@@ -267,7 +267,10 @@ To start off, look at the arguments
   \item{do.par}{
     Default is \code{TRUE}, meaning
     call \code{\link{par}()} as appropriate for settings such as \code{mfrow}.
-    Use \code{FALSE} if you don't want \code{plotmo} to start a new page.
+    Use \code{FALSE} or \code{2} if you don't want \code{plotmo} to start a new page.
+    The special value \code{2} means act like \code{TRUE} but do not restore
+    the \code{\link{par}()} settings to their former state.  Useful
+    if you want slip in a few more plots on the same page.
   }
   \item{caption}{
     Overall caption.  The default is to automatically create a caption

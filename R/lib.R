@@ -98,8 +98,8 @@ check.index.vec <- function(index.name, indexVec, object,
         indexVec <- 1
     if(!(NROW(indexVec) == 1 || NCOL(indexVec) == 1))
         stop0("\"", index.name, "\" must be a vector not a matrix ",
-            "(\"", index.name, "\" has dimensions ",
-            NROW(indexVec), " x ", NCOL(indexVec), ")")
+              "(\"", index.name, "\" has dimensions ",
+              NROW(indexVec), " x ", NCOL(indexVec), ")")
 
     if(use.as.col.index)
         len <- NCOL(object)         # index is for cols of object
@@ -117,9 +117,9 @@ check.index.vec <- function(index.name, indexVec, object,
         }
         # note that a single FALSE or TRUE is ok regardless of length(object)
         if(length(indexVec) > len && length(indexVec) != 1) {
-            stop0("logical index vector \"", index.name, "\" is too long\n",
-                "       Its length is ", length(indexVec),
-                " and the max allowed length is ", len)
+            stop0("logical index vector \"", index.name, "\" is too long.\n",
+                  "       Its length is ", length(indexVec),
+                  " and the max allowed length is ", len)
         }
     } else if(is.numeric(indexVec)) {
         if(check.empty) {
@@ -144,13 +144,13 @@ check.index.vec <- function(index.name, indexVec, object,
         if(any(abs(indexVec) > len)) {
             if(len != 1)
                 stop0("out of range value in \"", index.name,
-                    "\" (allowed index range is 1:",  len, ")")
+                      "\" (allowed index range is 1:",  len, ")")
             else if(treat.NA.as.one)
                 stop0("out of range value in \"", index.name,
-                    "\" (the only legal value is NA or 1)")
+                      "\", the only legal value is 1 (or NA)")
             else
                 stop0("out of range value in \"", index.name,
-                    "\" (the only legal value is 1)")
+                      "\" (the only legal value is 1)")
         }
     } else
         warning0("index vector \"", index.name,
@@ -232,10 +232,10 @@ match.choices <- function(arg, choices, arg.name)   # choices is a vector of str
         return(1)
     i <- pmatch(arg, choices)
     if(any(is.na(i)))
-        stop0(paste0("bad \"", arg.name, "\" argument \"", arg, "\"\n",
+        stop0(paste0("bad \"", arg.name, "\" argument \"", arg, "\".\n",
               "Choose one of: ", paste.quoted.names(choices)))
     if(i == 0)
-        stop0(paste("the \"", arg.name, "\" argument is ambiguous\n",
+        stop0(paste("the \"", arg.name, "\" argument is ambiguous.\n",
               "Choose one of: ", paste.quoted.names(choices)))
     i
 }

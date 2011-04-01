@@ -1,6 +1,14 @@
 Changes to plotmo Package
 -------------------------
 
+1.0-1 Apr 01, 2011
+
+plotmo was printing degree1 graphs for all used earth predictors,
+not just those appearing in degree1 terms.  Fixed that.
+
+plotmo was not handling all1=TRUE correctly for earth models with
+factor predictors.  Fixed that.
+
 1.0-0 Mar 31, 2011
 
 Initial release.  Moved plotmo from the earth 2.5-1 to here.

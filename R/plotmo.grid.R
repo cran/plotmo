@@ -119,7 +119,7 @@ check.grid.levels.arg <- function(x, grid.levels, pred.names)
     if(!is.null(grid.levels)) { # null is the default value
         if(!is.list(grid.levels))
             stop0("grid.levels must be a list.  ",
-                 "Example: grid.levels=list(sex=\"male\")")
+                  "Example: grid.levels=list(sex=\"male\")")
         for(name in names(grid.levels))
             if(!pmatch(name, pred.names, 0))
                 stop0("illegal variable name \"", name, "\" in grid.levels")
@@ -147,14 +147,14 @@ get.grid.lev <- function(xcol, pred.name, grid.func, grid.levels)
                 lev.name <- grid.levels[[iname]]
                 if(!is.character(lev.name) || length(lev.name) != 1)
                     stop0("illegal level for \"",
-                       names(grid.levels)[iname], "\" in grid.levels ",
-                       "(specify factor levels with a string)")
+                          names(grid.levels)[iname], "\" in grid.levels ",
+                          "(specify factor levels with a string)")
                 lev.names <- levels(xcol)
                 ilev <- pmatch(lev.name, lev.names, 0)
                 if(!ilev)
                     stop0("illegal level \"", lev.name, "\" for \"",
-                       pred.name, "\" in grid.levels (allowed levels are ",
-                       paste.quoted.names(lev.names), ")")
+                          pred.name, "\" in grid.levels (allowed levels are ",
+                          paste.quoted.names(lev.names), ")")
             }
             else if(!(is.numeric(lev) || is.logical(lev)) || !is.finite(lev))
                 stop0("illegal value for ", pred.name, " in grid.levels")

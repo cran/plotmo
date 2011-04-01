@@ -13,7 +13,7 @@ plotmo.prolog.default <- function(object, object.name)
     if(!is.list(object))
         stop0("'", object.name, "' is not a model object")
 
-	# removed the following, causes too many false alarms
+    # removed the following, causes too many false alarms
     # if(length(coef(object)) == 1)
     #     warning0("'", object.name, "' appears to be an intercept only model")
 }
@@ -498,8 +498,8 @@ strip.formula.string <- function(form)
     if(length(igrep) > 0) {
         # TODO formula has vars with $, this confuses predict() later, why?
         # they cause "Warning: after calling plotmo.predict, y has the wrong length"
-        stop0("plotmo: names with \"$\" are not yet supported\n",
-            "The unacceptable formula is ", form)
+        stop0("plotmo: names with \"$\" are not yet supported.\n",
+              "The offending formula is ", form)
     }
     form <- strip.white.space(form)
     args <- gsubi(".*~", "", form)                  # extract everything after ~

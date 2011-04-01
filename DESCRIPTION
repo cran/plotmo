@@ -1,5 +1,5 @@
 Package: plotmo
-Version: 1.0-0
+Version: 1.0-1
 Title: Plot a model's response while varying the values of the
         predictors.
 Author: Stephen Milborrow
@@ -11,6 +11,6 @@ Imports: rpart
 Suggests: earth
 License: GPL-3
 URL: http://www.milbo.users.sonic.net
-Packaged: 2011-03-31 11:56:00 UTC; milbo
+Packaged: 2011-04-01 11:52:54 UTC; milbo
 Repository: CRAN
-Date/Publication: 2011-03-31 15:18:52
+Date/Publication: 2011-04-01 21:07:28

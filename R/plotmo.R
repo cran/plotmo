@@ -123,9 +123,9 @@ plotmo <- function(object = stop("no 'object' arg"),
     {
         if(!(is.null(ylim) || is.na(ylim[1]) || length(ylim) == 2))
             stop0("'ylim' must be one of:\n",
-                "  NULL         all graphs have same vertical axes\n",
-                "  NA           each graph has its own vertical axis\n",
-                "  c(ymin,ymax) specify y axis min and max")
+                  "  NULL         all graphs have same vertical axes\n",
+                  "  NA           each graph has its own vertical axis\n",
+                  "  c(ymin,ymax) specify y axis min and max")
         if(length(ylim) == 2 && ylim[2] <= ylim[1])
             stop0("ylim[2] ", ylim[2], " is not greater than ylim[1] ", ylim[1])
         ylims <- c(NA, NA)
@@ -153,7 +153,7 @@ plotmo <- function(object = stop("no 'object' arg"),
     stopifnot.boolean(swapxy)
     stopifnot.boolean(xflip)
     stopifnot.boolean(yflip)
-    stopifnot.boolean(do.par)
+    stopifnot(length(do.par) == 1 && (do.par == 0 || do.par == 1 || do.par == 2))
     stopifnot(is.numeric(ngrid1) && length(ngrid1) == 1)
     trace <- check.trace.arg(trace)
     if(ngrid1 == -1)
@@ -200,7 +200,8 @@ plotmo <- function(object = stop("no 'object' arg"),
     }
     if(do.par) {
         old.par <- par(no.readonly=TRUE)
-        on.exit(par(old.par))
+        if(do.par == 1)
+            on.exit(par(old.par))
         do.par(nfigs, cex, xlab, ylab, caption)
     }
     else if(!is.null(cex)) {
@@ -227,7 +228,7 @@ plotmo <- function(object = stop("no 'object' arg"),
                     jitter.response, inverse.func, grid.func, grid.levels,
                     type2, ngrid2, col.persp, col.image, draw.plot=TRUE, x, y,
                     pairs, ylims, func.arg, pred.names, inverse.func.arg,
-                    clip.limits, nfigs, nsingles, npairs, do.par, main, xflip,
+                    clip.limits, nfigs, nsingles, npairs, main, xflip,
                     yflip, swapxy, xlab, ylab, cex, cex.lab, theta, phi, shade,
                     ...)
 
@@ -737,12 +738,12 @@ possibly.issue.degree1.out.of.range.warning <- function(out.of.range.preds, pred
 {
     if(length(out.of.range.preds) && !draw.plot)
         warning0("predicted values in the \"",
-            pred.names[out.of.range.preds[1]],
-            "\" graph ",
-            if(length(out.of.range.preds) > 1) "(and others) " else "",
-            "are out of ylim=(",
-            sprintf("%.2g", clip.limits[1]), ", ", sprintf("%.2g", clip.limits[2]),
-            ").\n         Use clip=FALSE to make this warning go away.")
+                  pred.names[out.of.range.preds[1]],
+                  "\" graph ",
+                  if(length(out.of.range.preds) > 1) "(and others) " else "",
+                  "are out of ylim=(",
+                  sprintf("%.2g", clip.limits[1]), ", ", sprintf("%.2g", clip.limits[2]),
+                  ").\n         Use clip=FALSE to make this warning go away.")
 }
 # plot degree two plots
 
@@ -757,7 +758,7 @@ plot.degree2 <- function(
     inverse.func.arg, clip.limits, nfigs, nsingles, npairs,
 
     # copy of args from plotmo
-    do.par, main, xflip, yflip, swapxy, xlab, ylab, cex, cex.lab,
+    main, xflip, yflip, swapxy, xlab, ylab, cex, cex.lab,
     theta, phi, shade, ...)
 {
     draw.plot.degree2 <- function(type2 = c("persp", "contour", "image"), ...)
@@ -785,8 +786,8 @@ plot.degree2 <- function(
             if(any(!is.finite(ylims))) {
                 cat("ylim", ylims, "\n\n")
                 stop0("Cannot generate ylim automatically for \"",
-                    pred.names[ipred1], "\" and \"", pred.names[ipred2], "\".\n",
-                    "       Specify ylim to make this message go away.")
+                      pred.names[ipred1], "\" and \"", pred.names[ipred2], "\".\n",
+                      "       Specify ylim to make this message go away.")
             }
         }
         switch(match.arg1(type2),
@@ -1137,7 +1138,7 @@ check.and.print.y <- function(y, msg, nresponse, expected.len, trace,
                 else
                     msg1 <- paste0("       Specify a column index like nresponse=2")
                 stop0("predicted response has multiple columns (see above) ",
-                      "but nresponse is not specified\n", msg1)
+                      "but nresponse is not specified.\n", msg1)
             }
             nresponse <- 1
         } else if (is.character(nresponse)) {

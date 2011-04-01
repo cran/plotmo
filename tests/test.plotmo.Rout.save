@@ -7,11 +7,7 @@
 Loading required package: leaps
 Loading required package: plotmo
 Loading required package: plotrix
-Warning message:
-package 'plotrix' was built under R version 2.12.2 
 > library(rpart)
-Warning message:
-package 'rpart' was built under R version 2.12.2 
 > data(kyphosis)
 > rpart.model <- rpart(Kyphosis~., data=kyphosis)
 > plotmo(rpart.model, type="vec", trace=2)

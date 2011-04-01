@@ -577,7 +577,7 @@ First few rows of predict() are
 [5,] 0.5736083 0.4263917
 [6,] 0.5747803 0.4252197
 
-Error : predicted response has multiple columns (see above) but nresponse is not specified
+Error : predicted response has multiple columns (see above) but nresponse is not specified.
        Specify a column index like nresponse=2 or a column name like nresponse="1"
 > set.seed(7)
 > plotmo(lda.model, caption="lda", trace=2, clip=F,

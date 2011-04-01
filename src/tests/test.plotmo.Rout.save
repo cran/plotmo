@@ -1356,6 +1356,21 @@ GCV 0.1447330    RSS 146.7947    GRSq 0.4020269    RSq 0.4190703
  grid:    pclass    sex age
              1st female  28
 
+> plotmo(a, trace=Trace, caption="plotmo with facs: pclass+sex+age, all1=T", all1=T)
+
+ grid:    pclass    sex age
+             1st female  28
+
+> plotmo(a, trace=Trace, caption="plotmo with facs: pclass+sex+age, all2=T", all2=T)
+
+ grid:    pclass    sex age
+             1st female  28
+
+> plotmo(a, trace=Trace, caption="plotmo with facs: pclass+sex+age, all1=T, all2=T", all1=T, all2=T)
+
+ grid:    pclass    sex age
+             1st female  28
+
 > plotmo(a, trace=Trace, clip=FALSE, degree2=FALSE, caption="plotmo (no degree2) with facs: pclass+sex+age")
 
  grid:    pclass    sex age
