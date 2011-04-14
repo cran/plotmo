@@ -34,51 +34,78 @@ test.fac.with.rpart <- function(ngrid2=20)
     # numeric x numeric
     a2 <- rpart(survived ~ pclass.num+parch.num, data=et)
     set.seed(145)
-    plotmo(a2, do.par=F, type2="im",
-           col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
+    plotmo(a2, do.par=F, type2="im", degree1=2,
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
     set.seed(145)
     plotmo(a2, do.par=F, type2="con", degree1=NA,
-           col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
     set.seed(145)
     plotmo(a2, do.par=F, type2="persp", degree1=NA,
-           ngrid2=100, theta=NA, ticktype="d", border=NA, cex.lab=.8, ntick=2)
+           ngrid2=40, theta=NA, ticktype="d", border=NA, cex.lab=.8, ntick=2)
 
     # factor x numeric
     a3 <- rpart(survived ~ pclass.fac+parch.num, data=et)
     set.seed(145)
     plotmo(a3, do.par=F, type2="im",
-           col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
+           col.response=col.response, cex.response=.3, jitter.response=0, pch.response=20)
     set.seed(145)
     plotmo(a3, do.par=F, type2="con", degree1=NA, ylim=c(0,1),
-           col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
+           col.response=col.response, cex.response=.3, jitter.response=0, pch.response=20)
     set.seed(145)
     plotmo(a3, do.par=F, type2="persp", degree1=NA,
-           ngrid2=100, theta=NA, ticktype="d", border=NA, cex.lab=.8, ntick=2)
+           ngrid2=40, theta=NA, ticktype="d", border=NA, cex.lab=.8, ntick=2)
 
     # numeric x factor
     a4 <- rpart(survived ~ pclass.num+parch.fac, data=et)
     set.seed(145)
     plotmo(a4, do.par=F, type2="im", tra=1,
-           col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
     set.seed(145)
     plotmo(a4, do.par=F, type2="con", degree1=NA,
-           col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
     set.seed(145)
     plotmo(a4, do.par=F, type2="persp", degree1=NA,
-           ngrid2=100, theta=NA, ticktype="d", border=NA, cex.lab=.8, ntick=2)
+           ngrid2=40, theta=NA, ticktype="d", border=NA, cex.lab=.8, ntick=2)
 
     # factor x factor
     a5 <- rpart(survived ~ pclass.fac+parch.fac, data=et)
     set.seed(145)
-    plotmo(a5, do.par=F, type2="im",
+    plotmo(a5, do.par=F, type2="im", nrug=100,
            col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
     set.seed(145)
     plotmo(a5, do.par=F, type2="con", degree1=NA,
            col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
     set.seed(145)
     plotmo(a5, do.par=F, type2="persp", degree1=NA,
-           ngrid2=100, theta=NA, ticktype="d", border=NA, cex.lab=.8, ntick=2)
-    par(mfrow=c(1,1))
+           ngrid2=40, theta=NA, ticktype="d", border=NA, cex.lab=.8, ntick=2)
+
+    # test ndiscrete
+    par(mfrow=c(3,5))
+    par(mar = c(2, 2, 3, 0.5), cex=.6)
+
+    plotmo(a2, do.par=F, type2="persp", degree1=2, ndiscrete=0, main="ndiscrete=0",
+           theta=NA, ticktype="d", ntick=2,
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
+    plotmo(a2, do.par=F, type2="im", degree1=NA, ndiscrete=0)
+    plotmo(a2, do.par=F, type2="con", degree1=NA, ndiscrete=0)
+    plotmo(a2, do.par=F, type2="persp", degree1=2, degree2=NA, ndiscrete=0, main="center", center=TRUE,
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
+
+    plotmo(a2, do.par=F, type2="persp", degree1=2, ndiscrete=3, main="ndiscrete=3",
+           theta=NA, ticktype="d", ntick=2,
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
+    plotmo(a2, do.par=F, type2="im", degree1=NA, ndiscrete=3)
+    plotmo(a2, do.par=F, type2="con", degree1=NA, ndiscrete=3)
+    plotmo(a2, do.par=F, type2="persp", degree1=2, degree2=NA, ndiscrete=3, main="center", center=TRUE,
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
+
+    plotmo(a2, do.par=F, type2="persp", degree1=2, ndiscrete=10, main="ndiscrete=10",
+           theta=NA, ticktype="d", ntick=2,
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
+    plotmo(a2, do.par=F, type2="im", degree1=NA, ndiscrete=10)
+    plotmo(a2, do.par=F, type2="con", degree1=NA, ndiscrete=10)
+    plotmo(a2, do.par=F, type2="persp", degree1=2, degree2=NA, ndiscrete=10, main="center", center=TRUE,
+           col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
 }
 test.fac.with.rpart()
 cat("==test plotmo swapxy with factors==\n")
@@ -112,23 +139,24 @@ test.swapxy.with.rpart <- function(ngrid2=20)
                 plotmo(a5, do.par=F, type2="im", degree1=NA,
                        swapxy=swapxy, xflip=xflip, yflip=yflip,
                        main=paste("swapxy=", swapxy, "\nxflip=", xflip, "\nyflip=", yflip),
-                       col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
+                       col.response=col.response, cex.response=3, jitter.response=.3,
+                       pch.response=".")
                 set.seed(145)
                 plotmo(a5, do.par=F, type2="con", degree1=NA,
                        swapxy=swapxy, xflip=xflip, yflip=yflip,
                        main=paste("swapxy=", swapxy, "\nxflip=", xflip, "\nyflip=", yflip),
-                       col.response=col.response, cex.response=.3, jitter.response=1, pch.response=20)
+                       col.response=col.response, cex.response=.3, jitter.response=.3, pch.response=20)
             }
     }
     par(mfrow=c(2,2))
     set.seed(146)
     plotmo(a5, do.par=F, type2="persp", degree1=NA, trace=0,
            swapxy=FALSE, main=paste("swapxy=", FALSE),
-           ngrid2=100, theta=145, ticktype="d", cex.lab=.8, ntick=5)
+           ngrid2=40, theta=145, ticktype="d", cex.lab=.8, ntick=5)
     set.seed(146)
     plotmo(a5, do.par=F, type2="persp", degree1=NA, trace=0,
            swapxy=TRUE, main=paste("swapxy=", TRUE),
-           ngrid2=100, theta=145, ticktype="d", cex.lab=.8, ntick=5)
+           ngrid2=40, theta=145, ticktype="d", cex.lab=.8, ntick=5)
     set.seed(146)
     plotmo(a5, do.par=F, type2="im", degree1=2, trace=1,
            swapxy=FALSE, main=paste("swapxy=", FALSE))
@@ -141,8 +169,8 @@ col.response<- ifelse(ozone1$O3 == 38, "red", "pink")
 # test xflip arg, degree1 plots
 par(mfrow=c(2,2))
 set.seed(102)
-plotmo(aflip, degree1=1:2, degree2=0, do.par=F, col.response=col.response, pch.response=20, nrug=-1, ylab="O3")
-plotmo(aflip, degree1=1:2, degree2=F, do.par=F, col.response=col.response, pch.response=20, nrug=-1, ylab="O3", xflip=T, main="xflip=TRUE, degree1 plots")
+plotmo(aflip, degree1=1:2, degree2=0, do.par=F, col.response=col.response, pch.response=20, nrug=-1, ylab="O3", col.smooth="gray")
+plotmo(aflip, degree1=1:2, degree2=F, do.par=F, col.response=col.response, pch.response=20, nrug=-1, ylab="O3", xflip=T, main="xflip=TRUE, degree1 plots", , col.smooth="gray")
 
 col.response<- ifelse(ozone1$O3 == 1, "green", "pink")
 
@@ -180,6 +208,66 @@ plotmo(aflip, degree1=0, degree2=2, do.par=F, type2="con", col.response=col.resp
 plotmo(aflip, degree1=0, degree2=2, do.par=F, type2="con", col.response=col.response, pch.response=20, swapxy=T, xflip=T)
 plotmo(aflip, degree1=0, degree2=2, do.par=F, type2="con", col.response=col.response, pch.response=20, swapxy=T, yflip=T)
 plotmo(aflip, degree1=0, degree2=2, do.par=F, type2="con", col.response=col.response, pch.response=20, swapxy=T, xflip=T, yflip=T)
+
+# ordered factor
+
+cat("==test plotmo with ordered factor==\n")
+par(mfcol=c(2,2))
+par(mar=c(3, 3, 3, 1))
+par(mgp=c(1.5, .5, 0))
+a <- lm(height~., data=Loblolly)
+termplot(a, partial.resid=T, rug=T, terms=2, main="Seed is an ordered factor") # compare to termplot
+plotmo(a, trace=0, do.par=F, col.resp="gray", nrug=T, all2=T)
+
+#---------------------------------------------------------------------------
+# test ndiscrete with integer and non integer predictors, with missing values
+
+par(mfcol=c(2,4))
+par(mar=c(3, 3, 3, 1))
+par(mgp=c(1.5, .5, 0))
+et <- etitanic
+et$var <- et$parch
+et$var[et$var==1] <- 0 # want a "hole" in var's value, for testing
+et$var[1:3] <- 6
+cat("table(et$var):")
+print(table(et$var))
+cat("\n")
+a <- earth(survived~var+age, data=et, degree=2, pm="none")
+
+plotmo(a, trace=0, ndiscrete=0,
+       main="integral var\n(var levels are 0 2 3 4 5 6)\nndiscrete=0", cex.lab=.8,
+       do.par=F, col.smooth="indianred", ticktype="d", clip=F, degree1=0, theta=40)
+
+plotmo(a, trace=0, ndiscrete=0,
+       do.par=F, col.smooth="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
+
+#------------
+plotmo(a, trace=0, ndiscrete=10,  main="integral var\nndiscrete=10", cex.lab=.8,
+       do.par=F, col.smooth="indianred", ticktype="d", clip=F, degree1=0, theta=40)
+
+plotmo(a, trace=0, ndiscrete=10,
+       do.par=F, col.smooth="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
+
+#------------
+et$var <- et$var / 2
+cat("table(et$var):")
+print(table(et$var))
+cat("\n")
+a <- earth(survived~var+age, data=et, degree=2, pm="none")
+
+plotmo(a, trace=0, ndiscrete=0,
+       main="integral var\n(var levels are 0 1 1.5 2 2.5 3)\nndiscrete=0", cex.lab=.8,
+       do.par=F, col.smooth="indianred", ticktype="d", clip=F, degree1=0, theta=40)
+
+plotmo(a, trace=0, ndiscrete=0,
+       do.par=F, col.smooth="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
+
+#------------
+plotmo(a, trace=0, ndiscrete=10, main="non integral var\nndiscrete=10", cex.lab=.8,
+       do.par=F, col.smooth="indianred", ticktype="d", clip=F, degree1=0, theta=40)
+
+plotmo(a, trace=0, ndiscrete=10,
+       do.par=F, col.smooth="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

@@ -1,6 +1,7 @@
 # plotmo.rpart.R: plotmo methods for rpart objects
+#                 See the descriptions of the methods in plotmo.methods.R.
 
-get.default.plotmo.type.rpart <- function(obj)
+get.plotmo.default.type.rpart <- function(obj, ...)
 {
     # use same default as predict.rpart
     if(obj$method == "class")
@@ -10,15 +11,15 @@ get.default.plotmo.type.rpart <- function(obj)
 }
 get.plotmo.singles.rpart <- function(object, env, x, ...)
 {
+    # get all variables used in the tree
     varnames <- as.character(object$frame$var) # factor to character
     varnames <- unique(varnames[varnames != "<leaf>"])
     match(varnames, colnames(x))
 }
-# We consider rpart variables paired if one is the direct parent
-# of the other in the tree.
-
 get.plotmo.pairs.rpart <- function(object, env, x, trace, ...)
 {
+    # we consider rpart variables paired if one is the direct
+    # parent of the other in the tree.
     irow <- as.integer(row.names(object$frame))
     var.names <- character(length=max(irow))
     var.names[irow] <- as.character(object$frame$var) # factor to character

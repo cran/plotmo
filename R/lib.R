@@ -1,14 +1,12 @@
-# lib.R: miscellaneous definitions for plotmo
+# lib.R: miscellaneous function for plotmo
 
-stop0 <- function(...)
-    stop(..., call.=FALSE)
+stop0 <- function(...) stop(..., call.=FALSE)
 
-warning0 <- function(...) # set options(warn=2) and traceback() to see the call
-    warning(..., call.=FALSE)
+# set options(warn=2) and traceback() to see where the warning occurred
+warning0 <- function(...) warning(..., call.=FALSE)
 
 # The function stopif is intended for catching programmer errors.
 # For user errors, we try to give a more informative message.
-
 stopif <- function(...) stopifnot(!(...))
 
 printf <- function(format, ...) cat(sprintf(format, ...)) # like c printf
@@ -28,34 +26,43 @@ any1 <- function(x) any(x != 0) # like any but no warning if x not logical
 
 is.try.error <- function(obj) class(obj)[1] == "try-error"
 
-# We use identical() and not is.na() below because is.na(x) gives warnings
-# for certain x's, e.g if x is a function, and x == 0 gives warnings if x
-# is a vector or a function etc.
+is.zero <- function(x) length(x) == 1 && x == 0
 
-is.na.or.zero <- function(x) identical(x, NA) || identical(x, 0)
+is.integral <- function(x) all(floor(x) == x)
 
 stopifnot.boolean <- function(b) # b==0 or b==1 is also ok
 {
     if(length(b) != 1 || !(is.logical(b) || is.numeric(b)) ||
-            is.na(b) || !(b == 0 || b == 1)) {
-        name <- deparse(substitute(b))
-        cat0("\n", name, ": ")
-        print(b)
-        cat("\n")
-        stop0("the ", name,
-              " argument is not FALSE or TRUE or 0 or 1 (see above print)")
-    }
+            is.na(b) || !(b == 0 || b == 1))
+        stop0("the ", deparse(substitute(b)),
+              " argument is not FALSE or TRUE or 0 or 1")
 }
-check.trace.arg <- function(trace) # make sure trace is a one element vector
+stopifnot.integer <- function(i, logical.acceptable=TRUE)
 {
-    if(!is.vector(trace))
-        warning0("bad \"trace\" argument")
-    if(length(trace) != 1)
-        warning0("\"trace\" argument has more than one element")
-    as.numeric(trace[1])
+    if(!(is.numeric(i) || (logical.acceptable && is.logical(i))) ||
+            length(i) != 1 || is.na(i) || !is.finite(i) || floor(i) != i)
+        stop0("the ", deparse(substitute(i)), " argument is not an integer")
 }
-# warn.if.not.all.finite is intended to help clarify possibly confusing
-# messages from within the bowels of calls to other functions later
+stopifnot.scalar <- function(x, logical.acceptable=TRUE)
+{
+    if(!(is.numeric(x) || (logical.acceptable && is.logical(x))) ||
+             is.na(x) || !is.finite(x) || length(x) != 1)
+        stop0("the ", deparse(substitute(x)), " argument is not scalar")
+}
+my.center <- function(x, trace=FALSE)
+{
+    if(!is.null(x) && !is.factor(x)) {
+        if(trace)
+            name <- deparse(substitute(x))
+        x <- x - mean(x[is.finite(x)], na.rm=TRUE)
+        if(trace) {
+            cat0("centered ", name, " length ", length(x))
+            print.first.few.elements.of.vector(x, trace)
+        }
+    }
+    x
+}
+# warn.if.not.all.finite helps preempt confusing message from code later.
 # Return TRUE if warning issued.
 
 warn.if.not.all.finite <- function(x, text="unknown")
@@ -75,6 +82,48 @@ warn.if.not.all.finite <- function(x, text="unknown")
         return(TRUE)
     }
     FALSE
+}
+print.first.few.elements.of.vector <- function(x, trace)
+{
+    try(cat(" min", min(x), "max", max(x)), silent=TRUE)
+    cat(" values ")
+    len <- if(trace >= 3) length(x) else min(10, length(x))
+    for(i in 1:len)
+        cat(x[i], "")
+    if(length(x) > len)
+        cat("...")
+   cat("\n")
+    if(trace >= 3) {
+        cat("\n")
+        print(summary(x))
+    }
+}
+# print first few rows and last row of x
+# if trace >= 3, then print all rows of x, up to 1e4 rows
+print.first.few.rows <- function(x, trace, msg="x", msg2="")
+{
+    stopifnot(length(dim(x)) == 2)
+    cat0(msg, "[", nrow(x), ",", ncol(x), "]", msg2, ":\n")
+    if(is.null(colnames(x)))
+        colnames(x) <- paste("V", 1:ncol(x))
+    xnew <- x
+    nprint <- if(trace >= 3) 1e4 else 3
+    if(nprint < nrow(x)-2) {
+        xnew <- x[c(1:(nprint+1), nrow(x)), , drop=FALSE]
+        rownames(xnew)[nprint+1] <- "..."
+    }
+    print(xnew)
+    is.fac <- sapply(x, is.factor)
+    if(any(is.fac)) {
+        names <- paste0(colnames(x),
+                        ifelse(sapply(x, is.ordered), "(ordered)", ""))
+        cat("\nfactors:", strip.white.space(names[is.fac]), "\n")
+    }
+    if(trace >= 3) {
+        cat("\n")
+        print(summary(x))
+    }
+    cat("\n")
 }
 # Check that an index vector specified by the user is ok to index an object.
 # We want to preclude confusing R messages or behaviour later.
@@ -131,7 +180,7 @@ check.index.vec <- function(index.name, indexVec, object,
                 else
                     stop0("\"", index.name, "\" is all zeroes")
         }
-        if(any(floor(indexVec) != indexVec))
+        if(!is.integral(indexVec))
             stop0(index.name, " is not an integer")
         if(any(indexVec < 0) && any(indexVec > 0))
             stop0("mixed negative and positive values in \"", index.name, "\"")
@@ -223,25 +272,31 @@ match.arg1 <- function(arg)     # match.arg1 returns an integer
 {
     formal.args <- formals(sys.function(sys.parent()))
     arg.name=deparse(substitute(arg))
-    match.choices(arg, choices=eval(formal.args[[arg.name]]),  arg.name=arg.name)
+    match.choices(arg[1], choices=eval(formal.args[[arg.name]]),  arg.name=arg.name)
 }
-match.choices <- function(arg, choices, arg.name)   # choices is a vector of strings
+match.choices <- function(arg, choices, arg.name) # choices is a vector of strings
 {
-    stopifnot(is.character(arg))
-    if(all(arg == choices))
-        return(1)
-    i <- pmatch(arg, choices)
-    if(any(is.na(i)))
-        stop0(paste0("bad \"", arg.name, "\" argument \"", arg, "\".\n",
-              "Choose one of: ", paste.quoted.names(choices)))
-    if(i == 0)
-        stop0(paste("the \"", arg.name, "\" argument is ambiguous.\n",
-              "Choose one of: ", paste.quoted.names(choices)))
-    i
+    if(!is.character(arg) || length(arg) != 1)
+         stop0("bad \"", arg.name, "\" argument.\n",
+               "Choose one of: ", paste.quoted.names(choices))
+    imatch <- pmatch(arg, choices)
+    if(any(is.na(imatch))) {
+        imatch <- NULL
+        for(i in 1:length(choices))
+            if(pmatch(arg, choices[i], nomatch=0))
+                imatch <- c(i, imatch)
+        if(length(imatch) == 0)
+            stop0(arg.name, "=\"", arg, "\" is illegal.\n",
+                  "Choose one of: ", paste.quoted.names(choices))
+        if(length(imatch) > 1)
+            stop0(paste0(arg.name, "=\"", arg, "\" is ambiguous.\n",
+                         "Choose one of: ", paste.quoted.names(choices)))
+    }
+    imatch
 }
 # Call this only after a plot is on the screen to avoid
 # an error message "plot.new has not been called yet"
-# TODO the trimming code sometimes overtrims
+# TODO the trimming code sometimes overtrims, that's why I added the 1.4
 
 show.caption <- function(caption, trim=0, show=TRUE, cex=1)
 {
@@ -250,7 +305,7 @@ show.caption <- function(caption, trim=0, show=TRUE, cex=1)
             if(is.logical(trim))
                 trim <- 1
             # trim caption to fit
-            len <- len.caption * trim / strwidth(caption, "figure")
+            len <- len.caption * 1.4 * trim / strwidth(caption, "figure")
             caption <- substr(caption, 1, len)
             # append ellipsis if chars deleted
             if(len < len.caption)
@@ -264,14 +319,6 @@ show.caption <- function(caption, trim=0, show=TRUE, cex=1)
 # the make.space functions should only be called if do.par is TRUE
 # (otherwise par is not restored correctly)
 
-make.space.for.caption <- function(caption)
-{
-    oma <- par("oma")
-    if(nchar(caption) > 0 && oma[3] < 3) {
-        oma[3] <- 3
-        par(oma=oma)
-    }
-}
 make.space.for.bottom.axis <- function()
 {
     mar <- par("mar")

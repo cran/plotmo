@@ -37,12 +37,12 @@ plotmo(a, xlab="", ylab="", caption=caption, trace=1)
 caption <- "test 4 x 4 layout with ylab"
 dopar(1,1,caption)
 a <- earth(O3 ~ ., data=ozone1, nk=30, pmethod="n", degree=2)
-plotmo(a, xlab="", ylab="ozone", caption=caption, trace=Trace)
+plotmo(a, xlab="", ylab="ozone", caption=caption, trace=2)
 
 caption <- "test 3 x 3 layout"
 dopar(1,1,caption)
 a <- earth(O3 ~ ., data=ozone1, nk=16, pmethod="n", degree=2)
-plotmo(a, xlab="", ylab="", caption=caption, trace=Trace)
+plotmo(a, xlab="", ylab="", caption=caption, trace=3)
 
 caption <- "test 2 x 2 layout"
 dopar(1,1,caption)
@@ -63,11 +63,11 @@ plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, caption=caption,
 set.seed(1)
 plotmo(a, do.par=FALSE, degree1=F, degree2=4, grid.func=mean, col.persp="white", ngrid2=10, phi=40, trace=Trace)
 set.seed(1)
-plotmo(a, do.par=FALSE, degree1=1, lty.degree1=2, col.degree1=2, nrug=50, degree2=F, main="nrug=50", trace=Trace)
+plotmo(a, do.par=FALSE, degree1=1, lty.degree1=2, lwd.degree1=4, col.degree1=2, nrug=300, degree2=F, main="nrug=300", trace=Trace)
 set.seed(1)
 plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, main="nrug=-1", trace=Trace)
 set.seed(1)
-plotmo(a, do.par=FALSE, degree1=1, nrug=20, ngrid1=50, degree2=F, main="ngrid1=50 nrug=20", trace=Trace)
+plotmo(a, do.par=FALSE, degree1=1, nrug=500, ngrid1=50, degree2=F, main="ngrid1=50 nrug=500", trace=Trace)
 plotmo(a, do.par=FALSE, degree1=NA, degree2=1, phi=60, box=F, r=100) # dots args
 
 caption <- "test plotmo ylim"
@@ -106,11 +106,12 @@ ad.glob <- earth(oz[,2:3], oz[,1], degree=2)
 func1 <- function()
 {
     caption <- "test environments and finding the correct data"
-    dopar(6,4,caption)
+    dopar(4,4,caption)
 
     plotmo(a.glob, do.par=FALSE, main="a.glob oz",
           degree1=1, all2=1, degree2=1, type2="im", trace=T,
           col.response=3, pch.response=20)
+    mtext(caption, outer=TRUE, font=2, line=1.5, cex=1)
 
     plotmo(ad.glob, do.par=FALSE, main="ad.glob oz",
           degree1=1, all2=1, degree2=1, type2="im", trace=T,
@@ -152,6 +153,9 @@ func1 <- function()
                degree1=1, all2=1, degree2=1, type2="im", trace=T,
                col.response=3, pch.response=20)
 
+        caption <- "test environments and finding the correct data, continued"
+        dopar(4,4,caption)
+
         oz <- .1 * oz.org
         a.func <- earth(O3~temp+humidity, data=oz, degree=2)
         plotmo(a.func, do.par=FALSE, main="a.func oz.1",
@@ -171,10 +175,9 @@ func1 <- function()
            degree1=1, all2=1, degree2=1, type2="im", trace=T,
            col.response=3, pch.response=20)
 
-        cat("Expect error msg (because get.plotmo.x calculated using oz.1 i.e. func2.oz)\n")
         try(plotmo(a.oz10, do.par=FALSE, main="func1:a.oz10",
            degree1=1, all2=1, degree2=1, type2="im", trace=T,
-           col.response=3, pch.response=20))
+           col.response=3, pch.response=20, do.par=FALSE))
 
         cat("Expect error msg (because get.plotmo.x calculated using oz.1 i.e. func2.oz)\n")
         try(plotmo(ad.oz10, do.par=FALSE, main="func1:ad.oz10",
@@ -182,11 +185,55 @@ func1 <- function()
            col.response=3, pch.response=20))
     }
     func2()
+
+    y  <- 3:11
+    x1 <- c(1,3,2,4,5,6,6,6,6)
+    x2 <- c(2,3,4,5,6,7,8,9,10)
+    frame <- data.frame(y=y, x1=x1, x2=x2)
+    foo <- function()
+    {
+        lm.18.out <- lm(y~x1+x2)
+        x1[2] <- 18
+        y[3] <- 19
+        frame <- data.frame(y=y, x1=x1, x2=x2)
+        list(lm.18.out   = lm.18.out,
+             lm.18       = lm(y~x1+x2),
+             lm.18.keep  = lm(y~x1+x2, x=TRUE, y=TRUE),
+             lm.18.frame = lm(y~x1+x2, data=frame))
+    }
+    temp <- foo()
+        lm.18.out   <- temp$lm.18.out
+        lm.18       <- temp$lm.18
+        lm.18.keep  <- temp$lm.18.keep
+        lm.18.frame <- temp$lm.18.frame
+
+    # following should all use the x1 and y inside foo
+
+    cat("==lm.18.out\n")
+    plotmo(lm.18.out,   trace=1, main="lm.18.out",
+           do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
+           col.response=2, pch.response=20)
+
+    cat("==lm.18\n")
+    plotmo(lm.18,       trace=1, main="lm.18",
+           do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
+           col.response=2, pch.response=20)
+
+    cat("==lm.18.keep\n")
+    plotmo(lm.18.keep,  trace=1, main="lm.18.keep",
+           do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
+           col.response=2, pch.response=20)
+
+    cat("==lm.18.frame\n")
+    plotmo(lm.18.frame, trace=1, main="lm.18.frame",
+           do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
+           col.response=2, pch.response=20)
 }
 func1()
 
 caption <- "test earth formula versus x,y model"
 dopar(4,4,caption)
+mtext(caption, outer=TRUE, font=2, line=1.5, cex=1)
 a <- earth(O3 ~ ., data=ozone1, degree=2)
 plotmo(a, do.par=FALSE, caption=caption, trace=Trace)
 a <- earth(ozone1[, -1], ozone1[,1], degree=2)
@@ -200,6 +247,7 @@ plotmo(a, trace=Trace)
 
 caption = "se=2, earth(doy~humidity+temp+wind, data=ozone1) versus termplot (expect no se lines)"
 dopar(3,2,caption)
+mtext(caption, outer=TRUE, font=2, line=1.5, cex=1)
 a <- earth(doy~humidity + temp + wind, data=ozone1, degree=2)
 cat("Ignore warning: predict.earth ignored argument \"se\"\n")
 termplot(a)
@@ -346,7 +394,8 @@ plotmo(a, type="earth", ylim=c(0, 1), caption="type=\"earth\" plotmo glm with mi
 plotmo(a, type="link", ylim=c(0, 1), clip=FALSE, caption="type=\"link\" plotmo glm with mixed fac and non-fac degree2 terms")
 plotmo(a, type="class", ylim=c(0, 1), caption="type=\"class\" plotmo glm with mixed fac and non-fac degree2 terms")
 plotmo(a, ylim=c(0, 1), caption="default type (\"response\")\nplotmo glm with mixed fac and non-fac degree2 terms")
-# now with different type2's
+# now with different type2s
+mtext("different type2s", outer=TRUE, font=2, line=1.5, cex=1)
 plotmo(a, do.par=FALSE, type2="persp",   theta=-20, degree1=FALSE, grid.levels=list(pclass="2nd"))
 plotmo(a, do.par=FALSE, type2="contour", degree1=FALSE, grid.levels=list(pclass="2nd"))
 plotmo(a, do.par=FALSE, type2="image",   degree1=FALSE, grid.levels=list(pclass="2nd"),
@@ -360,19 +409,21 @@ a20 <- earth(O3 ~ humidity + temp + doy, data=ozone1, degree=2, glm=list(family=
 set.seed(1) # needed for nrug
 plotmo(a20, nrug=-1)
 
-set.seed(1) # needed for nrug
-plotmo(a20, nrug=-1, caption="Test plotmo with a vector main",
-       main=c("Humidity", "Temperature", "Day of year", "Humidity: Temperature", "Temperature: Day of Year"))
+set.seed(1) # needed for nrug and npoints
+plotmo(a20, nrug=200, caption="Test plotmo with a vector main (and npoints=200)",
+       main=c("Humidity", "Temperature", "Day of year", "Humidity: Temperature", "Temperature: Day of Year"),
+       col.response="gray", pch.response=".", cex.response=3, npoints=200)
 
-set.seed(1) # needed for nrug
-cat("Expect warning below\n")
-plotmo(a20, nrug=-1, caption="Test plotmo with a vector main, missing double titles",
-       main=c("Humidity", "Temperature", "Day of year", "Humidity: Temperature"))
+cat("Expect warning below (missing double titles)\n")
+plotmo(a20, nrug=-1, caption="Test plotmo with a vector main (and plain smooth)",
+       main=c("Humidity", "Temperature", "Day of year", "Humidity: Temperature"),
+       col.smooth="indianred")
 
-set.seed(1) # needed for nrug
-cat("Expect warning below\n")
-plotmo(a20, nrug=-1, caption="Test plotmo with a vector main, missing single titles",
-       main=c("Humidity", "Temperature"))
+cat("Expect warning below (missing single titles)\n")
+plotmo(a20, nrug=-1, caption="Test plotmo with a vector main (and smooth args)",
+       main=c("Humidity", "Temperature"),
+       col.smooth="indianred", lwd.smooth=2, lty.smooth=2,
+       col.response="gray", npoints=500)
 
 aflip <- earth(O3~vh + wind + humidity + temp, data=ozone1, degree=2)
 
@@ -405,13 +456,109 @@ try(plotmo(aflip, z="abc")) # expect Error : "zlab" is illegal, use "ylab" inste
 try(plotmo(aflip, degree2="abc"))  # expect Error : degree2 must be an index vector (numeric or logical)
 try(plotmo(aflip, degree1=c(4,1))) # expect Error : out of range value in degree2 (allowed index range is 1:3)
 try(plotmo(aflip, none.such=TRUE)) # expect Error : illegal argument "all1"
+try(plotmo(aflip, ntick=3, type2="im")) # expect Error: the ntick argument is illegal for type2="image"
+try(plotmo(aflip, breaks=3, type2="persp")) # expect Error: the breaks argument is illegal for type2="persp"
+try(plotmo(aflip, breaks=99, type2="cont")) # expect Error:  the breaks argument is illegal for type2="contour"
 
-# test error reporting
+# Test error handling when accessing the original data
 
 lm.bad <- lm.fit(as.matrix(ozone1[,-1]), as.matrix(ozone1[,1]))
-try(plotmo(lm.bad))          # expect Error: get.plotmo.x.default cannot get the x matrix
-try(plotmo(lm.bad, trace=1)) # expect Error: get.plotmo.x.default cannot get the x matrix
+try(plotmo(lm.bad))          # expect Error: this object is not supported by plotmo
 try(plotmo(99))              # expect Error: '99' is not a model object
+
+x <- matrix(c(1,3,2,4,5,6,7,8,9,10,
+              2,3,4,5,6,7,8,9,8,9), ncol=2)
+
+colnames(x) <- c("c1", "c2")
+x1 <- x[,1]
+x2 <- x[,2]
+y <- 3:12
+df <- data.frame(y=y, x1=x1, x2=x2)
+foo1 <- function()
+{
+    a.foo1 <- lm(y~x1+x2)
+    x1 <- NULL
+    try(plotmo(a.foo1)) # Expect Error: get.plotmo.x.default cannot get the x matrix
+}
+foo1()
+foo2 <- function()
+{
+    a.foo2 <- lm(y~x1+x2, data=df)
+    df <- NULL
+    try(plotmo(a.foo2)) # the original data "df" is no longer available (use x=TRUE in the call to lm?)
+}
+foo2()
+foo3 <- function()
+{
+    a.foo3 <- lm(y~x) # lm() builds a.foo3 model for which predict doesn't work
+    try(plotmo(a.foo3)) # Error : variable 'x' was fitted with type "nmatrix.2" but type "numeric" was supplied
+}
+foo3()
+foo4 <- function()
+{
+    a.foo4 <- lm(y~x[,1]+x[,2])  # lm() builds a.foo4 model for which predict doesn't work
+    try(plotmo(a.foo4)) # Error : predict.lm(xgrid, type="response") returned a response of the wrong length.
+}
+foo4()
+foo5 <- function()
+{
+    a.foo5 <- lm(y~x1+x2)
+    x1 <- c(1,2,3)
+    try(plotmo(a.foo5)) # Expect Error: get.plotmo.x.default cannot get the x matrix
+}
+foo5()
+foo6 <- function()
+{
+    a.foo6 <- lm(y~x1+x2)
+    y[1] <- NA
+    try(plotmo(a.foo6, col.response=3)) # Error: get.plotmo.x.default cannot get the x matrix
+}
+foo6()
+foo7 <- function()
+{
+    a.foo7 <- lm(y~x1+x2)
+    y[1] <- Inf
+    plotmo(a.foo7, col.response=3) # Warning: non finite values returned by get.plotmo.y, see print above
+}
+foo7()
+# TODO removed because this now works (why?)
+# foo8 <- function()
+# {
+#     i <- 1
+#     a.foo8 <- lm(y~x[,i]+x[,2])
+#     try(plotmo(a.foo8, trace=2)) # Error: predict.lm(xgrid, type="response") returned a response of the wrong length.
+# }
+# foo8()
+foo9 <- function()
+{
+    my.list <- list(j=2)
+    a.foo9 <- lm(y~x[,1]+x[,my.list$j])
+    try(plotmo(a.foo9, trace=2)) # Error: plotmo: names with "$" are not yet supported.
+}
+foo9()
+
+# TODO removed because this now works (why?)
+# # test "entire x matrix is stored as the first element of evaluated.mf\n")
+# x <- matrix(c(1,3,2,4,5,
+#               2,3,4,5,6), ncol=2) # actual values not important
+# y <- 3:7
+# lm.model <- lm(y~x)
+# try(plotmo(lm.model, trace=2, caption="lm.model <- lm(y~x)")) # Expect predict.lm(xgrid, type="response") returned a response of the wrong length.
+
+set.seed(1235)
+tit <- etitanic
+tit <- tit[c(30:80,330:380,630:680), ]
+a <- earth(survived~., data=tit, glm=list(family=binomial), degree=2)
+plotmo(a, grid.levels=list(sex="ma"), caption="smooth: survived, sex=\"m\"",
+       col.smooth="indianred", lwd.smooth=2,
+       col.response=as.numeric(tit$survived)+2, pch.response=".", type2="im",
+       cex.response=3, jitter.response=.3)
+set.seed(1238)
+a <- earth(pclass~., data=tit, degree=2)
+plotmo(a, type="class", grid.levels=list(sex="ma"), caption="smooth: pclass, sex=\"m\"",
+       col.smooth="indianred", lwd.smooth=2,
+       col.response=as.numeric(tit$pclass)+1, type2="im",
+       pch.response=".", cex.response=3, jitter.response=.3)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

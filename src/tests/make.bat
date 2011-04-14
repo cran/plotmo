@@ -9,11 +9,13 @@ time /T
 @echo.
 @call test.plotmo.fac.bat
                         @if %errorlevel% NEQ 0 goto error
-@cd \a\earth\src\tests
+@echo.
+@call test.plotmo.center.bat
                         @if %errorlevel% NEQ 0 goto error
 @rem for a thorough test, run \a\earth\src\tests\make.bat
+@cd \a\earth\src\tests
+                        @if %errorlevel% NEQ 0 goto error
 @call make.bat
-@rem @call test.earth.glm.bat
                         @if %errorlevel% NEQ 0 goto error
 @cd \a\plotmo\src\tests
 @goto done

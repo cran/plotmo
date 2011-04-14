@@ -1,7 +1,31 @@
 Changes to plotmo Package
 -------------------------
 
-1.0-1 Apr 01, 2011
+--- 1.2-0 Apr 12, 2011
+
+Added ndiscrete arg (variables with a small number of levels
+   are now plotted as "blocks", like factors).
+Added smooth.col and related args (plotmo can add a loess line).
+Made tweaks necessary because earth now imports this package.
+Added dvalue and npoints args.
+Added center arg (preliminary implementation).
+Added basic support for lars, nnet, and knn3 models.
+Jittering now works better.
+We now jitter response points for factors and discrete variables by default.
+plotmo is now faster:
+   We cache the plot data to avoid calling predict twice for each plot
+   For discrete vars and factors we only call predict for their original values
+   ngrid1 is much smaller (ok to do that because of ndiscrete arg)
+Better error reporting for illegal args.
+Reduced the number of default colors (just grays and lightblue now).
+Out-of-range values in image plots are now plotted in blue.
+Fixed an issue where the wrong environment could be used.
+Better error reporting for unsupported models.
+Fixed handling of factors with non contiguous levels
+Modified test scripts to conform to R 2.13.0's way of printing numbers
+Numerous other document and code touch ups.
+
+--- 1.0-1 Apr 01, 2011
 
 plotmo was printing degree1 graphs for all used earth predictors,
 not just those appearing in degree1 terms.  Fixed that.
@@ -9,6 +33,6 @@ not just those appearing in degree1 terms.  Fixed that.
 plotmo was not handling all1=TRUE correctly for earth models with
 factor predictors.  Fixed that.
 
-1.0-0 Mar 31, 2011
+--- 1.0-0 Mar 31, 2011
 
 Initial release.  Moved plotmo from the earth 2.5-1 to here.

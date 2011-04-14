@@ -1,42 +1,52 @@
-# plotmo.methods.R:  method functions for plotmo e.g. get.plotmo.singles.default
+# plotmo.methods.R:  default method functions for plotmo
 
 #------------------------------------------------------------------------------
-plotmo.prolog <- function(object, object.name) # gets called at the start of plotmo
+# All these methods functions have an argument "env", which is the environment
+# in which the model function was originally called.  If that is not available
+# from the object, arg is the environment in which plotmo was called.
+
+plotmo.prolog <- function(object, env, object.name) # gets called at the start of plotmo
 {
     UseMethod("plotmo.prolog")
 }
-plotmo.prolog.default <- function(object, object.name)
+plotmo.prolog.default <- function(object, env, object.name)
 {
     # here we just establish with some sort of plausibility that object
     # is a model object, to minimize confusing messages later
 
     if(!is.list(object))
         stop0("'", object.name, "' is not a model object")
-
-    # removed the following, causes too many false alarms
-    # if(length(coef(object)) == 1)
-    #     warning0("'", object.name, "' appears to be an intercept only model")
 }
 #------------------------------------------------------------------------------
-get.default.plotmo.type <- function(obj)
+# Get the type to be used when plotmo's argument "type" is NULL (the default)
+
+get.plotmo.default.type <- function(obj, env)
 {
-    UseMethod("get.default.plotmo.type")
+    UseMethod("get.plotmo.default.type")
 }
-get.default.plotmo.type.default <- function(obj)
+get.plotmo.default.type.default <- function(obj, ...)
 {
     "response"
+}
+get.plotmo.default.type.nnet <- function(obj, ...)
+{
+    "raw"
+}
+get.plotmo.default.type.knn3 <- function(obj, ...)
+{
+    "prob"
 }
 #------------------------------------------------------------------------------
 # Get the y limits to be used when ylim=NULL.  Return a two elem vector or
 # NA.  If NA, plotmo will use the range of the predicted response as the ylim
 # (it gets the predicted response by calling plot.degree1 and plot.degree2
-# to go through the plotting code, but without actually plotting).
+# to run through the plotting code, but without actually plotting).
 
-get.plotmo.auto.ylim <- function(object, type, trace)
+get.plotmo.ylim <- function(object, env, type, trace)
 {
-    UseMethod("get.plotmo.auto.ylim")
+    UseMethod("get.plotmo.ylim")
 }
-get.plotmo.auto.ylim.default <- function(object, type, trace)
+get.plotmo.ylim.default <- function(object, env, type, ...)
 {
     if(predictions.are.probabilities(object, type))
         return(c(0, 1))
@@ -46,12 +56,19 @@ get.plotmo.auto.ylim.default <- function(object, type, trace)
 # Return a two elem vector or NA.  If NA, plotmo will use the range of the
 # original response as the clip limits.
 
-get.plotmo.clip.limits <- function(object, type, y, trace)
+get.plotmo.clip.limits <- function(object, env, type, y, trace)
 {
     UseMethod("get.plotmo.clip.limits")
 }
-get.plotmo.clip.limits.default <- function(object, type, y, trace)
+get.plotmo.clip.limits.default <- function(object, env, type, y, trace)
 {
+    no.clip.limits <- function(object, type)
+    {
+        pmatch(type, "class", 0) ||
+        # assume no clip limits if is glm object and predict type is "link"
+        (!is.null(get.glm.family(object)) && pmatch(type, c("link"), 0))
+    }
+    #--- get.plotmo.clip.limits.default starts here
     if(predictions.are.probabilities(object, type))
         return(c(0, 1))
     else if(no.clip.limits(object, type))
@@ -64,7 +81,6 @@ get.plotmo.clip.limits.default <- function(object, type, y, trace)
 # returned vector and remove duplicates.  The default method simply
 # returns the indices of all predictors.  The object specific methods
 # typically return only the predictors actually used in the model.
-# The env argument is the environment from which plotmo was called.
 
 get.plotmo.singles <- function(object, env, x, trace, all1)
 {
@@ -72,47 +88,69 @@ get.plotmo.singles <- function(object, env, x, trace, all1)
 }
 get.plotmo.singles.default <- function(object, env, x, ...)
 {
-    ifirst <- if(colnames(x)[1] == "(Intercept)") 2 else 1 # delete intercept
-    ifirst:ncol(x)
+    1 : ncol(x)
 }
 #------------------------------------------------------------------------------
 # Get the pairs of predictors to be displayed in degree2 plots.
 # Each row of the returned pairs matrix is the indices of two predictors
-# for a degree2 plot. Example (this was returned from get.pairs.rpart):
+# for a degree2 plot. Example (this was returned from get.plotmo.pairs.rpart):
 #
 #    1    2
 #    1    2
-#    2    1
 #    2    1
 #
 # The indices are col numbers in the x matrix.  The caller will remove
-# duplicates pairs and re-order the pairs on the order in the call to the
-# model function.  The above example will become simply
+# duplicated pairs and re-order the pairs on the order of the predictors
+# in the original call to the model function.  The above example will
+# become simply
 #
-#   1    2
+#    1    2
 #
 # It is ok to return NULL or a matrix with zero rows.
-# The env argument is the environment from which plotmo was called.
 
 get.plotmo.pairs <- function(object, env, x, trace, all2)
 {
-    get.all.pairs <- function(object, env, x, trace)
-    {
-        singles <- get.plotmo.singles(object, env, x, trace, all1=TRUE)
-        if(length(singles) == 0)
-            return(NULL) # no pairs (must be an intercept only model)
-        singles <- unique(singles)
-        if(length(singles) > 10) { # 10 is arbitrary
-            warning0("too many variables to plot all pairs,\n         ",
-                     "so plotting degree2 plots for just the first 10 variables")
-            singles <- singles[1:10]
-        }
-        form.pairs(singles)
-    }
-    #--- get.plotmo.pairs starts here
     if(all2)
-        return(get.all.pairs(object, env, x, trace))
+        return(get.all.pairs(object, env, x, trace)) # TODO include all1 in this
     UseMethod("get.plotmo.pairs")
+}
+# Predictors x1 and x2 are considered paired if they appear in the formula
+# in forms such as x1:x2 or I(x1*x2) or s(x1,x2)
+
+get.plotmo.pairs.default <- function(object, env, x, trace, ...)
+{
+    pairs <- NULL
+    if(!is.null(object$call$formula)) {
+        form <- object$call$formula
+        # following "if" is needed for: form <- Volume ~ .; lm(form, data=trees)
+        if(typeof(form) != "language")
+            form <- eval(form, env)
+        form <- as.formula(form)
+        data <- get.data.for.formula(object, env, object$call$data, "x", trace)
+        terms <- terms(form, data=data)
+        term.labels <- NULL
+        if(!is.null(terms))
+            term.labels <- attr(terms, "term.labels")
+        if(!is.null(term.labels))
+            pairs <- get.plotmo.pairs.from.term.labels(term.labels, colnames(x), trace)
+        else if(trace)
+            cat0("no degree2 plots because no object$call$formula$term.labels\n")
+    }
+    pairs
+}
+get.all.pairs <- function(object, env, x, trace, max.pairs=10) # 10 is arbitrary
+{
+    singles <- get.plotmo.singles(object, env, x, trace, all1=TRUE)
+    if(length(singles) == 0)
+        return(NULL) # no pairs (must be an intercept only model)
+    singles <- unique(singles)
+    if(length(singles) > max.pairs) {
+        warning0("too many variables to plot all pairs,\n           ",
+                 "so plotting degree2 plots for just the first ",
+                 max.pairs, " variables")
+        singles <- singles[1:max.pairs]
+    }
+    form.pairs(singles)
 }
 form.pairs <- function(varnames) # return a two column matrix, each row is a pair
 {
@@ -121,35 +159,11 @@ form.pairs <- function(varnames) # return a two column matrix, each row is a pai
     pairs <- cbind(col1, col2)
     pairs[col1 != col2, , drop=FALSE]
 }
-# Predictors x1 and x2 are considered paired if they appear in the formula
-# in forms such as x1:x2 or I(x1*x2) or s(x1,x2)
-
-get.plotmo.pairs.default <- function(object, env, x, trace, ...)
-{
-    pairs <- matrix(0, nrow=0, ncol=2)  # no pairs
-    term.labels <- NULL
-    if(!is.null(object$call$formula)) {
-        form <- object$call$formula
-        # following "if" is needed for: form <- Volume ~ .; lm(form, data=trees)
-        if(typeof(form) != "language")
-            form <- eval(form, env)
-        form <- as.formula(form)
-        data <- get.formula.data(object, env, object$call$data, FALSE, trace)
-        terms <- terms(form, data=data)
-        if(!is.null(terms))
-            term.labels <- attr(terms, "term.labels")
-    }
-    if(!is.null(term.labels))
-        pairs <- get.plotmo.pairs.from.term.labels(term.labels, colnames(x), trace)
-    else if(trace)
-         cat("no degree2 plots because no $call$formula$term.labels, use all2=TRUE\n")
-    pairs
-}
 #------------------------------------------------------------------------------
 # This is called once for each degree1 and degree2 plot.  The newdata
 # argument is a data.frame of predictor values to be displayed in the
-# plot.  The other args are copies of the args passed to plotmo (trace will
-# have been set FALSE by plotmo if this particular call should not be traced)
+# current plot.  The other args are copies of the args passed to plotmo.
+# The trace flag here will be TRUE if trace=2 was used in the call to plotmo.
 
 plotmo.predict <- function(object, newdata, type, se.fit, trace)
 {
@@ -164,7 +178,6 @@ plotmo.predict.default <- function(object, newdata, type, se.fit, trace)
 }
 #------------------------------------------------------------------------------
 # Return the data matrix for the given object with the response deleted.
-# The env argument is the environment from which plotmo was called.
 
 get.plotmo.x <- function(object, env, trace)
 {
@@ -174,12 +187,9 @@ get.plotmo.x <- function(object, env, trace)
 }
 # The default function tries hard to get x regardless of the model.
 #
-# Note that the alternative approach of simply calling the standard
-# model.matrix wouldn't get us what we want here because it can return columns
-# with headings like "ns(x3,4)" whereas we want the "naked" predictor x3.
-#
-# If the model has a call$formula, the columns of the returned matrix are
-# in the same order as the predictors in the formula.
+# Note that the alternative approach of simply calling the standard model.matrix
+# wouldn't get us what we want here because, among other reasons, it can return
+# columns with headings like "ns(x3,4)" whereas we want the "naked" predictor x3.
 
 get.plotmo.x.default <- function(object, env, trace)
 {
@@ -188,18 +198,24 @@ get.plotmo.x.default <- function(object, env, trace)
         is.null(x) || is.try.error(x) || NROW(x) == 0 ||
             (check.colnames && is.null(colnames(x)))
     }
-    #--- get.plotmo.x.default starts here ---
+    #--- get.plotmo.x.default starts here
+
+    # This check suffices to prevent most downstream error messages for objects
+    # that don't have the fields required for the default plotmo methods.
+    if(is.null(object$call) && is.null(object[["x"]]))
+        stop0("this object is not supported by plotmo")
+
     try.error.message <- NULL
-    x <- object[["x"]] # use [["x"]] rather than $x to prevent partial matching
+    x <- object.x <- object[["x"]] # use [["x"]] rather than $x to prevent partial match
     if(!badx(x, check.colnames=TRUE) && trace)
         cat("got x with colnames from object$x\n")
     if(badx(x, check.colnames=TRUE)) {
-        x <- get.x.from.formula(object, env, trace)
+        x <- formula.x <- get.data.from.formula("x", object, env, trace)
         if(!badx(x, check.colnames=TRUE) && trace)
             cat("got x with colnames from object$call$formula\n")
     }
     if(badx(x, check.colnames=TRUE)) {
-        x <- try(eval(object$call[["x"]], env), silent=TRUE)
+        x <- call.x <- try(eval(object$call[["x"]], env), silent=TRUE)
         if(!badx(x, check.colnames=TRUE) && trace)
             cat("got x with colnames from object$call$x\n")
         if(is.try.error(x))
@@ -207,16 +223,17 @@ get.plotmo.x.default <- function(object, env, trace)
     }
     # if don't have an x with colnames look for one without colnames
     if(badx(x, check.colnames=TRUE)) {
-        x <- object[["x"]]
-        if(!badx(x, FALSE) && trace)
-            cat("got x without colnames from object$x\n")
-        if(badx(x, check.colnames=FALSE)) {
-            x <- get.x.from.formula(object, env, trace)
+        x <- object.x
+        if(!badx(x, check.colnames=FALSE)) {
+            if(trace)
+                cat("got x without colnames from object$x\n")
+        } else {
+            x <- formula.x
             if(!badx(x, check.colnames=FALSE) && trace)
                 cat("got x without colnames from object$call$formula\n")
         }
         if(badx(x, check.colnames=FALSE)) {
-            x <- try(eval(object$call[["x"]], env), silent=TRUE)
+            x <- call.x
             if(!badx(x, check.colnames=FALSE) && trace)
                 cat("got x without colnames from object$call$x\n")
             if(is.try.error(x))
@@ -237,89 +254,34 @@ get.plotmo.x.default <- function(object, env, trace)
                 cat(gsub("Error in ", "", try.error.message[1]))
             cat("\n")
         }
-        stop0("get.plotmo.x.default cannot get the x matrix --- ",
-              "tried object$x, object$call$formula, and object$call$x")
-    }
-    x
-}
-# get x by calling model.frame() with a stripped formula
-
-get.x.from.formula <- function(object, env, trace)
-{
-    Call <- object$call
-    if(is.null(Call))
-        return(NULL)    # error will be reported later
-    m <- match(c("formula", "data"), names(Call), 0)
-    if(all(m == 0))
-        return(NULL)
-    Call <- Call[c(1, m)]
-    Call[[1]] <- as.name("model.frame")
-
-    # TODO it would be nice to use whatever NA handling the original model
-    # function used, but there seems to be no general way of knowing what that is.
-    # In the meantime the following hack seems to suffice.
-    Call$na.action <- if(inherits(object, "rpart")) na.pass else na.fail
-
-    form <- Call$formula
-    if(is.null(form))
-        return(NULL)
-    # following "if" is needed for: form <- Volume ~ .; earth(form, data=trees)
-    # fixes bug reported by Martin Maechler and Michael Amrein
-    if(typeof(form) != "language")
-        form <- eval(form, env)
-    formula.as.string <- format(form)
-    stripped.formula <- strip.formula.string(formula.as.string)
-    if(trace > 1)
-        cat0("formula ", formula.as.string, "\n",
-             "stripped formula ", stripped.formula, "\n")
-    Call$formula <- parse(text=stripped.formula)[[1]]
-    Call$data <- get.formula.data(object, env, Call$data, FALSE, trace)
-    if(trace > 1)
-        my.print.call("about to call ", Call)
-    if(length(grep(".+~", stripped.formula))) { # has response?
-        x <- try(eval(Call, env)[,-1])   # then eval without the response
-    } else {
-        warning0("formula has no response variable, formula is ", stripped.formula)
-        x <- try(eval(Call, env))
-    }
-    if(is.try.error(x)) {
-        if(length(grep("missing", x)))
-            stop0("get.x.from.formula: could not evaluate formula")
-        else
-            stop0("get.x.from.formula: could not evaluate formula ",
-                  "(variables were deleted?)")
-    }
-    if(NCOL(x) == 1) {
-        # if one predictor, model.matrix returns a vec with no colname, so fix it
-        x <- data.frame(x)
-        colnames(x) <- strip.formula.string(attr(object$terms, "term.labels")[1])
+        stop0("get.plotmo.x.default cannot get the x matrix\n",
+              "       (tried object$x, object$call$formula, and object$call$x)")
     }
     x
 }
 #------------------------------------------------------------------------------
 # get.plotmo.y is similar to model.response but can deal with models
-# created without a formula.  The env argument is the environment from
-# which plotmo was called.
+# created without a formula.
 
-get.plotmo.y <- function(object, env, expected.len, trace)
+get.plotmo.y <- function(object, env, y.column, expected.len, trace)
 {
     if(trace)
         cat("\n--get.plotmo.y\n\n")
     UseMethod("get.plotmo.y")
 }
-get.plotmo.y.default <- function(object, env, expected.len, trace)
+get.plotmo.y.default <- function(object, env, y.column, expected.len, trace)
 {
     bady <- function(y)
     {
         is.null(y) || is.try.error(y)
     }
-    #--- get.plotmo.y.default starts here ---
+    #--- get.plotmo.y.default starts here
     try.error.message <- NULL
     y <- object[["y"]] # use [["y"]] rather than $y to prevent partial matching
     if(!bady(y) && trace)
         cat("got y from object$y\n")
     if(bady(y)) {
-        y <- get.y.from.formula(object, env, trace)
+        y <- get.data.from.formula("y", object, env, trace)
         if(!bady(y) && trace)
             cat("got y from object$call$formula\n")
     }
@@ -339,7 +301,7 @@ get.plotmo.y.default <- function(object, env, expected.len, trace)
         if(!(is.vector(y) || is.factor(y)) || length(y) != expected.len)
             y <- NULL
         if(!bady(y) && trace)
-            cat0("got y from second argument to model function\n")
+            cat0("got y from the second argument to the model function\n")
     }
     if(bady(y)) {
         if(trace) {
@@ -363,93 +325,170 @@ get.plotmo.y.default <- function(object, env, expected.len, trace)
     }
     y
 }
-get.y.from.formula <- function(object, env, trace)
+get.plotmo.y.earth <- function(object, env, y.column, expected.len, trace)
 {
-    Call <- object$call
-    if(is.null(Call))
-        return(NULL)    # error will be reported later
-    m <- match(c("formula", "data"), names(Call), 0)
-    if(all(m == 0))
-        return(NULL)
-    Call <- Call[c(1, m)]
+    y <- get.plotmo.y.default(object, env, y.column, expected.len, trace)
 
-    # replace the formula with the stripped formula
-    form <- Call$formula
-    if(is.null(form))
-        return(NULL)
+    # do the same processing on y as earth does, e.g. if y is a two
+    # level factor, convert it to an indicator column of 0s and 1s
+
+    y <- earth:::expand.arg(y, env, is.y.arg=TRUE, colnames(y))
+    if(length(colnames(y)) == 1 && colnames(y) == "y")
+        colnames(y) <- NULL # remove artificial colname added by expand.arg
+    # TODO revisit y.column handling here
+    if(!is.null(object$glm.list[[1]])) # if an earth.glm model, use y.column 1
+        y.column <- 1
+
+    list(y=y, y.column=y.column)
+}
+get.plotmo.y.bagEarth <- function(object, env, y.column, expected.len, trace)
+{
+    get.plotmo.y.earth(object, env, y.column, expected.len, trace)
+}
+#------------------------------------------------------------------------------
+# If object has a formula, use that formula to get x or y (field is "x" or "y").
+
+get.data.from.formula <- function(field, object, env, trace)
+{
+    get.iformula <- function() # get the index of the formula in object$call
+    {
+        iformula <- match(c("formula"), names(call), 0)
+        if(iformula == 0) {
+            # no field named "formula" in call, so look for a formula
+            # anywhere in the call and name it "formula", then try again
+            # TODO for which models is this actually necessary?
+            call.list <- as.list(call)
+            for(i in 1:length(call))
+                if(typeof(call.list[[i]]) == "language" &&
+                        as.list(call.list[[i]])[[1]] == "~") {
+                    if(trace)
+                        cat0("no field named \"formula\" in call, ",
+                             "but found a formula anyway\n")
+                    names <- names(call)
+                    names[i] <- "formula"
+                    names(call) <- names
+                    break
+                }
+            # try again
+            iformula <- match(c("formula"), names(call), 0)
+        }
+        iformula
+    }
+    #--- get.data.from.formula starts here
+    call <- object$call
+    if(is.null(call))
+        return(NULL)    # error will be reported later
+    iformula <- get.iformula()
+    if(iformula == 0)   # no formula?
+        return(NULL)    # error will be reported later
+    idata <- match(c("data"), names(call), 0) # may be 0, that's ok
+    mf <- call[c(1, iformula, idata)]
+    mf[[1]] <- as.name("model.frame")
+    form <- mf[[2]]
+    # following "if" is needed for: form <- Volume ~ .; earth(form, data=trees)
+    # fixes bug reported by Martin Maechler and Michael Amrein
     if(typeof(form) != "language")
         form <- eval(form, env)
     formula.as.string <- paste(format(form), collapse=" ")
     stripped.formula <- strip.formula.string(formula.as.string)
-    Call$formula <- parse(text=stripped.formula)[[1]]
-    if(trace > 1)
+    if(trace >= 2)
         cat0("formula ", formula.as.string, "\n",
              "stripped formula ", stripped.formula, "\n")
-
-    Call$data <- get.formula.data(object, env, Call$data, TRUE, trace)
-    Call[[1]] <- as.name("model.frame")
+    mf$formula <- try(parse(text=stripped.formula)[[1]])
+    if(is.try.error(mf$formula)) # should never happen
+        stop0("plotmo cannot parse the model formula ", formula.as.string)
+    mf$data <- get.data.for.formula(object, env, mf$data, field, trace)
     # TODO following is a hack for rpart's (special but useful) NA handling
-    Call$na.action <- if(inherits(object, "rpart")) na.pass else na.fail
-    stripped.formula <- strip.formula.string(formula.as.string)
-    if(trace > 1)
-        my.print.call("about to call ", Call)
-    Call <- try(eval(Call, env))
-    if(!is.try.error(Call))
-        model.response(Call, type="any")
+    mf$na.action <- if(inherits(object, "rpart")) na.pass else na.fail
+    if(trace >= 2)
+        my.print.call("about to eval ", mf)
+    evaluated.mf <- try(eval(mf, env))
+    if(is.try.error(evaluated.mf)) {
+        if(trace >= 2)
+            cat("eval(mf, env) failed\n")
+        return(NULL) # error will be reported later
+    }
+    if(field == "x") {
+        if(length(grep(".+~", stripped.formula)))         # has response?
+            evaluated.mf <- evaluated.mf[,-1, drop=FALSE] # drop the response
+        else
+            warning0("formula has no response variable, formula is ",
+                      stripped.formula)
+
+        # TODO code for the following and similar
+        # (why is this happening? c.f. error.bad.ylen):
+        # library(ElemStatLearn); x <- mixture.example$x;
+        # g <- mixture.example$y; x.mod <- lm(g ~ x)
+        if(inherits(evaluated.mf[[1]], what=c("data.frame", "matrix"), which=FALSE)) {
+            if(trace >= 2)
+                cat("entire x matrix is stored as the first element of evaluated.mf\n")
+            evaluated.mf <- evaluated.mf[[1]]
+        }
+    } else if(field == "y")
+        evaluated.mf <- model.response(evaluated.mf, type="any")
+    else
+        stop("internal error, bad field: ", field)
+    evaluated.mf
 }
-#------------------------------------------------------------------------------
-get.formula.data <- function(object, env, data.name, get.y, trace)
+get.data.for.formula <- function(object, env, data.arg, field, trace)
 {
     data.is.good <- function(...)
     {
-        # the length test is necessary for lm which saves x as an
-        # empty list if its x arg is FALSE, don't know why
-        good <- !is.null(x) && length(x)
+        # The length test is necessary for lm which saves data as an
+        # empty list if its data arg is FALSE, don't know why
+        # The is.xxx tests are to minimize false positives.
+        good <- !is.null(data) && length(data) &&
+                    (is.data.frame(data) || is.matrix(data) ||
+                     is.vector(data) || is.factor(data))
         if(good && trace)
-            cat("get.formula.data: got",
-                if(get.y) "y" else "x", "from", paste0(...), "\n")
+            cat("get.data.for.formula: using", field, "from", paste0(...), "\n")
         good
     }
-    #--- get.formula.data starts here ---
-    xname <- if(get.y) "y" else "x"
-    x <- object[["data"]]
+    #--- get.data.for.formula starts here
+    data <- object[["data"]]
     if(!data.is.good("object$data")) {
-        x <- object[[xname]]
-        if(!data.is.good("object$", xname)) {
-            if(!is.null(data.name)) {
-                x <- eval(data.name, env)
-                if(!data.is.good("data passed to original call to ",
-                                 class(object)[1])) {
-                    stop0("the original data \"", data.name,
-                          "\" is no longer available",
-                          if(inherits(object, "earth"))
-                                " (use keepxy=TRUE)"
-                          else if(inherits(object, "lm"))
-                                paste0(" (use ", xname, "=TRUE)")
-                          else  "")
-                }
+        data <- object[[field]]
+        if(!data.is.good("object$", field) && !is.null(data.arg)) {
+            # try data.arg (i.e. object$call$data or mf$data)
+            data <- eval(data.arg, env)
+            data.arg.as.character <- strip.white.space(deparse(data.arg)[1])
+            if(!data.is.good(paste0("\"", data.arg.as.character,
+                    "\" passed to ", class(object)[1]))) {
+                msg <-
+                    if(inherits(object, "earth"))
+                        " (use keepxy=TRUE in the call to earth?)"
+                    else if(inherits(object, "lm"))
+                        paste0(" (use ", field, "=TRUE in the call to lm?)")
+                    else
+                        ""
+                stop0("the data \"", data.arg.as.character, "\" passed to ",
+                      class(object)[1], " is no longer available", msg,
+                      "\n       (tried object$data, object$", field,
+                      " and call$", data.arg.as.character, ")")
             }
         }
     }
-    x
+    # Following needed if original data to model was a matrix not a data.frame.
+    # Else get Error in model.frame.default: 'data' must be a data.frame.
+    if(class(data)[1] == "matrix")
+        data <- as.data.frame(data)
+    if(is.null(data) && trace >= 2)
+        cat("no explicit data for formula\n")
+    data
 }
-#------------------------------------------------------------------------------
-# Given the term.labels, return an npairs x 2 matrix specifying which
-# predictors are pairs. The elements in the returned matrix are col indices of x.
-#
-# It works like this: extract substrings from each term.label that look
-# like predictor pairs and qualify them as a valid pair if both predictors
-# in the pair are in pred.names.
-#
-# The following combos of x1 and x2 are considered pairs: "x1*x2" "x1:x2" "s(x1,x2)"
+# Given the term.labels, return a npairs x 2 matrix specifying which predictors
+# are paired. The elements in the returned matrix are column indices of x.
 #
 # This routine is not infallible but works for the commonly used formulas.
+# It works by extracting substrings in each term.label that looks like a
+# predictor pair.  The following combos of x1 and x2 for example are
+# considered pairs: x1*x2, x1:x2, s(x1,x2), and similar.
 
 get.plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace)
 {
     if(trace)
         cat("term.labels:", term.labels, "\n")
-    pairs <- matrix(0, nrow=0, ncol=2)          # no pairs
+    pairs <- matrix(0, nrow=0, ncol=2)          # no pairs initially
     for(i in 1:length(term.labels)) {
         s <- strip.white.space(term.labels[i])
         s <- gsub("[+*/,]", ":", s)             # replace + * / , with :
@@ -463,17 +502,18 @@ get.plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace)
             cat("considering", s)
 
         if(igrep[1] > 0) for(i in seq_along(igrep)) {
-            # extract the i'th "ident1:ident2" into Pair
+            # extract the i'th "ident1:ident2" into pair
             start <- igrep[i]
             stop <- start + attr(igrep, "match.length")[i] - 1
-            Pair <- substr(s, start=start, stop=stop)
-            Pair <- strsplit(Pair, ":")[[1]]    # Pair is now c("ident1","ident2")
-            ipred1 <- which(pred.names == Pair[1])
-            ipred2 <- which(pred.names == Pair[2])
+            pair <- substr(s, start=start, stop=stop)
+            pair <- strsplit(pair, ":")[[1]]    # pair is now c("ident1","ident2")
+            # are the variables in the candidate pair in pred.names?
+            ipred1 <- which(pred.names == pair[1])
+            ipred2 <- which(pred.names == pair[2])
             if(trace)
-                cat("->", Pair, "at", if(length(ipred1)) ipred1 else NA,
+                cat("->", pair, "at", if(length(ipred1)) ipred1 else NA,
                     if(length(ipred2)) ipred2 else NA)
-            if(length(ipred1) == 1 && length(ipred2) == 1 && Pair[1] != Pair[2])
+            if(length(ipred1) == 1 && length(ipred2) == 1 && pair[1] != pair[2])
                 pairs <- c(pairs, ipred1, ipred2)
         }
         if(trace)
@@ -481,7 +521,6 @@ get.plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace)
     }
     matrix(pairs, ncol=2, byrow=TRUE)
 }
-#------------------------------------------------------------------------------
 # Given a formula (as string), return a string with the "naked" predictors.
 #
 # Example: y ~ x9 + ns(x2,4) + s(x3,x4,df=4) + x5:sqrt(x6)
@@ -492,10 +531,13 @@ get.plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace)
 
 strip.formula.string <- function(form)
 {
-    gsubi <- function(pat, rep, x) gsub(pat, rep, x, ignore.case=TRUE)
-
+    gsubi <- function(pat, rep, x, perl=FALSE)
+    {
+        gsub(pat, rep, x, ignore.case=TRUE, perl=perl)
+    }
+    #--- strip.formula.string starts here
     igrep <- grep("[a-zA-Z._][a-zA-Z._0-9]\\$", form)   # check for "ident$"
-    if(length(igrep) > 0) {
+    if(length(igrep)) {
         # TODO formula has vars with $, this confuses predict() later, why?
         # they cause "Warning: after calling plotmo.predict, y has the wrong length"
         stop0("plotmo: names with \"$\" are not yet supported.\n",
@@ -508,9 +550,9 @@ strip.formula.string <- function(form)
     # Doing that with regular expressions is tricky, so we adopt this approach:
     # change "+" "-" "," in square brackets to #PLUS# #MINUS# #COMMA# to protect them
 
-    args <- gsubi("(\\[.*)\\+(.*\\])", "\\1#PLUS#\\2", args)
-    args <- gsubi("(\\[.*)\\-(.*\\])", "\\1#MINUS#\\2", args)
-    args <- gsubi("(\\[.*)\\,(.*\\])", "\\1#COMMA#\\2", args)
+    args <- gsubi("(\\[[.\\$a-z0-9]*)\\+([.\\$a-z0-9]*\\])", "\\1#PLUS#\\2", args)
+    args <- gsubi("(\\[[.\\$a-z0-9]*)\\-([.\\$a-z0-9]*\\])", "\\1#MINUS#\\2", args)
+    args <- gsubi("(\\[[.\\$a-z0-9]*)\\,([.\\$a-z0-9]*\\])", "\\1#COMMA#\\2", args)
 
     args <- gsubi("[-*/:]", "+", args)              # replace - / * : with +
 
@@ -549,34 +591,32 @@ strip.formula.string <- function(form)
 
     strip.white.space(paste(response[1], paste(args, collapse=" "), collapse=" "))
 }
-#------------------------------------------------------------------------------
 # Return TRUE if predictions are probabilities (thus their range is 0 ... 1).
 # Just a guess really, works for common models
 # The intent is to minimize "predicted values are out of ylim" messages.
 
 predictions.are.probabilities <- function(object, type)
 {
-    # get object's glm family if there is one, returns a string or NULL
-    # TODO how to specify the 2nd or later model in earth's glm.list?
-    get.glm.family <- function(object)
-    {
-        family <- NULL
-        if(!is.null(object$glm.list[[1]])) # object class is "earth"
-            family <- object$glm.list[[1]]$family$family
-        else if(!is.null(object$family) && is.list(object$family))
-            family <- object$family$family # object class is "glm" and similar
-        family
-    }
-    #--- predictions.are.probabilities starts here ---
+    #--- predictions.are.probabilities starts here
     if(pmatch(type, c("probability", "posterior"), 0))
         return(TRUE)
-    family <- get.glm.family(object)
-    is.binom <- !is.null(family) &&
-                    pmatch(family, c("binomial", "quasibinomial"), nomatch=0)
-    is.binom && pmatch(type, "response", 0)
+    is.binom <- FALSE
+    if(pmatch(type, "response", 0)) {
+        family <- get.glm.family(object)
+        is.binom <- !is.null(family) &&
+                        pmatch(family, c("binomial", "quasibinomial"), nomatch=0)
+    }
+    is.binom
 }
-no.clip.limits <- function(object, type)
+# get object's glm family if there is one, returns a string or NULL
+# TODO how to specify the 2nd or later model in earth's glm.list?
+
+get.glm.family <- function(object)
 {
-    # assume no clip limits if is glm object and response is "link"
-    inherits(object, "glm") && pmatch(type, c("link"), 0)
+    family <- NULL
+    if(!is.null(object$glm.list[[1]])) # object class is "earth"
+        family <- object$glm.list[[1]]$family$family
+    else if(!is.null(object$family) && is.list(object$family))
+        family <- object$family$family # object class is "glm" or similar
+    family
 }

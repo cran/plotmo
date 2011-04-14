@@ -65,7 +65,7 @@ get.plotmo.pairs.earth <- function(object, env, x, trace, ...)
     }
     pairs
 }
-get.plotmo.pairs.bagEarth <- function(object, env, pred.names, x, trace, all2)
+get.plotmo.pairs.bagEarth <- function(object, env, x, trace, ...)
 {
     pairs <- matrix(0, nrow=0, ncol=2)
     for(i in 1:length(object$fit))
