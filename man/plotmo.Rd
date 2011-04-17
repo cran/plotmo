@@ -73,7 +73,7 @@ To start off, look at the arguments
   \item{center}{
      Center the plotted response.
      Default is \code{FALSE}.
-     (This is an initial implementation of centering, details will change.)
+     (This is an initial implementation of centering and will change.)
   }
   \item{ndiscrete}{
      Default \code{5} (a somewhat arbitrary value).
@@ -418,10 +418,9 @@ effect of the other variables is averaged.
 % determined without actually doing the calculation.
 % That is not the case for most models (it is for CART trees).
 
-\code{\link[=termplot]{Termplot}} is effective where applicable, but
-it can be used only on models with a \code{predict} method that
-supports \code{type="terms"}, and it does not generate
-degree2 plots.
+\code{\link[=termplot]{Termplot}} is effective but can be used only on
+models with a \code{predict} method that supports \code{type="terms"},
+and it does not generate degree2 plots.
 
 \bold{Which variables are plotted?}
 
@@ -484,38 +483,38 @@ shouldn't be taken too seriously.)
     data(ozone1)
     oz <- ozone1[, c("O3", "humidity", "temp", "ibt")]
 
-    lm.fit <- lm(O3 ~ humidity + temp*ibt, data=oz)     # linear model
-    plotmo(lm.fit, se=2, col.response="gray", nrug=-1)
+    lm.model <- lm(O3 ~ humidity + temp*ibt, data=oz)       # linear model
+    plotmo(lm.model, se=2, col.response="gray", nrug=-1)
 
-    library(rpart)                                      # rpart
-    rpart.fit <- rpart(O3 ~ ., data=oz)
-    plotmo(rpart.fit, all2=TRUE)
+    library(rpart)                                          # rpart
+    rpart.model <- rpart(O3 ~ ., data=oz)
+    plotmo(rpart.model, all2=TRUE)
 
-    library(randomForest)                               # randomForest
-    rf.fit <- randomForest(O3~., data=oz)
-    plotmo(rf.fit)
-    # partialPlot(rf.fit, oz, temp) # compare to partial dependence plot
+    library(randomForest)                                   # randomForest
+    rf.model <- randomForest(O3~., data=oz)
+    plotmo(rf.model)
+    # partialPlot(rf.model, oz, temp) # compare to partial dependence plot
 
-    library(gbm)                                        # gbm
-    gbm.fit <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=1000)
-    plotmo(gbm.fit)
-    # plot(gbm.fit, i.var=2) # compare to partial dependence plots
-    # plot(gbm.fit, i.var=c(2,3))
+    library(gbm)                                            # gbm
+    gbm.model <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=1000)
+    plotmo(gbm.model)
+    # plot(gbm.model, i.var=2) # compare to partial dependence plots
+    # plot(gbm.model, i.var=c(2,3))
 
-    library(mgcv)                                       # gam
-    gam.fit <- gam(O3 ~ s(humidity)+s(temp)+s(ibt)+s(temp,ibt), data=oz)
-    plotmo(gam.fit, se=2, all2=TRUE)
+    library(mgcv)                                           # gam
+    gam.model <- gam(O3 ~ s(humidity)+s(temp)+s(ibt)+s(temp,ibt), data=oz)
+    plotmo(gam.model, se=2, all2=TRUE)
 
-    library(nnet)                                       # nnet
+    library(nnet)                                           # nnet
     set.seed(4)
-    nnet.fit <- nnet(O3~., data=scale(oz), size=2, decay=0.01, trace=FALSE)
-    plotmo(nnet.fit, type="raw", all2=T)
+    nnet.model <- nnet(O3~., data=scale(oz), size=2, decay=0.01, trace=FALSE)
+    plotmo(nnet.model, type="raw", all2=T)
 
-    library(MASS)                                       # qda
+    library(MASS)                                           # qda
     lcush <- data.frame(Type=as.numeric(Cushings$Type),log(Cushings[,1:2]))
     lcush <- lcush[1:21,]
-    qda.fit <- qda(Type~., data=lcush)
-    plotmo(qda.fit, type="class", all2=TRUE,
+    qda.model <- qda(Type~., data=lcush)
+    plotmo(qda.model, type="class", all2=TRUE,
        type2="contour", ngrid2=100, nlevels=2, drawlabels=FALSE,
        col.response=as.numeric(lcush$Type)+1,
        pch.response=as.character(lcush$Type))
@@ -562,7 +561,7 @@ Re-invoke \code{plotmo} with \code{clip=FALSE}.
 See the section ``The \code{clip} argument''.
 
 %spacer
-\bold{o}\code{ Error: predict.lm(xgrid, type="response") returned a response of the wrong length.}
+\bold{o}\code{ Error: predict.lm(xgrid, type="response") returned the wrong length}
 
 \bold{o}\code{ Warning: 'newdata' had 100 rows but variable(s) found have 30 rows}
 
@@ -641,10 +640,10 @@ their values before \code{plotmo} was called.
   \code{www.milbo.org/rpart-plot/prp.pdf} has a section on \code{plotmo}
 }
 \examples{
-library(earth)
-data(ozone1)
-earth.model <- earth(O3 ~ ., data = ozone1, degree = 2)
-plotmo(earth.model)
+library(rpart)
+data(kyphosis)
+rpart.model <- rpart(Kyphosis~., data=kyphosis)
+plotmo(rpart.model, type="prob", nresponse="present")
 }
 \keyword{partial dependence}
 \keyword{regression}

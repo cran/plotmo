@@ -1,8 +1,15 @@
 # test.plotmo.rpart.R: test plotmo on non-earth models
 # Stephen Milborrow, Basley KwaZulu-Natal Mar 2011
 
+library(plotmo)
+library(earth)
+source("fast.postscript.R")
+data(ozone1)
+data(etitanic)
+options(warn=1) # print warnings as they occur
+if(!interactive())
+    fast.postscript(paper="letter")
 Trace <- 0
-
 dopar <- function(nrows, ncols, caption = "")
 {
     cat("                             ", caption, "\n")
@@ -12,13 +19,6 @@ dopar <- function(nrows, ncols, caption = "")
     par(mgp = c(1.6, 0.6, 0))
     par(cex = 0.7)
 }
-library(earth)
-data(ozone1)
-data(etitanic)
-options(warn=1) # print warnings as they occur
-if(!interactive())
-    postscript(paper="letter")
-
 caption <- "test lm(log(doy) ~ vh+wind+humidity+temp+log(ibh), data=ozone1)"
 dopar(4,5,caption)
 a <- lm(log(doy) ~ vh + wind + humidity + temp + log(ibh), data=ozone1)

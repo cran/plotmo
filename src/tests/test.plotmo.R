@@ -7,8 +7,14 @@
 print(R.version.string)
 print(citation("rpart.plot"))
 
+library(earth)
+source("fast.postscript.R")
+data(ozone1)
+data(etitanic)
+options(warn=1) # print warnings as they occur
+if(!interactive())
+    fast.postscript(paper="letter")
 Trace <- 0
-
 dopar <- function(nrows, ncols, caption = "")
 {
     cat("                             ", caption, "\n")
@@ -18,13 +24,6 @@ dopar <- function(nrows, ncols, caption = "")
     par(mgp = c(1.6, 0.6, 0))
     par(cex = 0.7)
 }
-library(earth)
-data(ozone1)
-data(etitanic)
-options(warn=1) # print warnings as they occur
-if(!interactive())
-    postscript(paper="letter")
-
 caption <- "basic earth test of plotmo"
 a <- earth(O3 ~ ., data=ozone1, degree=2)
 plotmo(a, degree1=2, degree2=4, caption=caption, trace=TRUE)

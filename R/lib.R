@@ -7,6 +7,7 @@ warning0 <- function(...) warning(..., call.=FALSE)
 
 # The function stopif is intended for catching programmer errors.
 # For user errors, we try to give a more informative message.
+
 stopif <- function(...) stopifnot(!(...))
 
 printf <- function(format, ...) cat(sprintf(format, ...)) # like c printf
@@ -56,8 +57,9 @@ my.center <- function(x, trace=FALSE)
             name <- deparse(substitute(x))
         x <- x - mean(x[is.finite(x)], na.rm=TRUE)
         if(trace) {
-            cat0("centered ", name, " length ", length(x))
-            print.first.few.elements.of.vector(x, trace)
+            name <- paste0("centered ", name)
+            cat(name, "length ", length(x))
+            print.first.few.elements.of.vector(x, trace, name)
         }
     }
     x
@@ -82,48 +84,6 @@ warn.if.not.all.finite <- function(x, text="unknown")
         return(TRUE)
     }
     FALSE
-}
-print.first.few.elements.of.vector <- function(x, trace)
-{
-    try(cat(" min", min(x), "max", max(x)), silent=TRUE)
-    cat(" values ")
-    len <- if(trace >= 3) length(x) else min(10, length(x))
-    for(i in 1:len)
-        cat(x[i], "")
-    if(length(x) > len)
-        cat("...")
-   cat("\n")
-    if(trace >= 3) {
-        cat("\n")
-        print(summary(x))
-    }
-}
-# print first few rows and last row of x
-# if trace >= 3, then print all rows of x, up to 1e4 rows
-print.first.few.rows <- function(x, trace, msg="x", msg2="")
-{
-    stopifnot(length(dim(x)) == 2)
-    cat0(msg, "[", nrow(x), ",", ncol(x), "]", msg2, ":\n")
-    if(is.null(colnames(x)))
-        colnames(x) <- paste("V", 1:ncol(x))
-    xnew <- x
-    nprint <- if(trace >= 3) 1e4 else 3
-    if(nprint < nrow(x)-2) {
-        xnew <- x[c(1:(nprint+1), nrow(x)), , drop=FALSE]
-        rownames(xnew)[nprint+1] <- "..."
-    }
-    print(xnew)
-    is.fac <- sapply(x, is.factor)
-    if(any(is.fac)) {
-        names <- paste0(colnames(x),
-                        ifelse(sapply(x, is.ordered), "(ordered)", ""))
-        cat("\nfactors:", strip.white.space(names[is.fac]), "\n")
-    }
-    if(trace >= 3) {
-        cat("\n")
-        print(summary(x))
-    }
-    cat("\n")
 }
 # Check that an index vector specified by the user is ok to index an object.
 # We want to preclude confusing R messages or behaviour later.
@@ -230,43 +190,59 @@ exists.and.not.null <- function(object, mode="any", argname="")
 
     return(TRUE)
 }
-# Example of my.print.call:
-#
-# Call: earth(formula=O3~., data=ozone1, trace=4, linpreds=c(3,
-#       8), degree=2)
-#
-# Note that the 2nd line is horizontally aligned with the first.
-
-my.print.call <- function(msg, Call)
+print.object.call <- function(object)
 {
-    # don't print x or y if they are too long
-    # TODO there must be a better way of checking length
-    if(!is.null(Call$x)) {
-        x. <- Call$x
-        if(length(paste(substitute(x.))) > 100)
-            Call$x <- paste0("[", NROW(Call$x), ",", NCOL(Call$x),
-                             "]-too-long-to-display")
+    if(is.null(object$call))
+        cat("object$call is null\n\n")
+    else
+        cat("object$call:",
+            paste0(deparse(object$call), collapse=""), "\n\n")
+}
+print.first.few.elements.of.vector <- function(x, trace, name=NULL)
+{
+    try(cat(" min", min(x), "max", max(x)), silent=TRUE)
+    spaces <- "               "
+    if(!is.null(name))
+        spaces <- sprintf("%*s", nchar(name), " ")  # nchar spaces
+    cat0("\n", spaces, " value ")
+    len <- if(trace >= 3) length(x) else min(10, length(x))
+    for(i in 1:len)
+        cat(x[i], "")
+    if(length(x) > len)
+        cat("...")
+   cat("\n")
+    if(trace >= 3) {
+        cat("\n")
+        print(summary(x))
     }
-    if(!is.null(Call$y)) {
-        y. <- Call$y
-        if(length(paste(substitute(y.))) > 100)
-            Call$y <- paste0("[", NROW(Call$y), ",", NCOL(Call$y),
-                             "]-too-long-to-display")
-    }
-    Call$na.action <- NULL # don't want to print the na.action
-    s <- format(Call)
-    if(length(s) > 8) {
-        s <- s[1:8]
-        s[8] <- paste(s[8], "\netc.")
-    }
-    s <- gsub("[ \t\n]", "", s)                 # remove white space
+}
+# print first few rows and last row of x
+# if trace >= 3, then print all rows of x, up to 1e4 rows
 
-    # add newlines and prefix (spaces prefix all lines except the first)
-    spaces. <- sprintf("%*s", nchar(msg), " ")   # nchar spaces
-
-    s <- gsub(",", ", ", s)                     # replace comma with comma space
-    s <- paste(s, collapse=paste("\n", spaces., sep=""), sep="")
-    cat0(msg, s, "\n")
+print.first.few.rows <- function(x, trace, msg="x", msg2="")
+{
+    stopifnot(length(dim(x)) == 2)
+    cat0(msg, "[", nrow(x), ",", ncol(x), "]", msg2, ":\n")
+    if(is.null(colnames(x)))
+        colnames(x) <- paste("V", 1:ncol(x))
+    xnew <- x
+    nprint <- if(trace >= 3) 1e4 else 3
+    if(nprint < nrow(x)-2) {
+        xnew <- x[c(1:(nprint+1), nrow(x)), , drop=FALSE]
+        rownames(xnew)[nprint+1] <- "..."
+    }
+    print(xnew)
+    is.fac <- sapply(x, is.factor)
+    if(any(is.fac)) {
+        names <- paste0(colnames(x),
+                        ifelse(sapply(x, is.ordered), "(ordered)", ""))
+        cat("\nfactors:", strip.white.space(names[is.fac]), "\n")
+    }
+    if(trace >= 3) {
+        cat("\n")
+        print(summary(x))
+    }
+    cat("\n")
 }
 match.arg1 <- function(arg)     # match.arg1 returns an integer
 {

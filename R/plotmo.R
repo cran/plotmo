@@ -14,7 +14,6 @@
 # TODO get.plotmo.x should allow allow unnamed cols in x if get
 #        from object$x or object$call$x
 # TODO get.plotmo.x and get.plotmo.y both eval model frame, expensive, could share?
-# TODO increase xlim and ylim to fit jittered response points
 # TODO use ngrid1 to limit the number of points plotted for "func" argument
 # TODO allow display quantiles for rug, say nrug=-10 means 10% quantiles.
 # TODO add ycolumn argument for multiple response models (for earth we currently
@@ -592,8 +591,8 @@ plotmo.predict.wrapper <- function(object, newdata, type, se.fit,
             cat0("\nplotmo.predict(type=\"", type, "\") for degree1 plot \"",
                 pred.names[ipred1], "\" ")
         else
-            cat0("\nplotmo.predict(type=\"", type, "\") for  degree2 plot \"",
-                 pred.names[ipred1], "\" and \"", pred.names[ipred2], "\" ")
+            cat0("\nplotmo.predict(type=\"", type, "\") for degree2 plot \"",
+                 pred.names[ipred1], ":", pred.names[ipred2], "\" ")
         if(se.fit)
             cat0("se.fit=", se.fit, " ")
         print.first.few.rows(newdata, trace, "with newdata")
@@ -683,6 +682,15 @@ plot.degree1 <- function(
     }
     draw.plot.degree1 <- function()
     {
+        # get title if any for the current plot
+        get.main1 <- function(main, isingle, nfigs, degree1, all1, pred.names, ipred)
+        {
+            main <- ""
+            # show degree1 plot numbers in headers if plotting all predictors
+            if(nfigs > 1 && (!is.specified(degree1) || all1))
+                main <- paste0(isingle, " ")
+            paste(main, pred.names[ipred])
+        }
         get.degree1.xlim <- function()
         {
             xcol <- xframe[,ipred]
@@ -716,8 +724,8 @@ plot.degree1 <- function(
             # possibly add extra space for the rug and jittered response points
             preadjusted.ylim <<- ylim # to determine if we need to add gray horiz lines
             if((nrug || yjitter) &&
-                    (is.null(ylim.org) || is.na(ylim.org[1]) || # not user specified?
-                    (ylim.org[1] == 0 && ylim.org[2] == 1))) {
+                    (is.null(ylim.org) || is.na(ylim.org[1])) && # not user specified?
+                    (center || length(unique.y) > 3)) { # see draw.degree1.response
                 yrange <- ylim[2] - ylim[1]
                 # expansion factor here is just approximately correct
                 ylim[1] <- ylim[1] - .2 * yjitter * yrange
@@ -727,21 +735,22 @@ plot.degree1 <- function(
             }
             ylim
         }
-        # get title if any for the current plot
-        get.main1 <- function(main, isingle, nfigs, degree1, all1, pred.names, ipred)
-        {
-            main <- ""
-            # show degree1 plot numbers in headers if plotting all predictors
-            if(nfigs > 1 && (!is.specified(degree1) || all1))
-                main <- paste0(isingle, " ")
-            paste(main, pred.names[ipred])
-        }
         draw.degree1.response <- function(x, iresponse, ipred,
                                           col.response, cex.response, pch.response)
         {
             length.y <- length(y)
+            jitted.y <- jitter(y[iresponse], factor=yjitter)
+            if(!center && length(unique.y) <= 3) { # binary or ternary response?
+                # shift so jitted points in vertical range 0 to 1
+                min <- min(jitted.y)
+                max <- max(jitted.y)
+                jitted.y <-
+                    ifelse(y[iresponse] < .333, jitted.y[iresponse] - min,      # bottom points
+                    ifelse(y[iresponse] < .667, jitted.y[iresponse],            # middle points
+                                                jitted.y[iresponse] + 1 - max)) # top points
+            }
             points(jitter(as.numeric(x[iresponse, ipred]), factor=xjitter),
-                   jitter(y[iresponse],                    factor=yjitter),
+                   jitted.y,
                    col=rep(col.response, length.out=length.y)[iresponse], # recycle
                    cex=rep(cex.response, length.out=length.y)[iresponse],
                    pch=rep(pch.response, length.out=length.y)[iresponse])
@@ -852,10 +861,10 @@ plot.degree1 <- function(
         is.fac.x <- is.factor(x[,ipred])
         xjitter <- yjitter <- jitter.response
         if(!is.zero(col.response)) {
-            if(is.fac.x)
-                xjitter <- max(.8, 2 * xjitter)
-            else if (length(xlevs[[ipred]]) <= ndiscrete)
-                xjitter <- max(.5, 2 * xjitter)
+            if(is.fac.x && length(unique.y) <= 3)
+                xjitter <- max(.8, 2 * xjitter) # big default jitter, discrete x and y
+            else if(is.fac.x || (length(xlevs[[ipred]]) <= ndiscrete))
+                xjitter <- max(.4, 2 * xjitter) # not so big default jitter, discrete x
             if(length(unique.y) <= ndiscrete)
                 yjitter <- max(.3, yjitter)
         }
@@ -1464,31 +1473,11 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
 {
     get.nresponse <- function()
     {
-        print.matrix.info <- function(xname, x)
-        {
-            rownames(x) <- NULL
-            if(NROW(x) <= 6) { # head prints 6 rows
-                cat0("Contents of ", xname, " are\n")
-                print(x)
-            } else {
-                rowstring <-
-                    if(class(x)[1] == "numeric" || class(x)[1] == "factor")
-                         "elements"
-                    else
-                         "rows"
-                if(trace >= 4)
-                    cat0(xname, ":\n")
-                else
-                    cat0("First few ", rowstring, " of ", xname, " are\n")
-                print(head(x,  if(trace >= 4) 1e5 else 6))
-            }
-        }
         stopifnot(length(nresponse) == 1)
         if(is.na(nresponse)) {
             if(NCOL(y) > 1) {
                 cat("\n")
-                print.matrix.info(msg, y)
-                cat("\n")
+                print.first.few.rows(y, trace, paste0(msg, " returned "))
                 if(!is.null(colnames))
                     msg1 <- paste0("       Specify a column index like nresponse=2 or ",
                                    "a column name like nresponse=\"", colnames[2], "\"")
@@ -1544,7 +1533,7 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
              "returned length ", length(y))
         if(will.take.subset)
             cat(" (before taking subset)")
-        print.first.few.elements.of.vector(y, trace)
+        print.first.few.elements.of.vector(y, trace, msg)
     }
     any.nas <- if(printed.na.warning.global) FALSE else any(is.na(y))
     any.non.finites <- FALSE
@@ -1625,8 +1614,9 @@ apply.inverse.func <- function(y, object, trace, inverse.func, inverse.func.name
 
 error.bad.ylen <- function(y, msg, object, expected.len)
 {
-    stop0(msg, " returned a response of the wrong length (got ", length(y),
-          " expected ", expected.len, ").")
+    cat("\n")
+    stop0(msg, " returned the wrong length (got ", length(y),
+          " expected ", expected.len, ")")
 }
 # Should the factor labels on the x axis be printed horizontally or vertically?
 

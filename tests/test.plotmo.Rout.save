@@ -4,9 +4,6 @@
 > # This does a basic sanity test of plotmo.
 > # For more comprehensive tests, see plotmo/src/tests.
 > library(plotmo)
-> library(earth)
-Loading required package: leaps
-Loading required package: plotrix
 > library(rpart)
 > data(kyphosis)
 > rpart.model <- rpart(Kyphosis~., data=kyphosis)
@@ -18,13 +15,13 @@ formula Kyphosis ~ .
 stripped formula Kyphosis~.
 get.data.for.formula: using x from "kyphosis" passed to rpart 
 about to eval model.frame(formula=Kyphosis~., data=structure(list(Kyphosis=structure(c(1L, 
-              1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 
-              1L, 1L, 1L, 1L, 2L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
-              1L, 1L, 1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 
-              1L, 1L, 1L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 
-              1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L
-              ), .Label=c("absent", "present"), class="factor"), Age=c(71L, 
-              158L, 128L, 2L, 1L, 1L, 61L, 37L, 113L, 59L, 82L, 148L, 18L, etc.
+    1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 
+    1L, 1L, 1L, 1L, 2L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+    1L, 1L, 1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 
+    1L, 1L, 1L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 
+    1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L
+    ), .Label=c("absent", "present"), class="factor"), Age=c(71L, 
+    158L, 128L, 2L, 1L, 1L, 61L, 37L, 113L, 59L, 82L, 148L, 18L, ...
 got x with colnames from object$call$formula
 
 x[81,3]:
@@ -40,7 +37,8 @@ nlevels: Age=64 Number=8 Start=16
 --get.plotmo.y
 
 got y from object$y
-get.plotmo.y returned length 81 min 1 max 2 values 1 1 2 1 1 1 1 1 1 2 ...
+get.plotmo.y returned length 81 min 1 max 2
+             value 1 1 2 1 1 1 1 1 1 2 ...
 
 clip.limits 1 2 
 
@@ -64,7 +62,8 @@ plotmo.predict(type="vec") for degree1 plot "Age" with newdata[50,3]:
 ...  13.551020      4    13
 50  206.000000      4    13
 
-predict.rpart(xgrid, type="vec") returned length 50 min 1 max 2 values 1 1 1 1 1 1 1 1 1 1 ...
+predict.rpart(xgrid, type="vec") returned length 50 min 1 max 2
+                                 value 1 1 1 1 1 1 1 1 1 1 ...
 
 plotmo.predict(type="vec") for degree1 plot "Start" with newdata[16,3]:
     Age Number Start
@@ -74,11 +73,12 @@ plotmo.predict(type="vec") for degree1 plot "Start" with newdata[16,3]:
 ...  87      4     5
 16   87      4    18
 
-predict.rpart(xgrid, type="vec") returned length 16 min 1 max 2 values 2 2 2 2 2 2 2 2 2 2 ...
+predict.rpart(xgrid, type="vec") returned length 16 min 1 max 2
+                                 value 2 2 2 2 2 2 2 2 2 2 ...
 
 --plot.degree2(draw.plot=FALSE)
 
-plotmo.predict(type="vec") for  degree2 plot "Age" and "Start" with newdata[320,3]:
+plotmo.predict(type="vec") for degree2 plot "Age:Start" with newdata[320,3]:
             Age Number Start
 1       1.00000      4     1
 2      11.78947      4     1
@@ -86,7 +86,8 @@ plotmo.predict(type="vec") for  degree2 plot "Age" and "Start" with newdata[320,
 ...    33.36842      4     1
 20.15 206.00000      4    18
 
-predict.rpart(xgrid, type="vec") returned length 320 min 1 max 2 values 2 2 2 2 2 2 2 2 2 2 ...
+predict.rpart(xgrid, type="vec") returned length 320 min 1 max 2
+                                 value 2 2 2 2 2 2 2 2 2 2 ...
 
 
 ylim 1 2 

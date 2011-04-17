@@ -1,8 +1,18 @@
 > # test.plotmo.rpart.R: test plotmo on non-earth models
 > # Stephen Milborrow, Basley KwaZulu-Natal Mar 2011
 > 
+> library(plotmo)
+> library(earth)
+Loading required package: leaps
+Loading required package: plotrix
+> source("fast.postscript.R")
+> data(ozone1)
+> data(etitanic)
+> options(warn=1) # print warnings as they occur
+> if(!interactive())
++     fast.postscript(paper="letter")
+Opening Rplots.ps 
 > Trace <- 0
-> 
 > dopar <- function(nrows, ncols, caption = "")
 + {
 +     cat("                             ", caption, "\n")
@@ -12,16 +22,6 @@
 +     par(mgp = c(1.6, 0.6, 0))
 +     par(cex = 0.7)
 + }
-> library(earth)
-Loading required package: leaps
-Loading required package: plotmo
-Loading required package: plotrix
-> data(ozone1)
-> data(etitanic)
-> options(warn=1) # print warnings as they occur
-> if(!interactive())
-+     postscript(paper="letter")
-> 
 > caption <- "test lm(log(doy) ~ vh+wind+humidity+temp+log(ibh), data=ozone1)"
 > dopar(4,5,caption)
                               test lm(log(doy) ~ vh+wind+humidity+temp+log(ibh), data=ozone1) 
@@ -186,7 +186,8 @@ nlevels: x=100 z=100
 --get.plotmo.y
 
 got y from object$y
-get.plotmo.y returned length 100 min -0.09294014 max 0.8425504 values 0.2803529 0.5217916 0.1177545 0.2369002 0.2962403 0.2134538 0.08681319 0.3755435 0.4335776 0.485286 ...
+get.plotmo.y returned length 100 min -0.09294014 max 0.8425504
+             value 0.2803529 0.5217916 0.1177545 0.2369002 0.2962403 0.2134538 0.08681319 0.3755435 0.4335776 0.485286 ...
 
 clip.limits -0.09294014 0.8425504 
 
@@ -213,7 +214,8 @@ plotmo.predict(type="response") for degree1 plot "x" with newdata[50,2]:
 ... 0.07329946 0.5185988
 50  0.99190609 0.5185988
 
-predict.gam(xgrid, type="response") returned length 50 min 0.1783782 max 0.4979262 values 0.3863872 0.3939398 0.4019455 0.410471 0.4195786 0.4293108 0.4396554 0.45035 0.4610606 0.4712948 ...
+predict.gam(xgrid, type="response") returned length 50 min 0.1783782 max 0.4979262
+                                    value 0.3863872 0.3939398 0.4019455 0.410471 0.4195786 0.4293108 0.4396554 0.45035 0.4610606 0.4712948 ...
 
 plotmo.predict(type="response") for degree1 plot "z" with newdata[50,2]:
             x          z
@@ -223,11 +225,12 @@ plotmo.predict(type="response") for degree1 plot "z" with newdata[50,2]:
 ... 0.4878107 0.07305348
 50  0.4878107 0.99268406
 
-predict.gam(xgrid, type="response") returned length 50 min 0.193361 max 0.4118666 values 0.193361 0.201246 0.2102896 0.2202034 0.2307204 0.2415487 0.2524108 0.2631668 0.2737087 0.2839172 ...
+predict.gam(xgrid, type="response") returned length 50 min 0.193361 max 0.4118666
+                                    value 0.193361 0.201246 0.2102896 0.2202034 0.2307204 0.2415487 0.2524108 0.2631668 0.2737087 0.2839172 ...
 
 --plot.degree2(draw.plot=FALSE)
 
-plotmo.predict(type="response") for  degree2 plot "x" and "z" with newdata[400,2]:
+plotmo.predict(type="response") for degree2 plot "x:z" with newdata[400,2]:
              x          z
 1   0.01339033 0.01307758
 2   0.06489116 0.01307758
@@ -235,7 +238,8 @@ plotmo.predict(type="response") for  degree2 plot "x" and "z" with newdata[400,2
 ... 0.16789282 0.01307758
 400 0.99190609 0.99268406
 
-predict.gam(xgrid, type="response") returned length 400 min -0.03239347 max 0.5841616 values 0.5320208 0.524147 0.5110715 0.4916667 0.4647756 0.4294505 0.3851978 0.3322193 0.2718122 0.2070933 ...
+predict.gam(xgrid, type="response") returned length 400 min -0.03239347 max 0.5841616
+                                    value 0.5320208 0.524147 0.5110715 0.4916667 0.4647756 0.4294505 0.3851978 0.3322193 0.2718122 0.2070933 ...
 
 ylim -0.09294014 0.8425504 
 
@@ -250,14 +254,16 @@ Applying "func" arg to
 1 0.01339033 0.5185988
 2 0.03336004 0.5185988
 3 0.05332975 0.5185988
-func=test1 returned length 50 min 0.1071762 max 0.5207568 values 0.3423716 0.3706791 0.3978903 0.4234688 0.4468962 0.4676942 0.4854453 0.4998123 0.5105547 0.5175411 ...
+func=test1 returned length 50 min 0.1071762 max 0.5207568
+           value 0.3423716 0.3706791 0.3978903 0.4234688 0.4468962 0.4676942 0.4854453 0.4998123 0.5105547 0.5175411 ...
 
 Applying "func" arg to
           x          z
 1 0.4878107 0.01307758
 2 0.4878107 0.03306954
 3 0.4878107 0.05306151
-func=test1 returned length 50 min 0.1668464 max 0.3675085 values 0.1668464 0.1796153 0.1925092 0.205434 0.2182929 0.2309886 0.2434258 0.2555129 0.2671644 0.278303 ...
+func=test1 returned length 50 min 0.1668464 max 0.3675085
+           value 0.1668464 0.1796153 0.1925092 0.205434 0.2182929 0.2309886 0.2434258 0.2555129 0.2671644 0.278303 ...
 
 --plot.degree2(draw.plot=TRUE)
 
@@ -437,8 +443,10 @@ nlevels: Girth=27 Height=21
 
 get.data.for.formula: using y from "trees" passed to lm 
 got y from object$call$formula
-get.plotmo.y returned length 31 min 2.322388 max 4.343805 values 2.332144 2.332144 2.322388 2.797281 2.933857 2.980619 2.747271 2.901422 3.11795 2.99072 ...
-inverse.func=exp returned length 31 min 10.2 max 77 values 10.3 10.3 10.2 16.4 18.8 19.7 15.6 18.2 22.6 19.9 ...
+get.plotmo.y returned length 31 min 2.322388 max 4.343805
+             value 2.332144 2.332144 2.322388 2.797281 2.933857 2.980619 2.747271 2.901422 3.11795 2.99072 ...
+inverse.func=exp returned length 31 min 10.2 max 77
+                 value 10.3 10.3 10.2 16.4 18.8 19.7 15.6 18.2 22.6 19.9 ...
 
 clip.limits 10.2 77 
 
@@ -452,12 +460,14 @@ plotmo.predict(type="response") for degree1 plot "Girth" with newdata[27,2]:
 ...  10.5     76
 27   20.6     76
 
-predict.lm(xgrid, type="response") returned length 27 min 2.548812 max 4.407664 values 2.548812 2.59415 2.624375 2.88129 2.911515 2.926628 2.956853 2.971966 2.987078 3.002191 ...
-inverse.func=exp returned length 27 min 12.7919 max 82.07748 values 12.7919 13.38521 13.79596 17.83727 18.38463 18.66458 19.23734 19.53027 19.82766 20.12959 ...
+predict.lm(xgrid, type="response") returned length 27 min 2.548812 max 4.407664
+                                   value 2.548812 2.59415 2.624375 2.88129 2.911515 2.926628 2.956853 2.971966 2.987078 3.002191 ...
+inverse.func=exp returned length 27 min 12.7919 max 82.07748
+                 value 12.7919 13.38521 13.79596 17.83727 18.38463 18.66458 19.23734 19.53027 19.82766 20.12959 ...
 
 --plot.degree2(draw.plot=FALSE)
 
-plotmo.predict(type="response") for  degree2 plot "Girth" and "Height" with newdata[400,2]:
+plotmo.predict(type="response") for degree2 plot "Girth:Height" with newdata[400,2]:
         Girth Height
 1    8.300000     63
 2    8.947368     63
@@ -465,8 +475,10 @@ plotmo.predict(type="response") for  degree2 plot "Girth" and "Height" with newd
 ... 10.242105     63
 400 20.600000     87
 
-predict.lm(xgrid, type="response") returned length 400 min 2.216637 max 4.455988 values 2.216637 2.334497 2.452358 2.570218 2.688079 2.80594 2.9238 3.041661 3.159521 3.277382 ...
-inverse.func=exp returned length 400 min 9.176416 max 86.14119 values 9.176416 10.32427 11.6157 13.06868 14.7034 16.54261 18.61188 20.93999 23.55932 26.50629 ...
+predict.lm(xgrid, type="response") returned length 400 min 2.216637 max 4.455988
+                                   value 2.216637 2.334497 2.452358 2.570218 2.688079 2.80594 2.9238 3.041661 3.159521 3.277382 ...
+inverse.func=exp returned length 400 min 9.176416 max 86.14119
+                 value 9.176416 10.32427 11.6157 13.06868 14.7034 16.54261 18.61188 20.93999 23.55932 26.50629 ...
 
 ylim 10.2 77 
 
@@ -479,14 +491,16 @@ Applying "func" arg to
 1   8.3     76
 2   8.6     76
 3   8.8     76
-func=my.func returned length 27 min 6.833333 max 68.33333 values 6.833333 8.333333 9.333333 17.83333 18.83333 19.33333 20.33333 20.83333 21.33333 21.83333 ...
+func=my.func returned length 27 min 6.833333 max 68.33333
+             value 6.833333 8.333333 9.333333 17.83333 18.83333 19.33333 20.33333 20.83333 21.33333 21.83333 ...
 
 Applying "func" arg to
   Girth Height
 1  12.9     63
 2  12.9     64
 3  12.9     65
-func=my.func returned length 21 min 25.5 max 33.5 values 25.5 25.83333 26.16667 26.5 27.5 27.83333 28.16667 28.5 29.16667 29.5 ...
+func=my.func returned length 21 min 25.5 max 33.5
+             value 25.5 25.83333 26.16667 26.5 27.5 27.83333 28.16667 28.5 29.16667 29.5 ...
 persp(Girth:Height) theta 235 ylim 10.2 77 cex 0.83
 > 
 > # se testing
@@ -516,7 +530,8 @@ nlevels: O3=35 vh=53 wind=11 humidity=65 temp=63 ibh=196 dpg=128 ibt=193 vis=24
 
 get.data.for.formula: using y from "ozone1" passed to lm 
 got y from object$call$formula
-get.plotmo.y returned length 330 min 33 max 390 values 33 34 35 36 37 38 39 40 41 42 ...
+get.plotmo.y returned length 330 min 33 max 390
+             value 33 34 35 36 37 38 39 40 41 42 ...
 
 clip.limits 33 390 
 
@@ -530,7 +545,8 @@ plotmo.predict(type="response") for degree1 plot "O3" with newdata[35,9]:
 ...  4 5760    5       64   62 2112.5  24 167.5 120
 35  38 5760    5       64   62 2112.5  24 167.5 120
 
-predict.lm(xgrid, type="response") returned length 35 min 110.3949 max 242.8995 values 242.8995 239.3182 235.737 232.1558 228.5746 224.9934 221.4122 217.831 214.2498 210.6686 ...
+predict.lm(xgrid, type="response") returned length 35 min 110.3949 max 242.8995
+                                   value 242.8995 239.3182 235.737 232.1558 228.5746 224.9934 221.4122 217.831 214.2498 210.6686 ...
 begin se handling, 
 plotmo.predict(type="response") for degree1 plot "O3" se.fit=TRUE with newdata[35,9]:
     O3   vh wind humidity temp    ibh dpg   ibt vis
@@ -540,7 +556,8 @@ plotmo.predict(type="response") for degree1 plot "O3" se.fit=TRUE with newdata[3
 ...  4 5760    5       64   62 2112.5  24 167.5 120
 35  38 5760    5       64   62 2112.5  24 167.5 120
 
-predict.lm(xgrid, type="response", se=...) returned length 35 min 5.489166 max 28.16472 values 13.81704 12.82397 11.84786 10.89329 9.966435 9.075802 8.23315 7.454768 6.762884 6.186586 ...
+predict.lm(xgrid, type="response", se=...) returned length 35 min 5.489166 max 28.16472
+                                           value 13.81704 12.82397 11.84786 10.89329 9.966435 9.075802 8.23315 7.454768 6.762884 6.186586 ...
 end se handling
 
 ylim 4.846793 385.9276 
@@ -562,13 +579,13 @@ formula log(doy) ~ vh + wind + log(humidity)
 stripped formula log(doy)~vh+wind+humidity
 get.data.for.formula: using x from "ozone1" passed to lm 
 about to eval model.frame(formula=log(doy)~vh+wind+humidity, data=structure(list(
-              O3=c(3, 5, 5, 6, 4, 4, 6, 7, 4, 6, 5, 4, 4, 7, 5, 9, 4, 
-              3, 4, 4, 5, 6, 9, 6, 6, 11, 10, 7, 12, 9, 2, 3, 3, 2, 3, 
-              3, 4, 6, 8, 6, 4, 3, 7, 11, 13, 6, 5, 4, 4, 6, 10, 15, 23, 
-              17, 7, 2, 3, 3, 4, 6, 7, 7, 6, 3, 2, 8, 12, 12, 16, 9, 24, 
-              13, 8, 10, 8, 9, 10, 14, 9, 11, 7, 9, 12, 12, 8, 9, 5, 4, 
-              4, 9, 13, 5, 10, 10, 7, 5, 4, 7, 3, 4, 7, 11, 15, 22, 17, 
-              7, 10, 19, 18, 12, 6, 9, 19, 21, 29, 16, 11, 2, 12, 16, 22, etc.
+    O3=c(3, 5, 5, 6, 4, 4, 6, 7, 4, 6, 5, 4, 4, 7, 5, 9, 4, 
+    3, 4, 4, 5, 6, 9, 6, 6, 11, 10, 7, 12, 9, 2, 3, 3, 2, 3, 
+    3, 4, 6, 8, 6, 4, 3, 7, 11, 13, 6, 5, 4, 4, 6, 10, 15, 23, 
+    17, 7, 2, 3, 3, 4, 6, 7, 7, 6, 3, 2, 8, 12, 12, 16, 9, 24, 
+    13, 8, 10, 8, 9, 10, 14, 9, 11, 7, 9, 12, 12, 8, 9, 5, 4, 
+    4, 9, 13, 5, 10, 10, 7, 5, 4, 7, 3, 4, 7, 11, 15, 22, 17, 
+    7, 10, 19, 18, 12, 6, 9, 19, 21, 29, 16, 11, 2, 12, 16, 22, ...
 got x with colnames from object$call$formula
 
 x[330,3]:
@@ -587,15 +604,16 @@ formula log(doy) ~ vh + wind + log(humidity)
 stripped formula log(doy)~vh+wind+humidity
 get.data.for.formula: using y from "ozone1" passed to lm 
 about to eval model.frame(formula=log(doy)~vh+wind+humidity, data=structure(list(
-              O3=c(3, 5, 5, 6, 4, 4, 6, 7, 4, 6, 5, 4, 4, 7, 5, 9, 4, 
-              3, 4, 4, 5, 6, 9, 6, 6, 11, 10, 7, 12, 9, 2, 3, 3, 2, 3, 
-              3, 4, 6, 8, 6, 4, 3, 7, 11, 13, 6, 5, 4, 4, 6, 10, 15, 23, 
-              17, 7, 2, 3, 3, 4, 6, 7, 7, 6, 3, 2, 8, 12, 12, 16, 9, 24, 
-              13, 8, 10, 8, 9, 10, 14, 9, 11, 7, 9, 12, 12, 8, 9, 5, 4, 
-              4, 9, 13, 5, 10, 10, 7, 5, 4, 7, 3, 4, 7, 11, 15, 22, 17, 
-              7, 10, 19, 18, 12, 6, 9, 19, 21, 29, 16, 11, 2, 12, 16, 22, etc.
+    O3=c(3, 5, 5, 6, 4, 4, 6, 7, 4, 6, 5, 4, 4, 7, 5, 9, 4, 
+    3, 4, 4, 5, 6, 9, 6, 6, 11, 10, 7, 12, 9, 2, 3, 3, 2, 3, 
+    3, 4, 6, 8, 6, 4, 3, 7, 11, 13, 6, 5, 4, 4, 6, 10, 15, 23, 
+    17, 7, 2, 3, 3, 4, 6, 7, 7, 6, 3, 2, 8, 12, 12, 16, 9, 24, 
+    13, 8, 10, 8, 9, 10, 14, 9, 11, 7, 9, 12, 12, 8, 9, 5, 4, 
+    4, 9, 13, 5, 10, 10, 7, 5, 4, 7, 3, 4, 7, 11, 15, 22, 17, 
+    7, 10, 19, 18, 12, 6, 9, 19, 21, 29, 16, 11, 2, 12, 16, 22, ...
 got y from object$call$formula
-get.plotmo.y returned length 330 min 3.496508 max 5.966147 values 3.496508 3.526361 3.555348 3.583519 3.610918 3.637586 3.663562 3.688879 3.713572 3.73767 ...
+get.plotmo.y returned length 330 min 3.496508 max 5.966147
+             value 3.496508 3.526361 3.555348 3.583519 3.610918 3.637586 3.663562 3.688879 3.713572 3.73767 ...
 
 clip.limits 3.496508 5.966147 
 
@@ -628,7 +646,8 @@ plotmo.predict(type="response") for degree1 plot "vh" with newdata[50,3]:
 ... 5358.571    5       64
 50  5950.000    5       64
 
-predict.lm(xgrid, type="response") returned length 50 min 4.383936 max 5.596516 values 4.383936 4.408682 4.433429 4.458175 4.482922 4.507668 4.532415 4.557161 4.581908 4.606655 ...
+predict.lm(xgrid, type="response") returned length 50 min 4.383936 max 5.596516
+                                   value 4.383936 4.408682 4.433429 4.458175 4.482922 4.507668 4.532415 4.557161 4.581908 4.606655 ...
 begin se handling, 
 plotmo.predict(type="response") for degree1 plot "vh" se.fit=TRUE with newdata[50,3]:
           vh wind humidity
@@ -638,7 +657,8 @@ plotmo.predict(type="response") for degree1 plot "vh" se.fit=TRUE with newdata[5
 ... 5358.571    5       64
 50  5950.000    5       64
 
-predict.lm(xgrid, type="response", se=...) returned length 50 min 0.03461581 max 0.1397293 values 0.1397293 0.1358274 0.1319332 0.1280475 0.1241711 0.1203048 0.1164497 0.1126069 0.1087778 0.1049637 ...
+predict.lm(xgrid, type="response", se=...) returned length 50 min 0.03461581 max 0.1397293
+                                           value 0.1397293 0.1358274 0.1319332 0.1280475 0.1241711 0.1203048 0.1164497 0.1126069 0.1087778 0.1049637 ...
 end se handling
 
 plotmo.predict(type="response") for degree1 plot "wind" with newdata[11,3]:
@@ -649,7 +669,8 @@ plotmo.predict(type="response") for degree1 plot "wind" with newdata[11,3]:
 ... 5760    4       64
 11  5760   11       64
 
-predict.lm(xgrid, type="response") returned length 11 min 5.023502 max 5.40358 values 5.40358 5.334475 5.299922 5.26537 5.230817 5.196265 5.161712 5.12716 5.092607 5.058055 ...
+predict.lm(xgrid, type="response") returned length 11 min 5.023502 max 5.40358
+                                   value 5.40358 5.334475 5.299922 5.26537 5.230817 5.196265 5.161712 5.12716 5.092607 5.058055 ...
 begin se handling, 
 plotmo.predict(type="response") for degree1 plot "wind" se.fit=TRUE with newdata[11,3]:
       vh wind humidity
@@ -659,7 +680,8 @@ plotmo.predict(type="response") for degree1 plot "wind" se.fit=TRUE with newdata
 ... 5760    4       64
 11  5760   11       64
 
-predict.lm(xgrid, type="response", se=...) returned length 11 min 0.03467051 max 0.1024331 values 0.08731791 0.05924741 0.04717818 0.03816251 0.03467051 0.03824634 0.04731376 0.05940937 0.07304399 0.08750113 ...
+predict.lm(xgrid, type="response", se=...) returned length 11 min 0.03467051 max 0.1024331
+                                           value 0.08731791 0.05924741 0.04717818 0.03816251 0.03467051 0.03824634 0.04731376 0.05940937 0.07304399 0.08750113 ...
 end se handling
 
 plotmo.predict(type="response") for degree1 plot "humidity" with newdata[50,3]:
@@ -670,7 +692,8 @@ plotmo.predict(type="response") for degree1 plot "humidity" with newdata[50,3]:
 ... 5760    5 23.53061
 50  5760    5 93.00000
 
-predict.lm(xgrid, type="response") returned length 50 min 4.969591 max 5.311203 values 4.969591 4.986043 5.001325 5.015593 5.028973 5.04157 5.053469 5.064745 5.075459 5.085664 ...
+predict.lm(xgrid, type="response") returned length 50 min 4.969591 max 5.311203
+                                   value 4.969591 4.986043 5.001325 5.015593 5.028973 5.04157 5.053469 5.064745 5.075459 5.085664 ...
 begin se handling, 
 plotmo.predict(type="response") for degree1 plot "humidity" se.fit=TRUE with newdata[50,3]:
       vh wind humidity
@@ -680,7 +703,8 @@ plotmo.predict(type="response") for degree1 plot "humidity" se.fit=TRUE with new
 ... 5760    5 23.53061
 50  5760    5 93.00000
 
-predict.lm(xgrid, type="response", se=...) returned length 50 min 0.03241697 max 0.08170657 values 0.08170657 0.07669081 0.0720946 0.06786937 0.06397645 0.06038488 0.0570697 0.05401081 0.05119203 0.04860037 ...
+predict.lm(xgrid, type="response", se=...) returned length 50 min 0.03241697 max 0.08170657
+                                           value 0.08170657 0.07669081 0.0720946 0.06786937 0.06397645 0.06038488 0.0570697 0.05401081 0.05119203 0.04860037 ...
 end se handling
 > plotmo(a, do.par=FALSE, caption=caption, ylim=NA, se=2, col.shade="pink", col.se=1, trace=Trace)
 
@@ -896,11 +920,11 @@ end se handling
                2   2  28
 
 
-Contents of predict.lda(xgrid, type="posterior") are
-             0          1
-[1,] 0.5689119 0.43108806
-[2,] 0.8135813 0.18641868
-[3,] 0.9352020 0.06479797
+predict.lda(xgrid, type="posterior") returned [3,2]:
+          0          1
+1 0.5689119 0.43108806
+2 0.8135813 0.18641868
+3 0.9352020 0.06479797
 
 Error : predicted response has multiple columns (see above) but nresponse is not specified.
        Specify a column index like nresponse=2 or a column name like nresponse="1"
@@ -915,13 +939,13 @@ formula survived ~ .
 stripped formula survived~.
 get.data.for.formula: using x from "etitanic2" passed to lda 
 about to eval model.frame(formula=survived~., data=structure(list(pclass=c(1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, etc.
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
 got x with colnames from object$call$formula
 
 x[1046,3]:
@@ -940,15 +964,16 @@ formula survived ~ .
 stripped formula survived~.
 get.data.for.formula: using y from "etitanic2" passed to lda 
 about to eval model.frame(formula=survived~., data=structure(list(pclass=c(1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, etc.
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
 got y from object$call$formula
-get.plotmo.y returned length 1046 min 0 max 1 values 1 1 0 0 0 1 1 0 1 0 ...
+get.plotmo.y returned length 1046 min 0 max 1
+             value 1 1 0 0 0 1 1 0 1 0 ...
 
 --get.plotmo.singles
 
@@ -976,14 +1001,16 @@ plotmo.predict(type="posterior") for degree1 plot "pclass" with newdata[3,3]:
 2      2   2  28
 3      3   2  28
 
-predict.lda(xgrid, type="posterior") column "0" returned length 3 min 0.5689119 max 0.935202 values 0.5689119 0.8135813 0.935202 
+predict.lda(xgrid, type="posterior") column "0" returned length 3 min 0.5689119 max 0.935202
+                                     value 0.5689119 0.8135813 0.935202 
 
 plotmo.predict(type="posterior") for degree1 plot "sex" with newdata[2,3]:
   pclass sex age
 1      2   1  28
 2      2   2  28
 
-predict.lda(xgrid, type="posterior") column "0" returned length 2 min 0.1489949 max 0.8135813 values 0.1489949 0.8135813 
+predict.lda(xgrid, type="posterior") column "0" returned length 2 min 0.1489949 max 0.8135813
+                                     value 0.1489949 0.8135813 
 
 plotmo.predict(type="posterior") for degree1 plot "age" with newdata[50,3]:
     pclass sex       age
@@ -993,11 +1020,12 @@ plotmo.predict(type="posterior") for degree1 plot "age" with newdata[50,3]:
 ...      2   2  5.054453
 50       2   2 80.000000
 
-predict.lda(xgrid, type="posterior") column "0" returned length 50 min 0.6286389 max 0.9624145 values 0.6286389 0.641486 0.6541332 0.6665662 0.6787717 0.6907377 0.7024534 0.713909 0.7250962 0.7360078 ...
+predict.lda(xgrid, type="posterior") column "0" returned length 50 min 0.6286389 max 0.9624145
+                                     value 0.6286389 0.641486 0.6541332 0.6665662 0.6787717 0.6907377 0.7024534 0.713909 0.7250962 0.7360078 ...
 
 --plot.degree2(draw.plot=TRUE)
 
-plotmo.predict(type="posterior") for  degree2 plot "pclass" and "sex" with newdata[6,3]:
+plotmo.predict(type="posterior") for degree2 plot "pclass:sex" with newdata[6,3]:
     pclass sex age
 1        1   1  28
 2        2   1  28
@@ -1005,9 +1033,10 @@ plotmo.predict(type="posterior") for  degree2 plot "pclass" and "sex" with newda
 ...      1   2  28
 3.1      3   2  28
 
-predict.lda(xgrid, type="posterior") column "0" returned length 6 min 0.05028077 max 0.935202 values 0.05028077 0.1489949 0.3666841 0.5689119 0.8135813 0.935202 
+predict.lda(xgrid, type="posterior") column "0" returned length 6 min 0.05028077 max 0.935202
+                                     value 0.05028077 0.1489949 0.3666841 0.5689119 0.8135813 0.935202 
 
-plotmo.predict(type="posterior") for  degree2 plot "pclass" and "age" with newdata[60,3]:
+plotmo.predict(type="posterior") for degree2 plot "pclass:age" with newdata[60,3]:
     pclass sex       age
 1        1   2  0.166700
 2        2   2  0.166700
@@ -1015,9 +1044,10 @@ plotmo.predict(type="posterior") for  degree2 plot "pclass" and "age" with newda
 ...      1   2  4.368453
 60       3   2 80.000000
 
-predict.lda(xgrid, type="posterior") column "0" returned length 60 min 0.338574 max 0.9883285 values 0.338574 0.6286389 0.8484402 0.3712905 0.6613582 0.865924 0.4052315 0.6926044 0.8816722 0.4401032 ...
+predict.lda(xgrid, type="posterior") column "0" returned length 60 min 0.338574 max 0.9883285
+                                     value 0.338574 0.6286389 0.8484402 0.3712905 0.6613582 0.865924 0.4052315 0.6926044 0.8816722 0.4401032 ...
 
-plotmo.predict(type="posterior") for  degree2 plot "sex" and "age" with newdata[40,3]:
+plotmo.predict(type="posterior") for degree2 plot "sex:age" with newdata[40,3]:
     pclass sex       age
 1        2   1  0.166700
 2        2   2  0.166700
@@ -1025,7 +1055,8 @@ plotmo.predict(type="posterior") for  degree2 plot "sex" and "age" with newdata[
 ...      2   2  4.368453
 40       2   2 80.000000
 
-predict.lda(xgrid, type="posterior") column "0" returned length 40 min 0.06359133 max 0.9624145 values 0.06359133 0.6286389 0.07265495 0.6613582 0.08289605 0.6926044 0.09443369 0.7221787 0.1073891 0.7499349 ...
+predict.lda(xgrid, type="posterior") column "0" returned length 40 min 0.06359133 max 0.9624145
+                                     value 0.06359133 0.6286389 0.07265495 0.6613582 0.08289605 0.6926044 0.09443369 0.7221787 0.1073891 0.7499349 ...
 > set.seed(8)
 > plotmo(lda.model, caption="lda with jitter", trace=2, clip=F,
 +        col.response=as.numeric(etitanic2$survived)+2, type="posterior", nresponse=1,
@@ -1037,13 +1068,13 @@ formula survived ~ .
 stripped formula survived~.
 get.data.for.formula: using x from "etitanic2" passed to lda 
 about to eval model.frame(formula=survived~., data=structure(list(pclass=c(1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, etc.
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
 got x with colnames from object$call$formula
 
 x[1046,3]:
@@ -1062,15 +1093,16 @@ formula survived ~ .
 stripped formula survived~.
 get.data.for.formula: using y from "etitanic2" passed to lda 
 about to eval model.frame(formula=survived~., data=structure(list(pclass=c(1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, etc.
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
 got y from object$call$formula
-get.plotmo.y returned length 1046 min 0 max 1 values 1 1 0 0 0 1 1 0 1 0 ...
+get.plotmo.y returned length 1046 min 0 max 1
+             value 1 1 0 0 0 1 1 0 1 0 ...
 
 --get.plotmo.singles
 
@@ -1098,14 +1130,16 @@ plotmo.predict(type="posterior") for degree1 plot "pclass" with newdata[3,3]:
 2      2   2  28
 3      3   2  28
 
-predict.lda(xgrid, type="posterior") column "0" returned length 3 min 0.5689119 max 0.935202 values 0.5689119 0.8135813 0.935202 
+predict.lda(xgrid, type="posterior") column "0" returned length 3 min 0.5689119 max 0.935202
+                                     value 0.5689119 0.8135813 0.935202 
 
 plotmo.predict(type="posterior") for degree1 plot "sex" with newdata[2,3]:
   pclass sex age
 1      2   1  28
 2      2   2  28
 
-predict.lda(xgrid, type="posterior") column "0" returned length 2 min 0.1489949 max 0.8135813 values 0.1489949 0.8135813 
+predict.lda(xgrid, type="posterior") column "0" returned length 2 min 0.1489949 max 0.8135813
+                                     value 0.1489949 0.8135813 
 
 plotmo.predict(type="posterior") for degree1 plot "age" with newdata[50,3]:
     pclass sex       age
@@ -1115,11 +1149,12 @@ plotmo.predict(type="posterior") for degree1 plot "age" with newdata[50,3]:
 ...      2   2  5.054453
 50       2   2 80.000000
 
-predict.lda(xgrid, type="posterior") column "0" returned length 50 min 0.6286389 max 0.9624145 values 0.6286389 0.641486 0.6541332 0.6665662 0.6787717 0.6907377 0.7024534 0.713909 0.7250962 0.7360078 ...
+predict.lda(xgrid, type="posterior") column "0" returned length 50 min 0.6286389 max 0.9624145
+                                     value 0.6286389 0.641486 0.6541332 0.6665662 0.6787717 0.6907377 0.7024534 0.713909 0.7250962 0.7360078 ...
 
 --plot.degree2(draw.plot=TRUE)
 
-plotmo.predict(type="posterior") for  degree2 plot "pclass" and "sex" with newdata[6,3]:
+plotmo.predict(type="posterior") for degree2 plot "pclass:sex" with newdata[6,3]:
     pclass sex age
 1        1   1  28
 2        2   1  28
@@ -1127,9 +1162,10 @@ plotmo.predict(type="posterior") for  degree2 plot "pclass" and "sex" with newda
 ...      1   2  28
 3.1      3   2  28
 
-predict.lda(xgrid, type="posterior") column "0" returned length 6 min 0.05028077 max 0.935202 values 0.05028077 0.1489949 0.3666841 0.5689119 0.8135813 0.935202 
+predict.lda(xgrid, type="posterior") column "0" returned length 6 min 0.05028077 max 0.935202
+                                     value 0.05028077 0.1489949 0.3666841 0.5689119 0.8135813 0.935202 
 
-plotmo.predict(type="posterior") for  degree2 plot "pclass" and "age" with newdata[60,3]:
+plotmo.predict(type="posterior") for degree2 plot "pclass:age" with newdata[60,3]:
     pclass sex       age
 1        1   2  0.166700
 2        2   2  0.166700
@@ -1137,9 +1173,10 @@ plotmo.predict(type="posterior") for  degree2 plot "pclass" and "age" with newda
 ...      1   2  4.368453
 60       3   2 80.000000
 
-predict.lda(xgrid, type="posterior") column "0" returned length 60 min 0.338574 max 0.9883285 values 0.338574 0.6286389 0.8484402 0.3712905 0.6613582 0.865924 0.4052315 0.6926044 0.8816722 0.4401032 ...
+predict.lda(xgrid, type="posterior") column "0" returned length 60 min 0.338574 max 0.9883285
+                                     value 0.338574 0.6286389 0.8484402 0.3712905 0.6613582 0.865924 0.4052315 0.6926044 0.8816722 0.4401032 ...
 
-plotmo.predict(type="posterior") for  degree2 plot "sex" and "age" with newdata[40,3]:
+plotmo.predict(type="posterior") for degree2 plot "sex:age" with newdata[40,3]:
     pclass sex       age
 1        2   1  0.166700
 2        2   2  0.166700
@@ -1147,7 +1184,8 @@ plotmo.predict(type="posterior") for  degree2 plot "sex" and "age" with newdata[
 ...      2   2  4.368453
 40       2   2 80.000000
 
-predict.lda(xgrid, type="posterior") column "0" returned length 40 min 0.06359133 max 0.9624145 values 0.06359133 0.6286389 0.07265495 0.6613582 0.08289605 0.6926044 0.09443369 0.7221787 0.1073891 0.7499349 ...
+predict.lda(xgrid, type="posterior") column "0" returned length 40 min 0.06359133 max 0.9624145
+                                     value 0.06359133 0.6286389 0.07265495 0.6613582 0.08289605 0.6926044 0.09443369 0.7221787 0.1073891 0.7499349 ...
 > qda.model <- qda(survived ~ ., data=etitanic2)
 > set.seed(9)
 > plotmo(qda.model, caption="qda with jitter", trace=2, clip=F,
@@ -1160,13 +1198,13 @@ formula survived ~ .
 stripped formula survived~.
 get.data.for.formula: using x from "etitanic2" passed to qda 
 about to eval model.frame(formula=survived~., data=structure(list(pclass=c(1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, etc.
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
 got x with colnames from object$call$formula
 
 x[1046,3]:
@@ -1185,15 +1223,16 @@ formula survived ~ .
 stripped formula survived~.
 get.data.for.formula: using y from "etitanic2" passed to qda 
 about to eval model.frame(formula=survived~., data=structure(list(pclass=c(1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-              1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, etc.
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
 got y from object$call$formula
-get.plotmo.y returned length 1046 min 0 max 1 values 1 1 0 0 0 1 1 0 1 0 ...
+get.plotmo.y returned length 1046 min 0 max 1
+             value 1 1 0 0 0 1 1 0 1 0 ...
 
 --get.plotmo.singles
 
@@ -1221,14 +1260,16 @@ plotmo.predict(type="post") for degree1 plot "pclass" with newdata[3,3]:
 2      2   2  28
 3      3   2  28
 
-predict.qda(xgrid, type="post") column "1" returned length 3 min 0.09172236 max 0.4136036 values 0.4136036 0.173235 0.09172236 
+predict.qda(xgrid, type="post") column "1" returned length 3 min 0.09172236 max 0.4136036
+                                value 0.4136036 0.173235 0.09172236 
 
 plotmo.predict(type="post") for degree1 plot "sex" with newdata[2,3]:
   pclass sex age
 1      2   1  28
 2      2   2  28
 
-predict.qda(xgrid, type="post") column "1" returned length 2 min 0.173235 max 0.9020997 values 0.9020997 0.173235 
+predict.qda(xgrid, type="post") column "1" returned length 2 min 0.173235 max 0.9020997
+                                value 0.9020997 0.173235 
 
 plotmo.predict(type="post") for degree1 plot "age" with newdata[50,3]:
     pclass sex       age
@@ -1238,11 +1279,12 @@ plotmo.predict(type="post") for degree1 plot "age" with newdata[50,3]:
 ...      2   2  5.054453
 50       2   2 80.000000
 
-predict.qda(xgrid, type="post") column "1" returned length 50 min 0.0727541 max 0.5382786 values 0.5382786 0.5073867 0.4771642 0.4478275 0.419558 0.3925005 0.3667628 0.3424184 0.3195085 0.2980465 ...
+predict.qda(xgrid, type="post") column "1" returned length 50 min 0.0727541 max 0.5382786
+                                value 0.5382786 0.5073867 0.4771642 0.4478275 0.419558 0.3925005 0.3667628 0.3424184 0.3195085 0.2980465 ...
 
 --plot.degree2(draw.plot=TRUE)
 
-plotmo.predict(type="post") for  degree2 plot "pclass" and "sex" with newdata[6,3]:
+plotmo.predict(type="post") for degree2 plot "pclass:sex" with newdata[6,3]:
     pclass sex age
 1        1   1  28
 2        2   1  28
@@ -1250,9 +1292,10 @@ plotmo.predict(type="post") for  degree2 plot "pclass" and "sex" with newdata[6,
 ...      1   2  28
 3.1      3   2  28
 
-predict.qda(xgrid, type="post") column "1" returned length 6 min 0.09172236 max 0.9868176 values 0.9868176 0.9020997 0.6479004 0.4136036 0.173235 0.09172236 
+predict.qda(xgrid, type="post") column "1" returned length 6 min 0.09172236 max 0.9868176
+                                value 0.9868176 0.9020997 0.6479004 0.4136036 0.173235 0.09172236 
 
-plotmo.predict(type="post") for  degree2 plot "pclass" and "age" with newdata[60,3]:
+plotmo.predict(type="post") for degree2 plot "pclass:age" with newdata[60,3]:
     pclass sex       age
 1        1   2  0.166700
 2        2   2  0.166700
@@ -1260,9 +1303,10 @@ plotmo.predict(type="post") for  degree2 plot "pclass" and "age" with newdata[60
 ...      1   2  4.368453
 60       3   2 80.000000
 
-predict.qda(xgrid, type="post") column "1" returned length 60 min 0.0536493 max 0.8412456 values 0.8412456 0.5382786 0.293836 0.7872905 0.4600594 0.2414025 0.7249536 0.3883466 0.1987967 0.6567895 ...
+predict.qda(xgrid, type="post") column "1" returned length 60 min 0.0536493 max 0.8412456
+                                value 0.8412456 0.5382786 0.293836 0.7872905 0.4600594 0.2414025 0.7249536 0.3883466 0.1987967 0.6567895 ...
 
-plotmo.predict(type="post") for  degree2 plot "sex" and "age" with newdata[40,3]:
+plotmo.predict(type="post") for degree2 plot "sex:age" with newdata[40,3]:
     pclass sex       age
 1        2   1  0.166700
 2        2   2  0.166700
@@ -1270,7 +1314,8 @@ plotmo.predict(type="post") for  degree2 plot "sex" and "age" with newdata[40,3]
 ...      2   2  4.368453
 40       2   2 80.000000
 
-predict.qda(xgrid, type="post") column "1" returned length 40 min 0.07281274 max 0.9627743 values 0.9627743 0.5382786 0.9544618 0.4600594 0.9454079 0.3883466 0.9358487 0.3253971 0.9260848 0.271993 ...
+predict.qda(xgrid, type="post") column "1" returned length 40 min 0.07281274 max 0.9627743
+                                value 0.9627743 0.5382786 0.9544618 0.4600594 0.9454079 0.3883466 0.9358487 0.3253971 0.9260848 0.271993 ...
 > 
 > # test get.plotmo.y from the 2nd argument of the model function (non-formula interface)
 > lcush <- data.frame(Type=as.numeric(Cushings$Type), log(Cushings[,1:2]))[1:21,]
@@ -1298,7 +1343,8 @@ nlevels: Tetrahydrocortisone=19 Pregnanetriol=17
 --get.plotmo.y
 
 got y from the second argument to the model function
-get.plotmo.y returned length 21 min 1 max 3 values 1 1 1 1 1 1 2 2 2 2 ...
+get.plotmo.y returned length 21 min 1 max 3
+             value 1 1 1 1 1 1 2 2 2 2 ...
 
 clip.limits -Inf Inf 
 
@@ -1312,11 +1358,12 @@ plotmo.predict(type="class") for degree1 plot "Tetrahydrocortisone" with newdata
 ...           1.3350011     0.1823216
 19            3.9852735     0.1823216
 
-predict.qda(xgrid, type="class") returned length 19 min 1 max 3 values 1 1 1 1 1 1 2 2 2 2 ...
+predict.qda(xgrid, type="class") returned length 19 min 1 max 3
+                                 value 1 1 1 1 1 1 2 2 2 2 ...
 
 --plot.degree2(draw.plot=FALSE)
 
-plotmo.predict(type="class") for  degree2 plot "Tetrahydrocortisone" and "Pregnanetriol" with newdata[323,2]:
+plotmo.predict(type="class") for degree2 plot "Tetrahydrocortisone:Pregnanetriol" with newdata[323,2]:
       Tetrahydrocortisone Pregnanetriol
 1               0.6418539     -3.218876
 2               1.0986123     -3.218876
@@ -1324,7 +1371,8 @@ plotmo.predict(type="class") for  degree2 plot "Tetrahydrocortisone" and "Pregna
 ...             1.3350011     -3.218876
 19.16           3.9852735      2.459589
 
-predict.qda(xgrid, type="class") returned length 323 min 1 max 3 values 1 1 1 1 1 1 1 1 1 1 ...
+predict.qda(xgrid, type="class") returned length 323 min 1 max 3
+                                 value 1 1 1 1 1 1 1 1 1 1 ...
 
 ylim 1 3 
 
@@ -1648,15 +1696,16 @@ formula species ~ .
 stripped formula species~.
 get.data.for.formula: using x from "ird" passed to nnet.formula 
 about to eval model.frame(formula=species~., data=structure(list(Sepal.L.=c(5.1, 
-              4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 
-              5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 
-              5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 
-              5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 
-              6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 
-              5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 
-              5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, etc.
+    4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 
+    5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 
+    5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 
+    5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 
+    6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 
+    5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 
+    5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, ...
 got x with colnames from object$call$formula
-got subset from object$call$subset length 75 min 1 max 147 values 30 7 1 36 29 20 50 43 19 35 ...
+got subset from object$call$subset length 75 min 1 max 147
+                value 30 7 1 36 29 20 50 43 19 35 ...
 
 x[75,4] (after taking subset):
     Sepal.L. Sepal.W. Petal.L. Petal.W.
@@ -1674,16 +1723,18 @@ formula species ~ .
 stripped formula species~.
 get.data.for.formula: using y from "ird" passed to nnet.formula 
 about to eval model.frame(formula=species~., data=structure(list(Sepal.L.=c(5.1, 
-              4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 
-              5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 
-              5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 
-              5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 
-              6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 
-              5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 
-              5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, etc.
+    4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 
+    5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 
+    5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 
+    5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 
+    6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 
+    5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 
+    5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, ...
 got y from object$call$formula
-got subset from object$call$subset length 75 min 1 max 147 values 30 7 1 36 29 20 50 43 19 35 ...
-get.plotmo.y returned length 150 (before taking subset) min 1 max 3 values 1 1 1 1 1 1 1 1 1 1 ...
+got subset from object$call$subset length 75 min 1 max 147
+                value 30 7 1 36 29 20 50 43 19 35 ...
+get.plotmo.y returned length 150 (before taking subset) min 1 max 3
+             value 1 1 1 1 1 1 1 1 1 1 ...
 
 clip.limits -Inf Inf 
 
@@ -1711,7 +1762,8 @@ plotmo.predict(type="class") for degree1 plot "Sepal.L." with newdata[28,4]:
 ...      4.7        3      4.4      1.3
 28       7.9        3      4.4      1.3
 
-predict.nnet.formula(xgrid, type="class") returned length 28 min 1 max 1 values 1 1 1 1 1 1 1 1 1 1 ...
+predict.nnet.formula(xgrid, type="class") returned length 28 min 1 max 1
+                                          value 1 1 1 1 1 1 1 1 1 1 ...
 
 plotmo.predict(type="class") for degree1 plot "Sepal.W." with newdata[18,4]:
     Sepal.L. Sepal.W. Petal.L. Petal.W.
@@ -1721,7 +1773,8 @@ plotmo.predict(type="class") for degree1 plot "Sepal.W." with newdata[18,4]:
 ...      5.8      2.6      4.4      1.3
 18       5.8      4.4      4.4      1.3
 
-predict.nnet.formula(xgrid, type="class") returned length 18 min 1 max 3 values 3 2 2 2 2 2 2 2 2 2 ...
+predict.nnet.formula(xgrid, type="class") returned length 18 min 1 max 3
+                                          value 3 2 2 2 2 2 2 2 2 2 ...
 
 plotmo.predict(type="class") for degree1 plot "Petal.L." with newdata[33,4]:
     Sepal.L. Sepal.W. Petal.L. Petal.W.
@@ -1731,7 +1784,8 @@ plotmo.predict(type="class") for degree1 plot "Petal.L." with newdata[33,4]:
 ...      5.8        3      1.4      1.3
 33       5.8        3      6.7      1.3
 
-predict.nnet.formula(xgrid, type="class") returned length 33 min 1 max 3 values 1 1 1 1 1 1 1 1 1 2 ...
+predict.nnet.formula(xgrid, type="class") returned length 33 min 1 max 3
+                                          value 1 1 1 1 1 1 1 1 1 2 ...
 
 plotmo.predict(type="class") for degree1 plot "Petal.W." with newdata[21,4]:
     Sepal.L. Sepal.W. Petal.L. Petal.W.
@@ -1741,11 +1795,12 @@ plotmo.predict(type="class") for degree1 plot "Petal.W." with newdata[21,4]:
 ...      5.8        3      4.4      0.4
 21       5.8        3      4.4      2.4
 
-predict.nnet.formula(xgrid, type="class") returned length 21 min 1 max 3 values 1 1 1 1 1 1 2 2 2 2 ...
+predict.nnet.formula(xgrid, type="class") returned length 21 min 1 max 3
+                                          value 1 1 1 1 1 1 2 2 2 2 ...
 
 --plot.degree2(draw.plot=FALSE)
 
-plotmo.predict(type="class") for  degree2 plot "Sepal.L." and "Petal.L." with newdata[400,4]:
+plotmo.predict(type="class") for degree2 plot "Sepal.L.:Petal.L." with newdata[400,4]:
     Sepal.L. Sepal.W. Petal.L. Petal.W.
 1   4.400000        3      1.0      1.3
 2   4.584211        3      1.0      1.3
@@ -1753,9 +1808,10 @@ plotmo.predict(type="class") for  degree2 plot "Sepal.L." and "Petal.L." with ne
 ... 4.952632        3      1.0      1.3
 400 7.900000        3      6.7      1.3
 
-predict.nnet.formula(xgrid, type="class") returned length 400 min 1 max 3 values 1 1 1 1 1 1 1 1 1 1 ...
+predict.nnet.formula(xgrid, type="class") returned length 400 min 1 max 3
+                                          value 1 1 1 1 1 1 1 1 1 1 ...
 
-plotmo.predict(type="class") for  degree2 plot "Sepal.L." and "Petal.W." with newdata[400,4]:
+plotmo.predict(type="class") for degree2 plot "Sepal.L.:Petal.W." with newdata[400,4]:
     Sepal.L. Sepal.W. Petal.L. Petal.W.
 1   4.400000        3      4.4      0.1
 2   4.584211        3      4.4      0.1
@@ -1763,9 +1819,10 @@ plotmo.predict(type="class") for  degree2 plot "Sepal.L." and "Petal.W." with ne
 ... 4.952632        3      4.4      0.1
 400 7.900000        3      4.4      2.4
 
-predict.nnet.formula(xgrid, type="class") returned length 400 min 1 max 3 values 1 1 1 1 1 1 1 1 1 1 ...
+predict.nnet.formula(xgrid, type="class") returned length 400 min 1 max 3
+                                          value 1 1 1 1 1 1 1 1 1 1 ...
 
-plotmo.predict(type="class") for  degree2 plot "Sepal.W." and "Petal.L." with newdata[360,4]:
+plotmo.predict(type="class") for degree2 plot "Sepal.W.:Petal.L." with newdata[360,4]:
     Sepal.L. Sepal.W. Petal.L. Petal.W.
 1        5.8      2.2      1.0      1.3
 2        5.8      2.3      1.0      1.3
@@ -1773,9 +1830,10 @@ plotmo.predict(type="class") for  degree2 plot "Sepal.W." and "Petal.L." with ne
 ...      5.8      2.6      1.0      1.3
 360      5.8      4.4      6.7      1.3
 
-predict.nnet.formula(xgrid, type="class") returned length 360 min 1 max 3 values 1 1 1 1 1 1 1 1 1 1 ...
+predict.nnet.formula(xgrid, type="class") returned length 360 min 1 max 3
+                                          value 1 1 1 1 1 1 1 1 1 1 ...
 
-plotmo.predict(type="class") for  degree2 plot "Sepal.W." and "Petal.W." with newdata[360,4]:
+plotmo.predict(type="class") for degree2 plot "Sepal.W.:Petal.W." with newdata[360,4]:
     Sepal.L. Sepal.W. Petal.L. Petal.W.
 1        5.8      2.2      4.4      0.1
 2        5.8      2.3      4.4      0.1
@@ -1783,9 +1841,10 @@ plotmo.predict(type="class") for  degree2 plot "Sepal.W." and "Petal.W." with ne
 ...      5.8      2.6      4.4      0.1
 360      5.8      4.4      4.4      2.4
 
-predict.nnet.formula(xgrid, type="class") returned length 360 min 1 max 3 values 1 1 1 1 1 1 1 1 1 1 ...
+predict.nnet.formula(xgrid, type="class") returned length 360 min 1 max 3
+                                          value 1 1 1 1 1 1 1 1 1 1 ...
 
-plotmo.predict(type="class") for  degree2 plot "Petal.L." and "Petal.W." with newdata[400,4]:
+plotmo.predict(type="class") for degree2 plot "Petal.L.:Petal.W." with newdata[400,4]:
     Sepal.L. Sepal.W. Petal.L. Petal.W.
 1        5.8        3      1.0      0.1
 2        5.8        3      1.3      0.1
@@ -1793,7 +1852,8 @@ plotmo.predict(type="class") for  degree2 plot "Petal.L." and "Petal.W." with ne
 ...      5.8        3      1.9      0.1
 400      5.8        3      6.7      2.4
 
-predict.nnet.formula(xgrid, type="class") returned length 400 min 1 max 3 values 1 1 1 1 1 1 1 1 1 1 ...
+predict.nnet.formula(xgrid, type="class") returned length 400 min 1 max 3
+                                          value 1 1 1 1 1 1 1 1 1 1 ...
 
 
 ylim 1 3 

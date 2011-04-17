@@ -1,6 +1,15 @@
 Changes to plotmo Package
 -------------------------
 
+--- 1.2-3 Apr 17, 2011
+
+This package no longer needs the earth package.  However the current
+  earth (2.6-1) needs some hooks in this package to build.
+  After earth 2.6-2 is on CRAN that will no longer be necessary,
+  and the hooks will be removed from this package.
+We now have better error reporting for bad y's.
+We now have better jittering of response points with a binary response.
+
 --- 1.2-0 Apr 12, 2011
 
 Added ndiscrete arg (variables with a small number of levels

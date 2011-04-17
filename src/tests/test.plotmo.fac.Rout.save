@@ -6,11 +6,13 @@
 Loading required package: leaps
 Loading required package: plotrix
 > library(rpart)
+> source("fast.postscript.R")
 > data(ozone1)
 > data(etitanic)
 > options(warn=1) # print warnings as they occur
 > if(!interactive())
-+     postscript(paper="letter")
++     fast.postscript(paper="letter")
+Opening Rplots.ps 
 > 
 > cat("==test plotmo with factors==\n")
 ==test plotmo with factors==
@@ -141,7 +143,8 @@ nlevels: pclass.num=3 parch.fac=4
 --get.plotmo.y
 
 got y from object$y
-get.plotmo.y returned length 1046 min 0 max 1 values 1 1 0 0 0 1 1 0 1 0 ...
+get.plotmo.y returned length 1046 min 0 max 1
+             value 1 1 0 0 0 1 1 0 1 0 ...
 
 clip.limits 0 1 
 
@@ -155,11 +158,12 @@ plotmo.predict(type="vector") for degree1 plot "pclass.num" with newdata[3,2]:
 
 factors: parch.fac 
 
-predict.rpart(xgrid, type="vector") returned length 3 min 0.261477 max 0.6029412 values 0.6029412 0.3157895 0.261477 
+predict.rpart(xgrid, type="vector") returned length 3 min 0.261477 max 0.6029412
+                                    value 0.6029412 0.3157895 0.261477 
 
 --plot.degree2(draw.plot=FALSE)
 
-plotmo.predict(type="vector") for  degree2 plot "pclass.num" and "parch.fac" with newdata[12,2]:
+plotmo.predict(type="vector") for degree2 plot "pclass.num:parch.fac" with newdata[12,2]:
     pclass.num parch.fac
 1            1      levz
 2            2      levz
@@ -169,7 +173,8 @@ plotmo.predict(type="vector") for  degree2 plot "pclass.num" and "parch.fac" wit
 
 factors: parch.fac 
 
-predict.rpart(xgrid, type="vector") returned length 12 min 0.261477 max 0.7483444 values 0.6029412 0.3157895 0.261477 0.7483444 0.7483444 0.261477 0.7483444 0.7483444 0.261477 0.7483444 ...
+predict.rpart(xgrid, type="vector") returned length 12 min 0.261477 max 0.7483444
+                                    value 0.6029412 0.3157895 0.261477 0.7483444 0.7483444 0.261477 0.7483444 0.7483444 0.261477 0.7483444 ...
 
 ylim 0 1 
 
@@ -323,7 +328,8 @@ nlevels: pclass.fac=3 parch.fac=3
 --get.plotmo.y
 
 got y from object$y
-get.plotmo.y returned length 152 min 0 max 1 values 1 1 0 0 0 1 1 0 1 0 ...
+get.plotmo.y returned length 152 min 0 max 1
+             value 1 1 0 0 0 1 1 0 1 0 ...
 
 clip.limits 0 1 
 
@@ -337,11 +343,12 @@ plotmo.predict(type="vector") for degree1 plot "parch.fac" with newdata[3,2]:
 
 factors: pclass.fac parch.fac 
 
-predict.rpart(xgrid, type="vector") returned length 3 min 0.6363636 max 0.6666667 values 0.6666667 0.6363636 0.6363636 
+predict.rpart(xgrid, type="vector") returned length 3 min 0.6363636 max 0.6666667
+                                    value 0.6666667 0.6363636 0.6363636 
 
 --plot.degree2(draw.plot=FALSE)
 
-plotmo.predict(type="vector") for  degree2 plot "pclass.fac" and "parch.fac" with newdata[9,2]:
+plotmo.predict(type="vector") for degree2 plot "pclass.fac:parch.fac" with newdata[9,2]:
     pclass.fac       parch.fac
 1          1st        lev.zero
 2          2nd        lev.zero
@@ -351,7 +358,8 @@ plotmo.predict(type="vector") for  degree2 plot "pclass.fac" and "parch.fac" wit
 
 factors: pclass.fac parch.fac 
 
-predict.rpart(xgrid, type="vector") returned length 9 min 0.1707317 max 0.8823529 values 0.6666667 0.3235294 0.1707317 0.6363636 0.8823529 0.4 0.6363636 0.8823529 0.4 
+predict.rpart(xgrid, type="vector") returned length 9 min 0.1707317 max 0.8823529
+                                    value 0.6666667 0.3235294 0.1707317 0.6363636 0.8823529 0.4 0.6363636 0.8823529 0.4 
 
 ylim 0.1707317 0.8823529 
 

@@ -15,7 +15,7 @@ plotmo.prolog.default <- function(object, env, object.name)
     # is a model object, to minimize confusing messages later
 
     if(!is.list(object))
-        stop0("'", object.name, "' is not a model object")
+        stop0("'", object.name, "' is not an S3 model object")
 }
 #------------------------------------------------------------------------------
 # Get the type to be used when plotmo's argument "type" is NULL (the default)
@@ -325,31 +325,24 @@ get.plotmo.y.default <- function(object, env, y.column, expected.len, trace)
     }
     y
 }
-get.plotmo.y.earth <- function(object, env, y.column, expected.len, trace)
-{
-    y <- get.plotmo.y.default(object, env, y.column, expected.len, trace)
-
-    # do the same processing on y as earth does, e.g. if y is a two
-    # level factor, convert it to an indicator column of 0s and 1s
-
-    y <- earth:::expand.arg(y, env, is.y.arg=TRUE, colnames(y))
-    if(length(colnames(y)) == 1 && colnames(y) == "y")
-        colnames(y) <- NULL # remove artificial colname added by expand.arg
-    # TODO revisit y.column handling here
-    if(!is.null(object$glm.list[[1]])) # if an earth.glm model, use y.column 1
-        y.column <- 1
-
-    list(y=y, y.column=y.column)
-}
-get.plotmo.y.bagEarth <- function(object, env, y.column, expected.len, trace)
-{
-    get.plotmo.y.earth(object, env, y.column, expected.len, trace)
-}
 #------------------------------------------------------------------------------
 # If object has a formula, use that formula to get x or y (field is "x" or "y").
 
 get.data.from.formula <- function(field, object, env, trace)
 {
+    print.unevaluated.model.frame <- function(msg, mf)
+    {
+        mf$na.action <- NULL # don't want to print the na.action
+        s <- format(mf)
+        if(length(s) > 8) {
+            s <- s[1:8]
+            s[8] <- paste(s[8], "\n...")
+        }
+        s <- gsub("[ \t\n]", "", s) # remove white space
+        s <- gsub(",", ", ", s)     # replace comma with comma space
+        s <- paste(s, collapse="\n    ", sep="")
+        cat0(msg, s, "\n")
+    }
     get.iformula <- function() # get the index of the formula in object$call
     {
         iformula <- match(c("formula"), names(call), 0)
@@ -401,7 +394,7 @@ get.data.from.formula <- function(field, object, env, trace)
     # TODO following is a hack for rpart's (special but useful) NA handling
     mf$na.action <- if(inherits(object, "rpart")) na.pass else na.fail
     if(trace >= 2)
-        my.print.call("about to eval ", mf)
+        print.unevaluated.model.frame("about to eval ", mf)
     evaluated.mf <- try(eval(mf, env))
     if(is.try.error(evaluated.mf)) {
         if(trace >= 2)

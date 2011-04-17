@@ -1,4 +1,7 @@
+# TODO! remove this file once earth 2.6-2 is safely in CRAN
+
 # plotmo.rpart.R: plotmo methods for earth objects
+# See the descriptions of the methods in plotmo:::plotmo.methods.R.
 
 get.plotmo.singles.earth <- function(object, env, x, trace, all1)
 {
@@ -65,6 +68,22 @@ get.plotmo.pairs.earth <- function(object, env, x, trace, ...)
     }
     pairs
 }
+get.plotmo.y.earth <- function(object, env, y.column, expected.len, trace)
+{
+    y <- plotmo:::get.plotmo.y.default(object, env, y.column, expected.len, trace)
+
+    # do the same processing on y as earth does, e.g. if y is a two
+    # level factor, convert it to an indicator column of 0s and 1s
+
+    y <- earth:::expand.arg(y, env, is.y.arg=TRUE, colnames(y))
+    if(length(colnames(y)) == 1 && colnames(y) == "y")
+        colnames(y) <- NULL # remove artificial colname added by expand.arg
+    # TODO revisit y.column handling here
+    if(!is.null(object$glm.list[[1]])) # if an earth.glm model, use y.column 1
+        y.column <- 1
+
+    list(y=y, y.column=y.column)
+}
 get.plotmo.pairs.bagEarth <- function(object, env, x, trace, ...)
 {
     pairs <- matrix(0, nrow=0, ncol=2)
@@ -72,4 +91,8 @@ get.plotmo.pairs.bagEarth <- function(object, env, x, trace, ...)
         pairs <- rbind(pairs,
                        get.plotmo.pairs.earth(object$fit[[i]], env, x, trace))
     pairs[order(pairs[,1], pairs[,2]),]
+}
+get.plotmo.y.bagEarth <- function(object, env, y.column, expected.len, trace)
+{
+    get.plotmo.y.earth(object, env, y.column, expected.len, trace)
 }

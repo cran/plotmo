@@ -43,6 +43,18 @@ plotmo.predict.lars <- function(object, newdata, type, se.fit, ...)
     # just a skeleton for now, s and mode not specified
     predict(object, newx=newdata, type=type)$fit
 }
+get.plotmo.default.type.bruto <- function(obj, ...)
+{
+    "fitted"
+}
+plotmo.predict.bruto <- function(object, newdata, type, se.fit, ...)
+{
+    if(se.fit)
+        stop0("predict.bruto does not support \"se\"")
+
+    # TODO fails: predict.bruto returned a response of the wrong length (got 31 expected 27)
+    predict(object, newx=as.matrix(newdata), type=type)
+}
 plotmo.predict.lda <- function(object, newdata, type, se.fit, trace)
 {
     if(se.fit)

@@ -13,12 +13,12 @@
 diff test.plotmo.fac.Rout test.plotmo.fac.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
-@diffps -s Rplots.ps ..\..\.#\test.plotmo.fac.save.ps
+@diffps -s Rplots.ps ..\..\.#\test-reference\test.plotmo.fac.save.ps
 @exit /B 1
 :good2
 @rem test.plotmo.fac.save.ps is too big to be included in the release
 @rem so it is stored elsewhere
-diffps Rplots.ps ..\..\.#\test.plotmo.fac.save.ps
+diffps Rplots.ps ..\..\.#\test-reference\test.plotmo.fac.save.ps
 @if %errorlevel% equ 0 goto good3:
 @echo === Files are different ===
 @exit /B 1

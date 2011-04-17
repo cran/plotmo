@@ -7,10 +7,12 @@ Loading required package: rpart
 > library(earth)
 Loading required package: leaps
 Loading required package: plotrix
+> source("fast.postscript.R")
 > data(etitanic)
 > options(warn=1) # print warnings as they occur
 > if(!interactive())
-+     postscript(paper="letter")
++     fast.postscript(paper="letter")
+Opening Rplots.ps 
 > et <- etitanic[, c("survived", "pclass", "sex", "age")]
 > et$pclassn <- as.numeric(et$pclass)
 > et <- et[c(30:80,330:380,630:680), ]
@@ -25,18 +27,140 @@ Loading required package: plotrix
 > 
 > set.seed(844)
 > a1 <- lm(survived~pclassn+sex, data=et)
-> plotmo(a1, all2=T, do.par=F, degree1=NA, degree2=1, center=TRUE, clip=F,
+> plotmo(a1, all2=T, do.par=F, degree1=NA, degree2=1, center=TRUE, clip=F, 
++        trace=1,
 +        main="a1: survived~pclassn+sex\n(default ndiscrete)",
 +        col.response=ifelse(et$survived, "black", "red"),
 +        pch.response=".", cex.response=2.5, jitter.response=.4, lab=c(1,1,1))
+
+--get.plotmo.x
+
+get.data.for.formula: using x from "et" passed to lm 
+got x with colnames from object$call$formula
+
+x[153,2]:
+    pclassn    sex
+31        1   male
+32        1   male
+33        1 female
+...       1 female
+741       3   male
+
+factors: sex 
+
+nlevels: pclassn=3 sex=2 
+
+--get.plotmo.y
+
+get.data.for.formula: using y from "et" passed to lm 
+got y from object$call$formula
+get.plotmo.y returned length 153 min 0 max 1
+             value 0 1 1 1 0 1 1 0 0 1 ...
+centered y length  153 min -0.4117647 max 0.5882353
+           value -0.4117647 0.5882353 0.5882353 0.5882353 -0.4117647 0.5882353 0.5882353 -0.4117647 -0.4117647 0.5882353 ...
+
+--plot.degree2(draw.plot=FALSE)
+
+plotmo.predict(type="response") for degree2 plot "pclassn:sex" with newdata[6,2]:
+    pclassn    sex
+1         1 female
+2         2 female
+3         3 female
+...       1   male
+3.1       3   male
+
+factors: sex 
+
+predict.lm(xgrid, type="response") returned length 6 min 0.03115047 max 0.9462358
+                                   value 0.9462358 0.7757674 0.6052991 0.3720872 0.2016188 0.03115047 
+centered y.predict length  24 min -0.4575426 max 0.4575426
+                   value 0.4575426 0.4575426 0.2870743 0.2870743 0.116606 0.116606 0.4575426 0.4575426 0.2870743 0.2870743 ...
+
+ylim -0.4575426 0.5882353 
+persp(pclassn:sex) theta 145 ylim -0.458 0.588 cex 0.66
 > 
 > set.seed(844)
-> plotmo(a1, degree1=1, all2=T, degree2=0, do.par=F, xflip=T, center=TRUE, clip=F,
+> plotmo(a1, degree1=1, all2=T, degree2=0, do.par=F, xflip=T, center=TRUE, clip=F, 
++        trace=2,
 +        grid.levels=list(sex="f"), ndiscrete=ndiscrete,
 +        main="pclassn with sex=\"female\"",
 +        col.smooth="lightblue",  lwd.smooth=2,
 +        col.response=ifelse(et$survived, "black", "red"),
 +        pch.response=".", cex.response=2.5, jitter.response=.4)
+
+--get.plotmo.x
+
+formula survived ~ pclassn + sex
+stripped formula survived~pclassn+sex
+get.data.for.formula: using x from "et" passed to lm 
+about to eval model.frame(formula=survived~pclassn+sex, data=structure(list(
+    survived=c(0L, 1L, 1L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 1L, 
+    1L, 1L, 0L, 1L, 1L, 1L, 1L, 0L, 0L, 0L, 1L, 1L, 1L, 1L, 0L, 
+    0L, 1L, 0L, 1L, 1L, 1L, 1L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 0L, 
+    1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 
+    0L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 
+    0L, 1L, 0L, 0L, 1L, 1L, 0L, 1L, 0L, 1L, 1L, 1L, 0L, 0L, 0L, 
+    0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, ...
+got x with colnames from object$call$formula
+
+x[153,2]:
+    pclassn    sex
+31        1   male
+32        1   male
+33        1 female
+...       1 female
+741       3   male
+
+factors: sex 
+
+nlevels: pclassn=3 sex=2 
+
+--get.plotmo.y
+
+formula survived ~ pclassn + sex
+stripped formula survived~pclassn+sex
+get.data.for.formula: using y from "et" passed to lm 
+about to eval model.frame(formula=survived~pclassn+sex, data=structure(list(
+    survived=c(0L, 1L, 1L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 1L, 
+    1L, 1L, 0L, 1L, 1L, 1L, 1L, 0L, 0L, 0L, 1L, 1L, 1L, 1L, 0L, 
+    0L, 1L, 0L, 1L, 1L, 1L, 1L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 0L, 
+    1L, 1L, 0L, 1L, 1L, 0L, 1L, 1L, 1L, 1L, 0L, 1L, 1L, 0L, 1L, 
+    0L, 0L, 1L, 1L, 0L, 1L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 0L, 0L, 
+    0L, 1L, 0L, 0L, 1L, 1L, 0L, 1L, 0L, 1L, 1L, 1L, 0L, 0L, 0L, 
+    0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, 1L, 0L, 0L, 0L, 0L, 0L, 0L, ...
+got y from object$call$formula
+get.plotmo.y returned length 153 min 0 max 1
+             value 0 1 1 1 0 1 1 0 0 1 ...
+centered y length  153 min -0.4117647 max 0.5882353
+           value -0.4117647 0.5882353 0.5882353 0.5882353 -0.4117647 0.5882353 0.5882353 -0.4117647 -0.4117647 0.5882353 ...
+
+--get.plotmo.singles
+
+singles: 1 pclassn 
+
+--get.plotmo.pairs
+
+pairs:
+     [,1] [,2]
+
+--plot.degree1(draw.plot=FALSE)
+
+plotmo.predict(type="response") for degree1 plot "pclassn" with newdata[3,2]:
+  pclassn    sex
+1       1 female
+2       2 female
+3       3 female
+
+factors: sex 
+
+predict.lm(xgrid, type="response") returned length 3 min 0.6052991 max 0.9462358
+                                   value 0.9462358 0.7757674 0.6052991 
+centered y.predict length  3 min -0.1704683 max 0.1704683
+                   value 0.1704683 0 -0.1704683 
+
+ylim -0.4117647 0.5882353 
+
+--plot.degree1(draw.plot=TRUE)
 
  grid:    pclassn    sex
                 2 female
