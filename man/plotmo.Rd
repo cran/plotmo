@@ -20,7 +20,7 @@ plotmo(object = stop("no 'object' arg"),
        col.smooth = 0, lty.smooth = 1, lwd.smooth = 1,
        se = 0, col.shade = "lightgray", col.se = 0, lty.se = 2,
        func = NULL, col.func = "lightblue", lty.func = 1, lwd.func = 1,
-       ngrid1 = 50,
+       ngrid1 = 50,  grid=FALSE,
        type2 = "persp", ngrid2 = 20,
        col.image = gray(0:10/10), col.persp = "lightblue",
        theta = NA, phi = 30, dvalue = 1, shade = 0.5,
@@ -263,6 +263,11 @@ To start off, look at the arguments
   \item{ngrid1}{
      Number of points in degree1 plots.
      Default is \code{50}.
+  }
+  \item{grid}{
+     Default \code{FALSE}.
+     Use \code{TRUE} to add a \code{\link{grid}} to the degree1 plots.
+     You can also specify a color here, e.g. \code{grid="darkgray"}.
   }
   \item{xlab}{
      Horizontal axis label on degree1 plots

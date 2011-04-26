@@ -70,6 +70,7 @@ plotmo <- function(object = stop("no 'object' arg"),
     lty.func    = 1,
     lwd.func    = 1,
     ngrid1      = 50,
+    grid        = FALSE,
     type2       = "persp",
     ngrid2      = 20,
     col.image   = gray(0:10/10),
@@ -99,7 +100,8 @@ plotmo <- function(object = stop("no 'object' arg"),
                         pch.response, jitter.response, iresponse,
                         col.smooth, lty.smooth, lwd.smooth,
                         inverse.func, grid.func, grid.levels,
-                        ngrid1, col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se,
+                        ngrid1, grid,
+                        col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se,
                         col.shade, func, col.func, lty.func, lwd.func, nrug,
                         draw.plot=FALSE,
                         x, y, singles, ylims, xlevs, ndiscrete, func.name, pred.names,
@@ -291,7 +293,8 @@ plotmo <- function(object = stop("no 'object' arg"),
                     pch.response, jitter.response, iresponse,
                     col.smooth, lty.smooth, lwd.smooth,
                     inverse.func, grid.func, grid.levels,
-                    ngrid1, col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se,
+                    ngrid1, grid,
+                    col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se,
                     col.shade, func, col.func, lty.func, lwd.func, nrug,
                     draw.plot=TRUE,
                     x, y, singles, ylims, xlevs, ndiscrete, func.name, pred.names,
@@ -607,7 +610,8 @@ plot.degree1 <- function(
     col.response, cex.response, pch.response, jitter.response, iresponse,
     col.smooth, lty.smooth, lwd.smooth,
     inverse.func, grid.func, grid.levels,
-    ngrid1, col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se, col.shade,
+    ngrid1, grid,
+    col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se, col.shade,
     func, col.func, lty.func, lwd.func, nrug,
     # args generated in plotmo, draw.plot=FALSE means get ylims but don't actually plot
     draw.plot,
@@ -801,6 +805,8 @@ plot.degree1 <- function(
                 }
             }
             #--- draw.degree1.fac starts here
+            if(!identical(grid, FALSE))
+                grid(col=grid, lty=1, nx=NA, ny=NULL) # horizontal grid
             if(!is.null(y.se.lower))
                 draw.se.fac()
             if(!is.zero(col.response))
@@ -841,6 +847,8 @@ plot.degree1 <- function(
                 }
             }
             #--- draw.degree1.numeric starts here
+            if(!identical(grid, FALSE))
+                grid(col=grid, lty=1)
             if(!is.null(y.se.lower))
                 draw.se.numeric()
             draw.degree1.func(func, func.name, # draw the func arg, if specified
@@ -886,16 +894,24 @@ plot.degree1 <- function(
              font=eval(dots$font), font.axis=eval(dots$font.axis),
              lab=eval(dots$lab), mgp=eval(dots$mgp))
 
-        # add horizontal gray lines if ylim was 0,1 but is no longer 0,1
-        # because it was expanded for space for jittered points
-        # TODO do this any time y is discrete with just a few levels?
-        if(yjitter && all(preadjusted.ylim == c(0,1))) {
-            abline(h=preadjusted.ylim[1], col="gray", lwd=.6)
-            abline(h=preadjusted.ylim[2], col="gray", lwd=.6)
+        if(identical(grid, FALSE) || is.na(grid)) { # no grid?
+            if(is.na(grid)) # be lenient, allow NA
+                grid <- FALSE
+            if(center)
+                abline(h=0, col="gray", lwd=.6)
+            # add horizontal gray lines if ylim was 0,1 but is no longer 0,1
+            # because it was expanded for space for jittered points
+            # TODO do this any time y is discrete with just a few levels?
+            if(yjitter && all(preadjusted.ylim == c(0,1))) {
+                abline(h=preadjusted.ylim[1], col="gray", lwd=.6)
+                abline(h=preadjusted.ylim[2], col="gray", lwd=.6)
+            }
+        } else {        # want grid
+            stopifnot(is.numeric(grid) || is.logical(grid) || is.character(grid))
+            if(is.logical(grid))    # grid=TRUE?
+                grid <- "lightgray" # default color
         }
-        if(center)
-            abline(h=0, col="gray", lwd=.6)
-        if(is.fac.x)  # x[,ipred] is a factor?
+        if(is.fac.x)    # x[,ipred] is a factor?
             draw.degree1.fac()
         else
             draw.degree1.numeric()

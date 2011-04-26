@@ -1,6 +1,13 @@
 Changes to plotmo Package
 -------------------------
 
+--- 1.2-4 Apr 27, 2011
+
+Removed hooks for the earth package (which are no longer necessary 
+   with earth 2.6-2).  The file plotmo.methods.R was deleted.
+
+Added the grid argument.
+
 --- 1.2-3 Apr 17, 2011
 
 This package no longer needs the earth package.  However the current
@@ -44,4 +51,4 @@ factor predictors.  Fixed that.
 
 --- 1.0-0 Mar 31, 2011
 
-Initial release.  Moved plotmo from the earth 2.5-1 to here.
+Initial release.  Moved plotmo from earth 2.5-1 to here.
