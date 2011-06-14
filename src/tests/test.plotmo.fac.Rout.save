@@ -123,7 +123,7 @@ names(et): survived pclass.fac parch.num parch.fac pclass.num
                  1st         0
 
 
---get.plotmo.x
+--get.plotmo.x for rpart object
 
 get.data.for.formula: using x from "et" passed to rpart 
 got x with colnames from object$call$formula
@@ -140,7 +140,7 @@ factors: parch.fac
 
 nlevels: pclass.num=3 parch.fac=4 
 
---get.plotmo.y
+--get.plotmo.y for rpart object
 
 got y from object$y
 get.plotmo.y returned length 1046 min 0 max 1
@@ -308,7 +308,7 @@ Warning: forcing clip=FALSE because center=TRUE (a limitation of the current imp
 Levels: lev.zero lev.one lev.two.or.more
 names(et): survived pclass.fac parch.num parch.fac pclass.num 
 
---get.plotmo.x
+--get.plotmo.x for rpart object
 
 get.data.for.formula: using x from "et" passed to rpart 
 got x with colnames from object$call$formula
@@ -325,7 +325,7 @@ factors: pclass.fac parch.fac
 
 nlevels: pclass.fac=3 parch.fac=3 
 
---get.plotmo.y
+--get.plotmo.y for rpart object
 
 got y from object$y
 get.plotmo.y returned length 152 min 0 max 1

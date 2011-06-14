@@ -1,10 +1,18 @@
 Changes to plotmo Package
 -------------------------
 
+--- 1.2-5 Jun 11, 2011
+
+Fixed an incorrect stop when trace>0 and x had no column names.
+We no longer print the plot index in the plot title when all1 or
+   all2 specified but also degree1 and degree2.
+Added get.plotmo.default.type.fda
+Touchups to the documentation.
+
 --- 1.2-4 Apr 27, 2011
 
-Removed hooks for the earth package (which are no longer necessary 
-   with earth 2.6-2).  The file plotmo.methods.R was deleted.
+Removed hooks for the earth package (which are no longer necessary
+  with earth 2.6-2).  The file plotmo.methods.R was deleted.
 
 Added the grid argument.
 

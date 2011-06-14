@@ -88,6 +88,7 @@ get.plotmo.singles <- function(object, env, x, trace, all1)
 }
 get.plotmo.singles.default <- function(object, env, x, ...)
 {
+    stopifnot(NCOL(x) >= 1)
     1 : ncol(x)
 }
 #------------------------------------------------------------------------------
@@ -182,7 +183,7 @@ plotmo.predict.default <- function(object, newdata, type, se.fit, trace)
 get.plotmo.x <- function(object, env, trace)
 {
     if(trace)
-        cat("\n--get.plotmo.x\n\n")
+        cat("\n--get.plotmo.x for", class(object)[1], "object\n\n")
     UseMethod("get.plotmo.x")
 }
 # The default function tries hard to get x regardless of the model.
@@ -203,7 +204,8 @@ get.plotmo.x.default <- function(object, env, trace)
     # This check suffices to prevent most downstream error messages for objects
     # that don't have the fields required for the default plotmo methods.
     if(is.null(object$call) && is.null(object[["x"]]))
-        stop0("this object is not supported by plotmo")
+        stop0("this object is not supported by plotmo (object's class is ",
+              paste.quoted.names(class(object)), ")")
 
     try.error.message <- NULL
     x <- object.x <- object[["x"]] # use [["x"]] rather than $x to prevent partial match
@@ -266,7 +268,7 @@ get.plotmo.x.default <- function(object, env, trace)
 get.plotmo.y <- function(object, env, y.column, expected.len, trace)
 {
     if(trace)
-        cat("\n--get.plotmo.y\n\n")
+        cat("\n--get.plotmo.y for", class(object)[1], "object\n\n")
     UseMethod("get.plotmo.y")
 }
 get.plotmo.y.default <- function(object, env, y.column, expected.len, trace)

@@ -56,7 +56,7 @@ Opening Rplots.ps
 > a <- earth(O3 ~ ., data=ozone1, degree=2)
 > plotmo(a, degree1=2, degree2=4, caption=caption, trace=TRUE)
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 get.data.for.formula: using x from "ozone1" passed to earth 
 got x with colnames from object$call$formula
@@ -71,7 +71,7 @@ x[330,9]:
 
 nlevels: vh=53 wind=11 humidity=65 temp=63 ibh=196 dpg=128 ibt=193 vis=24 doy=325 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 get.data.for.formula: using y from "ozone1" passed to earth 
 got y from object$call$formula
@@ -119,7 +119,7 @@ persp(ibh:dpg) theta 235 ylim 3.95 15.7 cex 0.83
 > a <- earth(O3 ~ ., data=ozone1, nk=51, pmethod="n", degree=2)
 > plotmo(a, xlab="", ylab="", caption=caption, trace=1)
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 get.data.for.formula: using x from "ozone1" passed to earth 
 got x with colnames from object$call$formula
@@ -134,7 +134,7 @@ x[330,9]:
 
 nlevels: vh=53 wind=11 humidity=65 temp=63 ibh=196 dpg=128 ibt=193 vis=24 doy=325 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 get.data.for.formula: using y from "ozone1" passed to earth 
 got y from object$call$formula
@@ -197,7 +197,7 @@ persp(ibt:vis) theta -35 ylim 1.16 36.3 cex 0.66
 > a <- earth(O3 ~ ., data=ozone1, nk=30, pmethod="n", degree=2)
 > plotmo(a, xlab="", ylab="ozone", caption=caption, trace=2)
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 formula O3 ~ .
 stripped formula O3~.
@@ -222,7 +222,7 @@ x[330,9]:
 
 nlevels: vh=53 wind=11 humidity=65 temp=63 ibh=196 dpg=128 ibt=193 vis=24 doy=325 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 formula O3 ~ .
 stripped formula O3~.
@@ -241,11 +241,11 @@ get.plotmo.y returned length 330 min 1 max 38
 
 clip.limits 1 38 
 
---get.plotmo.singles
+--get.plotmo.singles for earth object
 
 singles: 4 temp, 5 ibh, 7 ibt, 8 vis, 9 doy 
 
---get.plotmo.pairs
+--get.plotmo.pairs for earth object
 
 pairs:
       [,1]         [,2]    
@@ -1523,7 +1523,7 @@ persp(ibh:dpg) theta 235 ylim 1.17 35.3 cex 0.66
 > a <- earth(O3 ~ ., data=ozone1, nk=16, pmethod="n", degree=2)
 > plotmo(a, xlab="", ylab="", caption=caption, trace=3)
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 formula O3 ~ .
 stripped formula O3~.
@@ -1895,7 +1895,7 @@ x[330,9]:
 
 nlevels: vh=53 wind=11 humidity=65 temp=63 ibh=196 dpg=128 ibt=193 vis=24 doy=325 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 formula O3 ~ .
 stripped formula O3~.
@@ -1922,11 +1922,11 @@ get.plotmo.y returned length 330 min 1 max 38
 
 clip.limits 1 38 
 
---get.plotmo.singles
+--get.plotmo.singles for earth object
 
 singles: 4 temp, 5 ibh, 8 vis, 9 doy 
 
---get.plotmo.pairs
+--get.plotmo.pairs for earth object
 
 pairs:
      [,1]         [,2]    
@@ -3960,7 +3960,7 @@ GCV 8498.516    RSS 2498879    GRSq 0.2222847    RSq 0.3028199
 > func1()
                               test environments and finding the correct data 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 get.data.for.formula: using x from "oz" passed to earth 
 got x with colnames from object$call$formula
@@ -3975,7 +3975,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 get.data.for.formula: using y from "oz" passed to earth 
 got y from object$call$formula
@@ -4016,7 +4016,7 @@ ylim 2 34
             80       68
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 got x with colnames from object$call$x
 
@@ -4030,7 +4030,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 got y from object$call$y
 get.plotmo.y returned length 51 min 2 max 34
@@ -4070,7 +4070,7 @@ ylim 2 34
             80       68
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 get.data.for.formula: using x from "oz" passed to earth 
 got x with colnames from object$call$formula
@@ -4085,7 +4085,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 get.data.for.formula: using y from "oz" passed to earth 
 got y from object$call$formula
@@ -4126,7 +4126,7 @@ ylim 2 34
             80       68
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 got x with colnames from object$call$x
 
@@ -4140,7 +4140,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 got y from object$call$y
 get.plotmo.y returned length 51 min 2 max 34
@@ -4180,7 +4180,7 @@ ylim 2 34
             80       68
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 get.data.for.formula: using x from "oz" passed to earth 
 got x with colnames from object$call$formula
@@ -4195,7 +4195,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 get.data.for.formula: using y from "oz" passed to earth 
 got y from object$call$formula
@@ -4236,7 +4236,7 @@ ylim 20 340
            800      680
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 got x with colnames from object$call$x
 
@@ -4250,7 +4250,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 got y from object$call$y
 get.plotmo.y returned length 51 min 20 max 340
@@ -4290,7 +4290,7 @@ ylim 20 340
            800      680
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 get.data.for.formula: using x from "oz10" passed to earth 
 got x with colnames from object$call$formula
@@ -4305,7 +4305,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 get.data.for.formula: using y from "oz10" passed to earth 
 got y from object$call$formula
@@ -4346,7 +4346,7 @@ ylim 20 340
            800      680
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 got x with colnames from object$call$x
 
@@ -4360,7 +4360,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 got y from object$call$y
 get.plotmo.y returned length 51 min 20 max 340
@@ -4401,7 +4401,7 @@ ylim 20 340
 
                               test environments and finding the correct data, continued 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 get.data.for.formula: using x from "oz" passed to earth 
 got x with colnames from object$call$formula
@@ -4416,7 +4416,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 get.data.for.formula: using y from "oz" passed to earth 
 got y from object$call$formula
@@ -4457,7 +4457,7 @@ ylim 0.2 3.4
              8      6.8
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 got x with colnames from object$call$x
 
@@ -4471,7 +4471,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 got y from object$call$y
 get.plotmo.y returned length 51 min 0.2 max 3.4
@@ -4511,7 +4511,7 @@ ylim 0.2 3.4
              8      6.8
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 get.data.for.formula: using x from object$data 
 got x with colnames from object$call$formula
@@ -4526,7 +4526,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 get.data.for.formula: using y from object$data 
 got y from object$call$formula
@@ -4567,7 +4567,7 @@ ylim 20 340
            800      680
 
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 got x with colnames from object$x
 
@@ -4581,7 +4581,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 got y from object$y
 get.plotmo.y column "oz[,1]" returned length 51 min 20 max 340
@@ -4624,7 +4624,7 @@ Error in plotmo(a.oz10, do.par = FALSE, main = "func1:a.oz10", degree1 = 1,  :
   formal argument "do.par" matched by multiple actual arguments
 Expect error msg (because get.plotmo.x calculated using oz.1 i.e. func2.oz)
 
---get.plotmo.x
+--get.plotmo.x for earth object
 
 got x with colnames from object$call$x
 
@@ -4638,7 +4638,7 @@ x[51,2]:
 
 nlevels: temp=27 humidity=27 
 
---get.plotmo.y
+--get.plotmo.y for earth object
 
 got y from object$call$y
 get.plotmo.y returned length 51 min 0.2 max 3.4
@@ -4677,7 +4677,7 @@ Error : all predicted values are out of the range of the original response, try 
 
 ==lm.18.out
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 got x with colnames from object$call$formula
 
@@ -4691,7 +4691,7 @@ x[9,2]:
 
 nlevels: x1=6 x2=9 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 got y from object$call$formula
 get.plotmo.y returned length 9 min 3 max 19
@@ -4717,7 +4717,7 @@ predict.lm(xgrid, type="response") returned length 6 min 7 max 7
                                    value 7 7 7 7 7 7 
 ==lm.18
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 got x with colnames from object$call$formula
 
@@ -4731,7 +4731,7 @@ x[9,2]:
 
 nlevels: x1=6 x2=9 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 got y from object$call$formula
 get.plotmo.y returned length 9 min 3 max 19
@@ -4757,7 +4757,7 @@ predict.lm(xgrid, type="response") returned length 6 min 4.830107 max 10.10783
                                    value 10.10783 9.797372 9.176464 8.86601 8.555556 4.830107 
 ==lm.18.keep
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 got x with colnames from object$x
 
@@ -4771,7 +4771,7 @@ x[9,2]:
 
 nlevels: x1=6 x2=9 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 got y from object$y
 get.plotmo.y returned length 9 min 3 max 19
@@ -4797,7 +4797,7 @@ predict.lm(xgrid, type="response") returned length 6 min 4.830107 max 10.10783
                                    value 10.10783 9.797372 9.176464 8.86601 8.555556 4.830107 
 ==lm.18.frame
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 get.data.for.formula: using x from "frame" passed to lm 
 got x with colnames from object$call$formula
@@ -4812,7 +4812,7 @@ x[9,2]:
 
 nlevels: x1=6 x2=9 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 get.data.for.formula: using y from "frame" passed to lm 
 got y from object$call$formula
@@ -5451,7 +5451,7 @@ Error : the breaks argument is illegal for type2="contour"
 > 
 > lm.bad <- lm.fit(as.matrix(ozone1[,-1]), as.matrix(ozone1[,1]))
 > try(plotmo(lm.bad))          # expect Error: this object is not supported by plotmo
-Error : this object is not supported by plotmo
+Error : this object is not supported by plotmo (object's class is "list")
 > try(plotmo(99))              # expect Error: '99' is not a model object
 Error : '99' is not an S3 model object
 > 
@@ -5552,7 +5552,7 @@ Warning: non-finite values returned by get.plotmo.y
 + }
 > foo9()
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 Error : plotmo: names with "$" are not yet supported.
 The offending formula is y ~ x[, 1] + x[, my.list$j]

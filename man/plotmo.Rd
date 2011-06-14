@@ -32,7 +32,8 @@ plotmo(object = stop("no 'object' arg"),
 To start off, look at the arguments
   \code{object},
   \code{type},
-  and \code{clip}.
+  \code{clip},
+  and \code{col.response}.
 
   \item{object}{
      Model object.
@@ -130,7 +131,7 @@ To start off, look at the arguments
      \code{plotmo(fit, grid.levels=list(sex="m", age=21))}.
      }
   \item{col.response}{
-     Color of response points (response sites in degree2 plots).
+     Color of response points (or response sites in degree2 plots).
      This refers to the response \code{y} in the data
      used to build the model.
      Default is 0, don't plot the response.
@@ -408,14 +409,19 @@ is called.
 
 \bold{Alternatives}
 
-An alternative approach is to use partial dependence plots
+An alternative approach is to use partial-dependence plots
 (e.g. \emph{The Elements of Statistical Learning} 10.13.2).
 \code{Plotmo} sets the ``other'' variables to their median
-value, whereas in a partial dependence plot at each plotted point the
+value, whereas in a partial-dependence plot at each plotted point the
 effect of the other variables is averaged.
-(Eventually \code{plotmo} will be enhanced to draw partial dependence plots.)
+In general, partial-dependence plots and \code{plotmo} plots will
+differ, but for additive models the \emph{shape} of the curves will
+match identically.
+Eventually \code{plotmo} will be enhanced to draw
+partial-dependence plots.
+
 % There appears to be no general-purpose R function similar to
-% \code{plotmo} for drawing partial dependence plots.
+% \code{plotmo} for drawing partial-dependence plots.
 % An example special purpose function is \code{\link[randomForest]{partialPlot}} in the
 % \code{\link[randomForest]{randomForest}} package.
 % Averaging over the sample at every point is a slow process
@@ -426,6 +432,13 @@ effect of the other variables is averaged.
 \code{\link[=termplot]{Termplot}} is effective but can be used only on
 models with a \code{predict} method that supports \code{type="terms"},
 and it does not generate degree2 plots.
+
+Some other possibilites for plotting the response on a per-predictor
+basis are partial-residual plots, partial-regression variable plots, and 
+marginal-model plots (e.g.  \code{\link[car]{crPlots}},
+\code{\link[car]{avPlots}}, and \code{\link[car]{marginalModelPlot}} in the
+\code{\link[car]{car-package}}).
+These plots are orientated towards linear models.
 
 \bold{Which variables are plotted?}
 
@@ -498,12 +511,12 @@ shouldn't be taken too seriously.)
     library(randomForest)                                   # randomForest
     rf.model <- randomForest(O3~., data=oz)
     plotmo(rf.model)
-    # partialPlot(rf.model, oz, temp) # compare to partial dependence plot
+    # partialPlot(rf.model, oz, temp) # compare to partial-dependence plot
 
     library(gbm)                                            # gbm
     gbm.model <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=1000)
     plotmo(gbm.model)
-    # plot(gbm.model, i.var=2) # compare to partial dependence plots
+    # plot(gbm.model, i.var=2) # compare to partial-dependence plots
     # plot(gbm.model, i.var=c(2,3))
 
     library(mgcv)                                           # gam
@@ -555,7 +568,8 @@ The methods are:
 
 The message is probably issued by the \code{predict} method for your
 model \code{object}.
-See the appropriate \code{\link{predict}} help page.
+Set \code{type} to a legal value as described
+on the help page for the \code{\link{predict}} method for your object.
 
 %spacer
 \bold{o}\code{ Error: predicted values are out of ylim, try clip=FALSE}
@@ -623,7 +637,7 @@ See the section ``Which variables are plotted?''.
 \bold{o} \emph{The \code{persp} display is unnaturally jagged. How can I change that?}
 
 Use \code{clip=FALSE}.
-The jaggedness is probably an artifact of the way  \code{\link{persp}} works
+The jaggedness is probably an artifact of the way \code{\link{persp}} works
 at the boundaries.
 You can also try increasing \code{ngrid2}.
 

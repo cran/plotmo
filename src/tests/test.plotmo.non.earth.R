@@ -568,6 +568,44 @@ ir.nn2 <- nnet(species ~ ., data = ird, subset = samp, size = 2, rang = 0.1,
 plotmo(ir.nn2, type="class", trace=2, all2=T, degree2=2:6)
 plotmo(ir.nn2, nresponse=2, clip=F, all2=T, degree2=1:5)
 
+#--- fda ------------------------------------------------------------------------------
+
+par(mfrow=c(1,1))
+
+par(mfrow=c(4,5))
+par(mar = c(3, 2, 3, .1)) # b, l, t, r
+par(mgp = c(1.5, .5, 0))
+fda.earth <- fda(Species~., data=iris, keep.fitted=TRUE, method=earth, keepxy=TRUE, trace=0)
+fda.polyreg <- fda(Species~., data=iris, keep.fitted=TRUE, keepxy=TRUE)
+fda.bruto <- fda(Species~., data=iris, keep.fitted=TRUE, method=bruto)
+
+# expect Error: this object is nor supported by plotmo
+try(plotmo(fda.polyreg$fit, type="variates", nresponse=1, clip=F, do.par=F))
+
+plot(1, main="plotmo with fda", xaxt="n", yaxt="n", xlab="", ylab="", 
+     type="n", bty="n", cex.main=1.2, xpd=NA)
+
+plotmo(fda.earth, type="variates", nresponse=1, clip=F, do.par=F)
+
+plot(1, main="plotmo with fda.earth$fit", xaxt="n", yaxt="n", xlab="", ylab="", 
+     type="n", bty="n", cex.main=1.2, xpd=NA)
+
+plotmo(fda.earth$fit, nresponse=1, clip=F, do.par=F)
+
+plot(1, main="", xaxt="n", yaxt="n", xlab="", ylab="", 
+     type="n", bty="n", cex.main=1.5, xpd=NA)
+
+plot(fda.earth)
+plotmo(fda.earth, clip=F, do.par=F, trace=2) # default type is class
+
+plot(fda.polyreg)
+plotmo(fda.polyreg, type="variates", nresponse=1, clip=F, do.par=F, trace=2, degree1=c(1,3,4))
+plot(1, main="", xaxt="n", yaxt="n", xlab="", ylab="", 
+     type="n", bty="n", cex.main=1.5, xpd=NA)
+
+# plot(fda.bruto)
+# plotmo(fda.bruto, type="variates", nresponse=1, clip=F, do.par=F)
+
 if(!interactive()) {
     dev.off()         # finish postscript plot
     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs

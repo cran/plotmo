@@ -226,10 +226,12 @@ print.first.few.rows <- function(x, trace, msg="x", msg2="")
     if(is.null(colnames(x)))
         colnames(x) <- paste("V", 1:ncol(x))
     xnew <- x
-    nprint <- if(trace >= 3) 1e4 else 3
-    if(nprint < nrow(x)-2) {
-        xnew <- x[c(1:(nprint+1), nrow(x)), , drop=FALSE]
-        rownames(xnew)[nprint+1] <- "..."
+    nprint <- if(trace >= 3) 1000 else 5
+    if(nprint < nrow(x)) {
+        xnew <- x[c(1:(nprint-1), nrow(x)), , drop=FALSE]
+        if(is.null(rownames(xnew)))
+            rownames(xnew) <- c(1:(nprint-1), nrow(x))
+        rownames(xnew)[nprint-2+1] <- "..."
     }
     print(xnew)
     is.fac <- sapply(x, is.factor)

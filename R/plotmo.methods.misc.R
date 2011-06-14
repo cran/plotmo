@@ -93,3 +93,29 @@ get.lda.yhat <- function(object, yhat, type, trace)
     }
     yhat1
 }
+get.plotmo.default.type.fda <- function(obj, ...)
+{
+    "class"
+}
+# TODO Following commented out because polyreg is not supported by plotmo
+# So with comment out we support plotmo(fda.object) but not plotmo(fda.object$fit).
+# If not not commented out, we would support neither.
+#
+# get.plotmo.singles.fda <- function(object, env, x, trace, all1)
+# {
+#   if(trace) {
+#       trace <- 2
+#       cat("Invoking get.plotmo.x.wrapper for embedded fda object\n")
+#   }
+#   x <- get.plotmo.x.wrapper(object$fit, env, trace)
+#     get.plotmo.singles(object$fit, env, x, trace, all1)
+# }
+# get.plotmo.pairs.fda <- function(object, env, x, trace, all2)
+# {
+#   if(trace) {
+#       trace <- 2
+#       cat("Invoking get.plotmo.x.wrapper for embedded fda object\n")
+#   }
+#   x <- get.plotmo.x.wrapper(object$fit, env, trace)
+#     get.plotmo.pairs(object$fit, env, x, trace, all2)
+# }

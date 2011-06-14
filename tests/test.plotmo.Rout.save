@@ -9,7 +9,7 @@
 > rpart.model <- rpart(Kyphosis~., data=kyphosis)
 > plotmo(rpart.model, type="vec", trace=2)
 
---get.plotmo.x
+--get.plotmo.x for rpart object
 
 formula Kyphosis ~ .
 stripped formula Kyphosis~.
@@ -34,7 +34,7 @@ x[81,3]:
 
 nlevels: Age=64 Number=8 Start=16 
 
---get.plotmo.y
+--get.plotmo.y for rpart object
 
 got y from object$y
 get.plotmo.y returned length 81 min 1 max 2
@@ -42,11 +42,11 @@ get.plotmo.y returned length 81 min 1 max 2
 
 clip.limits 1 2 
 
---get.plotmo.singles
+--get.plotmo.singles for rpart object
 
 singles: 1 Age, 3 Start 
 
---get.plotmo.pairs
+--get.plotmo.pairs for rpart object
 
 pairs:
      [,1]    [,2]     

@@ -33,7 +33,7 @@ Opening Rplots.ps
 +        col.response=ifelse(et$survived, "black", "red"),
 +        pch.response=".", cex.response=2.5, jitter.response=.4, lab=c(1,1,1))
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 get.data.for.formula: using x from "et" passed to lm 
 got x with colnames from object$call$formula
@@ -50,7 +50,7 @@ factors: sex
 
 nlevels: pclassn=3 sex=2 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 get.data.for.formula: using y from "et" passed to lm 
 got y from object$call$formula
@@ -88,7 +88,7 @@ persp(pclassn:sex) theta 145 ylim -0.458 0.588 cex 0.66
 +        col.response=ifelse(et$survived, "black", "red"),
 +        pch.response=".", cex.response=2.5, jitter.response=.4)
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 formula survived ~ pclassn + sex
 stripped formula survived~pclassn+sex
@@ -115,7 +115,7 @@ factors: sex
 
 nlevels: pclassn=3 sex=2 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 formula survived ~ pclassn + sex
 stripped formula survived~pclassn+sex
@@ -134,11 +134,11 @@ get.plotmo.y returned length 153 min 0 max 1
 centered y length  153 min -0.4117647 max 0.5882353
            value -0.4117647 0.5882353 0.5882353 0.5882353 -0.4117647 0.5882353 0.5882353 -0.4117647 -0.4117647 0.5882353 ...
 
---get.plotmo.singles
+--get.plotmo.singles for lm object
 
 singles: 1 pclassn 
 
---get.plotmo.pairs
+--get.plotmo.pairs for lm object
 
 pairs:
      [,1] [,2]

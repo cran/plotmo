@@ -481,8 +481,8 @@ get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1)
         stop0("degree1 must be an index vector (numeric or logical)")
     }
     if(trace >= 2)
-        cat("\n--get.plotmo.singles\n\n")
-    singles <- get.plotmo.singles(object, env, x, trace >= 2, all1)
+        cat("\n--get.plotmo.singles for", class(object)[1], "object\n\n")
+    singles <- get.plotmo.singles(object, env, x, trace >=2 , all1)
     if(length(singles))
         singles <- sort(unique(singles))
     nsingles <- length(singles)
@@ -507,7 +507,7 @@ get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
         stop0("degree2 must be an index vector (numeric or logical)")
     }
     if(trace >= 2)
-        cat("\n--get.plotmo.pairs\n\n")
+        cat("\n--get.plotmo.pairs for", class(object)[1], "object\n\n")
     pairs <- get.plotmo.pairs(object, env, x, trace >= 2, all2)
     if(!NROW(pairs) || !NCOL(pairs))
         pairs <- NULL
@@ -690,9 +690,8 @@ plot.degree1 <- function(
         get.main1 <- function(main, isingle, nfigs, degree1, all1, pred.names, ipred)
         {
             main <- ""
-            # show degree1 plot numbers in headers if plotting all predictors
-            if(nfigs > 1 && (!is.specified(degree1) || all1))
-                main <- paste0(isingle, " ")
+            if(nfigs > 1 && !is.specified(degree1))
+                main <- paste0(isingle, " ") # show plot number in headers
             paste(main, pred.names[ipred])
         }
         get.degree1.xlim <- function()
@@ -1124,9 +1123,8 @@ plot.degree2 <- function(
                               pred.names, ipred1, ipred2)
         {
             main <- ""
-            # show degree2 plot numbers in headers if plotting all predictors
-            if(nfigs > 1 && (!is.specified(degree2) || all2))
-                main <- paste0(ipair, " ")
+            if(nfigs > 1 && !is.specified(degree2))
+                main <- paste0(ipair, " ") # show plot number in headers
             if(swapxy)
                 paste0(main, pred.names[ipred2], ": ", pred.names[ipred1])
             else
@@ -1134,7 +1132,8 @@ plot.degree2 <- function(
         }
         #--- draw.plot.degree2 starts here
         main <- get.main(main, nsingles+ipair, get.main2,
-                         nfigs, degree2, all2, ipair, pred.names, ipred1, ipred2)
+                         nfigs, degree2, all2, ipair, pred.names,
+                         ipred1, ipred2)
         if(is.null(ylim))           # same ylim for each graph? (actually zlim)
             ylim <- ylims
         else if(is.na(ylim[1])) {   # each graph has its own ylim?
@@ -1172,8 +1171,8 @@ plot.degree2 <- function(
     xgrid <- get.degree2.xgrid(x, grid.func, grid.levels, pred.names, ngrid2)
     response.name <- NULL
     for(ipair in 1:npairs) {
-        ipred1 <- pairs[ipair,1]        # index of first predictor
-        ipred2 <- pairs[ipair,2]        # index of second predictor
+        ipred1 <- pairs[ipair,1]  # index of first predictor
+        ipred2 <- pairs[ipair,2]  # index of second predictor
         if(ipair > 1 && trace1 == 1)    # trace only the first graph if trace=1
             trace1 <- 0
 
@@ -1495,10 +1494,10 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
                 cat("\n")
                 print.first.few.rows(y, trace, paste0(msg, " returned "))
                 if(!is.null(colnames))
-                    msg1 <- paste0("       Specify a column index like nresponse=2 or ",
-                                   "a column name like nresponse=\"", colnames[2], "\"")
+                    msg1 <- paste0("       Specify a column index like nresponse=1 or ",
+                                   "a column name like nresponse=\"", colnames[1], "\"")
                 else
-                    msg1 <- paste0("       Specify a column index like nresponse=2")
+                    msg1 <- paste0("       Specify a column index like nresponse=1")
                 stop0("predicted response has multiple columns (see above) ",
                       "but nresponse is not specified.\n", msg1)
             }

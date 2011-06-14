@@ -145,7 +145,7 @@ Opening Rplots.ps
 > if(length(grep("package:gam", search())))
 +     detach("package:gam")
 > library(mgcv)
-This is mgcv 1.7-5. For overview type 'help("mgcv-package")'.
+This is mgcv 1.7-6. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test plot.gam, with mgcv::gam(y ~ s(x) + s(x,z)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -165,7 +165,7 @@ This is mgcv 1.7-5. For overview type 'help("mgcv-package")'.
 +       func=test1, col.func="indianred", lwd.func=5, lty.func=2, trace=2,
 +       col.axis=4, col.lab=2, font=2, font.axis=3, lab=c(2,2,7), lwd.smooth=3, mgp=c(.1,.5,.2))
 
---get.plotmo.x
+--get.plotmo.x for gam object
 
 formula y ~ s(x) + s(x, z)
 stripped formula y~x+x+z
@@ -183,7 +183,7 @@ x[100,2]:
 
 nlevels: x=100 z=100 
 
---get.plotmo.y
+--get.plotmo.y for gam object
 
 got y from object$y
 get.plotmo.y returned length 100 min -0.09294014 max 0.8425504
@@ -191,11 +191,11 @@ get.plotmo.y returned length 100 min -0.09294014 max 0.8425504
 
 clip.limits -0.09294014 0.8425504 
 
---get.plotmo.singles
+--get.plotmo.singles for gam object
 
 singles: 1 x, 2 z 
 
---get.plotmo.pairs
+--get.plotmo.pairs for gam object
 
 term.labels: s(x) s(x, z) 
 considering s(x)
@@ -424,7 +424,7 @@ GCV 0.1079334    RSS 28.75354    GRSq 0.8078581    RSq 0.8439443
 > my.func <- function(x) -60 + 5 * x[,1] + x[,2] / 3
 > plotmo(a, caption=caption, inverse.func = exp, col.response = "pink", func=my.func, col.func="gray", ngrid1=1000, type2="p", trace=1, col.smooth="indianred")
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 get.data.for.formula: using x from "trees" passed to lm 
 got x with colnames from object$call$formula
@@ -439,7 +439,7 @@ x[31,2]:
 
 nlevels: Girth=27 Height=21 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 get.data.for.formula: using y from "trees" passed to lm 
 got y from object$call$formula
@@ -511,7 +511,7 @@ persp(Girth:Height) theta 235 ylim 10.2 77 cex 0.83
 > a <- lm(doy~., data=ozone1)
 > plotmo(a, se=2, do.par=FALSE, trace=1, caption=caption)
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 get.data.for.formula: using x from "ozone1" passed to lm 
 got x with colnames from object$call$formula
@@ -526,7 +526,7 @@ x[330,9]:
 
 nlevels: O3=35 vh=53 wind=11 humidity=65 temp=63 ibh=196 dpg=128 ibt=193 vis=24 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 get.data.for.formula: using y from "ozone1" passed to lm 
 got y from object$call$formula
@@ -573,7 +573,7 @@ ylim 4.846793 385.9276
 > a <- lm(log(doy) ~ vh + wind + log(humidity), data=ozone1)
 > plotmo(a, do.par=FALSE, caption=caption, ylim=NA, se=2, trace=2)
 
---get.plotmo.x
+--get.plotmo.x for lm object
 
 formula log(doy) ~ vh + wind + log(humidity)
 stripped formula log(doy)~vh+wind+humidity
@@ -598,7 +598,7 @@ x[330,3]:
 
 nlevels: vh=53 wind=11 humidity=65 
 
---get.plotmo.y
+--get.plotmo.y for lm object
 
 formula log(doy) ~ vh + wind + log(humidity)
 stripped formula log(doy)~vh+wind+humidity
@@ -617,11 +617,11 @@ get.plotmo.y returned length 330 min 3.496508 max 5.966147
 
 clip.limits 3.496508 5.966147 
 
---get.plotmo.singles
+--get.plotmo.singles for lm object
 
 singles: 1 vh, 2 wind, 3 humidity 
 
---get.plotmo.pairs
+--get.plotmo.pairs for lm object
 
 get.data.for.formula: using x from "ozone1" passed to lm 
 term.labels: vh wind log(humidity) 
@@ -927,13 +927,13 @@ predict.lda(xgrid, type="posterior") returned [3,2]:
 3 0.9352020 0.06479797
 
 Error : predicted response has multiple columns (see above) but nresponse is not specified.
-       Specify a column index like nresponse=2 or a column name like nresponse="1"
+       Specify a column index like nresponse=1 or a column name like nresponse="0"
 > set.seed(7)
 > plotmo(lda.model, caption="lda", trace=2, clip=F,
 +        col.response=as.numeric(etitanic2$survived)+2, type="posterior", nresponse=1, col.smooth="indianred",
 +        all2=TRUE, type2="image")
 
---get.plotmo.x
+--get.plotmo.x for lda object
 
 formula survived ~ .
 stripped formula survived~.
@@ -958,7 +958,7 @@ x[1046,3]:
 
 nlevels: pclass=3 sex=2 age=98 
 
---get.plotmo.y
+--get.plotmo.y for lda object
 
 formula survived ~ .
 stripped formula survived~.
@@ -975,11 +975,11 @@ got y from object$call$formula
 get.plotmo.y returned length 1046 min 0 max 1
              value 1 1 0 0 0 1 1 0 1 0 ...
 
---get.plotmo.singles
+--get.plotmo.singles for lda object
 
 singles: 1 pclass, 2 sex, 3 age 
 
---get.plotmo.pairs
+--get.plotmo.pairs for lda object
 
 pairs:
      [,1]       [,2]   
@@ -1062,7 +1062,7 @@ predict.lda(xgrid, type="posterior") column "0" returned length 40 min 0.0635913
 +        col.response=as.numeric(etitanic2$survived)+2, type="posterior", nresponse=1,
 +        all2=TRUE, type2="image", jitter.response=.3)
 
---get.plotmo.x
+--get.plotmo.x for lda object
 
 formula survived ~ .
 stripped formula survived~.
@@ -1087,7 +1087,7 @@ x[1046,3]:
 
 nlevels: pclass=3 sex=2 age=98 
 
---get.plotmo.y
+--get.plotmo.y for lda object
 
 formula survived ~ .
 stripped formula survived~.
@@ -1104,11 +1104,11 @@ got y from object$call$formula
 get.plotmo.y returned length 1046 min 0 max 1
              value 1 1 0 0 0 1 1 0 1 0 ...
 
---get.plotmo.singles
+--get.plotmo.singles for lda object
 
 singles: 1 pclass, 2 sex, 3 age 
 
---get.plotmo.pairs
+--get.plotmo.pairs for lda object
 
 pairs:
      [,1]       [,2]   
@@ -1192,7 +1192,7 @@ predict.lda(xgrid, type="posterior") column "0" returned length 40 min 0.0635913
 +        col.response=as.numeric(etitanic2$survived)+2, type="post", nresponse=2, col.smooth="indianred",
 +        all2=TRUE, type2="image", jitter.resp=.6, pch.resp=20)
 
---get.plotmo.x
+--get.plotmo.x for qda object
 
 formula survived ~ .
 stripped formula survived~.
@@ -1217,7 +1217,7 @@ x[1046,3]:
 
 nlevels: pclass=3 sex=2 age=98 
 
---get.plotmo.y
+--get.plotmo.y for qda object
 
 formula survived ~ .
 stripped formula survived~.
@@ -1234,11 +1234,11 @@ got y from object$call$formula
 get.plotmo.y returned length 1046 min 0 max 1
              value 1 1 0 0 0 1 1 0 1 0 ...
 
---get.plotmo.singles
+--get.plotmo.singles for qda object
 
 singles: 1 pclass, 2 sex, 3 age 
 
---get.plotmo.pairs
+--get.plotmo.pairs for qda object
 
 pairs:
      [,1]       [,2]   
@@ -1326,7 +1326,7 @@ predict.qda(xgrid, type="post") column "1" returned length 40 min 0.07281274 max
 +        col.response=as.numeric(lcush$Type)+1,
 +        pch.response=as.character(lcush$Type))
 
---get.plotmo.x
+--get.plotmo.x for qda object
 
 got x with colnames from object$call$x
 
@@ -1340,7 +1340,7 @@ c5            2.7600099     2.0281482
 
 nlevels: Tetrahydrocortisone=19 Pregnanetriol=17 
 
---get.plotmo.y
+--get.plotmo.y for qda object
 
 got y from the second argument to the model function
 get.plotmo.y returned length 21 min 1 max 3
@@ -1690,7 +1690,7 @@ Warning in FUN(X[[4L]], ...) :
 +                decay = 5e-4, maxit = 20, trace=F)
 > plotmo(ir.nn2, type="class", trace=2, all2=T, degree2=2:6)
 
---get.plotmo.x
+--get.plotmo.x for nnet.formula object
 
 formula species ~ .
 stripped formula species~.
@@ -1717,7 +1717,7 @@ x[75,4] (after taking subset):
 
 nlevels: Sepal.L.=28 Sepal.W.=18 Petal.L.=33 Petal.W.=21 
 
---get.plotmo.y
+--get.plotmo.y for nnet.formula object
 
 formula species ~ .
 stripped formula species~.
@@ -1738,11 +1738,11 @@ get.plotmo.y returned length 150 (before taking subset) min 1 max 3
 
 clip.limits -Inf Inf 
 
---get.plotmo.singles
+--get.plotmo.singles for nnet.formula object
 
 singles: 1 Sepal.L., 2 Sepal.W., 3 Petal.L., 4 Petal.W. 
 
---get.plotmo.pairs
+--get.plotmo.pairs for nnet.formula object
 
 pairs:
      [,1]         [,2]        
@@ -1877,6 +1877,262 @@ persp(Petal.L.:Petal.W.) theta -35 ylim 1 3 cex 0.66
  grid:    Sepal.L. Sepal.W. Petal.L. Petal.W.
                5.8        3      4.4      1.3
 
+> 
+> #--- fda ------------------------------------------------------------------------------
+> 
+> par(mfrow=c(1,1))
+> 
+> par(mfrow=c(4,5))
+> par(mar = c(3, 2, 3, .1)) # b, l, t, r
+> par(mgp = c(1.5, .5, 0))
+> fda.earth <- fda(Species~., data=iris, keep.fitted=TRUE, method=earth, keepxy=TRUE, trace=0)
+> fda.polyreg <- fda(Species~., data=iris, keep.fitted=TRUE, keepxy=TRUE)
+> fda.bruto <- fda(Species~., data=iris, keep.fitted=TRUE, method=bruto)
+> 
+> # expect Error: this object is nor supported by plotmo
+> try(plotmo(fda.polyreg$fit, type="variates", nresponse=1, clip=F, do.par=F))
+Error : this object is not supported by plotmo (object's class is "polyreg")
+> 
+> plot(1, main="plotmo with fda", xaxt="n", yaxt="n", xlab="", ylab="", 
++      type="n", bty="n", cex.main=1.2, xpd=NA)
+> 
+> plotmo(fda.earth, type="variates", nresponse=1, clip=F, do.par=F)
+
+ grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                   5.8           3         4.35         1.3
+
+> 
+> plot(1, main="plotmo with fda.earth$fit", xaxt="n", yaxt="n", xlab="", ylab="", 
++      type="n", bty="n", cex.main=1.2, xpd=NA)
+> 
+> plotmo(fda.earth$fit, nresponse=1, clip=F, do.par=F)
+
+ grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                   5.8           3         4.35         1.3
+
+> 
+> plot(1, main="", xaxt="n", yaxt="n", xlab="", ylab="", 
++      type="n", bty="n", cex.main=1.5, xpd=NA)
+> 
+> plot(fda.earth)
+> plotmo(fda.earth, clip=F, do.par=F, trace=2) # default type is class
+
+--get.plotmo.x for fda object
+
+formula Species ~ .
+stripped formula Species~.
+get.data.for.formula: using x from "iris" passed to fda 
+about to eval model.frame(formula=Species~., data=structure(list(Sepal.Length=c(5.1, 
+    4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 
+    5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 
+    5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 
+    5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 
+    6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 
+    5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 
+    5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, ...
+got x with colnames from object$call$formula
+
+x[150,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            5.1         3.5          1.4         0.2
+2            4.9         3.0          1.4         0.2
+3            4.7         3.2          1.3         0.2
+...          4.6         3.1          1.5         0.2
+150          5.9         3.0          5.1         1.8
+
+nlevels: Sepal.Length=35 Sepal.Width=23 Petal.Length=43 Petal.Width=22 
+
+--get.plotmo.y for fda object
+
+formula Species ~ .
+stripped formula Species~.
+get.data.for.formula: using y from "iris" passed to fda 
+about to eval model.frame(formula=Species~., data=structure(list(Sepal.Length=c(5.1, 
+    4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 
+    5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 
+    5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 
+    5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 
+    6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 
+    5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 
+    5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, ...
+got y from object$call$formula
+get.plotmo.y returned length 150 min 1 max 3
+             value 1 1 1 1 1 1 1 1 1 1 ...
+
+--get.plotmo.singles for fda object
+
+singles: 1 Sepal.Length, 2 Sepal.Width, 3 Petal.Length, 4 Petal.Width 
+
+--get.plotmo.pairs for fda object
+
+get.data.for.formula: using x from "iris" passed to fda 
+term.labels: Sepal.Length Sepal.Width Petal.Length Petal.Width 
+considering Sepal.Length
+considering Sepal.Width
+considering Petal.Length
+considering Petal.Width
+no pairs
+
+--plot.degree1(draw.plot=FALSE)
+
+plotmo.predict(type="class") for degree1 plot "Sepal.Length" with newdata[35,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            4.3           3         4.35         1.3
+2            4.4           3         4.35         1.3
+3            4.5           3         4.35         1.3
+...          4.6           3         4.35         1.3
+35           7.9           3         4.35         1.3
+
+predict.fda(xgrid, type="class") returned length 35 min 2 max 2
+                                 value 2 2 2 2 2 2 2 2 2 2 ...
+
+plotmo.predict(type="class") for degree1 plot "Sepal.Width" with newdata[23,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            5.8         2.0         4.35         1.3
+2            5.8         2.2         4.35         1.3
+3            5.8         2.3         4.35         1.3
+...          5.8         2.4         4.35         1.3
+23           5.8         4.4         4.35         1.3
+
+predict.fda(xgrid, type="class") returned length 23 min 2 max 2
+                                 value 2 2 2 2 2 2 2 2 2 2 ...
+
+plotmo.predict(type="class") for degree1 plot "Petal.Length" with newdata[43,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            5.8           3          1.0         1.3
+2            5.8           3          1.1         1.3
+3            5.8           3          1.2         1.3
+...          5.8           3          1.3         1.3
+43           5.8           3          6.9         1.3
+
+predict.fda(xgrid, type="class") returned length 43 min 1 max 3
+                                 value 1 1 1 1 1 1 1 1 1 2 ...
+
+plotmo.predict(type="class") for degree1 plot "Petal.Width" with newdata[22,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            5.8           3         4.35         0.1
+2            5.8           3         4.35         0.2
+3            5.8           3         4.35         0.3
+...          5.8           3         4.35         0.4
+22           5.8           3         4.35         2.5
+
+predict.fda(xgrid, type="class") returned length 22 min 2 max 3
+                                 value 2 2 2 2 2 2 2 2 2 2 ...
+
+ylim 1 3 
+
+--plot.degree1(draw.plot=TRUE)
+
+ grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                   5.8           3         4.35         1.3
+
+> 
+> plot(fda.polyreg)
+> plotmo(fda.polyreg, type="variates", nresponse=1, clip=F, do.par=F, trace=2, degree1=c(1,3,4))
+
+--get.plotmo.x for fda object
+
+formula Species ~ .
+stripped formula Species~.
+get.data.for.formula: using x from "iris" passed to fda 
+about to eval model.frame(formula=Species~., data=structure(list(Sepal.Length=c(5.1, 
+    4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 
+    5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 
+    5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 
+    5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 
+    6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 
+    5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 
+    5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, ...
+got x with colnames from object$call$formula
+
+x[150,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            5.1         3.5          1.4         0.2
+2            4.9         3.0          1.4         0.2
+3            4.7         3.2          1.3         0.2
+...          4.6         3.1          1.5         0.2
+150          5.9         3.0          5.1         1.8
+
+nlevels: Sepal.Length=35 Sepal.Width=23 Petal.Length=43 Petal.Width=22 
+
+--get.plotmo.y for fda object
+
+formula Species ~ .
+stripped formula Species~.
+get.data.for.formula: using y from "iris" passed to fda 
+about to eval model.frame(formula=Species~., data=structure(list(Sepal.Length=c(5.1, 
+    4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 
+    5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5.1, 4.6, 5.1, 4.8, 5, 5, 
+    5.2, 5.2, 4.7, 4.8, 5.4, 5.2, 5.5, 4.9, 5, 5.5, 4.9, 4.4, 5.1, 
+    5, 4.5, 4.4, 5, 5.1, 4.8, 5.1, 4.6, 5.3, 5, 7, 6.4, 6.9, 5.5, 
+    6.5, 5.7, 6.3, 4.9, 6.6, 5.2, 5, 5.9, 6, 6.1, 5.6, 6.7, 5.6, 
+    5.8, 6.2, 5.6, 5.9, 6.1, 6.3, 6.1, 6.4, 6.6, 6.8, 6.7, 6, 5.7, 
+    5.5, 5.5, 5.8, 6, 5.4, 6, 6.7, 6.3, 5.6, 5.5, 5.5, 6.1, 5.8, ...
+got y from object$call$formula
+get.plotmo.y returned length 150 min 1 max 3
+             value 1 1 1 1 1 1 1 1 1 1 ...
+
+--get.plotmo.singles for fda object
+
+singles: 1 Sepal.Length, 3 Petal.Length, 4 Petal.Width 
+
+--get.plotmo.pairs for fda object
+
+get.data.for.formula: using x from "iris" passed to fda 
+term.labels: Sepal.Length Sepal.Width Petal.Length Petal.Width 
+considering Sepal.Length
+considering Sepal.Width
+considering Petal.Length
+considering Petal.Width
+no pairs
+
+--plot.degree1(draw.plot=FALSE)
+
+plotmo.predict(type="variates") for degree1 plot "Sepal.Length" with newdata[35,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            4.3           3         4.35         1.3
+2            4.4           3         4.35         1.3
+3            4.5           3         4.35         1.3
+...          4.6           3         4.35         1.3
+35           7.9           3         4.35         1.3
+
+predict.fda(xgrid, type="variates") returned length 35 min -0.03206216 max 2.98401
+                                    value 2.98401 2.900231 2.816451 2.732671 2.648891 2.565111 2.481332 2.397552 2.313772 2.229992 ...
+
+plotmo.predict(type="variates") for degree1 plot "Petal.Length" with newdata[43,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            5.8           3          1.0         1.3
+2            5.8           3          1.1         1.3
+3            5.8           3          1.2         1.3
+...          5.8           3          1.3         1.3
+43           5.8           3          6.9         1.3
+
+predict.fda(xgrid, type="variates") returned length 43 min -5.721611 max 7.39739
+                                    value -5.721611 -5.499255 -5.276899 -5.054543 -4.832187 -4.609831 -4.387475 -4.165119 -3.720407 -1.274492 ...
+
+plotmo.predict(type="variates") for degree1 plot "Petal.Width" with newdata[22,4]:
+    Sepal.Length Sepal.Width Petal.Length Petal.Width
+1            5.8           3         4.35         0.1
+2            5.8           3         4.35         0.2
+3            5.8           3         4.35         0.3
+...          5.8           3         4.35         0.4
+22           5.8           3         4.35         2.5
+
+predict.fda(xgrid, type="variates") returned length 22 min -1.679479 max 5.134106
+                                    value -1.679479 -1.395579 -1.11168 -0.8277808 -0.5438814 -0.259982 0.8756154 1.159515 1.443414 1.727314 ...
+
+ylim -5.721611 7.39739 
+
+--plot.degree1(draw.plot=TRUE)
+
+ grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                   5.8           3         4.35         1.3
+
+> plot(1, main="", xaxt="n", yaxt="n", xlab="", ylab="", 
++      type="n", bty="n", cex.main=1.5, xpd=NA)
+> 
+> # plot(fda.bruto)
+> # plotmo(fda.bruto, type="variates", nresponse=1, clip=F, do.par=F)
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot
