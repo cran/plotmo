@@ -1,6 +1,10 @@
 Changes to plotmo Package
 -------------------------
 
+--- 1.2-6 
+
+Removed an incorrect stopifnot.integer(y.column) in get.plotmo.y.wrapper
+
 --- 1.2-5 Jun 11, 2011
 
 Fixed an incorrect stop when trace>0 and x had no column names.

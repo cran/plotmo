@@ -569,7 +569,6 @@ get.plotmo.y.wrapper <- function(object, env, y.column, expected.len, trace)
         y.column <- y$y.column
         if(is.na(y.column)[1])
             y.column <- 1
-        stopifnot.integer(y.column)
         if(!is.null(y$y))
             y <- y$y
     } else

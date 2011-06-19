@@ -4935,7 +4935,7 @@ h(-0.676502-q_3107)           2.2
 h(q_7107- -0.672598)          0.3
 
 Selected 17 of 31 terms, and 13 of 16 predictors 
-Importance: q_6103, q_4104, q_2102, q_7104, q_3109, q_6101, q_2104, q_4, q_3106, q_3105, ...
+Importance: q_6103, q_4104, q_2102, q_7104, q_3109, q_6101, q_2104, q_4, ...
 Number of terms at each degree of interaction: 1 16 (additive model)
 GCV 2.5    RSS 1451    GRSq 0.54    RSq 0.58
 > plotmo(earthobj)
@@ -5037,7 +5037,7 @@ h(-0.696421-a.rather.long.in.fact.very.long.name.q_3107)          2.69
 h(a.rather.long.in.fact.very.long.name.q_7107- -0.672466)         0.26
 
 Selected 18 of 31 terms, and 13 of 16 predictors 
-Importance: a.rather.long.in.fact.very.long.name.q_6103, a.rather.long.in.fact.very.long.name.q_4104, a.rather.long.in.fact.very.long.name.q_2102, a.rather.long.in.fact.very.long.name.q_7104, a.rather.long.in.fact.very.long.name.q_3109, a.rather.long.in.fact.very.long.name.q_6101, a.rather.long.in.fact.very.long.name.q_2104, a.rather.long.in.fact.very.long.name.q_4, a.rather.long.in.fact.very.long.name.q_3106, a.rather.long.in.fact.very.long.name.q_3105, ...
+Importance: a.rather.long.in.fact.very.long.name.q_6103, ...
 Number of terms at each degree of interaction: 1 17 (additive model)
 GCV 2.5    RSS 1443    GRSq 0.54    RSq 0.58
 > plot(a.rather.long.in.fact.very.long.name.for.the.modelA)
@@ -5107,7 +5107,7 @@ h(-0.163231-a.rather.long.in.fact.very.long.name.q_3109) * h(0.822637-a.rather.l
 h(a.rather.long.in.fact.very.long.name.q_4-0.898656) * h(0.542573-a.rather.long.in.fact.very.long.name.q_7104) * h(a.rather.long.in.fact.very.long.name.q_2111- -0.476604)         39.4
 
 Selected 18 of 33 terms, and 12 of 16 predictors 
-Importance: a.rather.long.in.fact.very.long.name.q_6103, a.rather.long.in.fact.very.long.name.q_4104, a.rather.long.in.fact.very.long.name.q_2102, a.rather.long.in.fact.very.long.name.q_7104, a.rather.long.in.fact.very.long.name.q_3109, a.rather.long.in.fact.very.long.name.q_6101, a.rather.long.in.fact.very.long.name.q_2104, a.rather.long.in.fact.very.long.name.q_4, a.rather.long.in.fact.very.long.name.q_3106, a.rather.long.in.fact.very.long.name.q_3105, ...
+Importance: a.rather.long.in.fact.very.long.name.q_6103, ...
 Number of terms at each degree of interaction: 1 13 3 1
 GCV 2.5    RSS 1388    GRSq 0.54    RSq 0.6
 > plot(a.rather.long.in.fact.very.long.name.for.the.modelC)

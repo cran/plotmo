@@ -5,7 +5,7 @@
 \description{
 Plot a model's response when varying one or two predictors while
 holding the other predictors constant.  A poor man's partial
-dependence plot.   See the ``Details'' section for an overview.
+dependence plot.   See the \dQuote{Details} section for an overview.
 }
 \usage{
 plotmo(object = stop("no 'object' arg"),
@@ -57,12 +57,12 @@ To start off, look at the arguments
      Default is \code{TRUE}, meaning plot only predicted values that
      are in the expected range.
      Use \code{FALSE} to plot all values.
-     See ``The \code{clip} argument'' section below for details.
+     See \dQuote{The \code{clip} argument} section below for details.
   }
   \item{ylim}{Three possibilities:\cr
 
      (i) \code{NULL} (default) all y axes have same limits
-     (where ``y'' is actually ``z'' on degree2 plots).
+     (where \dQuote{y} is actually \dQuote{z} on degree2 plots).
      The limits are the min and max values of the predicted response
      across all plots (after applying \code{clip}).
 
@@ -96,7 +96,7 @@ To start off, look at the arguments
      Default is \code{FALSE}.
      Use \code{TRUE} to plot all predictors,
      not just those usually selected by \code{plotmo}.
-     See ``Which variables are plotted?'' below.
+     See \dQuote{Which variables are plotted?} below.
      The \code{all1} argument increases the number of plots;
      the \code{degree1} argument reduces the number of plots.
   }
@@ -411,7 +411,7 @@ is called.
 
 An alternative approach is to use partial-dependence plots
 (e.g. \emph{The Elements of Statistical Learning} 10.13.2).
-\code{Plotmo} sets the ``other'' variables to their median
+\code{Plotmo} sets the \dQuote{other} variables to their median
 value, whereas in a partial-dependence plot at each plotted point the
 effect of the other variables is averaged.
 In general, partial-dependence plots and \code{plotmo} plots will
@@ -470,7 +470,7 @@ like \code{x1*x2}, \code{x1:x2} and \code{s(x1,x2)}.}
 With the default \code{clip=TRUE}, predicted values out of the
 expected range are not displayed.
 
-Generally, the ``expected range'' is the range of the response
+Generally, the \dQuote{expected range} is the range of the response
 \code{y} used when building the model.
 But that depends on the type of model, and \code{plotmo}
 knows about some special cases.
@@ -577,7 +577,7 @@ on the help page for the \code{\link{predict}} method for your object.
 Probably \code{plotmo} has incorrectly determined the expected range
 of the response, and hence also \code{ylim}.
 Re-invoke \code{plotmo} with \code{clip=FALSE}.
-See the section ``The \code{clip} argument''.
+See the section \dQuote{The \code{clip} argument}.
 
 %spacer
 \bold{o}\code{ Error: predict.lm(xgrid, type="response") returned the wrong length}
@@ -600,9 +600,9 @@ matrix.  Use simple variable names (so \code{x1} rather than
 \code{dat$x1}, for example).
 
 If the symptoms persist after changing the way the model is called,
-and the model is not one of those listed in ``Which variables are
-plotted'', it is possible that the model class is not supported
-by \code{plotmo}.  See ``Extending plotmo''.
+and the model is not one of those listed in \dQuote{Which variables are
+plotted}, it is possible that the model class is not supported
+by \code{plotmo}.  See \dQuote{Extending plotmo}.
 
 %spacer
 \bold{o}\code{ Error: get.plotmo.x.default cannot get the x matrix}
@@ -622,7 +622,7 @@ the environment when \code{plotmo} is called?
 \bold{o}\code{ Error: this object is not supported by plotmo}
 
 \code{Plotmo}'s default methods are insufficient for your model object.
-See ``Extending plotmo'' above (and contact the author --- this is often
+See \dQuote{Extending plotmo} above (and contact the author --- this is often
 easy to fix).
 
 %spacer
@@ -632,7 +632,7 @@ easy to fix).
 
 Use \code{all2=TRUE}.
 By default, degree2 plots are drawn only for some types of model.
-See the section ``Which variables are plotted?''.
+See the section \dQuote{Which variables are plotted?}.
 
 \bold{o} \emph{The \code{persp} display is unnaturally jagged. How can I change that?}
 
@@ -641,7 +641,7 @@ The jaggedness is probably an artifact of the way \code{\link{persp}} works
 at the boundaries.
 You can also try increasing \code{ngrid2}.
 
-\bold{o} \emph{The \code{image} display has blue ``holes'' in it. What gives?}
+\bold{o} \emph{The \code{image} display has blue \dQuote{holes} in it. What gives?}
 
 The holes are areas where the predicted response is out-of-range.
 Try using \code{clip=FALSE}.
@@ -656,7 +656,8 @@ their values before \code{plotmo} was called.
 }
 \author{Stephen Milborrow}
 \seealso{
-  \code{www.milbo.org/rpart-plot/prp.pdf} has a section on \code{plotmo}
+There is section on \code{plotmo} in the \code{rpart.plot} vignette
+\dQuote{\href{http://www.milbo.org/rpart-plot/prp.pdf}{Plotting \code{rpart} trees with \code{prp}}}.
 }
 \examples{
 library(rpart)
