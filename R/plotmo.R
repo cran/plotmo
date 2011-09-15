@@ -8,7 +8,6 @@
 #        used, but there seems to be no general way of knowing what that is.
 # TODO would like to add a newdata argument, but NA handling seems insoluble
 # TODO add "add" option so can overlya graphs e.g. with different grid.levels.
-# TODO allow degree2 to explicitly specify two varnames, likewise for degree1
 # TODO allow partial residual plots and variations
 # TODO allow user to specify x range on a per predictor basis
 # TODO get.plotmo.x should allow allow unnamed cols in x if get
@@ -475,11 +474,8 @@ get.plotmo.clip.limits.wrapper <- function(object, env, type, y, trace)
 }
 get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1)
 {
-    if(!is.numeric(degree1) && !is.logical(degree1)) {
-        if(pmatch(degree1, "all", 0)) # backwards compatibility message
-            stop0("degree1=\"", degree1, "\" is no longer legal, use all1=TRUE instead")
-        stop0("degree1 must be an index vector (numeric or logical)")
-    }
+    if(!is.numeric(degree1) && !is.logical(degree1) && !is.character(degree1))
+        stop0("degree1 must be an index vector (numeric, logical, or character)")
     if(trace >= 2)
         cat("\n--get.plotmo.singles for", class(object)[1], "object\n\n")
     singles <- get.plotmo.singles(object, env, x, trace >=2 , all1)
@@ -487,7 +483,7 @@ get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1)
         singles <- sort(unique(singles))
     nsingles <- length(singles)
     if(nsingles) {
-        check.index.vec("degree1", degree1, singles)
+        degree1 <- check.index.vec("degree1", degree1, singles, colnames=colnames(x))
         singles <- singles[degree1]
     } else if(is.specified(degree1) && degree1[1] != 0)
         warning0("\"degree1\" specified but no degree1 plots")
@@ -501,11 +497,8 @@ get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1)
 }
 get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
 {
-    if(!is.numeric(degree2) && !is.logical(degree2)) {
-        if(pmatch(degree2, "all", 0)) # backwards compatibility message
-            stop0("degree2=\"", degree2, "\" is no longer legal, use all2=TRUE instead")
-        stop0("degree2 must be an index vector (numeric or logical)")
-    }
+    if(!is.numeric(degree2) && !is.logical(degree2) && !is.character(degree2))
+        stop0("degree2 must be an index vector (numeric, logical, or character)")
     if(trace >= 2)
         cat("\n--get.plotmo.pairs for", class(object)[1], "object\n\n")
     pairs <- get.plotmo.pairs(object, env, x, trace >= 2, all2)
@@ -518,7 +511,7 @@ get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
         # order the pairs on the predictor order
         order <- order(pairs[,1], pairs[,2])
         pairs <- pairs[order, , drop=FALSE]
-        check.index.vec("degree2", degree2, pairs)
+        degree2 <- check.index.vec("degree2", degree2, pairs, colnames=colnames(x))
         pairs <- pairs[degree2, , drop=FALSE]
     }
     if(trace >= 2) {
@@ -1261,7 +1254,7 @@ plot.persp <- function(x, grid1, grid2, y.predict, pred.names, ipred1, ipred2,
         y.predict <- t(y.predict)
     }
     # TODO want to use lab=c(2,2,7) or similar here but persp ignores it
-    persp(grid1, grid2, y.predict,
+    my.persp(grid1, grid2, y.predict,
           main=main, xlab=pred.names[ipred1], ylab=pred.names[ipred2], zlab=ylab,
           cex.lab=1.1 * cex.lab, cex.axis=cex.lab,
           zlim=ylim, col=col.persp, cex=cex1,
@@ -1514,9 +1507,9 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
                       "\" cannot be used because the predicted response has no column names")
             nresponse <- match.choices(nresponse, colnames, "nresponse")
         }
-        check.index.vec("nresponse", nresponse, y, check.empty = TRUE,
-                        use.as.col.index=TRUE, allow.negative.indices=FALSE,
-                        treat.NA.as.one=TRUE)
+        check.index.vec("nresponse", nresponse, y, 
+                        check.empty = TRUE, use.as.col.index=TRUE, 
+                        allow.negative.indices=FALSE, treat.NA.as.one=TRUE)
         nresponse
     }
     #--- check.and.print.y starts here

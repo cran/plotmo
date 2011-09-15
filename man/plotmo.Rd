@@ -86,11 +86,17 @@ To start off, look at the arguments
      Index vector specifying which main effect plots to include.
      Default is \code{TRUE}, meaning all degree1 plots (the \code{TRUE} gets recycled).
      Use \code{FALSE} (or \code{0}) for no degree1 plots.\cr
-     The easiest way to use this argument (and \code{degree2}) is to
+     Note that this indexes \code{plotmo} plots, not columns in \code{x}.
+     Probably the easiest way to use this argument (and \code{degree2}) is to
      first use the default (and possibly \code{all1=TRUE})
      to plot all figures.  This shows how the figures are numbered.
      Then replot using \code{degree1} to select the figures you want,
-     for example, \code{degree1=c(1,3)}.
+     for example, \code{degree1=c(1,3)}.\cr
+     \bold{New in version 1.3-0}: \code{degree1} may be a character vector
+     specifying which variables to plot e.g. \code{degree1=c("wind", "vis")}.
+     Note: \code{\link{grep}} is used for matching.  Thus \code{"wind"} will match
+     all variables that have \code{"wind"} in their names. Use \code{"^wind$"}
+     to match only the variable named \code{"wind"}.
   }
   \item{all1}{
      Default is \code{FALSE}.
@@ -102,7 +108,10 @@ To start off, look at the arguments
   }
   \item{degree2}{
      Index vector specifying which interaction plots to include.
-     Default is \code{TRUE}, meaning all degree2 plots.
+     Default is \code{TRUE}, meaning all degree2 plots.\cr
+     \bold{New in version 1.3-0}: \code{degree2} may be a character vector
+     specifying which variables to plot
+     (\code{\link{grep}} is used for matching).
   }
   \item{all2}{
      Default is \code{FALSE}.
@@ -434,7 +443,7 @@ models with a \code{predict} method that supports \code{type="terms"},
 and it does not generate degree2 plots.
 
 Some other possibilites for plotting the response on a per-predictor
-basis are partial-residual plots, partial-regression variable plots, and 
+basis are partial-residual plots, partial-regression variable plots, and
 marginal-model plots (e.g.  \code{\link[car]{crPlots}},
 \code{\link[car]{avPlots}}, and \code{\link[car]{marginalModelPlot}} in the
 \code{\link[car]{car-package}}).

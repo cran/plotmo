@@ -419,6 +419,15 @@ get.data.from.formula <- function(field, object, env, trace)
                 cat("entire x matrix is stored as the first element of evaluated.mf\n")
             evaluated.mf <- evaluated.mf[[1]]
         }
+        # Prevent misleading error msg later: bad index (missing column in x?)
+        # caused by the following code (NIR has class "AsIs"):
+        #    data(gasoline, package='pls')
+        #    a <- earth(octane ~ NIR, data=gasoline)
+        #    plotmo(a)
+        # There appears to be no easy fix for this (July 2011).
+        if(class(evaluated.mf[[1]])[1] == "AsIs")
+            stop0("the class of the rhs of the formula ", formula.as.string,
+                  " is \"AsIs\", which is not supported by plotmo")
     } else if(field == "y")
         evaluated.mf <- model.response(evaluated.mf, type="any")
     else

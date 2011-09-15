@@ -433,10 +433,6 @@ plotmo(aflip, all1=T, caption="all1=T")
 plotmo(aflip, all1=T, degree1=c(3,1), degree2=NA, caption="all1=T, degree1=c(3,1), degree2=NA")
 
 try(plotmo(aflip, no.such.arg=9)) # expect Error: plotmo: illegal argument "no.such.arg"
-try(plotmo(aflip, degree1="all")) # Expect Error: degree1="all" is no longer legal, use all1=TRUE instead
-try(plotmo(aflip, degree1="a"))   # Expect Error: degree1="all" is no longer legal, use all1=TRUE instead
-try(plotmo(aflip, degree1="x"))   # Expect Error: degree1 must be an index vector (numeric or logical)
-try(plotmo(aflip, degree2="all")) # Expect Error: degree2="all" is no longer legal, use all2=TRUE instead
 try(plotmo(aflip, ycolumn=1))     # Expect Error: ycolumn is no longer legal, use nresponse instead
 try(plotmo(aflip, title="abc"))   # Expect Error: "title" is illegal, use "caption" instead
 try(plotmo(aflip, ticktype="d", ntick=3, tic=3, tick=9)) # expect Error : duplicated arguments "ticktype" "tic" "tick"
@@ -452,12 +448,22 @@ try(plotmo(aflip, ticktype="d", ntick=3, title=3)) # Error : "title" is illegal,
 try(plotmo(aflip, ticktype="d", ntick=3, tit=3, titl=7)) # Error : "title" is illegal, use "caption" instead ("tit" taken to mean "title")
 try(plotmo(aflip, zlab="abc")) # expect Error : "zlab" is illegal, use "ylab" instead
 try(plotmo(aflip, z="abc")) # expect Error : "zlab" is illegal, use "ylab" instead ("z" taken to mean "zlab")
-try(plotmo(aflip, degree2="abc"))  # expect Error : degree2 must be an index vector (numeric or logical)
 try(plotmo(aflip, degree1=c(4,1))) # expect Error : out of range value in degree2 (allowed index range is 1:3)
 try(plotmo(aflip, none.such=TRUE)) # expect Error : illegal argument "all1"
 try(plotmo(aflip, ntick=3, type2="im")) # expect Error: the ntick argument is illegal for type2="image"
 try(plotmo(aflip, breaks=3, type2="persp")) # expect Error: the breaks argument is illegal for type2="persp"
 try(plotmo(aflip, breaks=99, type2="cont")) # expect Error:  the breaks argument is illegal for type2="contour"
+
+# test character degree1 and degree2 (added in plotmo version 1.3-0)
+
+a80 <- earth(O3~., data=ozone1, degree=2)
+plotmo(a80, degree1="i", degree2="t",
+       caption='degree1="i", degree2="t"')
+plotmo(a80, degree1="^temp$", degree2="^dpg$",
+       caption='degree1="^temp$", degree2="^dpg$"')
+# Expect Warning: "nonesuch1" in degree1 does not match any variables, ditto for degree2
+plotmo(a80, degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis"),
+       caption='degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis")')
 
 # Test error handling when accessing the original data
 

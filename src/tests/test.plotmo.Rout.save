@@ -5,31 +5,29 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 2.13.0 (2011-04-13)"
+[1] "R version 2.13.1 (2011-07-08)"
 > print(citation("rpart.plot"))
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
+  Stephen Milborrow (2011). rpart.plot: Plot rpart models.  An enhanced
   version of plot.rpart.. R package version 1.2-2.
-  http://www.milbo.org/rpart-plot
+  http://CRAN.R-project.org/package=rpart.plot
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
+    year = {2011},
     note = {R package version 1.2-2},
-    url = {http://www.milbo.org/rpart-plot},
+    url = {http://CRAN.R-project.org/package=rpart.plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")' .
 
-Warning message:
-In citation("rpart.plot") :
-  no date field in DESCRIPTION file of package 'rpart.plot'
 > 
 > library(earth)
 Loading required package: leaps
@@ -5384,14 +5382,6 @@ Warning: not enough elements in "main" (there are more plots than strings in "ma
 > 
 > try(plotmo(aflip, no.such.arg=9)) # expect Error: plotmo: illegal argument "no.such.arg"
 Error : illegal argument "no.such.arg"
-> try(plotmo(aflip, degree1="all")) # Expect Error: degree1="all" is no longer legal, use all1=TRUE instead
-Error : degree1="all" is no longer legal, use all1=TRUE instead
-> try(plotmo(aflip, degree1="a"))   # Expect Error: degree1="all" is no longer legal, use all1=TRUE instead
-Error : degree1="a" is no longer legal, use all1=TRUE instead
-> try(plotmo(aflip, degree1="x"))   # Expect Error: degree1 must be an index vector (numeric or logical)
-Error : degree1 must be an index vector (numeric or logical)
-> try(plotmo(aflip, degree2="all")) # Expect Error: degree2="all" is no longer legal, use all2=TRUE instead
-Error : degree2="all" is no longer legal, use all2=TRUE instead
 > try(plotmo(aflip, ycolumn=1))     # Expect Error: ycolumn is no longer legal, use nresponse instead
 Error : "ycolumn" is no longer legal, use "nresponse" instead
 > try(plotmo(aflip, title="abc"))   # Expect Error: "title" is illegal, use "caption" instead
@@ -5434,8 +5424,6 @@ Error : "title" is illegal, use "caption" instead ("tit" taken to mean "title")
 Error : "zlab" is illegal, use "ylab" instead
 > try(plotmo(aflip, z="abc")) # expect Error : "zlab" is illegal, use "ylab" instead ("z" taken to mean "zlab")
 Error : "zlab" is illegal, use "ylab" instead ("z" taken to mean "zlab")
-> try(plotmo(aflip, degree2="abc"))  # expect Error : degree2 must be an index vector (numeric or logical)
-Error : degree2 must be an index vector (numeric or logical)
 > try(plotmo(aflip, degree1=c(4,1))) # expect Error : out of range value in degree2 (allowed index range is 1:3)
 Error : out of range value in "degree1" (allowed index range is 1:3)
 > try(plotmo(aflip, none.such=TRUE)) # expect Error : illegal argument "all1"
@@ -5446,6 +5434,31 @@ Error : the ntick argument is illegal for type2="image"
 Error : the breaks argument is illegal for type2="persp"
 > try(plotmo(aflip, breaks=99, type2="cont")) # expect Error:  the breaks argument is illegal for type2="contour"
 Error : the breaks argument is illegal for type2="contour"
+> 
+> # test character degree1 and degree2 (added in plotmo version 1.3-0)
+> 
+> a80 <- earth(O3~., data=ozone1, degree=2)
+> plotmo(a80, degree1="i", degree2="t",
++        caption='degree1="i", degree2="t"')
+
+ grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+        5760    5       64   62 2112.5  24 167.5 120 205.5
+
+> plotmo(a80, degree1="^temp$", degree2="^dpg$",
++        caption='degree1="^temp$", degree2="^dpg$"')
+
+ grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+        5760    5       64   62 2112.5  24 167.5 120 205.5
+
+> # Expect Warning: "nonesuch1" in degree1 does not match any variables, ditto for degree2
+> plotmo(a80, degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis"),
++        caption='degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis")')
+Warning: "nonesuch1" in degree1 does not match any variables
+Warning: "nonesuch2" in degree2 does not match any variables
+
+ grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+        5760    5       64   62 2112.5  24 167.5 120 205.5
+
 > 
 > # Test error handling when accessing the original data
 > 
