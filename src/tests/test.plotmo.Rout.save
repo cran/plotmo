@@ -10,24 +10,26 @@
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (2011). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.2-2.
-  http://CRAN.R-project.org/package=rpart.plot
+  Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
+  version of plot.rpart.. R package version 1.2-3.
+  http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
-    year = {2011},
-    note = {R package version 1.2-2},
-    url = {http://CRAN.R-project.org/package=rpart.plot},
+    note = {R package version 1.2-3},
+    url = {http://www.milbo.org/rpart-plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")' .
 
+Warning message:
+In citation("rpart.plot") :
+  no date field in DESCRIPTION file of package 'rpart.plot'
 > 
 > library(earth)
 Loading required package: leaps
@@ -5459,6 +5461,11 @@ Warning: "nonesuch2" in degree2 does not match any variables
  grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
         5760    5       64   62 2112.5  24 167.5 120 205.5
 
+> # Expect above warnings and also Warning: nothing to plot
+> plotmo(a80, degree1="nonesuch1", degree2="nonesuch2")
+Warning: "nonesuch1" in degree1 does not match any variables
+Warning: "nonesuch2" in degree2 does not match any variables
+Warning: plotmo: nothing to plot
 > 
 > # Test error handling when accessing the original data
 > 

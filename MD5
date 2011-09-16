@@ -1,8 +1,8 @@
-978061a500f90b43853120df34e1a6a7 *DESCRIPTION
+d7a236fc102deb0dbff8e810528a53f5 *DESCRIPTION
 e03efdf6cf0afc9c27e91948cca568c4 *NAMESPACE
-dc3d4cfae37ac427402295f64bd516d3 *NEWS
+e9fbea652c162638463c4824bb21f3ba *NEWS
 33b7d9d213421d95d3170bcccfe1ad00 *R/grid.R
-a9395f4ff863f572f1f65ee20e26ce70 *R/lib.R
+9b4dcd070bb8c652e1e066be60a296ba *R/lib.R
 9bc431afd6019ddb814d2cb62ef19c97 *R/my.persp.R
 2f6bac8301e448c6a897735cd9ae66aa *R/plotmo.R
 ef538fcafad841ab48653bdf80565f7e *R/plotmo.methods.R
@@ -14,8 +14,8 @@ ef538fcafad841ab48653bdf80565f7e *R/plotmo.methods.R
 4d43bfdb996e4e2e3a80e7cb3bb564a2 *src/dummy.c
 e757923bf3dfc1a99a04be8523334066 *src/tests/fast.postscript.R
 3d1a2b22e1c1155d9b27637f0287dd87 *src/tests/make.bat
-cdd796c3ede77ad0eb0d77f890bf6adb *src/tests/test.plotmo.R
-83666d7331e3f7e578ac971183e8e8ac *src/tests/test.plotmo.Rout.save
+b7e395830a29015925d4c994b3f4c7f5 *src/tests/test.plotmo.R
+8d9cbc5c164686c126b429b929b7653a *src/tests/test.plotmo.Rout.save
 d6650bfb2a8e273691e28f45d7e9719e *src/tests/test.plotmo.bat
 a22c4bbefccdaa30c9f1414b0c4c2964 *src/tests/test.plotmo.center.R
 f64b1bb81121fcc0828d1d8b76d5b0b1 *src/tests/test.plotmo.center.Rout.save

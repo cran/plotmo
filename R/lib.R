@@ -153,8 +153,8 @@ check.index.vec <- function(index.name, indexVec, object, colnames=NULL,
         # like match but return multiple matches if present
         matchm <- function(x, tab)
         {
-             matches <- NULL
-             for(ix in 1:length(x)) {
+             matches <- integer(0)
+             for(ix in seq_along(x)) {
                 this.x <- x[ix]
                 for(itab in 1:length(tab))
                     if(this.x == tab[itab])
@@ -183,6 +183,7 @@ check.index.vec <- function(index.name, indexVec, object, colnames=NULL,
             stop("internal error")              # not yet supported
         unique(indexVec[!is.na(indexVec)])
     }
+    #--- check.index.vec starts here
     if(is.null(indexVec)) {
         if(check.empty)
            stop0("\"", index.name,

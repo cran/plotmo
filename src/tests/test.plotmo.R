@@ -464,6 +464,8 @@ plotmo(a80, degree1="^temp$", degree2="^dpg$",
 # Expect Warning: "nonesuch1" in degree1 does not match any variables, ditto for degree2
 plotmo(a80, degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis"),
        caption='degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis")')
+# Expect above warnings and also Warning: nothing to plot
+plotmo(a80, degree1="nonesuch1", degree2="nonesuch2")
 
 # Test error handling when accessing the original data
 
