@@ -53,10 +53,10 @@ stopifnot.scalar <- function(x, logical.acceptable=TRUE)
 my.center <- function(x, trace=FALSE)
 {
     if(!is.null(x) && !is.factor(x)) {
-        if(trace)
+        if(trace > 0)
             name <- deparse(substitute(x))
         x <- x - mean(x[is.finite(x)], na.rm=TRUE)
-        if(trace) {
+        if(trace > 0) {
             name <- paste0("centered ", name)
             cat(name, "length ", length(x))
             print.first.few.elements.of.vector(x, trace, name)

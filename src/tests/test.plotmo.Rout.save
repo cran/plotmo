@@ -5,31 +5,29 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 2.13.1 (2011-07-08)"
+[1] "R version 2.15.0 (2012-03-30)"
 > print(citation("rpart.plot"))
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.2-3.
-  http://www.milbo.org/rpart-plot
+  Stephen Milborrow (2011). rpart.plot: Plot rpart models.  An enhanced
+  version of plot.rpart.. R package version 1.2-2.
+  http://CRAN.R-project.org/package=rpart.plot
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
-    note = {R package version 1.2-3},
-    url = {http://www.milbo.org/rpart-plot},
+    year = {2011},
+    note = {R package version 1.2-2},
+    url = {http://CRAN.R-project.org/package=rpart.plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")' .
 
-Warning message:
-In citation("rpart.plot") :
-  no date field in DESCRIPTION file of package 'rpart.plot'
 > 
 > library(earth)
 Loading required package: leaps
@@ -3698,11 +3696,7 @@ persp(temp:dpg) theta 235 ylim 1.32 37.3 cex 0.66
 > dopar(1,1,caption)
                               test 2 x 2 layout 
 > a <- earth(O3 ~ ., data=ozone1, nk=9, pmethod="n", degree=2)
-> plotmo(a, xlab="", ylab="", caption=caption, trace=Trace)
-
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
-
+> plotmo(a, xlab="", ylab="", caption=caption, trace=-1) # trace=-1 inhibits "grid:" message
 > 
 > caption <- "test 1 x 1 layout"
 > dopar(1,1,caption)

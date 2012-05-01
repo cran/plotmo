@@ -52,7 +52,7 @@ plotmo <- function(object = stop("no 'object' arg"),
     jitter.response = 0,
     npoints         = -1,
     inverse.func    = NULL,
-    trace       = FALSE,
+    trace       = 0,
     nrug        = 0,
     col.degree1 = 1,
     lty.degree1 = 1,
@@ -150,7 +150,7 @@ plotmo <- function(object = stop("no 'object' arg"),
             else
                 ylims <- get.ylim.by.dummy.plots(ylims, trace)
         }
-        if(trace)
+        if(trace > 0)
             cat("\nylim", ylims, "\n")
         ylims
     }
@@ -468,7 +468,7 @@ get.plotmo.clip.limits.wrapper <- function(object, env, type, y, trace)
     clip.limits <- get.plotmo.clip.limits(object, env, type, y, trace)
     if(is.na(clip.limits[1]))
         clip.limits <- range(y, finite=TRUE)
-    if(trace)
+    if(trace > 0)
         cat("\nclip.limits", clip.limits, "\n")
     clip.limits # a two elem vec
 }
@@ -534,7 +534,7 @@ get.plotmo.x.wrapper <- function(object, env, trace)
     subset <- get.and.check.subset(x, object, env, trace)
     if(!is.null(subset))
         x <- x[subset, , drop=FALSE]
-    if(trace) {
+    if(trace > 0) {
         cat("\n")
         print.first.few.rows(x, trace, "x",
             if(!is.null(subset)) " (after taking subset)" else "")
@@ -549,7 +549,7 @@ get.xlevs <- function(x, trace)
     xlevs <- list(colnames(x))
     for(i in 1:ncol(x))
         xlevs[[i]] <- if(is.factor(x[,i])) levels(x[,i]) else sort(unique(x[,i]))
-    if(trace)
+    if(trace > 0)
         cat("nlevels:",
             strip.white.space(paste(colnames(x), "=", sapply(xlevs, length))), "\n")
     xlevs
@@ -581,7 +581,7 @@ plotmo.predict.wrapper <- function(object, newdata, type, se.fit,
                                    trace, pred.names, ipred1, ipred2=0)
 {
     stopifnot(is.character(type) && length(type) == 1)
-    if(trace) {
+    if(trace > 0) {
         if(ipred2 == 0)
             cat0("\nplotmo.predict(type=\"", type, "\") for degree1 plot \"",
                 pred.names[ipred1], "\" ")
@@ -908,12 +908,12 @@ plot.degree1 <- function(
             draw.degree1.numeric()
     }
     #--- plot.degree1 starts here
-    if(trace1 || trace >= 2)
+    if(trace1 > 0 || trace >= 2)
         cat0("\n--plot.degree1(draw.plot=", draw.plot, ")\n")
     ylim.org <- ylim
     # get the x matrix we will plot, will be updated later for each predictor one by one
     xgrid <- get.degree1.xgrid(x, grid.func, grid.levels, pred.names, ngrid1)
-    if(draw.plot)
+    if(draw.plot && trace >= 0)
         print.grid.values(xgrid)
     irug <- get.degree1.irug(nrug, x, draw.plot) # get the indices of the rug points, if any
     unique.y <- unique(y)
@@ -981,7 +981,7 @@ get.degree1.se <- function(y.predict, se, object, type, xframe, pred.names,
     y.se.lower <- NULL
     y.se.upper <- NULL
     if(!is.zero(se)) {
-        if(trace1)
+        if(trace1 > 0)
             cat("begin se handling, ")
         temp <- plotmo.predict.wrapper(object, xframe, type, se.fit=TRUE,
                                        trace1, pred.names, ipred)
@@ -997,10 +997,10 @@ get.degree1.se <- function(y.predict, se, object, type, xframe, pred.names,
             y.se.upper <- y.predict + se * temp$se.fit
             y.se.upper <- apply.inverse.func(y.se.upper, object, trace1,
                                              inverse.func, inverse.func.name)
-        } else if(trace1)
+        } else if(trace1 > 0)
             cat("no standard errs because is.null(temp$se.fit)\n")
 
-        if(trace1)
+        if(trace1 > 0)
             cat("end se handling\n")
     }
     list(y.se.lower=y.se.lower, y.se.upper=y.se.upper)
@@ -1009,7 +1009,7 @@ draw.degree1.func <- function(func, func.name, object,
                               xframe, ipred, center, trace, col.func, lty.func, lwd.func)
 {
     if(exists.and.not.null(func.name, "function", "func")) {
-        if(trace) {
+        if(trace > 0) {
             cat("\nApplying \"func\" arg to\n")
             print(head(xframe, if(trace >= 3) 1e5 else 3))
         }
@@ -1152,9 +1152,9 @@ plot.degree2 <- function(
                              jitter.response, xlevs, ndiscrete, iresponse, ...))
     }
     #--- plot.degree2 starts here
-    if(trace1 || trace >= 2)
+    if(trace1 > 0 || trace >= 2)
         cat0("\n--plot.degree2(draw.plot=", draw.plot, ")\n")
-    if(!trace1 && trace >= 2)
+    if(!trace1 > 0 && trace >= 2)
         cat("\n")
     stopifnot(npairs > 0)
     must.return.ylims <- is.null(degree2.global)
@@ -1244,7 +1244,7 @@ plot.persp <- function(x, grid1, grid2, y.predict, pred.names, ipred1, ipred2,
         warning0("ignoring yflip=TRUE for persp plot")
     theta1 <- get.theta()
     cex1 <- par("cex") # persp needs an explicit cex arg, doesn't use par("cex")
-    if(trace)
+    if(trace > 0)
         printf("persp(%s:%s) theta %.3g ylim %.3g %.3g cex %.3g\n",
                 pred.names[ipred1], pred.names[ipred2], theta1,
                 ylim[1], ylim[2], cex1)
@@ -1253,12 +1253,18 @@ plot.persp <- function(x, grid1, grid2, y.predict, pred.names, ipred1, ipred2,
         temp <- ipred1; ipred1 <- ipred2; ipred2 <- temp # swap ipred1 and ipred2
         y.predict <- t(y.predict)
     }
-    # TODO want to use lab=c(2,2,7) or similar here but persp ignores it
-    my.persp(grid1, grid2, y.predict,
-          main=main, xlab=pred.names[ipred1], ylab=pred.names[ipred2], zlab=ylab,
-          cex.lab=1.1 * cex.lab, cex.axis=cex.lab,
-          zlim=ylim, col=col.persp, cex=cex1,
-          theta=theta1, phi=phi, shade=shade, d=dvalue, ...)
+    # We use suppressWarnings below to suppress the annoying warning
+    # "surface extends beyond the box" that was introduced in R 2.13-1.
+    # (Unfortunately this also suppress any other warnings in persp.)
+    # TODO Want to use lab=c(2,2,7) or similar here but persp ignores it
+    suppressWarnings(
+      rval <- persp(grid1, grid2, y.predict,
+                  main=main, xlab=pred.names[ipred1],
+                  ylab=pred.names[ipred2], zlab=ylab,
+                  cex.lab=1.1 * cex.lab, cex.axis=cex.lab,
+                  zlim=ylim, col=col.persp, cex=cex1,
+                  theta=theta1, phi=phi, shade=shade, d=dvalue, ...))
+    rval
 }
 plot.contour <- function(x, grid1, grid2, y.predict, pred.names, ipred1, ipred2,
                          xflip, yflip, swapxy, main, cex.lab,
@@ -1507,8 +1513,8 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
                       "\" cannot be used because the predicted response has no column names")
             nresponse <- match.choices(nresponse, colnames, "nresponse")
         }
-        check.index.vec("nresponse", nresponse, y, 
-                        check.empty = TRUE, use.as.col.index=TRUE, 
+        check.index.vec("nresponse", nresponse, y,
+                        check.empty = TRUE, use.as.col.index=TRUE,
                         allow.negative.indices=FALSE, treat.NA.as.one=TRUE)
         nresponse
     }
@@ -1534,7 +1540,7 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
         y <- as.vector(y, mode="numeric")
     if(NROW(y) == 1 && NCOL(y) > 1)
         y <- as.vector(y[, 1])
-    if(trace) {
+    if(trace > 0) {
         cat0(msg, " ",
              if(is.null(yname)) "" else paste0("column \"", yname, "\" "),
              "returned length ", length(y))
@@ -1585,7 +1591,7 @@ get.and.check.subset <- function(x, object, env, trace)
         subset <- NULL
     else {
         check.index.vec("subset", subset, x, check.empty=TRUE, allow.duplicates=TRUE)
-        if(trace) {
+        if(trace > 0) {
             cat0("got subset from ", msg, " length " , length(subset))
             print.first.few.elements.of.vector(subset, trace)
            }

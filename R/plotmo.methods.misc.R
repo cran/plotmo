@@ -103,7 +103,7 @@ get.plotmo.default.type.fda <- function(obj, ...)
 #
 # get.plotmo.singles.fda <- function(object, env, x, trace, all1)
 # {
-#   if(trace) {
+#   if(trace > 0) {
 #       trace <- 2
 #       cat("Invoking get.plotmo.x.wrapper for embedded fda object\n")
 #   }
@@ -112,7 +112,7 @@ get.plotmo.default.type.fda <- function(obj, ...)
 # }
 # get.plotmo.pairs.fda <- function(object, env, x, trace, all2)
 # {
-#   if(trace) {
+#   if(trace > 0) {
 #       trace <- 2
 #       cat("Invoking get.plotmo.x.wrapper for embedded fda object\n")
 #   }

@@ -15,7 +15,7 @@ plotmo(object = stop("no 'object' arg"),
        grid.func = median, grid.levels = NULL,
        col.response = 0, cex.response = 1, pch.response = 1,
        jitter.response=0, npoints = -1,
-       inverse.func = NULL, trace = FALSE,
+       inverse.func = NULL, trace = 0,
        nrug = 0, col.degree1 = 1, lty.degree1 = 1, lwd.degree1 = 1,
        col.smooth = 0, lty.smooth = 1, lwd.smooth = 1,
        se = 0, col.shade = "lightgray", col.se = 0, lty.se = 2,
@@ -180,9 +180,10 @@ To start off, look at the arguments
      model formula is \code{log(y)~x}.
   }
   \item{trace}{
-     Default is \code{FALSE}.
-     Use \code{TRUE} to trace operation.
+     Default is \code{0}.\cr
+     Use \code{1} (or \code{TRUE}) to trace operation.\cr
      Use values greater than \code{1} for more detailed tracing.\cr
+     Use \code{-1} to inhibit the \code{grid:} message usually issued by \code{plotmo}.\cr
 \cr
 \bold{The following arguments are for degree1 (main effect) plots}
   }
@@ -256,7 +257,7 @@ To start off, look at the arguments
      The \code{func} is called for each plot with a single argument which
      is a data frame with columns in the same order as the predictors
      in the \code{formula} or \code{x} used to build the model.
-     Use \code{trace=TRUE} to see the column names and first few rows of this dataframe.
+     Use \code{trace=1} to see the column names and first few rows of this dataframe.
   }
   \item{col.func}{
      Color of \code{func} line.
@@ -317,7 +318,7 @@ To start off, look at the arguments
      Rotation parameter for \code{\link{persp}}.
      Default is \code{NA}, meaning automatically rotate each graph
      so the highest corner is furthest away.
-     Use \code{trace=TRUE} to see the calculated value for \code{theta}.
+     Use \code{trace=1} to see the calculated value for \code{theta}.
      Higher values of \code{theta} rotate clockwise.
   }
   \item{phi}{

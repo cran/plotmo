@@ -46,7 +46,7 @@ plotmo(a, xlab="", ylab="", caption=caption, trace=3)
 caption <- "test 2 x 2 layout"
 dopar(1,1,caption)
 a <- earth(O3 ~ ., data=ozone1, nk=9, pmethod="n", degree=2)
-plotmo(a, xlab="", ylab="", caption=caption, trace=Trace)
+plotmo(a, xlab="", ylab="", caption=caption, trace=-1) # trace=-1 inhibits "grid:" message
 
 caption <- "test 1 x 1 layout"
 dopar(1,1,caption)

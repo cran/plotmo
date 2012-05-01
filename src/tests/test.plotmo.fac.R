@@ -235,11 +235,11 @@ print(table(et$var))
 cat("\n")
 a <- earth(survived~var+age, data=et, degree=2, pm="none")
 
-plotmo(a, trace=0, ndiscrete=0,
+plotmo(a, trace=FALSE, ndiscrete=0,
        main="integral var\n(var levels are 0 2 3 4 5 6)\nndiscrete=0", cex.lab=.8,
        do.par=F, col.smooth="indianred", ticktype="d", clip=F, degree1=0, theta=40)
 
-plotmo(a, trace=0, ndiscrete=0,
+plotmo(a, trace=-1, ndiscrete=0,
        do.par=F, col.smooth="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
 
 #------------

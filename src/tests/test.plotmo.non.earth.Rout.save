@@ -145,7 +145,7 @@ Opening Rplots.ps
 > if(length(grep("package:gam", search())))
 +     detach("package:gam")
 > library(mgcv)
-This is mgcv 1.7-6. For overview type 'help("mgcv-package")'.
+This is mgcv 1.7-16. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test plot.gam, with mgcv::gam(y ~ s(x) + s(x,z)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -355,6 +355,7 @@ Loading required package: class
 > a <- mars(ozone1[, -1], ozone1[,1], degree=2)
 > b <- mars.to.earth(a)
 Converted mars(x=ozone1[, -1], y=ozone1[, 1], degree=2)
+
 to        earth(x=ozone1[, -1], y=ozone1[, 1], degree=2)
 > plotmo(a, do.par=FALSE, caption=caption, ylim=NA, trace=Trace)
 
@@ -1556,7 +1557,7 @@ Warning: ignoring xflip=TRUE for persp plot
 Warning: ignoring yflip=TRUE for persp plot
 > 
 > library(randomForest)
-randomForest 4.6-2
+randomForest 4.6-6
 Type rfNews() to see new features/changes/bug fixes.
 > data(ozone1)
 > set.seed(3)
@@ -1593,7 +1594,8 @@ The following object(s) are masked from 'package:faraway':
 
     melanoma
 
-Loaded gbm 1.6-3.1 
+Loaded gbm 1.6.3.2
+
 > library(rpart.plot) # for ptitanic, want data with NAs for testing
 > data(ptitanic)
 > ptit <- ptitanic[c(1:10,400:410,600:610),] # small data for fast test
@@ -1660,8 +1662,9 @@ The following object(s) are masked from 'package:class':
     condense
 
 Loading required package: cluster
-Warning in FUN(X[[4L]], ...) :
+Warning in FUN(X[[9L]], ...) :
   failed to assign RegisteredNativeSymbol for twins to twins since twins is already defined in the cluster namespace
+Loading required package: foreach
 > set.seed(13)
 > a.bag1 <- bagEarth(trees[,-3], trees[,3], B = 3)
 > plotmo(a.bag1, all2=TRUE, caption="bagEarth, trees")

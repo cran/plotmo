@@ -13,6 +13,7 @@ plotmo.prolog.default <- function(object, env, object.name)
 {
     # here we just establish with some sort of plausibility that object
     # is a model object, to minimize confusing messages later
+    # (e.g. Error in object$terms : $ operator not defined for this S4 class)
 
     if(!is.list(object))
         stop0("'", object.name, "' is not an S3 model object")
@@ -134,7 +135,7 @@ get.plotmo.pairs.default <- function(object, env, x, trace, ...)
             term.labels <- attr(terms, "term.labels")
         if(!is.null(term.labels))
             pairs <- get.plotmo.pairs.from.term.labels(term.labels, colnames(x), trace)
-        else if(trace)
+        else if(trace > 0)
             cat0("no degree2 plots because no object$call$formula$term.labels\n")
     }
     pairs
@@ -182,7 +183,7 @@ plotmo.predict.default <- function(object, newdata, type, se.fit, trace)
 
 get.plotmo.x <- function(object, env, trace)
 {
-    if(trace)
+    if(trace > 0)
         cat("\n--get.plotmo.x for", class(object)[1], "object\n\n")
     UseMethod("get.plotmo.x")
 }
@@ -209,16 +210,16 @@ get.plotmo.x.default <- function(object, env, trace)
 
     try.error.message <- NULL
     x <- object.x <- object[["x"]] # use [["x"]] rather than $x to prevent partial match
-    if(!badx(x, check.colnames=TRUE) && trace)
+    if(!badx(x, check.colnames=TRUE) && trace > 0)
         cat("got x with colnames from object$x\n")
     if(badx(x, check.colnames=TRUE)) {
         x <- formula.x <- get.data.from.formula("x", object, env, trace)
-        if(!badx(x, check.colnames=TRUE) && trace)
+        if(!badx(x, check.colnames=TRUE) && trace > 0)
             cat("got x with colnames from object$call$formula\n")
     }
     if(badx(x, check.colnames=TRUE)) {
         x <- call.x <- try(eval(object$call[["x"]], env), silent=TRUE)
-        if(!badx(x, check.colnames=TRUE) && trace)
+        if(!badx(x, check.colnames=TRUE) && trace > 0)
             cat("got x with colnames from object$call$x\n")
         if(is.try.error(x))
             try.error.message <- x
@@ -227,23 +228,23 @@ get.plotmo.x.default <- function(object, env, trace)
     if(badx(x, check.colnames=TRUE)) {
         x <- object.x
         if(!badx(x, check.colnames=FALSE)) {
-            if(trace)
+            if(trace > 0)
                 cat("got x without colnames from object$x\n")
         } else {
             x <- formula.x
-            if(!badx(x, check.colnames=FALSE) && trace)
+            if(!badx(x, check.colnames=FALSE) && trace > 0)
                 cat("got x without colnames from object$call$formula\n")
         }
         if(badx(x, check.colnames=FALSE)) {
             x <- call.x
-            if(!badx(x, check.colnames=FALSE) && trace)
+            if(!badx(x, check.colnames=FALSE) && trace > 0)
                 cat("got x without colnames from object$call$x\n")
             if(is.try.error(x))
                 try.error.message <- x
         }
     }
     if(badx(x, check.colnames=FALSE)) {
-        if(trace) {
+        if(trace > 0) {
             cat("Looked unsuccessfully for an x in the following places:\n")
             cat("\n(i) object$x:\n")
             print(head(object$x, 3))
@@ -267,7 +268,7 @@ get.plotmo.x.default <- function(object, env, trace)
 
 get.plotmo.y <- function(object, env, y.column, expected.len, trace)
 {
-    if(trace)
+    if(trace > 0)
         cat("\n--get.plotmo.y for", class(object)[1], "object\n\n")
     UseMethod("get.plotmo.y")
 }
@@ -280,16 +281,16 @@ get.plotmo.y.default <- function(object, env, y.column, expected.len, trace)
     #--- get.plotmo.y.default starts here
     try.error.message <- NULL
     y <- object[["y"]] # use [["y"]] rather than $y to prevent partial matching
-    if(!bady(y) && trace)
+    if(!bady(y) && trace > 0)
         cat("got y from object$y\n")
     if(bady(y)) {
         y <- get.data.from.formula("y", object, env, trace)
-        if(!bady(y) && trace)
+        if(!bady(y) && trace > 0)
             cat("got y from object$call$formula\n")
     }
     if(bady(y)) {
         y <- try(eval(object$call[["y"]], env), silent=TRUE)
-        if(!bady(y) && trace)
+        if(!bady(y) && trace > 0)
             cat0("got y from object$call$y\n")
         if(is.try.error(y))
             try.error.message <- y
@@ -302,11 +303,11 @@ get.plotmo.y.default <- function(object, env, y.column, expected.len, trace)
         y <- try(eval(object$call[[3]], env), silent=TRUE)
         if(!(is.vector(y) || is.factor(y)) || length(y) != expected.len)
             y <- NULL
-        if(!bady(y) && trace)
+        if(!bady(y) && trace > 0)
             cat0("got y from the second argument to the model function\n")
     }
     if(bady(y)) {
-        if(trace) {
+        if(trace > 0) {
             cat("Looked unsuccessfully for y in the following places:\n")
             cat("\n(i) object$y:\n")
             print(head(object$y, 3))
@@ -356,7 +357,7 @@ get.data.from.formula <- function(field, object, env, trace)
             for(i in 1:length(call))
                 if(typeof(call.list[[i]]) == "language" &&
                         as.list(call.list[[i]])[[1]] == "~") {
-                    if(trace)
+                    if(trace > 0)
                         cat0("no field named \"formula\" in call, ",
                              "but found a formula anyway\n")
                     names <- names(call)
@@ -444,7 +445,7 @@ get.data.for.formula <- function(object, env, data.arg, field, trace)
         good <- !is.null(data) && length(data) &&
                     (is.data.frame(data) || is.matrix(data) ||
                      is.vector(data) || is.factor(data))
-        if(good && trace)
+        if(good && trace > 0)
             cat("get.data.for.formula: using", field, "from", paste0(...), "\n")
         good
     }
@@ -490,7 +491,7 @@ get.data.for.formula <- function(object, env, data.arg, field, trace)
 
 get.plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace)
 {
-    if(trace)
+    if(trace > 0)
         cat("term.labels:", term.labels, "\n")
     pairs <- matrix(0, nrow=0, ncol=2)          # no pairs initially
     for(i in 1:length(term.labels)) {
@@ -502,7 +503,7 @@ get.plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace)
         igrep <- gregexpr(
             "[a-zA-Z._][a-zA-Z._0-9$]*:[a-zA-Z._][a-zA-Z._0-9$]*", s)[[1]]
 
-        if(trace)
+        if(trace > 0)
             cat("considering", s)
 
         if(igrep[1] > 0) for(i in seq_along(igrep)) {
@@ -514,13 +515,13 @@ get.plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace)
             # are the variables in the candidate pair in pred.names?
             ipred1 <- which(pred.names == pair[1])
             ipred2 <- which(pred.names == pair[2])
-            if(trace)
+            if(trace > 0)
                 cat("->", pair, "at", if(length(ipred1)) ipred1 else NA,
                     if(length(ipred2)) ipred2 else NA)
             if(length(ipred1) == 1 && length(ipred2) == 1 && pair[1] != pair[2])
                 pairs <- c(pairs, ipred1, ipred2)
         }
-        if(trace)
+        if(trace > 0)
             cat("\n")
     }
     matrix(pairs, ncol=2, byrow=TRUE)

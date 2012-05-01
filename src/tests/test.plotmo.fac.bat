@@ -2,7 +2,7 @@
 @rem Stephen Milborrow, Berea Mar 2011
 
 @echo === test.plotmo.fac ==================================================
-@"\PROGRA~1\R\R-2.13.1\bin\R.exe" CMD BATCH --quiet --vanilla test.plotmo.fac.R
+@"\PROGRA~1\R\R-2.15.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.fac.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.fac.Rout:
 @echo.
