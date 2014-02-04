@@ -6,6 +6,8 @@
 # TODO allow NAs, revisit NA code
 #        It would be nice to use whatever NA handling the original model function
 #        used, but there seems to be no general way of knowing what that is.
+#        cf Michael Friendly's email
+# TODO allow do.par="mfrow(c1,2)"
 # TODO would like to add a newdata argument, but NA handling seems insoluble
 # TODO add "add" option so can overlya graphs e.g. with different grid.levels.
 # TODO allow partial residual plots and variations

@@ -3,7 +3,6 @@
 > 
 > library(plotmo)
 > library(earth)
-Loading required package: leaps
 Loading required package: plotrix
 > source("fast.postscript.R")
 > data(ozone1)
@@ -145,7 +144,8 @@ Opening Rplots.ps
 > if(length(grep("package:gam", search())))
 +     detach("package:gam")
 > library(mgcv)
-This is mgcv 1.7-16. For overview type 'help("mgcv-package")'.
+Loading required package: nlme
+This is mgcv 1.7-28. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test plot.gam, with mgcv::gam(y ~ s(x) + s(x,z)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -333,6 +333,8 @@ func=test1 returned length 50 min 0.1668464 max 0.3675085
 > 
 > library(mda)
 Loading required package: class
+Loaded mda 0.4-4
+
 > caption <- "test mars and earth (expect not a close match)"
 > dopar(6,3,caption)
                               test mars and earth (expect not a close match) 
@@ -1423,7 +1425,7 @@ Loading required package: rpart
 
 Attaching package: 'rpart'
 
-The following object(s) are masked from 'package:faraway':
+The following object is masked from 'package:faraway':
 
     solder
 
@@ -1557,7 +1559,7 @@ Warning: ignoring xflip=TRUE for persp plot
 Warning: ignoring yflip=TRUE for persp plot
 > 
 > library(randomForest)
-randomForest 4.6-6
+randomForest 4.6-7
 Type rfNews() to see new features/changes/bug fixes.
 > data(ozone1)
 > set.seed(3)
@@ -1582,7 +1584,7 @@ Loading required package: splines
 
 Attaching package: 'survival'
 
-The following object(s) are masked from 'package:faraway':
+The following object is masked from 'package:faraway':
 
     rats
 
@@ -1590,12 +1592,12 @@ Loading required package: lattice
 
 Attaching package: 'lattice'
 
-The following object(s) are masked from 'package:faraway':
+The following object is masked from 'package:faraway':
 
     melanoma
 
-Loaded gbm 1.6.3.2
-
+Loading required package: parallel
+Loaded gbm 2.1
 > library(rpart.plot) # for ptitanic, want data with NAs for testing
 > data(ptitanic)
 > ptit <- ptitanic[c(1:10,400:410,600:610),] # small data for fast test
@@ -1605,8 +1607,9 @@ Loaded gbm 1.6.3.2
 > ptit$pclass <- NULL
 > ptit$pclass <- factor(as.numeric(temp), labels=c("first", "second", "third"))
 > set.seed(1010)
-> gbm.model <- gbm(survived~., data=ptit, train.frac=.95,
+> gbm.model <- gbm(survived~., data=ptit, train.frac=.95, verbose=TRUE,
 +                  n.trees=30, shrinkage=.1) # small number of trees for fast test
+Distribution not specified, assuming bernoulli ...
 Iter   TrainDeviance   ValidDeviance   StepSize   Improve
      1        1.2866          1.1075     0.1000    0.0267
      2        1.2462          1.0707     0.1000    0.0211
@@ -1618,6 +1621,7 @@ Iter   TrainDeviance   ValidDeviance   StepSize   Improve
      8        1.1135          0.9229     0.1000    0.0059
      9        1.1010          0.9032     0.1000    0.0061
     10        1.0903          0.8884     0.1000    0.0048
+    20        1.0179          0.7965     0.1000    0.0020
     30        0.9866          0.7623     0.1000    0.0007
 
 > par(mfrow=c(3,4))
@@ -1632,39 +1636,23 @@ Iter   TrainDeviance   ValidDeviance   StepSize   Improve
        female  28     0     0  first
 
 > print(summary(gbm.model))   # will also plot
-     var   rel.inf
-1    sex 76.528849
-2 pclass 18.525225
-3    age  3.353178
-4  sibsp  1.592748
-5  parch  0.000000
+          var   rel.inf
+sex       sex 76.528849
+pclass pclass 18.525225
+age       age  3.353178
+sibsp   sibsp  1.592748
+parch   parch  0.000000
 > par(mfrow=c(1,1))
 > 
 > library(caret)
-Loading required package: reshape
-Loading required package: plyr
+Loading required package: ggplot2
 
-Attaching package: 'plyr'
+Attaching package: 'caret'
 
-The following object(s) are masked from 'package:faraway':
+The following object is masked from 'package:survival':
 
-    ozone
+    cluster
 
-
-Attaching package: 'reshape'
-
-The following object(s) are masked from 'package:plyr':
-
-    rename, round_any
-
-The following object(s) are masked from 'package:class':
-
-    condense
-
-Loading required package: cluster
-Warning in FUN(X[[9L]], ...) :
-  failed to assign RegisteredNativeSymbol for twins to twins since twins is already defined in the cluster namespace
-Loading required package: foreach
 > set.seed(13)
 > a.bag1 <- bagEarth(trees[,-3], trees[,3], B = 3)
 > plotmo(a.bag1, all2=TRUE, caption="bagEarth, trees")

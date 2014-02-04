@@ -2,7 +2,7 @@
 @rem Stephen Milborrow, Basley KwaZulu-Natal Mar 2011
 
 @echo === test.plotmo.non.earth ==================================================
-@"\PROGRA~1\R\R-2.15.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.non.earth.R
+@"\PROGRA~1\R\R-3.0.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.non.earth.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.non.earth.Rout:
 @echo.

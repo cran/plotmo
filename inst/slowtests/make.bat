@@ -1,4 +1,4 @@
-@rem plotmo/src/tests/make.bat
+@rem plotmo/inst/slowtests/make.bat
 
 time /T
 @call test.plotmo.bat
@@ -12,12 +12,12 @@ time /T
 @echo.
 @call test.plotmo.center.bat
                         @if %errorlevel% NEQ 0 goto error
-@rem for a thorough test, run \a\earth\src\tests\make.bat
-@cd \a\earth\src\tests
+@rem for a thorough test, run \b\earth\src\tests\make.bat
+@cd \b\earth\src\tests
                         @if %errorlevel% NEQ 0 goto error
 @call make.bat
                         @if %errorlevel% NEQ 0 goto error
-@cd \a\plotmo\src\tests
+@cd \b\plotmo\inst\slowtests
 @goto done
 :error
 @echo ==== ERROR ====

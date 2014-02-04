@@ -534,7 +534,7 @@ temp <- ptit$pclass # put pclass at the end so can check ordering of importances
 ptit$pclass <- NULL
 ptit$pclass <- factor(as.numeric(temp), labels=c("first", "second", "third"))
 set.seed(1010)
-gbm.model <- gbm(survived~., data=ptit, train.frac=.95,
+gbm.model <- gbm(survived~., data=ptit, train.frac=.95, verbose=TRUE,
                  n.trees=30, shrinkage=.1) # small number of trees for fast test
 par(mfrow=c(3,4))
 par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
