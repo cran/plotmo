@@ -1,11 +1,13 @@
 # plotmo.gbm.R: plotmo method functions for gbm objects
 #               See the descriptions of the methods in plotmo.methods.R.
+#
+# TODO Add support for plotmo's level argument (quantile regression).
 
 # gbm.importance is a vector of variable indices (column numbers in x),
 # most important vars first, no variables with relative.influence < 1%.
 # We keep a global copy of this variable to avoid calling summary.gbm
 # twice (it's expensive).
-
+#
 gbm.importance <- NULL
 
 plotmo.prolog.gbm <- function(object, ...) # called when plotmo starts
@@ -68,10 +70,8 @@ get.plotmo.y.gbm <- function(object, ...)
     object$data$y[1:ntrain]
 }
 
-plotmo.predict.gbm <- function(object, newdata, type, se.fit, ...)
+plotmo.predict.gbm <- function(object, newdata, type, ...)
 {
-    if(se.fit)
-        stop0("predict.gbm does not support \"se\"")
     # predict.gbm doesn't do partial matching on type so do it here
     allowed.types <- c("link","response")
     predict(object, newdata, n.trees=object$n.trees, # calls predict.gbm

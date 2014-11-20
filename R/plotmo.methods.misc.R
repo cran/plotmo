@@ -28,15 +28,16 @@ get.plotmo.pairs.randomForest <- function(object, env, x, ...)
     # pairs of four most important variables
     form.pairs(importance[1: min(4, length(importance))])
 }
+plotmo.predict.quantregForest <- function(object, newdata, type, ...)
+{
+    predict(object, newdata=newdata, quantiles=.5)
+}
 get.plotmo.default.type.lars <- function(obj, ...)
 {
     "fit"
 }
-plotmo.predict.lars <- function(object, newdata, type, se.fit, ...)
+plotmo.predict.lars <- function(object, newdata, type, ...)
 {
-    if(se.fit)
-        stop0("predict.lars does not support \"se\"")
-
     if(pmatch(type, "coefficients", 0))
         stop0("predict.lars type=\"coefficients\" cannot be used with plotmo")
 
@@ -47,25 +48,18 @@ get.plotmo.default.type.bruto <- function(obj, ...)
 {
     "fitted"
 }
-plotmo.predict.bruto <- function(object, newdata, type, se.fit, ...)
+plotmo.predict.bruto <- function(object, newdata, type, ...)
 {
-    if(se.fit)
-        stop0("predict.bruto does not support \"se\"")
-
     # TODO fails: predict.bruto returned a response of the wrong length (got 31 expected 27)
     predict(object, newx=as.matrix(newdata), type=type)
 }
-plotmo.predict.lda <- function(object, newdata, type, se.fit, trace)
+plotmo.predict.lda <- function(object, newdata, type, trace)
 {
-    if(se.fit)
-        stop0("predict.lda does not support \"se\"")
     y <- predict(object, newdata, type=type)    # calls predict.lda
     get.lda.yhat(object, y, type, trace)
 }
-plotmo.predict.qda <- function(object, newdata, type, se.fit, trace)
+plotmo.predict.qda <- function(object, newdata, type, trace)
 {
-    if(se.fit)
-        stop0("predict.qda does not support \"se\"")
     y <- predict(object, newdata, type=type)    # calls predict.qda
     get.lda.yhat(object, y, type, trace)
 }
@@ -97,6 +91,37 @@ get.plotmo.default.type.fda <- function(obj, ...)
 {
     "class"
 }
+get.plotmo.default.type.varmod <- function(object, env, trace)
+{
+    "se"
+}
+get.plotmo.x.varmod <- function(object, env, trace)
+{
+    get.plotmo.x(object$parent, env, trace)
+}
+get.plotmo.y.varmod <- function(object, env, y.column, expected.len, trace)
+{
+    get.plotmo.y(object$residmod, env, y.column, expected.len, trace)
+}
+
+# # Simple interface for the AMORE package.
+# # Thanks to Bernard Nolan and David Lorenz for these.
+# # Commented out to avoid having suggests(AMORE) in plotmo DESCRIPTION file.
+#
+# get.plotmo.x.MLPnet <- function(object, ...)
+# {
+#     get("P", pos=1)
+# }
+# get.plotmo.y.MLPnet <- function(object, ...)
+# {
+#     get("T", pos=1)
+# }
+# predict.MLPnet <- function(object, newdata, ...)
+# {
+#     library(AMORE)
+#     sim.MLPnet(object, newdata, ...)
+# }
+
 # TODO Following commented out because polyreg is not supported by plotmo
 # So with comment out we support plotmo(fda.object) but not plotmo(fda.object$fit).
 # If not not commented out, we would support neither.

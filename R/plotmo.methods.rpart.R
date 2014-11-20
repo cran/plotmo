@@ -26,8 +26,8 @@ get.plotmo.pairs.rpart <- function(object, env, x, trace, ...)
     ivar <- charmatch(var.names, colnames(x))
     # following is the same as var.names != "<leaf>" & var.names !=""
     is.split <- !is.na(ivar) & ivar > 0
-    if(sum(is.split) == 0)
-        stop0("the rpart tree has no splits")
+    if(sum(is.split) == 0) # no splits? (intercept-only model)
+        return(NULL)
     pairs <- NULL
     for(i in 1:length(ivar)) {
         if(is.split[i]) {
@@ -43,11 +43,8 @@ get.plotmo.pairs.rpart <- function(object, env, x, trace, ...)
         pairs <- matrix(pairs, ncol=2, byrow=TRUE)
     pairs
 }
-plotmo.predict.rpart <- function(object, newdata, type, se.fit, trace)
+plotmo.predict.rpart <- function(object, newdata, type, trace)
 {
-    if(se.fit)
-        stop0("predict.rpart does not support \"se\"")
-
     # do some hand holding to avoid obscure message from predict.rpart
     pmatch <- pmatch(object$method, c("anova", "class", "exp", "poisson"))
     if(pmatch == 2) { # class

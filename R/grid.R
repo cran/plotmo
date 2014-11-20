@@ -57,7 +57,7 @@ get.degree1.xframe <- function(xgrid, x, ipred, ngrid1, xlevs)
 #         2.5       3.3
 #         3.0       3.3
 
-blockify.degree1.frame <- function(xframe, y.predict, y.se.lower, y.se.upper,
+blockify.degree1.frame <- function(xframe, y.predict, intervals,
                                    ipred, xlevs, ndiscrete)
 {
     xlevs1 <- xlevs[[ipred]]
@@ -66,10 +66,13 @@ blockify.degree1.frame <- function(xframe, y.predict, y.se.lower, y.se.upper,
     if(!is.factor(xframe[[ipred]]) && length(xlevs1) <= ndiscrete && is.integral(xlevs1)) {
         # discrete, so duplicate each elem in y.predict
         y.predict <- rep(y.predict, each=2)
-        if(!is.null(y.se.lower))
-            y.se.lower <- rep(y.se.lower, each=2)
-        if(!is.null(y.se.upper))
-            y.se.upper <- rep(y.se.upper, each=2)
+        if(!is.null(intervals)) {
+            intervals$fit      <- rep(intervals$fit,      each=2)
+            intervals$lwr      <- rep(intervals$lwr,      each=2)
+            intervals$upr      <- rep(intervals$upr,      each=2)
+            intervals$cint.lwr <- rep(intervals$cint.lwr, each=2)
+            intervals$cint.upr <- rep(intervals$cint.upr, each=2)
+        }
         # duplicate each row of xframe
         xframe <- xframe[rep(1:nrow(xframe), each=2), , drop=FALSE]
         if(nrow(xframe) >= 4) {
@@ -79,8 +82,7 @@ blockify.degree1.frame <- function(xframe, y.predict, y.se.lower, y.se.upper,
             xframe[[ipred]] <- xcol
         }
     }
-    list(xframe=xframe, y.predict=y.predict,
-         y.se.lower=y.se.lower, y.se.upper=y.se.upper)
+    list(xframe=xframe, y.predict=y.predict, intervals=intervals)
 }
 
 # Get the x matrix (actually a data.frame) to plot in degree2 plots.

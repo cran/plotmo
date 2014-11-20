@@ -1,5 +1,7 @@
 export(plotmo)
 
-export("get.plotmo.singles")
 export("get.plotmo.pairs")
+export("get.plotmo.singles")
+export("get.plotmo.type.wrapper")
 export("get.plotmo.y")
+export("get.plotmo.y_default")

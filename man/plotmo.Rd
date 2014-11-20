@@ -11,41 +11,41 @@ dependence plot.   See the \dQuote{Details} section for an overview.
 plotmo(object = stop("no 'object' arg"),
        type=NULL, nresponse = NA, clip = TRUE, ylim = NULL,
        center = FALSE, ndiscrete = 5,
-       degree1 = TRUE, all1=FALSE, degree2 = TRUE, all2=FALSE,
+       degree1 = TRUE, all1=FALSE, degree2 = TRUE, all2=FALSE, int.only.ok = TRUE,
        grid.func = median, grid.levels = NULL,
-       col.response = 0, cex.response = 1, pch.response = 1,
-       jitter.response=0, npoints = -1,
-       inverse.func = NULL, trace = 0,
+       col.response = 0, cex.response = NULL, pch.response = 20,
+       jitter.response=0, npoints = -1, inverse.func = NULL,
+       level = 0, shade.pints = "mistyrose2", shade2.pints = "mistyrose4",
+       trace = 0,
        nrug = 0, col.degree1 = 1, lty.degree1 = 1, lwd.degree1 = 1,
-       col.smooth = 0, lty.smooth = 1, lwd.smooth = 1,
-       se = 0, col.shade = "lightgray", col.se = 0, lty.se = 2,
+       col.smooth = 0, lty.smooth = 1, lwd.smooth = 1, smooth.f = .5,
        func = NULL, col.func = "lightblue", lty.func = 1, lwd.func = 1,
-       ngrid1 = 50,  grid=FALSE,
+       ngrid1 = 50,  grid = FALSE,
        type2 = "persp", ngrid2 = 20,
        col.image = gray(0:10/10), col.persp = "lightblue",
        theta = NA, phi = 30, dvalue = 1, shade = 0.5,
        do.par = TRUE, caption = NULL, main = NULL,
-       xlab = "", ylab = "", cex = NULL, cex.lab = 1,
-       xflip = FALSE, yflip = FALSE, swapxy = FALSE, ...)
+       xlim = NULL, xlab = "", ylab = "", cex = NULL, cex.lab = 1,
+       xflip = FALSE, yflip = FALSE, swapxy = FALSE, se = 0, ...)
 }
 \arguments{
-To start off, look at the arguments
+\bold{To start off, look at the arguments
   \code{object},
   \code{type},
   \code{clip},
-  and \code{col.response}.
+  and \code{col.response}.}
 
   \item{object}{
      Model object.
   }
   \item{type}{
      Type parameter passed to \code{\link{predict}}.
-     For legal values see the \code{predict} method for
+     For allowed values see the \code{predict} method for
      your \code{object} (such as
      \code{\link[earth]{predict.earth}} and \code{\link{predict.rpart}}).
      By default,
      \code{plotmo} tries to automatically select a suitable value
-     (usually \code{"response"}; if not it will be printed in the caption).
+     (usually \code{"response"}; if not it will be printed in the plot caption).
   }
   \item{nresponse}{
      Which column to use when \code{predict} returns multiple columns.
@@ -83,7 +83,7 @@ To start off, look at the arguments
      Factors are always considered discrete.
   }
   \item{degree1}{
-     Index vector specifying which main effect plots to include.
+     Index vector specifying which subset of main effect plots to include.
      Default is \code{TRUE}, meaning all degree1 plots (the \code{TRUE} gets recycled).
      Use \code{FALSE} (or \code{0}) for no degree1 plots.\cr
      Note that this indexes \code{plotmo} plots, not columns in \code{x}.
@@ -107,7 +107,7 @@ To start off, look at the arguments
      the \code{degree1} argument reduces the number of plots.
   }
   \item{degree2}{
-     Index vector specifying which interaction plots to include.
+     Index vector specifying which subset of interaction plots to include.
      Default is \code{TRUE}, meaning all degree2 plots.\cr
      \bold{New in version 1.3-0}: \code{degree2} may be a character vector
      specifying which variables to plot
@@ -117,9 +117,18 @@ To start off, look at the arguments
      Default is \code{FALSE}.
      Use \code{TRUE} to plot all pairs of predictors,
      not just those usually selected by \code{plotmo}.
+     The \code{all2} argument increases the number of plots;
+     the \code{degree2} argument reduces the number of plots.
+  }
+  \item{int.only.ok}{
+     \bold{New in version 2.0.0.}
+     Plot the model even if it is an intercept-only model.
+     Do this by plotting a single degree1 plot for the first predictor.\cr
+     Use \code{int.only.ok=FALSE} to instead issue an error message
+     for intercept-only models (which was the behaviour prior to version 2.0.0).
   }
   \item{grid.func}{
-     Function applied to columns of the x matrix to fix the values of
+     Function applied to columns of the \code{x} matrix to fix the values of
      variables not on the axes.
      Default is \code{\link{median}}.
      (This argument is ignored for factors.  The first level of
@@ -149,12 +158,12 @@ To start off, look at the arguments
   }
   \item{cex.response}{
      Relative size of response points.
-     Default is \code{1}.
+     Default is \code{NULL}, meaning automatic.
      Applies only if \code{col.response!=0}.
   }
   \item{pch.response}{
      Plot character for response points.
-     Default is \code{1}.
+     Default is \code{20}.
      Applies only if \code{col.response!=0}.
   }
   \item{jitter.response}{
@@ -163,7 +172,7 @@ To start off, look at the arguments
      Default \code{0}, no jitter.
      A typical useful value is \code{.3}, but it depends on the data.
      Points are jittered horizontally and vertically.
-     Note: the points for factors and discrete variables and responses
+     Note: the points for factors and discrete variables (see the \code{ndiscrete} argument)
      are always jittered (because unambiguous space is available),
      even when \code{jitter.response} is zero.
   }
@@ -178,6 +187,21 @@ To start off, look at the arguments
      Else a function applied to the predicted response before plotting.
      For example, you could use \code{inverse.func=exp} if your
      model formula is \code{log(y)~x}.
+  }
+  \item{level}{
+     \bold{New in version 2.0.0.}
+     Draw estimated confidence or prediction interval bands at the given \code{level}.
+     Default is 0, bands not plotted.
+     Else a fraction, something like \code{level=.95}.
+     See \dQuote{Prediction intervals} below.
+  }
+  \item{shade.pints}{
+     Color of \code{level} bands. Default is \code{"mistyrose2"}, a pale pink.
+     Applies only if \code{level > 0}.
+  }
+  \item{shade2.pints}{
+     Color of additional \code{level} bands.  Default is \code{"mistyrose4"}.
+     Applies only if \code{level > 0} and currently only for \code{lm} models.
   }
   \item{trace}{
      Default is \code{0}.\cr
@@ -225,30 +249,10 @@ To start off, look at the arguments
      Default is \code{1}.
      Applies only if \code{col.smooth!=0}.
   }
-  \item{se}{
-     Draw standard error bands at plus and minus \code{se} times the pointwise standard errors.
-     Default is \code{0}, no standard error bands.
-     A typical value would be \code{2}.
-     The predict method for the model \code{object} must support standard errors,
-     i.e. be callable with \code{se.fit=TRUE}
-     (such as \code{\link{predict.lm}} but not \code{\link[earth]{predict.earth}}).
-     Example:
-\preformatted{  fit <- lm(stack.loss~., stackloss)
-  plotmo(fit, se=2, col.response=2, nrug=-1)
-  %spacer
-}
-  }
-  \item{col.shade}{
-     Color of \code{se} shading.  Default is \code{"lightgray"}.
-     Use \code{0} for no shading.
-     Applies only if \code{se!=0}.
-  }
-  \item{col.se}{
-     Color of \code{se} lines.  Default is \code{0}, no lines just shading.
-     Applies only if \code{se!=0}.
-  }
-  \item{lty.se}{
-     Line type of \code{se} lines.  Default is \code{2}.
+  \item{smooth.f}{
+     \code{f} parameter in internal call to \code{\link{lowess}}.
+     Default is \code{.5}.
+     Applies only if \code{col.smooth!=0}.
   }
   \item{func}{
      Superimpose \code{func(x)} if \code{func} is not \code{NULL}.
@@ -279,17 +283,6 @@ To start off, look at the arguments
      Default \code{FALSE}.
      Use \code{TRUE} to add a \code{\link{grid}} to the degree1 plots.
      You can also specify a color here, e.g. \code{grid="darkgray"}.
-  }
-  \item{xlab}{
-     Horizontal axis label on degree1 plots
-     (for degree2 plots the labels are always the predictor names).
-     Default is \code{""}, no label, which gives more plottable area.
-     The special value \code{NULL} means use the current variable name as the label.
-     (If you use \code{NULL}, you may want to use \code{main=""} to avoid
-     redundant labeling.)
-  }
-  \item{ylab}{
-     Vertical axis label.  Values as for \code{xlab}.
 \cr
 \cr
   \bold{The following arguments are for degree2 plots}
@@ -336,8 +329,9 @@ To start off, look at the arguments
   }
   \item{do.par}{
     Default is \code{TRUE}, meaning start a new page and call \code{\link{par}} as
-    appropriate (this adjusts \code{mfrow}, \code{cex}, \code{mar}, and \code{mgp}).
-    Use \code{FALSE} to use the current graphics settings.
+    appropriate (this adjusts \code{mfrow}, \code{cex}, \code{mar}, and \code{mgp}).\cr
+    Use \code{FALSE} to use the current graphics settings,
+    for example if you want to add plots to an existing multifigure page.\cr
     The value \code{2} means act like \code{TRUE} but do not restore
     the \code{par} settings to their original state when \code{plotmo} exits.
     This is useful if you want to add a few more plots on the same page
@@ -352,6 +346,21 @@ To start off, look at the arguments
     By default generate titles automatically from the variable names.
     See also \code{caption}, for the overall title.
   }
+  \item{xlim}{
+     Default is \code{NULL}, meaning automatically calculate \code{xlim} for each graph.
+     Else used the given \code{xlim} for all \code{degree1} graphs.
+  }
+  \item{xlab}{
+     Horizontal axis label on degree1 plots
+     (for degree2 plots the labels are always the predictor names).
+     Default is \code{""}, no label, which gives more plottable area.
+     The special value \code{NULL} means use the current variable name as the label.
+     (If you use \code{NULL}, you may want to use \code{main=""} to avoid
+     redundant labeling.)
+  }
+  \item{ylab}{
+     Vertical axis label.  Values as for \code{xlab}.
+  }
   \item{cex}{
     Character expansion.
   }
@@ -360,7 +369,7 @@ To start off, look at the arguments
   }
   \item{xflip}{
      Default \code{FALSE}.
-     Use \code{TRUE} to flip the direction of the x axis.
+     Use \code{TRUE} to flip the direction of the \code{x} axis.
      This argument (and \code{yflip} and \code{swapxy}) is useful when comparing
      to a plot from another source and you want the axes to be the same.
      (Note that \code{xflip} and \code{yflip} cannot be used on the \code{persp} plots,
@@ -373,6 +382,10 @@ To start off, look at the arguments
   \item{swapxy}{
      Default \code{FALSE}.
      Use \code{TRUE} to swap the x and y axes on the degree2 graphs.
+  }
+  \item{se}{
+     Deprecated.  Please use the \code{level} argument instead.
+     So instead of \code{se=2} use \code{level=.95}.
   }
   \item{\dots}{
      Extra arguments are passed on to the plotting functions.
@@ -396,8 +409,8 @@ over-interpretation is a temptation.
 
 \code{Plotmo} was originally part of the \code{\link[earth]{earth}} package
 and a few connections to that package still remain.
-
-\bold{Limitations}
+}
+\section{Limitations}{
 
 NAs are not yet supported.
 To prevent confusing error messages from functions called by \code{plotmo},
@@ -417,8 +430,8 @@ model function).  If the environment was not saved with the model
 (typically if the \code{x,y} interface was used),
 the model data is evaluated in the environment in which \code{plotmo}
 is called.
-
-\bold{Alternatives}
+}
+\section{Alternatives}{
 
 An alternative approach is to use partial-dependence plots
 (e.g. \emph{The Elements of Statistical Learning} 10.13.2).
@@ -450,9 +463,9 @@ marginal-model plots (e.g.  \code{\link[car]{crPlots}},
 \code{\link[car]{avPlots}}, and \code{\link[car]{marginalModelPlot}} in the
 \code{\link[car]{car-package}}).
 These plots are orientated towards linear models.
-The \code{\link[effects]{effects-package}}) package is also of interest.
-
-\bold{Which variables are plotted?}
+The \code{\link[effects]{effects-package}} package is also of interest.
+}
+\section{Which variables are plotted?}{
 
 The set of variables plotted for some common objects is listed below.
 This may leave out variables that you would like to see ---
@@ -476,8 +489,8 @@ on the first column of \code{object$importance)}.}
 like \code{x1*x2}, \code{x1:x2} and \code{s(x1,x2)}.}
 %spacer
 }
-
-\bold{The \code{clip} argument}
+}
+\section{The \code{clip} argument}{
 
 With the default \code{clip=TRUE}, predicted values out of the
 expected range are not displayed.
@@ -500,8 +513,8 @@ are usually something we want to know about.
 Also, with \code{clip=FALSE}, a few errant predictions can expand the
 entire y-axis, making it difficult to see the shape of the other
 predictions.
-
-\bold{Using \code{plotmo} on various models}
+}
+\section{Using \code{plotmo} on various models}{
 
 Here are some examples which illustrate \code{plotmo} on various
 objects.
@@ -514,7 +527,7 @@ shouldn't be taken too seriously.)
     oz <- ozone1[, c("O3", "humidity", "temp", "ibt")]
 
     lm.model <- lm(O3 ~ humidity + temp*ibt, data=oz)       # linear model
-    plotmo(lm.model, se=2, col.response="gray", nrug=-1)
+    plotmo(lm.model, col.response="gray", nrug=-1)
 
     library(rpart)                                          # rpart
     rpart.model <- rpart(O3 ~ ., data=oz)
@@ -533,7 +546,7 @@ shouldn't be taken too seriously.)
 
     library(mgcv)                                           # gam
     gam.model <- gam(O3 ~ s(humidity)+s(temp)+s(ibt)+s(temp,ibt), data=oz)
-    plotmo(gam.model, se=2, all2=TRUE)
+    plotmo(gam.model, level=.95, all2=TRUE)
 
     library(nnet)                                           # nnet
     set.seed(4)
@@ -550,8 +563,113 @@ shouldn't be taken too seriously.)
        pch.response=as.character(lcush$Type))
 
 }
-\bold{Extending plotmo}
+}
+\section{Prediction intervals}{
 
+Use the \code{level} argument to plot pointwise confidence or prediction intervals.
+The \code{predict} method of the object must support this.
+Examples:
+\preformatted{
+  par(mfrow=c(2,3))
+  log.trees <- log(trees) # make the resids more homoscedastic
+                          # (necessary for lm)
+
+                                                             # lm
+  lm.model <- lm(Volume~Height, data=log.trees)
+  plot(lm.model, which=1, main="lm") # Residual vs Fitted graph
+  plotmo(lm.model, level=.90, col.response=2,
+         main="lm\n(conf and pred intervals)", do.par=F)
+
+                                                              # earth (requires earth 3.3)
+  library(earth)
+  earth.model <- earth(Volume~Height, data=log.trees,
+                       nfold=5, ncross=30, varmod.method="lm")
+  plotmo(earth.model, level=.90, col.response=2, main="earth", do.par=F)
+
+                                                              # quantreg
+  library(quantreg)
+  rq.model <- rq(Volume~Height, data=log.trees, tau=c(.05, .5, .95))
+  plotmo(rq.model, level=.90, col.response=2, main="rq", do.par=F)
+
+                                                              # quantregForest
+  # quantregForest is a layer on randomForest that allows prediction intervals
+  library(quantregForest)
+  x <- data.frame(Height=log.trees$Height)
+  qrf <- quantregForest(x, log.trees$Volume)
+  plotmo(qrf, level=.90, col.response=2, main="qrf", do.par=F)
+
+                                                              # gam
+  library(mgcv)
+  gam.model <- gam(Volume~s(Height), data=log.trees)
+  plotmo(gam.model, level=.90, col.response=2,
+         main="gam\n(conf not pred intervals)", do.par=F)
+
+}
+}
+\section{ }{ %force a paragraph break, \cr\cr gives a latex error
+Be aware of the distinction between the two types of interval:
+}
+\section{ }{
+(i) intervals for the prediction of the mean response
+(often called \emph{confidence intervals})
+}
+\section{ }{
+(ii) intervals for the prediction of a future value (often called
+\emph{prediction intervals}).
+}
+\section{ }{
+A reference is Section 3.5 of
+\href{http://cran.r-project.org/doc/contrib/Faraway-PRA.pdf}{Julian
+Faraway's online linear regression book}.
+Your object's \code{predict} method determines which of these
+get returned and plotted by \code{plotmo}.
+Currently only \code{lm} supports both types of interval
+on new data (see \code{predict.lm}'s
+\code{interval} argument), and both are plotted by \code{plotmo}.
+}
+\section{ }{
+Be aware of the assumptions made to generate the limits.
+At the very least, the model needs to fit the data adequately.  Most
+models will impose further conditions.
+For linear models the residuals must be homoscedastic.
+
+Examination of the "Residual versus Fitted" plot is the standard way
+of detecting issues.
+So for example, with linear models use \code{plot.lm(which=1)}
+and with earth models use \code{plot.which(which=3)}.
+Look at the the distribution of residual points to detect non-homoscedasity.
+Also look at the smooth line in the residuals plot to detect non-linearity.
+If this is highly curved, you cannot trust the intervals.
+% Look at the QQ plot to detect non-gaussianity.
+
+% For models that support heteroscedasity, the
+% normalized residuals should be approximately homoscedastic
+% (where \dQuote{normalization} here means dividing the residuals by
+% their estimated standard deviation).
+% For example, use \code{pearson=TRUE} in \code{plot.earth}.
+}
+\section{ }{
+One good place for more background on residual analysis is Chapter 8
+\emph{Regression Diagnostics: Residuals}
+in Sanford Weisberg
+\emph{Applied Linear Regression (2nd Edition)}.
+See also the prediction limits chapter
+in the vignette for the \code{\link[earth]{earth}} package.
+}
+% \section{ }{
+% (We mention that if \code{lm} was called with
+% \code{weights}, the prediction intervals returned by \code{predict.lm}
+% in our experience seem meaningless.)
+% }
+\section{ }{
+These are \emph{pointwise} limits.  They can only be interpreted in a
+pointwise fashion.
+So for non-parametric models they shouldn't be
+used to infer bumps or dips that are dependent on a range of the
+curve.  For that you need \emph{simultaneous} confidence bands, which
+none of the models above support.
+}
+\section{Extending plotmo}{
 \code{Plotmo} needs to access the data used to build the model.
 It does that with the method functions listed below.
 The default methods suffice for many objects.
@@ -560,7 +678,7 @@ an error message) if the model function did not save
 the call or data with the object in a standard fashion.
 Object-specific methods can usually be written to deal with such
 issues.
-See \code{plotmo.methods.gbm.R} in the \code{plotmo} source code for an example.
+See \code{plotmo.methods.*.R} in the \code{plotmo} source code for examples.
 The methods are:
 
 \describe{
@@ -573,9 +691,10 @@ The methods are:
 \item{\code{get.plotmo.pairs}}{ the array of pairs to be plotted in degree2 plots}
 \item{\code{get.plotmo.ylim}}{ the value of \code{ylim} when not specified by the user}
 \item{\code{get.plotmo.clip.limits}}{ the clip range when \code{clip=TRUE}}
+\item{\code{plotmo.pint}}{ the prediction intervals for \code{plotmo}'s \code{level} argument}
 }
-\bold{Common error messages}
-
+}
+\section{Common error messages}{
 \bold{o}\code{ Error in match.arg(type): 'arg' should be one of ...}
 
 The message is probably issued by the \code{predict} method for your
@@ -638,10 +757,8 @@ the environment when \code{plotmo} is called?
 \code{Plotmo}'s default methods are insufficient for your model object.
 See \dQuote{Extending plotmo} above (and contact the author --- this is often
 easy to fix).
-
-%spacer
-\bold{FAQ}
-
+}
+\section{FAQ}{
 \bold{o} \emph{I am not seeing any interaction plots.  How can I change that?}
 
 Use \code{all2=TRUE}.
@@ -681,7 +798,7 @@ if (require(rpart)) {
 }
 if (require(earth)) {
     data(ozone1)
-    earth.model <- earth(O3 ~ ., data=ozone1, degree=2)
+    earth.model <- earth(O3 ~ ., data=ozone1, degree=2, nk=21)
     plotmo(earth.model)
 }
 }

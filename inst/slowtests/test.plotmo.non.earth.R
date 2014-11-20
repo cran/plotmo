@@ -3,12 +3,11 @@
 
 library(plotmo)
 library(earth)
-source("fast.postscript.R")
 data(ozone1)
 data(etitanic)
 options(warn=1) # print warnings as they occur
 if(!interactive())
-    fast.postscript(paper="letter")
+    postscript(paper="letter")
 Trace <- 0
 dopar <- function(nrows, ncols, caption = "")
 {
@@ -18,6 +17,13 @@ dopar <- function(nrows, ncols, caption = "")
     par(mar = c(3, 3, 1.7, 0.5))
     par(mgp = c(1.6, 0.6, 0))
     par(cex = 0.7)
+}
+expect.err <- function(obj) # test that we got an error as expected from a try() call
+{
+    if(class(obj)[1] == "try-error")
+        cat("Got error as expected\n")
+    else
+        stop("did not get expected try error")
 }
 caption <- "test lm(log(doy) ~ vh+wind+humidity+temp+log(ibh), data=ozone1)"
 dopar(4,5,caption)
@@ -178,10 +184,10 @@ plotmo(b, do.par=FALSE, ylim=NA, trace=Trace)
 
 dopar(4,4, "test f <- O3 ~ .; a <- earth(f, data=ozone1)")
 fa <- log(O3) ~ .
-a <- earth(fa, data=ozone1, degree=2, minspan=-1)
+a <- earth(fa, data=ozone1, degree=2)
 print(summary(a))
 plot(a, do.par=FALSE)
-plotmo(a, do.par=FALSE, degree1=2:3, degree2=c(1,3), col.response = "pink", col.smooth="indianred")
+plotmo(a, do.par=FALSE, degree1=2:3, degree2=c(1,2), col.response = "pink", col.smooth="indianred")
 a <- lm(log(doy) ~ I(vh*wind) + I(humidity*temp) + log(ibh), data=ozone1)
 plotmo(a, do.par=FALSE, degree1=1:2)
 fa <- log(doy) ~ I(vh*wind) + I(humidity*temp) + log(ibh)
@@ -197,48 +203,48 @@ plotmo(a, caption=caption, inverse.func = exp, col.response = "pink", func=my.fu
 
 # se testing
 
-caption = "se=2, lm(doy~., data=ozone1) versus termplot"
+caption = "level=.95, lm(doy~., data=ozone1) versus termplot"
 dopar(6,3,caption)
 a <- lm(doy~., data=ozone1)
-plotmo(a, se=2, do.par=FALSE, trace=1, caption=caption)
+plotmo(a, level=.95, do.par=FALSE, trace=1, caption=caption)
 termplot(a, se=2)
 
-caption <- "test different se options, se=2, lm(log(doy)~vh+wind+log(humidity),data=ozone1)"
+caption <- "test different se options, level=.95, lm(log(doy)~vh+wind+log(humidity),data=ozone1)"
 dopar(4,3,caption)
 a <- lm(log(doy) ~ vh + wind + log(humidity), data=ozone1)
-plotmo(a, do.par=FALSE, caption=caption, ylim=NA, se=2, trace=2)
-plotmo(a, do.par=FALSE, caption=caption, ylim=NA, se=2, col.shade="pink", col.se=1, trace=Trace)
-plotmo(a, do.par=FALSE, caption=caption, ylim=NA, se=2, col.se=1, trace=Trace)
-plotmo(a, do.par=FALSE, caption=caption, ylim=NULL, se=2, col.se=1, trace=Trace)
+plotmo(a, do.par=FALSE, caption=caption, ylim=NA, level=.95, trace=2)
+plotmo(a, do.par=FALSE, caption=caption, ylim=NA, level=.95, shade.pints="pink", shade2.pints=3, trace=Trace)
+plotmo(a, do.par=FALSE, caption=caption, ylim=NA, level=.95, shade.pints=3, trace=Trace)
+plotmo(a, do.par=FALSE, caption=caption, ylim=NULL, level=.95, shade.pints=3, trace=Trace)
 
-caption <- "test se=2, lm(log(doy)~vh+wind+log(humidity),data=ozone1)"
+caption <- "test level=.95, lm(log(doy)~vh+wind+log(humidity),data=ozone1)"
 dopar(2,3,caption)
 a <- lm(log(doy) ~ vh + wind + log(humidity), data=ozone1)
-plotmo(a, do.par=FALSE, caption=caption, ylim=NA, se=2, trace=Trace)
-termplot(a, se=TRUE)
+plotmo(a, do.par=FALSE, caption=caption, ylim=NA, level=.95, trace=Trace)
+termplot(a, se=2)
 
-caption <- "test se=2 and inverse.func, lm(log(doy)~vh+wind+log(humidity),data=ozone1)"
+caption <- "test level=.95 and inverse.func, lm(log(doy)~vh+wind+log(humidity),data=ozone1)"
 dopar(3,3,caption)
 a <- lm(log(doy) ~ vh + wind + log(humidity), data=ozone1)
-plotmo(a, do.par=FALSE, caption=caption, ylim=NA, se=2, trace=Trace)
-plotmo(a, do.par=FALSE, caption=caption, ylim=NULL, se=2, inverse.func=exp, trace=Trace)
-termplot(a, se=TRUE)
+plotmo(a, do.par=FALSE, caption=caption, ylim=NA, level=.95, trace=Trace)
+plotmo(a, do.par=FALSE, caption=caption, ylim=NULL, level=.95, inverse.func=exp, trace=Trace)
+termplot(a, se=2)
 
-caption <- "test se=3, glm(lot2~log(u),data=clotting,family=Gamma)"
+caption <- "test level=.95, glm(lot2~log(u),data=clotting,family=Gamma)"
 set.seed(1)
 dopar(2,2,caption)
 u = c(5,10,15,20,30,40,60,80,100)
 lota = c(118,58,42,35,27,25,21,19,18)
 clotting <- data.frame(u = u, lota = lota)
 a <- glm(lota ~ log(u), data=clotting, family=Gamma)
-plotmo(a, do.par=FALSE, caption=caption, col.response=4, pch.response=7, clip=FALSE, nrug=-1, se=3, trace=Trace, col.smooth="indianred")
-termplot(a, se=TRUE)
+plotmo(a, do.par=FALSE, caption=caption, col.response=4, pch.response=7, clip=FALSE, nrug=-1, level=.95, trace=Trace, col.smooth="indianred")
+termplot(a, se=2)
 
 if(length(grep("package:gam", search())))
     detach("package:gam")
 library(mgcv)
 set.seed(1)
-caption <- "test se=2, plot.gam, with mgcv::gam(y ~ s(x) + s(x,z)) with response and func (and extra image plot)"
+caption <- "test level=.95, plot.gam, with mgcv::gam(y ~ s(x) + s(x,z)) with response and func (and extra image plot)"
 dopar(3,2,caption)
 par(mar = c(3, 5, 1.7, 0.5))    # more space for left and bottom axis
 test1 <- function(x,sx=0.3,sz=0.4)
@@ -250,9 +256,9 @@ x <- runif(n);
 z <- runif(n);
 y <- test1(cbind(x,z)) + rnorm(n) * 0.1
 a <- gam(y ~ s(x) + s(x,z))
-plotmo(a, do.par=FALSE, type2="contour", caption=caption, col.response=3, func=test1, col.func=4, se=2, trace=Trace)
+plotmo(a, do.par=FALSE, type2="contour", caption=caption, col.response=3, func=test1, col.func=4, level=.95, trace=Trace)
 plotmo(a, do.par=FALSE, degree1=F, degree2=1, type2="image", col.image=topo.colors(10),
-        ylim=NA, se=2, trace=Trace, main="topo.colors")
+        ylim=NA, level=.95, trace=Trace, main="topo.colors")
 plot(a, select=1)
 plot(a, select=2)
 plot(a, select=3)
@@ -263,13 +269,13 @@ plot(a, select=3)
 # detach("package:mgcv")
 # library(gam)
 # set.seed(1)
-# caption <- "test se=2, gam:gam(Ozone^(1/3)~lo(Solar.R)+lo(Wind, Temp),data=airquality)"
+# caption <- "test level=.95, gam:gam(Ozone^(1/3)~lo(Solar.R)+lo(Wind, Temp),data=airquality)"
 # dopar(3,2,caption)
 # data(airquality)
 # airquality <- na.omit(airquality)   # plotmo doesn't know how to deal with NAs yet
 # a <- gam(Ozone^(1/3) ~ lo(Solar.R) + lo(Wind, Temp), data = airquality)
 # cat("Ignore three warnings: No standard errors (currently) for gam predictions with newdata\n")
-# plotmo(a, do.par=FALSE, caption=caption, ylim=NA, col.response=3, se=2, trace=Trace)
+# plotmo(a, do.par=FALSE, caption=caption, ylim=NA, col.response=3, level=.95, trace=Trace)
 # # termplot(a)  #TODO this fails with R2.5: dim(data) <- dim: attempt to set an attribute on NULL
 # detach("package:gam")
 
@@ -285,22 +291,21 @@ ozone2[,"wind"] <- factor(ozone2[,"wind"], labels=c(
 # a <- earth(doy ~ ., data=ozone2)
 # set.seed(1)
 # dopar(4,3,caption)
-# plotmo(a, col.response="gray", se=2, nrug=-1, do.par=FALSE, caption=caption, trace=Trace)
+# plotmo(a, col.response="gray", level=.95, nrug=-1, do.par=FALSE, caption=caption, trace=Trace)
 # termplot(a)
 
 caption <- "test wind=factor, lm(doy ~ vh + wind + I(humidity*temp) + log(ibh), data=ozone2)"
 a <- lm(doy ~ vh + wind + I(humidity*temp) + log(ibh), data=ozone2)
 set.seed(1)
 dopar(4,3,caption)
-plotmo(a, col.response="gray", se=2, nrug=-1, do.par=FALSE, caption=caption, trace=Trace, col.smooth="indianred")
-termplot(a, se=TRUE)
+plotmo(a, col.response="gray", level=.95, nrug=-1, do.par=FALSE, caption=caption, trace=Trace, col.smooth="indianred")
+termplot(a, se=2)
 
-caption <- "test test se options like col.se"
+caption <- "test level options"
 dopar(2,2,caption)
-plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, se=2, caption=caption, trace=Trace)
-plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, se=2, lty.se=1, col.se=2, trace=Trace)
-plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, se=2, lty.se=1, col.shade=0, trace=Trace)
-plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, se=2, lty.se=3, col.shade="gray", trace=Trace)
+plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, level=.95, shade.pints=0, caption=caption, trace=Trace)
+plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, level=.95, shade.pints="pink", trace=Trace)
+plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, level=.95, shade2.pints=0, trace=Trace)
 
 caption <- "test wind=factor, glm(y ~ i + j, family=poisson())"
 y <- c(18,17,15,20,10,20,25,13,12)
@@ -309,7 +314,7 @@ j <- gl(3,3)
 a <- glm(y ~ i + j, family=poisson())
 set.seed(1)
 dopar(2,2,caption)
-plotmo(a, do.par=F, se=2, nrug=-1, caption=caption, trace=Trace)
+plotmo(a, do.par=F, level=.95, nrug=-1, caption=caption, trace=Trace)
 termplot(a, se=1, rug=T)
 
 if(length(grep("package:gam", search())))
@@ -317,9 +322,9 @@ if(length(grep("package:gam", search())))
 caption <- "test wind=factor, gam(doy ~ vh + wind + s(humidity) + s(vh) + temp, data=ozone2)"
 library(mgcv)
 a <- gam(doy ~ vh + wind + s(humidity) + s(vh) + temp, data=ozone2)
-plotmo(a, se=1, caption=caption, trace=Trace)
+plotmo(a, level=.95, caption=caption, trace=Trace)
 caption <- "test wind=factor, clip=TRUE, gam(doy ~ vh + wind + s(humidity) + s(vh) + temp, data=ozone2)"
-plotmo(a, se=1, caption=caption, clip=FALSE, trace=Trace)
+plotmo(a, level=.95, caption=caption, clip=FALSE, trace=Trace)
 # termplot doesn't work here so code commented out
 # dopar(3,3,caption)
 # plotmo(a, do.par=FALSE, trace=Trace)
@@ -332,7 +337,7 @@ plotmo(a, se=1, caption=caption, clip=FALSE, trace=Trace)
 # a <- gam(doy ~ vh + wind + lo(humidity) + lo(vh) + temp, data=ozone2)
 # set.seed(1)
 # dopar(4,3,caption)
-# plotmo(a, do.par=FALSE, caption=caption, ylim=NA, col.response=3, se=2, subcaption=caption, trace=Trace)
+# plotmo(a, do.par=FALSE, caption=caption, ylim=NA, col.response=3, level=.95, subcaption=caption, trace=Trace)
 # termplot(a, se=1)
 # detach("package:gam")
 
@@ -344,7 +349,7 @@ etitanic2$sex <- as.numeric(etitanic$sex)
 etitanic2$sibsp <- NULL
 etitanic2$parch <- NULL
 lda.model <- lda(survived ~ ., data=etitanic2)
-try(plotmo(lda.model, type="posterior")) # Expect Error: predicted response has multiple columns ...
+expect.err(try(plotmo(lda.model, type="posterior"))) # predicted response has multiple columns ...
 set.seed(7)
 plotmo(lda.model, caption="lda", trace=2, clip=F,
        col.response=as.numeric(etitanic2$survived)+2, type="posterior", nresponse=1, col.smooth="indianred",
@@ -448,7 +453,7 @@ par(mar=old.par$mar, mgp=old.par$mgp)
 
 plotmo(fit1, type="prob", nresponse=1, border=NA, col.persp="pink", all1=TRUE, all2=TRUE,
        caption="plotmo rpart fit1, all1=TRUE, all2=TRUE")
-try(plotmo(fit1, type="none.such1")) # expect error
+expect.err(try(plotmo(fit1, type="none.such1")))
 
 # rpart model with ozone data
 data(ozone1)
@@ -457,15 +462,15 @@ old.par <- par(mar=c(.5, 0.5, 2, .5), cex=.6, mgp = c(1.6, 0.6, 0))  # b l t r s
 a1 <- rpart(O3~temp+humidity, data=ozone1)
 prp(a1, main="rpart model with ozone data\n(temp and humidity only)\n")
 plotmo(a1, do.par=F, degree1=0, main="rpart", ticktype="detail", nticks=2, expand=.7)
-try(plotmo(a1, type="class")) # expect error
+expect.err(try(plotmo(a1, type="class")))
 # compare to a linear and earth model
 a3 <- lm(O3~temp+humidity, data=ozone1)
 plotmo(a3, do.par=F, clip=F, main="lm", degree1=0, all2=TRUE, ticktype="detail", nticks=2, expand=.7)
-try(plotmo(a3, type="none.such2")) # expect error
+expect.err(try(plotmo(a3, type="none.such2")))
 a <- earth(O3~temp+humidity, data=ozone1, degree=2)
 plotmo(a, do.par=F, clip=F, main="earth", degree1=NA, ticktype="detail", nticks=2, expand=.7)
-try(plotmo(a, type="none.such3"))    # expect error
-try(plotmo(a, type=c("abc", "def"))) # expect error
+expect.err(try(plotmo(a, type="none.such3")))
+expect.err(try(plotmo(a, type=c("abc", "def"))))
 
 # detailed rpart model
 par(mfrow=c(3,3))
@@ -579,20 +584,20 @@ fda.earth <- fda(Species~., data=iris, keep.fitted=TRUE, method=earth, keepxy=TR
 fda.polyreg <- fda(Species~., data=iris, keep.fitted=TRUE, keepxy=TRUE)
 fda.bruto <- fda(Species~., data=iris, keep.fitted=TRUE, method=bruto)
 
-# expect Error: this object is nor supported by plotmo
-try(plotmo(fda.polyreg$fit, type="variates", nresponse=1, clip=F, do.par=F))
+# this object is nor supported by plotmo
+expect.err(try(plotmo(fda.polyreg$fit, type="variates", nresponse=1, clip=F, do.par=F)))
 
-plot(1, main="plotmo with fda", xaxt="n", yaxt="n", xlab="", ylab="", 
+plot(1, main="plotmo with fda", xaxt="n", yaxt="n", xlab="", ylab="",
      type="n", bty="n", cex.main=1.2, xpd=NA)
 
 plotmo(fda.earth, type="variates", nresponse=1, clip=F, do.par=F)
 
-plot(1, main="plotmo with fda.earth$fit", xaxt="n", yaxt="n", xlab="", ylab="", 
+plot(1, main="plotmo with fda.earth$fit", xaxt="n", yaxt="n", xlab="", ylab="",
      type="n", bty="n", cex.main=1.2, xpd=NA)
 
 plotmo(fda.earth$fit, nresponse=1, clip=F, do.par=F)
 
-plot(1, main="", xaxt="n", yaxt="n", xlab="", ylab="", 
+plot(1, main="", xaxt="n", yaxt="n", xlab="", ylab="",
      type="n", bty="n", cex.main=1.5, xpd=NA)
 
 plot(fda.earth)
@@ -600,7 +605,7 @@ plotmo(fda.earth, clip=F, do.par=F, trace=2) # default type is class
 
 plot(fda.polyreg)
 plotmo(fda.polyreg, type="variates", nresponse=1, clip=F, do.par=F, trace=2, degree1=c(1,3,4))
-plot(1, main="", xaxt="n", yaxt="n", xlab="", ylab="", 
+plot(1, main="", xaxt="n", yaxt="n", xlab="", ylab="",
      type="n", bty="n", cex.main=1.5, xpd=NA)
 
 # plot(fda.bruto)

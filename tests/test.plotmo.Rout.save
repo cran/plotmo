@@ -8,6 +8,7 @@
 > data(kyphosis)
 > rpart.model <- rpart(Kyphosis~., data=kyphosis)
 > plotmo(rpart.model, type="vec", trace=2)
+Using env attr(object$terms, ".Environment")
 
 --get.plotmo.x for rpart object
 

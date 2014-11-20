@@ -4,12 +4,11 @@
 library(plotmo)
 library(earth)
 library(rpart)
-source("fast.postscript.R")
 data(ozone1)
 data(etitanic)
 options(warn=1) # print warnings as they occur
 if(!interactive())
-    fast.postscript(paper="letter")
+    postscript(paper="letter")
 
 cat("==test plotmo with factors==\n")
 test.fac.with.rpart <- function(ngrid2=20)

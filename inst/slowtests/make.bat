@@ -12,8 +12,11 @@ time /T
 @echo.
 @call test.plotmo.center.bat
                         @if %errorlevel% NEQ 0 goto error
-@rem for a thorough test, run \b\earth\src\tests\make.bat
-@cd \b\earth\src\tests
+@echo.
+@call test.plotmo.emma.bat
+                        @if %errorlevel% NEQ 0 goto error
+@rem for a thorough test, also run \b\earth\inst\slowtests\make.bat
+@cd \b\earth\inst\slowtests
                         @if %errorlevel% NEQ 0 goto error
 @call make.bat
                         @if %errorlevel% NEQ 0 goto error
@@ -22,7 +25,5 @@ time /T
 :error
 @echo ==== ERROR ====
 :done
-@rm -f ../earth_res.rc ../Makedeps
-@rm -f test.*.pdf
 time /T
 @exit /B  0

@@ -133,7 +133,7 @@ get.plotmo.pairs.default <- function(object, env, x, trace, ...)
         term.labels <- NULL
         if(!is.null(terms))
             term.labels <- attr(terms, "term.labels")
-        if(!is.null(term.labels))
+        if(!is.null(term.labels) && length(term.labels))
             pairs <- get.plotmo.pairs.from.term.labels(term.labels, colnames(x), trace)
         else if(trace > 0)
             cat0("no degree2 plots because no object$call$formula$term.labels\n")
@@ -167,16 +167,49 @@ form.pairs <- function(varnames) # return a two column matrix, each row is a pai
 # current plot.  The other args are copies of the args passed to plotmo.
 # The trace flag here will be TRUE if trace=2 was used in the call to plotmo.
 
-plotmo.predict <- function(object, newdata, type, se.fit, trace)
+plotmo.predict <- function(object, newdata, type, trace)
 {
     UseMethod("plotmo.predict")
 }
-plotmo.predict.default <- function(object, newdata, type, se.fit, trace)
+plotmo.predict.default <- function(object, newdata, type, trace)
 {
-    if(se.fit)
-        predict(object, newdata=newdata, type=type, se.fit=TRUE, trace=trace)
-    else
-        predict(object, newdata=newdata, type=type, trace=trace)
+    predict(object, newdata=newdata, type=type, trace=trace)
+}
+#------------------------------------------------------------------------------
+# Some models return multiple columns from predict that don't corresponsd
+# to the multiple responses of a multiple response model.  So we have to
+# modify the nresponse argument to select the appropriate column.
+
+plotmo.get.nresponse <- function(object, nresponse, y)
+{
+    UseMethod("plotmo.get.nresponse")
+}
+plotmo.get.nresponse.default <- function(object, nresponse, y)
+{
+    nresponse
+}
+#------------------------------------------------------------------------------
+# Handle plotmo's "level" argument.  Return a prediction interval dataframe
+# with either or both of the following sets of columns.  What columns get
+# returned depends on the capabilities of the object's predict method.
+# For example, predict.lm allows us to return both i and ii,  and for
+# earth models we can return only i.
+#
+#  (i)  lwr, upr               intervals for prediction of new data
+#
+#  (ii) cint.lwr, cint.upr     intervals for prediction of mean response
+
+plotmo.pint <- function(object, newdata, type, level, trace)
+{
+    if(trace > 0)
+        cat("\n--plotmo.pint for", class(object)[1], "object\n\n")
+    UseMethod("plotmo.pint")
+}
+plotmo.pint.default <- function(object, newdata, type, level, trace)
+{
+    stop0("\"level\" is not supported for ",
+          paste.quoted.names(class(object)[1]), " objects\n",
+          "You need to supply a plotmo.pint.", class(object)[1], " method")
 }
 #------------------------------------------------------------------------------
 # Return the data matrix for the given object with the response deleted.
@@ -205,8 +238,8 @@ get.plotmo.x.default <- function(object, env, trace)
     # This check suffices to prevent most downstream error messages for objects
     # that don't have the fields required for the default plotmo methods.
     if(is.null(object$call) && is.null(object[["x"]]))
-        stop0("this object is not supported by plotmo (object's class is ",
-              paste.quoted.names(class(object)), ")")
+        stop0(paste.quoted.names(class(object)[1]),
+              " objects are not supported by plotmo")
 
     try.error.message <- NULL
     x <- object.x <- object[["x"]] # use [["x"]] rather than $x to prevent partial match
@@ -271,6 +304,11 @@ get.plotmo.y <- function(object, env, y.column, expected.len, trace)
     if(trace > 0)
         cat("\n--get.plotmo.y for", class(object)[1], "object\n\n")
     UseMethod("get.plotmo.y")
+}
+# TODO this allows earth to call get.plotmo.y.default without use of :::
+get.plotmo.y_default <- function(object, env, y.column, expected.len, trace)
+{
+    get.plotmo.y.default(object, env, y.column, expected.len, trace)
 }
 get.plotmo.y.default <- function(object, env, y.column, expected.len, trace)
 {
@@ -569,7 +607,6 @@ strip.formula.string <- function(form)
     # replace ",ident" with ")+f(ident", thus "s(x0,x1)" becomes "s(x0)f(x1)"
 
     args <- gsubi(",([a-z._])", ")+s(\\1", args)
-
     args <- gsubi("[a-z._0-9$]*[(]", "", args)      # remove "ident("
     args <- gsubi("[,)][^+-]*", "", args)           # remove remaining ",arg1,arg2)"
 

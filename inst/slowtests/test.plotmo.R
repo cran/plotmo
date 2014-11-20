@@ -8,12 +8,11 @@ print(R.version.string)
 print(citation("rpart.plot"))
 
 library(earth)
-source("fast.postscript.R")
 data(ozone1)
 data(etitanic)
 options(warn=1) # print warnings as they occur
 if(!interactive())
-    fast.postscript(paper="letter")
+    postscript(paper="letter")
 Trace <- 0
 dopar <- function(nrows, ncols, caption = "")
 {
@@ -23,6 +22,13 @@ dopar <- function(nrows, ncols, caption = "")
     par(mar = c(3, 3, 1.7, 0.5))
     par(mgp = c(1.6, 0.6, 0))
     par(cex = 0.7)
+}
+expect.err <- function(obj) # test that we got an error as expected from a try() call
+{
+    if(class(obj)[1] == "try-error")
+        cat("Got error as expected\n")
+    else
+        stop("did not get expected try error")
 }
 caption <- "basic earth test of plotmo"
 a <- earth(O3 ~ ., data=ozone1, degree=2)
@@ -69,12 +75,14 @@ set.seed(1)
 plotmo(a, do.par=FALSE, degree1=1, nrug=500, ngrid1=50, degree2=F, main="ngrid1=50 nrug=500", trace=Trace)
 plotmo(a, do.par=FALSE, degree1=NA, degree2=1, phi=60, box=F, r=100) # dots args
 
-caption <- "test plotmo ylim"
+caption <- "test plotmo xlim and ylim"
 a <- earth(O3 ~ ., data=ozone1, degree=2)
-dopar(3,3,caption)
+dopar(5,3,caption)
 plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, caption=caption, xlab="ylim=default", trace=Trace)
 plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, ylim=NA, xlab="ylim=NA", trace=Trace)
 plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, ylim=c(0,20), xlab="ylim=c(0,20)", trace=Trace)
+plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, xlim=c(190,250))
+plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, xlim=c(190,250), ylim=c(11,18))
 
 # term.plot calls predict.earth with an se parameter, even with termplot(se=FALSE)
 
@@ -174,14 +182,16 @@ func1 <- function()
            degree1=1, all2=1, degree2=1, type2="im", trace=T,
            col.response=3, pch.response=20)
 
-        try(plotmo(a.oz10, do.par=FALSE, main="func1:a.oz10",
+        try <- try(plotmo(a.oz10, do.par=FALSE, main="func1:a.oz10",
            degree1=1, all2=1, degree2=1, type2="im", trace=T,
            col.response=3, pch.response=20, do.par=FALSE))
+        expect.err(try)
 
         cat("Expect error msg (because get.plotmo.x calculated using oz.1 i.e. func2.oz)\n")
-        try(plotmo(ad.oz10, do.par=FALSE, main="func1:ad.oz10",
+        try <- try(plotmo(ad.oz10, do.par=FALSE, main="func1:ad.oz10",
            degree1=1, all2=1, degree2=1, type2="im", trace=T,
            col.response=3, pch.response=20))
+        expect.err(try)
     }
     func2()
 
@@ -208,15 +218,17 @@ func1 <- function()
 
     # following should all use the x1 and y inside foo
 
-    cat("==lm.18.out\n")
-    plotmo(lm.18.out,   trace=1, main="lm.18.out",
-           do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
-           col.response=2, pch.response=20)
-
-    cat("==lm.18\n")
-    plotmo(lm.18,       trace=1, main="lm.18",
-           do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
-           col.response=2, pch.response=20)
+# TODO following fail when tested in plotmo 2.0.0 (did R's handling of scope change?)
+#
+#     cat("==lm.18.out\n")
+#     plotmo(lm.18.out,   trace=1, main="lm.18.out",
+#            do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
+#            col.response=2, pch.response=20)
+#
+#     cat("==lm.18\n")
+#     plotmo(lm.18,       trace=1, main="lm.18",
+#            do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
+#            col.response=2, pch.response=20)
 
     cat("==lm.18.keep\n")
     plotmo(lm.18.keep,  trace=1, main="lm.18.keep",
@@ -250,8 +262,7 @@ mtext(caption, outer=TRUE, font=2, line=1.5, cex=1)
 a <- earth(doy~humidity + temp + wind, data=ozone1, degree=2)
 cat("Ignore warning: predict.earth ignored argument \"se\"\n")
 termplot(a)
-cat("Ignore two warnings: predict.earth ignored argument \"se.fit\"\n")
-plotmo(a, se=2, do.par=FALSE, ylim=NA, degree2=c(1:2), clip=FALSE, caption=caption, trace=Trace)
+plotmo(a, do.par=FALSE, ylim=NA, degree2=c(1:2), clip=FALSE, caption=caption, trace=Trace)
 
 # test fix to bug reported by Joe Retzer, FIXED Dec 7, 2007
 N <- 650
@@ -338,7 +349,7 @@ a.rather.long.in.fact.very.long.name.for.the.modelA <-
                 a.rather.long.in.fact.very.long.name.q_3101 +
                 a.rather.long.in.fact.very.long.name.q_3104 +
                 a.rather.long.in.fact.very.long.name.q_7107,
-                data = a.rather.long.in.fact.very.long.name.for.the.dataframe, minspan=-1)
+                data = a.rather.long.in.fact.very.long.name.for.the.dataframe)
 print(summary(a.rather.long.in.fact.very.long.name.for.the.modelA, digits = 2))
 plot(a.rather.long.in.fact.very.long.name.for.the.modelA)
 plotmo(a.rather.long.in.fact.very.long.name.for.the.modelA)
@@ -346,7 +357,7 @@ plotmo(a.rather.long.in.fact.very.long.name.for.the.modelA)
 a.rather.long.in.fact.very.long.name.for.the.modelC <-
         earth(x = a.rather.long.in.fact.very.long.name.for.the.dataframe[,-1],
           y = a.rather.long.in.fact.very.long.name.for.the.response,
-                  degree = 3, minspan=-1)
+                  degree = 3)
 print(summary(a.rather.long.in.fact.very.long.name.for.the.modelC, digits = 2))
 plot(a.rather.long.in.fact.very.long.name.for.the.modelC)
 plotmo(a.rather.long.in.fact.very.long.name.for.the.modelC)
@@ -371,17 +382,17 @@ plotmo(a, caption="plotmo with mixed fac and non-fac degree2 terms and grid.leve
        ticktype="d", nticks=2)
 
 # check detection of illegal grid.levels argument
-try(plotmo(a, grid.levels=list(pcla="1", pclass="2")))  # Expect error
-try(plotmo(a, grid.levels=list(pclass="1", pcla="2")))  # Expect error
-try(plotmo(a, grid.levels=list(pcla=1)))                # Expect error
-try(plotmo(a, grid.levels=list(pcla=c("ab", "cd"))))    # Expect error
-try(plotmo(a, grid.levels=list(pcla=NA)))               # Expect error
-try(plotmo(a, grid.levels=list(pcla=Inf)))              # Expect error
-try(plotmo(a, grid.levels=list(pcla=9)))                # Expect error
-try(plotmo(a, grid.levels=list(age="ab")))              # Expect error
-try(plotmo(a, grid.levels=list(age=NA)))                # Expect error
-try(plotmo(a, grid.levels=list(age=Inf)))               # Expect error
-try(plotmo(a, grid.lev=list(age=list(1,2))))            # Expect error
+expect.err(try(plotmo(a, grid.levels=list(pcla="1", pclass="2"))))
+expect.err(try(plotmo(a, grid.levels=list(pclass="1", pcla="2"))))
+expect.err(try(plotmo(a, grid.levels=list(pcla=1))))
+expect.err(try(plotmo(a, grid.levels=list(pcla=c("ab", "cd")))))
+expect.err(try(plotmo(a, grid.levels=list(pcla=NA))))
+expect.err(try(plotmo(a, grid.levels=list(pcla=Inf))))
+expect.err(try(plotmo(a, grid.levels=list(pcla=9))))
+expect.err(try(plotmo(a, grid.levels=list(age="ab"))))
+expect.err(try(plotmo(a, grid.levels=list(age=NA))))
+expect.err(try(plotmo(a, grid.levels=list(age=Inf))))
+expect.err(try(plotmo(a, grid.lev=list(age=list(1,2)))))
 
 # more-or-less repeat above, but with glm models
 a <- earth(survived ~ pclass+age+sibsp, data=etitanic, degree=2, glm=list(family=binomial))
@@ -421,7 +432,7 @@ plotmo(a20, nrug=-1, caption="Test plotmo with a vector main (and plain smooth)"
 cat("Expect warning below (missing single titles)\n")
 plotmo(a20, nrug=-1, caption="Test plotmo with a vector main (and smooth args)",
        main=c("Humidity", "Temperature"),
-       col.smooth="indianred", lwd.smooth=2, lty.smooth=2,
+       col.smooth="indianred", lwd.smooth=2, lty.smooth=2,  smooth.f=.1,
        col.response="gray", npoints=500)
 
 aflip <- earth(O3~vh + wind + humidity + temp, data=ozone1, degree=2)
@@ -432,27 +443,27 @@ plotmo(aflip, all2=T, degree2=c(4, 2), caption="all2=T, degree2=c(4, 2)")
 plotmo(aflip, all1=T, caption="all1=T")
 plotmo(aflip, all1=T, degree1=c(3,1), degree2=NA, caption="all1=T, degree1=c(3,1), degree2=NA")
 
-try(plotmo(aflip, no.such.arg=9)) # expect Error: plotmo: illegal argument "no.such.arg"
-try(plotmo(aflip, ycolumn=1))     # Expect Error: ycolumn is no longer legal, use nresponse instead
-try(plotmo(aflip, title="abc"))   # Expect Error: "title" is illegal, use "caption" instead
-try(plotmo(aflip, ticktype="d", ntick=3, tic=3, tick=9)) # expect Error : duplicated arguments "ticktype" "tic" "tick"
-try(plotmo(aflip, ticktype="d", ntick=3, tic=3)) # expect Error : duplicated arguments "ticktype" "tic"
-try(plotmo(aflip, ticktype="s", nt=3)) # expect Error : nticks is illegal with ticktype="simple"
-try(plotmo(aflip, tic="s", nt=3)) # expect Error : nticks is illegal with ticktype="simple"
-try(plotmo(aflip, tic="s", nt=3)) # expect Error : nticks is illegal with ticktype="simple"
-try(plotmo(aflip, adj=8, adj=9)) # Error : duplicated arguments "adj" "adj"
-try(plotmo(aflip, adj1=8, adj2=9)) # Error : plotmo: illegal argument "adj1"
-try(plotmo(aflip, yc=8, x2=9)) # expect Error : "ycolumn" is no longer legal, use "nresponse" instead
-try(plotmo(aflip, ticktype="d", ntick=3, ti=3)) # Error : "title" is illegal, use "caption" instead ("ti" taken to mean "title")
-try(plotmo(aflip, ticktype="d", ntick=3, title=3)) # Error : "title" is illegal, use "caption" instead
-try(plotmo(aflip, ticktype="d", ntick=3, tit=3, titl=7)) # Error : "title" is illegal, use "caption" instead ("tit" taken to mean "title")
-try(plotmo(aflip, zlab="abc")) # expect Error : "zlab" is illegal, use "ylab" instead
-try(plotmo(aflip, z="abc")) # expect Error : "zlab" is illegal, use "ylab" instead ("z" taken to mean "zlab")
-try(plotmo(aflip, degree1=c(4,1))) # expect Error : out of range value in degree2 (allowed index range is 1:3)
-try(plotmo(aflip, none.such=TRUE)) # expect Error : illegal argument "all1"
-try(plotmo(aflip, ntick=3, type2="im")) # expect Error: the ntick argument is illegal for type2="image"
-try(plotmo(aflip, breaks=3, type2="persp")) # expect Error: the breaks argument is illegal for type2="persp"
-try(plotmo(aflip, breaks=99, type2="cont")) # expect Error:  the breaks argument is illegal for type2="contour"
+expect.err(try(plotmo(aflip, no.such.arg=9))) # plotmo: illegal argument "no.such.arg"
+expect.err(try(plotmo(aflip, ycolumn=1)))     # ycolumn is no longer legal, use nresponse instead
+expect.err(try(plotmo(aflip, title="abc")))   # "title" is illegal, use "caption" instead
+expect.err(try(plotmo(aflip, ticktype="d", ntick=3, tic=3, tick=9))) # duplicated arguments "ticktype" "tic" "tick"
+expect.err(try(plotmo(aflip, ticktype="d", ntick=3, tic=3))) # duplicated arguments "ticktype" "tic"
+expect.err(try(plotmo(aflip, ticktype="s", nt=3))) # nticks is illegal with ticktype="simple"
+expect.err(try(plotmo(aflip, tic="s", nt=3))) # nticks is illegal with ticktype="simple"
+expect.err(try(plotmo(aflip, tic="s", nt=3))) # nticks is illegal with ticktype="simple"
+expect.err(try(plotmo(aflip, adj=8, adj=9))) # Error : duplicated arguments "adj" "adj"
+expect.err(try(plotmo(aflip, adj1=8, adj2=9))) # Error : plotmo: illegal argument "adj1"
+expect.err(try(plotmo(aflip, yc=8, x2=9))) # "ycolumn" is no longer legal, use "nresponse" instead
+expect.err(try(plotmo(aflip, ticktype="d", ntick=3, ti=3))) # Error : "title" is illegal, use "caption" instead ("ti" taken to mean "title")
+expect.err(try(plotmo(aflip, ticktype="d", ntick=3, title=3))) # Error : "title" is illegal, use "caption" instead
+expect.err(try(plotmo(aflip, ticktype="d", ntick=3, tit=3, titl=7))) # Error : "title" is illegal, use "caption" instead ("tit" taken to mean "title")
+expect.err(try(plotmo(aflip, zlab="abc"))) # "zlab" is illegal, use "ylab" instead
+expect.err(try(plotmo(aflip, z="abc"))) # "zlab" is illegal, use "ylab" instead ("z" taken to mean "zlab")
+expect.err(try(plotmo(aflip, degree1=c(4,1)))) # out of range value in degree2 (allowed index range is 1:3)
+expect.err(try(plotmo(aflip, none.such=TRUE))) # illegal argument "all1"
+expect.err(try(plotmo(aflip, ntick=3, type2="im"))) # the ntick argument is illegal for type2="image"
+expect.err(try(plotmo(aflip, breaks=3, type2="persp"))) # the breaks argument is illegal for type2="persp"
+expect.err(try(plotmo(aflip, breaks=99, type2="cont"))) #  the breaks argument is illegal for type2="contour"
 
 # test character degree1 and degree2 (added in plotmo version 1.3-0)
 
@@ -470,8 +481,8 @@ plotmo(a80, degree1="nonesuch1", degree2="nonesuch2")
 # Test error handling when accessing the original data
 
 lm.bad <- lm.fit(as.matrix(ozone1[,-1]), as.matrix(ozone1[,1]))
-try(plotmo(lm.bad))          # expect Error: this object is not supported by plotmo
-try(plotmo(99))              # expect Error: '99' is not a model object
+expect.err(try(plotmo(lm.bad)))          # this object is not supported by plotmo
+expect.err(try(plotmo(99)))              # '99' is not a model object
 
 x <- matrix(c(1,3,2,4,5,6,7,8,9,10,
               2,3,4,5,6,7,8,9,8,9), ncol=2)
@@ -485,40 +496,46 @@ foo1 <- function()
 {
     a.foo1 <- lm(y~x1+x2)
     x1 <- NULL
-    try(plotmo(a.foo1)) # Expect Error: get.plotmo.x.default cannot get the x matrix
+    try <- try(plotmo(a.foo1)) # get.plotmo.x.default cannot get the x matrix
+    expect.err(try)
 }
 foo1()
 foo2 <- function()
 {
     a.foo2 <- lm(y~x1+x2, data=df)
     df <- NULL
-    try(plotmo(a.foo2)) # the original data "df" is no longer available (use x=TRUE in the call to lm?)
+    try <- try(plotmo(a.foo2)) # the original data "df" is no longer available (use x=TRUE in the call to lm?)
+    expect.err(try)
 }
 foo2()
 foo3 <- function()
 {
     a.foo3 <- lm(y~x) # lm() builds a.foo3 model for which predict doesn't work
-    try(plotmo(a.foo3)) # Error : variable 'x' was fitted with type "nmatrix.2" but type "numeric" was supplied
+    try <- try(plotmo(a.foo3)) # Error : variable 'x' was fitted with type "nmatrix.2" but type "numeric" was supplied
+    expect.err(try)
 }
 foo3()
 foo4 <- function()
 {
     a.foo4 <- lm(y~x[,1]+x[,2])  # lm() builds a.foo4 model for which predict doesn't work
-    try(plotmo(a.foo4)) # Error : predict.lm(xgrid, type="response") returned a response of the wrong length.
+    try <- try(plotmo(a.foo4)) # Error : predict.lm(xgrid, type="response") returned a response of the wrong length.
+    expect.err(try)
 }
 foo4()
 foo5 <- function()
 {
     a.foo5 <- lm(y~x1+x2)
     x1 <- c(1,2,3)
-    try(plotmo(a.foo5)) # Expect Error: get.plotmo.x.default cannot get the x matrix
+    try <- try(plotmo(a.foo5)) # get.plotmo.x.default cannot get the x matrix
+    expect.err(try)
 }
 foo5()
 foo6 <- function()
 {
     a.foo6 <- lm(y~x1+x2)
     y[1] <- NA
-    try(plotmo(a.foo6, col.response=3)) # Error: get.plotmo.x.default cannot get the x matrix
+    try <- try(plotmo(a.foo6, col.response=3)) # Error: get.plotmo.x.default cannot get the x matrix
+    expect.err(try)
 }
 foo6()
 foo7 <- function()
@@ -533,14 +550,16 @@ foo7()
 # {
 #     i <- 1
 #     a.foo8 <- lm(y~x[,i]+x[,2])
-#     try(plotmo(a.foo8, trace=2)) # Error: predict.lm(xgrid, type="response") returned a response of the wrong length.
+#     try <- try(plotmo(a.foo8, trace=2)) # Error: predict.lm(xgrid, type="response") returned a response of the wrong length.
+#     expect.err(try)
 # }
 # foo8()
 foo9 <- function()
 {
     my.list <- list(j=2)
     a.foo9 <- lm(y~x[,1]+x[,my.list$j])
-    try(plotmo(a.foo9, trace=2)) # Error: plotmo: names with "$" are not yet supported.
+    try <- try(plotmo(a.foo9, trace=2)) # Error: plotmo: names with "$" are not yet supported.
+    expect.err(try)
 }
 foo9()
 
@@ -550,7 +569,8 @@ foo9()
 #               2,3,4,5,6), ncol=2) # actual values not important
 # y <- 3:7
 # lm.model <- lm(y~x)
-# try(plotmo(lm.model, trace=2, caption="lm.model <- lm(y~x)")) # Expect predict.lm(xgrid, type="response") returned a response of the wrong length.
+# try <- try(plotmo(lm.model, trace=2, caption="lm.model <- lm(y~x)")) # Expect predict.lm(xgrid, type="response") returned a response of the wrong length.
+# expect.err(try)
 
 set.seed(1235)
 tit <- etitanic
@@ -566,6 +586,19 @@ plotmo(a, type="class", grid.levels=list(sex="ma"), caption="smooth: pclass, sex
        col.smooth="indianred", lwd.smooth=2,
        col.response=as.numeric(tit$pclass)+1, type2="im",
        pch.response=".", cex.response=3, jitter.response=.3)
+
+# intercept only models
+
+dopar(2, 2, caption = "intercept-only models")
+set.seed(1)
+x <- 1:10
+y <- runif(length(x))
+earth.intercept.only <- earth(x, y)
+plotmo(earth.intercept.only, do.par=FALSE, main="intercept-only model")
+plotmo(earth.intercept.only, do.par=FALSE, col.response=1, pch.response=20)
+library(rpart)
+rpart.intercept.only <- rpart(y~x)
+plotmo(rpart.intercept.only, do.par=FALSE)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

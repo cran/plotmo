@@ -4,11 +4,10 @@
 library(rpart.plot)
 library(plotmo)
 library(earth)
-source("fast.postscript.R")
 data(etitanic)
 options(warn=1) # print warnings as they occur
 if(!interactive())
-    fast.postscript(paper="letter")
+    postscript(paper="letter")
 et <- etitanic[, c("survived", "pclass", "sex", "age")]
 et$pclassn <- as.numeric(et$pclass)
 et <- et[c(30:80,330:380,630:680), ]
@@ -23,14 +22,14 @@ ndiscrete <- 0
 
 set.seed(844)
 a1 <- lm(survived~pclassn+sex, data=et)
-plotmo(a1, all2=T, do.par=F, degree1=NA, degree2=1, center=TRUE, clip=F, 
+plotmo(a1, all2=T, do.par=F, degree1=NA, degree2=1, center=TRUE, clip=F,
        trace=1,
        main="a1: survived~pclassn+sex\n(default ndiscrete)",
        col.response=ifelse(et$survived, "black", "red"),
        pch.response=".", cex.response=2.5, jitter.response=.4, lab=c(1,1,1))
 
 set.seed(844)
-plotmo(a1, degree1=1, all2=T, degree2=0, do.par=F, xflip=T, center=TRUE, clip=F, 
+plotmo(a1, degree1=1, all2=T, degree2=0, do.par=F, xflip=T, center=TRUE, clip=F,
        trace=2,
        grid.levels=list(sex="f"), ndiscrete=ndiscrete,
        main="pclassn with sex=\"female\"",

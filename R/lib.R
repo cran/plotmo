@@ -325,23 +325,23 @@ match.choices <- function(arg, choices, arg.name) # choices is a vector of strin
 }
 # Call this only after a plot is on the screen to avoid
 # an error message "plot.new has not been called yet"
-# TODO the trimming code sometimes overtrims, that's why I added the 1.4
 
-show.caption <- function(caption, trim=0, show=TRUE, cex=1)
+show.caption <- function(caption, trim=TRUE, show=TRUE, cex=1)
 {
-    if(!is.null(caption) && (len.caption <- nchar(caption))) {
+    if(!is.null(caption) && nchar(caption)) {
         if(trim) {
-            if(is.logical(trim))
-                trim <- 1
-            # trim caption to fit
-            len <- len.caption * 1.4 * trim / strwidth(caption, "figure")
-            caption <- substr(caption, 1, len)
-            # append ellipsis if chars deleted
-            if(len < len.caption)
-                caption <- paste0(caption, "...")
+            # trim each line of caption to fit
+            caption <- strsplit(caption, "\n")[[1]]
+            for(i in seq_along(caption)) {
+                nchar.org <- nchar(caption[i])
+                caption[i] <- substr(caption[i], 1, 60)
+                if(nchar(caption[i]) < nchar.org) # append ellipsis if chars deleted
+                    caption[i] <- paste0(caption[i], " ...")
+            }
+            caption <- paste(caption, collapse="\n")
         }
         if(show)
-            mtext(caption, outer=TRUE, font=2, line=1.5, cex=cex)
+            mtext(caption, outer=TRUE, font=2, line=1, cex=cex)
     }
     caption
 }
@@ -363,4 +363,17 @@ make.space.for.left.axis <- function()
         mar[2] <- 3
         par(mar=mar)
     }
+}
+get.cex.points <- function(npoints, len)
+{
+    n <- if(npoints <= 0) len else min(npoints, len)
+
+    cex.points <-
+        if     (n >= 5000) .2
+        else if(n >= 3000) .4
+        else if(n >= 1000) .6
+        else if(n >= 300)  .8
+        else               1
+
+    cex.points / par("cex")
 }

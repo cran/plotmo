@@ -9,7 +9,7 @@
 #        cf Michael Friendly's email
 # TODO allow do.par="mfrow(c1,2)"
 # TODO would like to add a newdata argument, but NA handling seems insoluble
-# TODO add "add" option so can overlya graphs e.g. with different grid.levels.
+# TODO add "add" option so can overlay graphs e.g. with different grid.levels.
 # TODO allow partial residual plots and variations
 # TODO allow user to specify x range on a per predictor basis
 # TODO get.plotmo.x should allow allow unnamed cols in x if get
@@ -22,7 +22,7 @@
 # TODO Fix this i.e. if predictor in munged formula is a numeric then delete it:
 # dat <- data.frame(x1=1:20, x2 = sample(1:20), y = rnorm(20)+1:20)
 # fm <- lm(y ~ x1+x2+sin(x1*x2/10), dat)
-# plotmo(fm, se=2)
+# plotmo(fm, se.fit=2)
 # Error in terms.formula(formula, data = data) : invalid model formula in ExtractVars
 
 degree1.global <- NULL # cached degree1 data to avoid calling the same predict twice
@@ -46,64 +46,69 @@ plotmo <- function(object = stop("no 'object' arg"),
     all1        = FALSE,
     degree2     = TRUE,
     all2        = FALSE,
+    int.only.ok = TRUE,
     grid.func   = median,
     grid.levels = NULL,
     col.response    = 0,
-    cex.response    = 1,
-    pch.response    = 1,
+    cex.response    = NULL,
+    pch.response    = 20,
     jitter.response = 0,
     npoints         = -1,
     inverse.func    = NULL,
-    trace       = 0,
-    nrug        = 0,
-    col.degree1 = 1,
-    lty.degree1 = 1,
-    lwd.degree1 = 1,
-    col.smooth  = 0,
-    lty.smooth  = 1,
-    lwd.smooth  = 1,
-    se          = 0,
-    col.shade   = "lightgray",
-    col.se      = 0,
-    lty.se      = 2,
-    func        = NULL,
-    col.func    = "lightblue",
-    lty.func    = 1,
-    lwd.func    = 1,
-    ngrid1      = 50,
-    grid        = FALSE,
-    type2       = "persp",
-    ngrid2      = 20,
-    col.image   = gray(0:10/10),
-    col.persp   = "lightblue",
-    theta       = NA,
-    phi         = 30,
-    dvalue      = 1,
-    shade       = 0.5,
-    do.par      = TRUE,
-    caption     = NULL,
-    main        = NULL,
-    xlab        = "",
-    ylab        = "",
-    cex         = NULL,
-    cex.lab     = 1,
-    xflip       = FALSE,
-    yflip       = FALSE,
-    swapxy      = FALSE,
+    level        = 0,
+    shade.pints  = "mistyrose2",
+    shade2.pints = "mistyrose4", # like above but used only if two kinds of intervals
+    trace        = 0,
+    nrug         = 0,
+    col.degree1  = 1,
+    lty.degree1  = 1,
+    lwd.degree1  = 1,
+    col.smooth   = 0,
+    lty.smooth   = 1,
+    lwd.smooth   = 1,
+    smooth.f     = .5,
+    func         = NULL,
+    col.func     = "lightblue",
+    lty.func     = 1,
+    lwd.func     = 1,
+    ngrid1       = 50,
+    grid         = FALSE,
+    type2        = "persp",
+    ngrid2       = 20,
+    col.image    = gray(0:10/10),
+    col.persp    = "lightblue",
+    theta        = NA,
+    phi          = 30,
+    dvalue       = 1,
+    shade        = 0.5,
+    do.par       = TRUE,
+    caption      = NULL,
+    main         = NULL,
+    xlim         = NULL,
+    xlab         = "",
+    ylab         = "",
+    cex          = NULL,
+    cex.lab      = 1,
+    xflip        = FALSE,
+    yflip        = FALSE,
+    swapxy       = FALSE,
+    se           = 0, # deprecated
     ...)
 {
     # call the plotting functions with draw.plot=FALSE to get the ylims
     get.ylim.by.dummy.plots <- function(ylims, trace, ...)
     {
         if(nsingles) # get ylim=c(miny, maxy) by calling with draw.plot=FALSE
-            ylims <- plot.degree1(object, degree1, all1, center, ylim, type, nresponse,
+            ylims <- plot.degree1(object, degree1, all1, center,
+                        xlim, ylim, type, nresponse,
                         clip, trace, trace1, col.response, cex.response,
                         pch.response, jitter.response, iresponse,
-                        col.smooth, lty.smooth, lwd.smooth,
+                        col.smooth, lty.smooth, lwd.smooth, smooth.f,
                         inverse.func, grid.func, grid.levels,
                         ngrid1, grid,
-                        col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se,
-                        col.shade, func, col.func, lty.func, lwd.func, nrug,
+                        col.degree1, lty.degree1, lwd.degree1,
+                        intercept.only, level, shade.pints, shade2.pints,
+                        func, col.func, lty.func, lwd.func, nrug,
                         draw.plot=FALSE,
                         x, y, singles, ylims, xlevs, ndiscrete, func.name, pred.names,
                         inverse.func.name, clip.limits, nfigs,
@@ -149,8 +154,12 @@ plotmo <- function(object = stop("no 'object' arg"),
             temp <- get.plotmo.ylim(object, env, type, trace)
             if(!is.na(temp[1]))
                 ylims <- temp
-            else
-                ylims <- get.ylim.by.dummy.plots(ylims, trace)
+            else {
+                if(intercept.only) # intercept-only model?
+                    ylims <- c(min(y) , max(y))
+                else
+                    ylims <- get.ylim.by.dummy.plots(ylims, trace)
+            }
         }
         if(trace > 0)
             cat("\nylim", ylims, "\n")
@@ -194,14 +203,12 @@ plotmo <- function(object = stop("no 'object' arg"),
         col.response <- 0
     if(all(is.na(col.smooth)))
         col.smooth <- 0
-    if(all(is.na(col.shade)))
-        col.shade <- 0
-    if(all(is.na(col.se)))
-        col.se <- 0
+    if(all(is.na(shade.pints))) # treat NA as 0
+        shade.pints <- 0
+    if(all(is.na(shade2.pints)))
+        shade2.pints <- 0
     if(all(is.na(col.func)))
         col.func <- 0
-    if(all(is.na(se)))
-        se <- 0
     if(all(is.na(degree1)))
         degree1 <- 0
     if(all(is.na(degree2)))
@@ -226,12 +233,16 @@ plotmo <- function(object = stop("no 'object' arg"),
         ngrid2 <- 500
     }
     stopifnot.integer(ndiscrete)
-    temp <- check.se.arg(se, missing(lty.se), lty.se, col.se, col.shade)
-        se <- temp$se
-        col.se <- temp$col.se
+    level <- check.level.arg(level, se, shade.pints, shade2.pints)
+    # set random seed for reproducibility if jitter is used
+    rnorm(1) # seems to be necessary to make .Random.seed available
+    old.seed <- .Random.seed
+    set.seed(1)
+    on.exit(set.seed(old.seed))
     # clear global flag (used to print certain warnings only once)
     unlockBinding("printed.na.warning.global", asNamespace("plotmo"))
     printed.na.warning.global <<- FALSE        # note <<- not <-
+    lockBinding("printed.na.warning.global", asNamespace("plotmo"))
     plotmo.prolog(object, env, deparse(substitute(object)))
     # initialize the variables used to store global data
     unlockBinding("degree1.global", asNamespace("plotmo"))
@@ -240,7 +251,15 @@ plotmo <- function(object = stop("no 'object' arg"),
     # Get the environment in which the model function was originally called.
     # If that is not available, use the environment in which plotmo was called.
     .Environment <- attr(object$terms, ".Environment")
-    env <- if(is.null(.Environment)) parent.frame() else .Environment
+    if(is.null(.Environment)) {
+        env <- parent.frame()
+        if(trace)
+            printf("Using env parent.frame()\n")
+    } else {
+        env <- .Environment
+        if(trace)
+            printf("Using env attr(object$terms, \".Environment\")\n")
+    }
     if(center && clip) {
         clip <- FALSE # otherwise incorrect clipping (TODO revisit)
         warning0("forcing clip=FALSE because center=TRUE ",
@@ -249,7 +268,7 @@ plotmo <- function(object = stop("no 'object' arg"),
     x <- get.plotmo.x.wrapper(object, env, trace)
     pred.names <- colnames(x)
     stopif(is.null(pred.names))
-    # list, each element is the unique levels for correspondig column of x
+    # list, each element is the unique levels for corresponding column of x
     xlevs <- get.xlevs(x, trace)
     if(!is.zero(col.response)) {
         iresponse <- get.iresponse(npoints, x)
@@ -260,12 +279,16 @@ plotmo <- function(object = stop("no 'object' arg"),
     y <- apply.inverse.func(y, object, trace, inverse.func, inverse.func.name)
     if(center)
         y <- my.center(y, trace)
+    if(is.null(cex.response))
+        cex.response <- get.cex.points(npoints, length(y))
     type <- get.plotmo.type.wrapper(object, env, type)
     clip.limits <- c(-Inf, Inf)
     if(clip)
         clip.limits <- get.plotmo.clip.limits.wrapper(object, env, type, y, trace)
     # singles is a vector of indices of predictors for degree1 plots
-    singles <- get.plotmo.singles.wrapper(object, env, x, trace, degree1, all1)
+    temp <- get.plotmo.singles.wrapper(object, env, x, trace, degree1, all1, int.only.ok)
+        intercept.only <- temp$intercept.only
+        singles <- temp$singles
     nsingles <- length(singles)
     # each row of pairs is the indices of two predictors for a degree2 plot
     pairs <- get.plotmo.pairs.wrapper(object, env, x, trace, all2, degree2)
@@ -289,14 +312,16 @@ plotmo <- function(object = stop("no 'object' arg"),
     }
     response.name <- NULL # column name when predict returns multiple columns
     if(nsingles) {
-        response.name <- plot.degree1(object, degree1, all1, center, ylim, type, nresponse,
+        response.name <- plot.degree1(object, degree1, all1, center,
+                    xlim, ylim, type, nresponse,
                     clip, trace, trace1, col.response, cex.response,
                     pch.response, jitter.response, iresponse,
-                    col.smooth, lty.smooth, lwd.smooth,
+                    col.smooth, lty.smooth, lwd.smooth, smooth.f,
                     inverse.func, grid.func, grid.levels,
                     ngrid1, grid,
-                    col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se,
-                    col.shade, func, col.func, lty.func, lwd.func, nrug,
+                    col.degree1, lty.degree1, lwd.degree1,
+                    intercept.only, level, shade.pints, shade2.pints,
+                    func, col.func, lty.func, lwd.func, nrug,
                     draw.plot=TRUE,
                     x, y, singles, ylims, xlevs, ndiscrete, func.name, pred.names,
                     inverse.func.name, clip.limits, nfigs,
@@ -319,15 +344,14 @@ plotmo <- function(object = stop("no 'object' arg"),
         if(is.null(response.name))
             response.name <- temp$response.name
     }
-    trim.caption <- FALSE
+    trim <- is.null(caption) # trim if auto-generate the caption
     if(is.null(caption) && do.par) {
-        trim.caption <- TRUE
         if(is.null(object$call))
             object.name <- deparse(substitute(object))
         caption <- get.default.caption(object.name)
     }
     if(!is.null(caption))
-        show.caption(caption, trim=trim.caption, cex=if(is.null(cex)) 1 else 1.2 * cex)
+        show.caption(caption, trim=trim, cex=if(is.null(cex)) 1 else 1.2 * cex)
     invisible()
 }
 # Check dots arguments, if any.  We want to make sure that amongst other
@@ -406,28 +430,6 @@ check.dots.args <- function(type2, dots)
         stop0("duplicated arguments ",
               paste.quoted.names(names[pmatch == pmatch[which(duplicated)[1]]]))
 }
-check.se.arg <- function(se, is.missing.lty.se, lty.se, col.se, col.shade)
-{
-    # check se argument
-    stopifnot(length(se) == 1)
-    if(is.logical(se)) {
-        if(se) {
-            # allow user to use se=TRUE for compat with termplot
-            warning0("plotmo: converted se=TRUE to se=2")
-            se <- 2
-        } else
-            se <- 0 # silently treat FALSE or NA as 0
-    }
-    stopifnot.scalar(se)
-    if(se < 0 || se > 9) # 9 is arbitrary
-        stop0("se=", se, " is out of range")
-    if(!is.missing.lty.se && lty.se != 0 && col.se[1] == 0)
-        col.se <- 1  # needed if user sets just lty.se but doesn't set col.se
-    if(se && (col.se == 0 || lty.se == 0) && col.shade == 0)
-        warning0("plotmo: 'se' ignored because (col.se == 0 || lty.se == 0) && ",
-                 "col.shade == 0)")
-    list(se=se, col.se=col.se)
-}
 do.par <- function(nfigs, cex, xlab, ylab)
 {
     nrows <- ceiling(sqrt(nfigs))
@@ -474,15 +476,20 @@ get.plotmo.clip.limits.wrapper <- function(object, env, type, y, trace)
         cat("\nclip.limits", clip.limits, "\n")
     clip.limits # a two elem vec
 }
-get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1)
+get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1, int.only.ok)
 {
     if(!is.numeric(degree1) && !is.logical(degree1) && !is.character(degree1))
         stop0("degree1 must be an index vector (numeric, logical, or character)")
     if(trace >= 2)
         cat("\n--get.plotmo.singles for", class(object)[1], "object\n\n")
-    singles <- get.plotmo.singles(object, env, x, trace >=2 , all1)
-    if(length(singles))
+    singles <- get.plotmo.singles(object, env, x, trace >=2, all1)
+    intercept.only <- FALSE    # assume model is not an intercept-only model
+    if(length(singles))        # not intercept-only model?
         singles <- sort(unique(singles))
+    else if(int.only.ok) {
+        singles <- 1           # use the first predictor for the plot (arbitrary)
+        intercept.only <- TRUE
+    }
     nsingles <- length(singles)
     if(nsingles) {
         degree1 <- check.index.vec("degree1", degree1, singles, colnames=colnames(x))
@@ -495,7 +502,8 @@ get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1)
         else
             cat("no singles\n")
     }
-    singles # a vector of indices of predictors for degree1 plots
+    list(intercept.only=intercept.only,
+         singles=singles) # a vector of indices of predictors for degree1 plots
 }
 get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
 {
@@ -579,33 +587,94 @@ get.plotmo.y.wrapper <- function(object, env, y.column, expected.len, trace)
     }
     y
 }
-plotmo.predict.wrapper <- function(object, newdata, type, se.fit,
+plotmo.predict.trace <- function(newdata, type, trace, pred.names, ipred1, ipred2=0, msg="")
+{
+    if(trace > 0) {
+        if(ipred2 == 0) # degree1 plot?
+            cat0("\nplotmo.predict(type=\"", type, "\"", msg, ") for degree1 plot ",
+                 "\"", pred.names[ipred1], "\" ")
+        else
+            cat0("\nplotmo.predict(type=\"", type, "\"", msg, ") for degree2 plot ",
+                 "\"", pred.names[ipred1], ":", pred.names[ipred2], "\" ")
+        print.first.few.rows(newdata, trace, "with newdata")
+    }
+}
+plotmo.predict.wrapper <- function(object, newdata, type,
                                    trace, pred.names, ipred1, ipred2=0)
 {
     stopifnot(is.character(type) && length(type) == 1)
-    if(trace > 0) {
-        if(ipred2 == 0)
-            cat0("\nplotmo.predict(type=\"", type, "\") for degree1 plot \"",
-                pred.names[ipred1], "\" ")
-        else
-            cat0("\nplotmo.predict(type=\"", type, "\") for degree2 plot \"",
-                 pred.names[ipred1], ":", pred.names[ipred2], "\" ")
-        if(se.fit)
-            cat0("se.fit=", se.fit, " ")
-        print.first.few.rows(newdata, trace, "with newdata")
+    plotmo.predict.trace(newdata, type, trace, pred.names, ipred1, ipred2)
+    plotmo.predict(object, newdata, type, trace >= 2)
+}
+check.level.arg <- function(level, se, shade.pints, shade2.pints)
+{
+    if(identical(level, NA) || identical(level, NULL))
+        level <- 0
+    stopifnot.scalar(level)
+    # some code for backward compatibility (se is now deprecated)
+    stopifnot.scalar(se)
+    if(se && level) # both specified?
+        stop0("plotmo's \"se\" argument is deprecated, please use \"level\" instead")
+    if(identical(se, TRUE)) {
+        level <- .95
+        warning0(
+            "plotmo's \"se\" argument is deprecated, please use \"level=.95\" instead")
+    } else if (se < 0 || se > 5) # 5 is arb
+        stop0("plotmo's \"se\" argument is deprecated, please use \"level=.95\" instead")
+    else if (se > 0 && se < 1)   # e.g. se=.95
+        stop0("plotmo's \"se\" argument is deprecated, please use \"level=.95\" instead")
+    else if (se > 0) {
+        level <- 1 - 2 * (1 - pnorm(se)) # se=2 becomes level=.954
+        warning0(sprintf(
+            "plotmo's \"se\" argument is deprecated, please use \"level=%.2f\" instead",
+            level))
+    } else if(level != 0 && (level < .5 || level >= 1))
+        stop0("level=", level, " is out of range, try level=.95")
+    level
+}
+# get prediction intervals
+plotmo.pint.wrapper <- function(object, newdata, type, level, trace,
+                                pred.names, ipred, inverse.func, inverse.func.name)
+{
+    if(level == 0)
+        return(NULL)
+    stopifnot(is.character(type) && length(type) == 1)
+    plotmo.predict.trace(newdata, type, trace, pred.names, ipred, 0,
+                         paste0(", level=", level))
+    # call plotmo.pint.xxx where xxx is object's class
+    intervals <- plotmo.pint(object, newdata, type, level, trace)
+    if(!is.null(intervals$lwr)) {
+        intervals$lwr <-
+            apply.inverse.func(intervals$lwr, object,
+                               trace, inverse.func, inverse.func.name)
+        intervals$upr <-
+            apply.inverse.func(intervals$upr, object,
+                               trace, inverse.func, inverse.func.name)
     }
-    plotmo.predict(object, newdata, type, se.fit, trace >= 2)
+    if(!is.null(intervals$cint.lwr)) {
+        intervals$cint.lwr <-
+            apply.inverse.func(intervals$cint.lwr, object,
+                               trace, inverse.func, inverse.func.name)
+        intervals$cint.upr <-
+            apply.inverse.func(intervals$cint.upr, object,
+                               trace, inverse.func, inverse.func.name)
+    }
+    if(trace > 0)
+        print.first.few.rows(intervals, trace, "prediction intervals")
+    intervals
 }
 # plot degree one plots i.e. main effects
 
 plot.degree1 <- function(
     # copy of args from plotmo, some have been tweaked slightly
-    object, degree1, all1, center, ylim, type, nresponse, clip, trace, trace1,
+    object, degree1, all1, center,
+    xlim, ylim, type, nresponse, clip, trace, trace1,
     col.response, cex.response, pch.response, jitter.response, iresponse,
-    col.smooth, lty.smooth, lwd.smooth,
+    col.smooth, lty.smooth, lwd.smooth, smooth.f,
     inverse.func, grid.func, grid.levels,
     ngrid1, grid,
-    col.degree1, lty.degree1, lwd.degree1, se, lty.se, col.se, col.shade,
+    col.degree1, lty.degree1, lwd.degree1,
+    intercept.only, level, shade.pints, shade2.pints,
     func, col.func, lty.func, lwd.func, nrug,
     # args generated in plotmo, draw.plot=FALSE means get ylims but don't actually plot
     draw.plot,
@@ -623,7 +692,7 @@ plot.degree1 <- function(
         # create data.frame of x values to be plotted, by updating xgrid for this predictor
         xframe <- get.degree1.xframe(xgrid, x, ipred, ngrid1, xlevs)
 
-        y.predict <- plotmo.predict.wrapper(object, xframe, type, se.fit=FALSE,
+        y.predict <- plotmo.predict.wrapper(object, xframe, type,
                                             trace1, pred.names, ipred)
         temp <- check.and.print.y(y.predict,
                                   paste0("predict.", class(object)[1],
@@ -633,25 +702,27 @@ plot.degree1 <- function(
             y.predict     <- temp$y
             response.name <- temp$yname
 
-        temp <- get.degree1.se(y.predict, se, object, type, xframe, pred.names,
-                               ipred, trace1, inverse.func, inverse.func.name)
-            y.se.lower <- temp$y.se.lower
-            y.se.upper <- temp$y.se.upper
-
         y.predict <- apply.inverse.func(y.predict, object,
                                         trace1, inverse.func, inverse.func.name)
 
-        temp <- blockify.degree1.frame(xframe, y.predict, y.se.lower, y.se.upper,
+        # prediction intervals, NULL if level argument not used
+        stopifnot(is.character(type) && length(type) == 1)
+        intervals <- plotmo.pint.wrapper(object, xframe, type, level, trace1,
+                        pred.names, ipred, inverse.func, inverse.func.name)
+
+        temp <- blockify.degree1.frame(xframe, y.predict, intervals,
                                        ipred, xlevs, ndiscrete)
-            xframe     <- temp$xframe
-            y.predict  <- temp$y.predict
-            y.se.lower <- temp$y.se.lower
-            y.se.upper <- temp$y.se.upper
+            xframe    <- temp$xframe
+            y.predict <- temp$y.predict
+            intervals <- temp$intervals
 
         if(center) {
             y.predict  <- my.center(y.predict, trace1)
-            y.se.lower <- my.center(temp$y.se.lower, trace1)
-            y.se.upper <- my.center(temp$y.se.upper, trace1)
+            intervals$fit      <- my.center(intervals$fit, trace1)
+            intervals$lwr      <- my.center(intervals$lwr, trace1)
+            intervals$upr      <- my.center(intervals$upr, trace1)
+            intervals$cint.lwr <- my.center(intervals$cint.lwr, trace1)
+            intervals$cint.upr <- my.center(intervals$cint.upr, trace1)
         }
         clipped.y <- y.predict
         if(clip) {
@@ -662,9 +733,10 @@ plot.degree1 <- function(
             else
                 clipped.y[y.lt | y.gt] <- NA
         }
-        ylims <- range1(ylims, clipped.y, y.se.lower, y.se.upper, finite=TRUE)
+        ylims <- range1(ylims, clipped.y, intervals$lwr, intervals$upr,
+                        intervals$cint.lwr, intervals$cint.upr, finite=TRUE)
         degree1.data <- list(xframe=xframe, y.predict=y.predict,
-                             y.se.lower=y.se.lower, y.se.upper=y.se.upper,
+                             intervals=intervals,
                              response.name=response.name, ylims=ylims,
                              out.of.range.preds=out.of.range.preds)
         # cache the data for next time
@@ -688,20 +760,36 @@ plot.degree1 <- function(
                 main <- paste0(isingle, " ") # show plot number in headers
             paste(main, pred.names[ipred])
         }
+        fix.lim <- function(lim)
+        {
+            # if lim[1] == lim[2], then adjust them so no msg from within plot()
+            small <- max(1e-6, .001 * abs(lim[2]))
+            bad.lim <- abs(lim[2] - lim[1]) < small
+            if(bad.lim)
+                lim <- c(lim[1] - small, lim[2] + small)
+            lim
+        }
         get.degree1.xlim <- function()
         {
-            xcol <- xframe[,ipred]
-            nlevels <- length(xlevs[[ipred]])
-            if(is.factor(xcol))
-                xlim <- c(.6, nlevels+.4)
+            if(!is.null(xlim.org) && !is.na(xlim.org)) # same xlim for each graph?
+                xlim <- xlim.org
             else {
-                xlim <- c(min(xcol), max(xcol))
-                xrange <- xlim[2] - xlim[1]
-                xlim[1] <- xlim[1] - .07 * xjitter * xrange
-                xlim[2] <- xlim[2] + .07 * xjitter * xrange
+                xcol <- xframe[,ipred]
+                nlevels <- length(xlevs[[ipred]])
+                if(is.factor(xcol))
+                    xlim <- c(.6, nlevels+.4)
+                else {
+                    xlim <- c(min(xcol), max(xcol))
+                    xrange <- xlim[2] - xlim[1]
+                    xlim[1] <- xlim[1] - .07 * xjitter * xrange
+                    xlim[2] <- xlim[2] + .07 * xjitter * xrange
+                }
             }
+            xlim <- fix.lim(xlim)
             if(xflip) {
-                temp <- xlim[1]; xlim[1] <- xlim[2]; xlim[2] <- temp
+                temp <- xlim[1]
+                xlim[1] <- xlim[2]
+                xlim[2] <- temp
             }
             xlim
         }
@@ -711,8 +799,9 @@ plot.degree1 <- function(
                 ylim <- ylims
             else if(is.na(ylim.org[1])) {   # each graph has its own ylim?
                 ylim <- range1(y.predict, finite=TRUE)
-                if(!is.null(y.se.lower))
-                    ylim <- range1(y.predict, y.se.lower, y.se.upper, finite=TRUE)
+                if(!is.null(intervals))
+                    ylim <- range1(y.predict, intervals$lwr, intervals$upr,
+                                   intervals$cint.lwr, intervals$cint.upr, finite=TRUE)
                 if(any(!is.finite(ylim)))
                     stop0("ylim argument to plotmo is NA but cannot generate ",
                           "ylim internally from predicted values (predictor \"",
@@ -730,7 +819,7 @@ plot.degree1 <- function(
                 if (nrug)
                     ylim[1] <- ylim[1] - .05 * yrange
             }
-            ylim
+            fix.lim(ylim)
         }
         draw.degree1.response <- function(x, iresponse, ipred,
                                           col.response, cex.response, pch.response)
@@ -752,7 +841,7 @@ plot.degree1 <- function(
                    cex=rep(cex.response, length.out=length.y)[iresponse],
                    pch=rep(pch.response, length.out=length.y)[iresponse])
         }
-        draw.smooth <- function(x, ipred, y, unique.y, col.smooth, lty.smooth, lwd.smooth)
+        draw.smooth <- function(x, ipred, y, unique.y, col.smooth, lty.smooth, lwd.smooth, smooth.f)
         {
             xcol <- x[,ipred]
             is.discrete <- FALSE
@@ -772,42 +861,54 @@ plot.degree1 <- function(
                       type="b", col=col.smooth, lty=lty.smooth, lwd=lwd.smooth, pch=20)
             } else {
                 # For less smoothing (so we can better judge inflection points),
-                # we use a value for f lower than the default 2/3. Also iter=0 is
+                # we use a value for f lwr than the default 2/3. Also iter=0 is
                 # best for lowess with binary responses, so says Harrell 2.4.6.
-                smooth <- lowess(xcol, y, f=.5, iter=if(length(unique.y) > 2) 3 else 0)
+                smooth <- lowess(xcol, y, f=smooth.f, iter=if(length(unique.y) > 2) 3 else 0)
                 lines(smooth$x, if(center) my.center(smooth$y) else smooth$y,
                       type="l", col=col.smooth, lty=lty.smooth, lwd=lwd.smooth)
             }
         }
+        get.level.shades <- function(intervals, shade.pints, shade2.pints)
+        {
+            if(is.null(intervals$lwr) || is.null(intervals$cint.lwr))
+                c(shade.pints, shade.pints)
+            else
+                c(shade.pints, shade2.pints) # use shade2.pints only if two kinds of intervals
+        }
         draw.degree1.fac <- function()
         {
-            draw.se.fac <- function(y) # draw std err bands for a factor predictor
+            draw.fac.intervals <- function(y) # draw std err bands for a factor predictor
             {
-                y.se.lower1 <- split(y.se.lower, xframe[,ipred])
-                y.se.upper1 <- split(y.se.upper, xframe[,ipred])
-                for(ilev in seq_along(levels(xframe[,ipred]))) {
-                    min <- min(y.se.lower1[[ilev]])
-                    max <- max(y.se.upper1[[ilev]])
-                    if(!is.zero(col.shade))
+                draw.intervals <- function(lwr, upr, shade)
+                {
+                    for(ilev in seq_along(levels(xframe[,ipred]))) {
+                        min <- min(lwr[[ilev]])
+                        max <- max(upr[[ilev]])
                         polygon(c(ilev - .4, ilev - .4, ilev + .4, ilev + .4),
-                            c(min, max, max, min), col=col.shade, lty=0, border=NA)
-                    if(lty.se != 0 && !is.zero(col.se)) {
-                        segments(ilev -.4, min, ilev + .4, min, lty=lty.se, col=col.se)
-                        segments(ilev -.4, max, ilev + .4, max, lty=lty.se, col=col.se)
+                                c(min, max, max, min), col=shade, lty=0, border=NA)
                     }
                 }
+                level.shades <- get.level.shades(intervals, shade.pints, shade2.pints)
+                if(!is.null(intervals$lwr))
+                    draw.intervals(split(intervals$lwr, xframe[,ipred]),
+                               split(intervals$upr, xframe[,ipred]),
+                               level.shades[1])
+                if(!is.null(intervals$cint.lwr))
+                    draw.intervals(split(intervals$cint.lwr, xframe[,ipred]),
+                               split(intervals$cint.upr, xframe[,ipred]),
+                               level.shades[2])
             }
             #--- draw.degree1.fac starts here
             if(!identical(grid, FALSE))
                 grid(col=grid, lty=1, nx=NA, ny=NULL) # horizontal grid
-            if(!is.null(y.se.lower))
-                draw.se.fac()
+            if(!is.null(intervals))
+                draw.fac.intervals()
             if(!is.zero(col.response))
                 draw.degree1.response(x, iresponse, ipred,
                                       col.response, cex.response, pch.response)
             if(!is.zero(col.smooth))
                 draw.smooth(x, ipred, y, unique.y,
-                            col.smooth, lty.smooth, lwd.smooth)
+                            col.smooth, lty.smooth, lwd.smooth, smooth.f)
             plot(xframe[,ipred], y.predict, add=TRUE,
                  xaxt=if(plot.levnames) "n" else "s",
                  # yaxt=if(center) "n" else "s",
@@ -828,22 +929,25 @@ plot.degree1 <- function(
         }
         draw.degree1.numeric <- function()
         {
-            draw.se.numeric <- function() # draw std err bars for a numeric predictor
+            draw.numeric.intervals <- function() # draw std err bars for a numeric predictor
             {
-                if(!is.zero(col.shade))
-                    polygon(c(xframe[,ipred], rev(xframe[,ipred])),
-                            c(y.se.lower, rev(y.se.upper)),
-                            col=col.shade, lty=0, border=NA)
-                if(lty.se != 0 && !is.zero(col.se)) {
-                    lines(xframe[,ipred], y.se.lower, lty=lty.se, col=col.se)
-                    lines(xframe[,ipred], y.se.upper, lty=lty.se, col=col.se)
+                x <- xframe[,ipred]
+                level.shades <- get.level.shades(intervals, shade.pints, shade2.pints)
+                if(!is.null(intervals$lwr)) {
+                    polygon(c(x, rev(x)),
+                            c(intervals$lwr, rev(intervals$upr)),
+                            col=level.shades[1], lty=0, border=NA)
                 }
+                if(!is.null(intervals$cint.lwr))
+                    polygon(c(x, rev(x)),
+                            c(intervals$cint.lwr, rev(intervals$cint.upr)),
+                            col=level.shades[2], lty=0, border=NA)
             }
             #--- draw.degree1.numeric starts here
             if(!identical(grid, FALSE))
                 grid(col=grid, lty=1)
-            if(!is.null(y.se.lower))
-                draw.se.numeric()
+            if(!is.null(intervals))
+                draw.numeric.intervals()
             draw.degree1.func(func, func.name, # draw the func arg, if specified
                               object, xframe, ipred, center, trace,
                               col.func, lty.func, lwd.func)
@@ -852,7 +956,7 @@ plot.degree1 <- function(
                                       col.response, cex.response, pch.response)
             if(!is.zero(col.smooth))
                 draw.smooth(x, ipred, y, unique.y,
-                            col.smooth, lty.smooth, lwd.smooth)
+                            col.smooth, lty.smooth, lwd.smooth, smooth.f)
             lines(x=xframe[,ipred], y=y.predict,
                   col=col.degree1, lty=lty.degree1, lwd=lwd.degree1)
             if(nrug)
@@ -861,6 +965,7 @@ plot.degree1 <- function(
         #--- draw.plot.degree1 starts here
         is.fac.x <- is.factor(x[,ipred])
         xjitter <- yjitter <- jitter.response
+
         if(!is.zero(col.response)) {
             if(is.fac.x && length(unique.y) <= 3)
                 xjitter <- max(.8, 2 * xjitter) # big default jitter, discrete x and y
@@ -912,10 +1017,11 @@ plot.degree1 <- function(
     #--- plot.degree1 starts here
     if(trace1 > 0 || trace >= 2)
         cat0("\n--plot.degree1(draw.plot=", draw.plot, ")\n")
+    xlim.org <- xlim
     ylim.org <- ylim
     # get the x matrix we will plot, will be updated later for each predictor one by one
     xgrid <- get.degree1.xgrid(x, grid.func, grid.levels, pred.names, ngrid1)
-    if(draw.plot && trace >= 0)
+    if(draw.plot && trace >= 0 && ncol(xgrid) > 1)
         print.grid.values(xgrid)
     irug <- get.degree1.irug(nrug, x, draw.plot) # get the indices of the rug points, if any
     unique.y <- unique(y)
@@ -929,20 +1035,22 @@ plot.degree1 <- function(
         # following happens with lm if you do e.g. ozone1$doy <- NULL after using ozone1
         # TODO I am not sure if this is enough to always catch such errors
         if(ipred > NCOL(x))
-            stop0("bad index (missing column in x?)")
+            stop0("bad index=", ipred, " (missing column in x?) NCOL(x)=", NCOL(x))
 
         temp <- get.degree1.data(isingle)
             xframe             <- temp$xframe
             y.predict          <- temp$y.predict
-            y.se.lower         <- temp$y.se.lower
-            y.se.upper         <- temp$y.se.upper
+            intervals          <- temp$intervals
             response.name      <- temp$response.name
             out.of.range.preds <- temp$out.of.range.preds
             if(must.return.ylims)
                 ylims <- temp$ylims
 
-        if(draw.plot)
+        if(draw.plot) {
             draw.plot.degree1()
+            if(intercept.only) # make it obvious that this is an intercept-only model
+                legend("topleft", "intercept-only model", bg="white")
+        }
     }
     if(clip)
         possibly.issue.degree1.out.of.range.warning(out.of.range.preds, pred.names,
@@ -976,36 +1084,6 @@ get.iresponse <- function(npoints, x) # get indices of xrows
         1:nrow(x)
     else
         sample(1:nrow(x), size=npoints, replace=FALSE)
-}
-get.degree1.se <- function(y.predict, se, object, type, xframe, pred.names,
-                           ipred, trace1, inverse.func, inverse.func.name)
-{
-    y.se.lower <- NULL
-    y.se.upper <- NULL
-    if(!is.zero(se)) {
-        if(trace1 > 0)
-            cat("begin se handling, ")
-        temp <- plotmo.predict.wrapper(object, xframe, type, se.fit=TRUE,
-                                       trace1, pred.names, ipred)
-
-        if(typeof(temp) == "list" && !is.null(temp$se.fit)) {
-            temp$se.fit <- check.and.print.y(temp$se.fit,
-                                paste0("predict.", class(object)[1],
-                                       "(xgrid, type=\"", type, "\", se=...)"),
-                                nresponse=1, object, nrow(xframe), trace1)
-            y.se.lower <- y.predict - se * temp$se.fit
-            y.se.lower <- apply.inverse.func(y.se.lower, object, trace1,
-                                             inverse.func, inverse.func.name)
-            y.se.upper <- y.predict + se * temp$se.fit
-            y.se.upper <- apply.inverse.func(y.se.upper, object, trace1,
-                                             inverse.func, inverse.func.name)
-        } else if(trace1 > 0)
-            cat("no standard errs because is.null(temp$se.fit)\n")
-
-        if(trace1 > 0)
-            cat("end se handling\n")
-    }
-    list(y.se.lower=y.se.lower, y.se.upper=y.se.upper)
 }
 draw.degree1.func <- function(func, func.name, object,
                               xframe, ipred, center, trace, col.func, lty.func, lwd.func)
@@ -1066,7 +1144,7 @@ plot.degree2 <- function(
             grid1  <- temp$grid1
             grid2  <- temp$grid2
 
-        y.predict <- plotmo.predict.wrapper(object, xframe, type, se.fit=FALSE,
+        y.predict <- plotmo.predict.wrapper(object, xframe, type,
                                             trace1, pred.names, ipred1, ipred2)
 
         temp <- check.and.print.y(y.predict,
@@ -1077,8 +1155,8 @@ plot.degree2 <- function(
             y.predict     <- temp$y
             response.name <- temp$yname
 
-        y.predict <- apply.inverse.func(y.predict, object, trace1,
-                                        inverse.func, inverse.func.name)
+        y.predict <- apply.inverse.func(y.predict, object,
+                                        trace1, inverse.func, inverse.func.name)
 
         if(type2 != "image") {
             temp <- blockify.degree2.frame(x, y.predict, grid1, grid2,
@@ -1462,10 +1540,10 @@ range1 <- function(x, ...)
     else
         range(x, ...)
 }
-get.plotmo.type.wrapper <- function(obj, env, type, func.name="plotmo")
+get.plotmo.type.wrapper <- function(object, env, type, func.name="plotmo")
 {
-    if(is.null(type))
-        type <- get.plotmo.default.type(obj, env) # get default type for this object class
+    if(is.null(type)) # get default type for this object class?
+        type <- get.plotmo.default.type(object, env)
     else {
         stopifnot(is.character(type))
         stopifnot(length(type) == 1)
@@ -1476,9 +1554,10 @@ get.plotmo.type.wrapper <- function(obj, env, type, func.name="plotmo")
 }
 # provided for backwards compatibility, earth:::plotd calls this
 # TODO remove this once earth has been updated to call get.plotmo.type.wrapper
-get.plotmo.type <- function(obj, type, func.name)
+
+get.plotmo.type <- function(object, type, func.name)
 {
-    get.plotmo.type.wrapper(obj, parent.frame(n=2), type, func.name)
+    get.plotmo.type.wrapper(object, parent.frame(n=2), type, func.name)
 }
 # Check that y is good.  Also if y has multiple columns
 # this returns just the column specified by nresponse.
@@ -1489,6 +1568,7 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
     get.nresponse <- function()
     {
         stopifnot(length(nresponse) == 1)
+        nresponse <- plotmo.get.nresponse(object, nresponse, y)
         if(is.na(nresponse)) {
             if(NCOL(y) > 1) {
                 cat("\n")
@@ -1557,6 +1637,7 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
         # set global flag (we want to print NA or non.finite warning only once)
         unlockBinding("printed.na.warning.global", asNamespace("plotmo"))
         printed.na.warning.global <<- TRUE     # note <<- not <-
+        lockBinding("printed.na.warning.global", asNamespace("plotmo"))
     }
     if(any.nas) {
         cat("\n")

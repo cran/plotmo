@@ -5,13 +5,11 @@
 > library(earth)
 Loading required package: plotrix
 > library(rpart)
-> source("fast.postscript.R")
 > data(ozone1)
 > data(etitanic)
 > options(warn=1) # print warnings as they occur
 > if(!interactive())
-+     fast.postscript(paper="letter")
-Opening Rplots.ps 
++     postscript(paper="letter")
 > 
 > cat("==test plotmo with factors==\n")
 ==test plotmo with factors==
@@ -121,6 +119,7 @@ names(et): survived pclass.fac parch.num parch.fac pclass.num
  grid:    pclass.fac parch.num
                  1st         0
 
+Using env attr(object$terms, ".Environment")
 
 --get.plotmo.x for rpart object
 
@@ -306,6 +305,7 @@ Warning: forcing clip=FALSE because center=TRUE (a limitation of the current imp
 [149] lev.zero        lev.zero        lev.zero        lev.zero       
 Levels: lev.zero lev.one lev.two.or.more
 names(et): survived pclass.fac parch.num parch.fac pclass.num 
+Using env attr(object$terms, ".Environment")
 
 --get.plotmo.x for rpart object
 
@@ -460,6 +460,7 @@ table(et$var):> print(table(et$var))
 > 
 > plotmo(a, trace=-1, ndiscrete=0,
 +        do.par=F, col.smooth="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
+Using env attr(object$terms, ".Environment")
 > 
 > #------------
 > plotmo(a, trace=0, ndiscrete=10,  main="integral var\nndiscrete=10", cex.lab=.8,
