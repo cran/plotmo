@@ -5,7 +5,10 @@
 \description{
 Plot a model's response when varying one or two predictors while
 holding the other predictors constant.  A poor man's partial
-dependence plot.   See the \dQuote{Details} section for an overview.
+dependence plot.
+
+See the package vignette
+\dQuote{\href{../doc/plotmo-notes.pdf}{Notes on the \code{plotmo} package}}.
 }
 \usage{
 plotmo(object = stop("no 'object' arg"),
@@ -33,7 +36,8 @@ plotmo(object = stop("no 'object' arg"),
   \code{object},
   \code{type},
   \code{clip},
-  and \code{col.response}.}
+  \code{col.response} and
+  \code{do.par}.}
 
   \item{object}{
      Model object.
@@ -152,9 +156,10 @@ plotmo(object = stop("no 'object' arg"),
      Color of response points (or response sites in degree2 plots).
      This refers to the response \code{y} in the data
      used to build the model.
-     Default is 0, don't plot the response.
+     Plotting these points is most helpful only when the model has a single predictor.\cr
      Can be a vector, for example,\cr
-     \code{col.response=as.numeric(survived)+2}.
+     \code{col.response=as.numeric(survived)+2}.\cr
+     Default is 0, don't plot the response.
   }
   \item{cex.response}{
      Relative size of response points.
@@ -329,7 +334,8 @@ plotmo(object = stop("no 'object' arg"),
   }
   \item{do.par}{
     Default is \code{TRUE}, meaning start a new page and call \code{\link{par}} as
-    appropriate (this adjusts \code{mfrow}, \code{cex}, \code{mar}, and \code{mgp}).\cr
+    appropriate to display multiple plots on the same page
+    (this adjusts \code{mfrow}, \code{cex}, \code{mar}, and \code{mgp}).\cr
     Use \code{FALSE} to use the current graphics settings,
     for example if you want to add plots to an existing multifigure page.\cr
     The value \code{2} means act like \code{TRUE} but do not restore
@@ -392,401 +398,11 @@ plotmo(object = stop("no 'object' arg"),
      (For \code{persp} plots, \code{ticktype="d", nticks=2} is useful.)
   }
 }
-\details{
-\code{Plotmo} can be used on a wide variety of regression models.
-It plots a degree1 (main effect) plot by calling \code{\link{predict}} to
-predict the response when changing one variable while holding all
-other variables at their median values.
-For degree2 (interaction) plots, two variables are changed while holding others
-at their medians.
-The first level is used instead of the median for factors.
-You can change this with the \code{grid.func} and
-\code{grid.levels} arguments.
-
-Each graph shows only a thin slice of the data because most variables
-are fixed.  Please be aware of that when interpreting the graph ---
-over-interpretation is a temptation.
-
-\code{Plotmo} was originally part of the \code{\link[earth]{earth}} package
-and a few connections to that package still remain.
-}
-\section{Limitations}{
-
-NAs are not yet supported.
-To prevent confusing error messages from functions called by \code{plotmo},
-it is safest to remove NAs before building your model.
-(However, \code{\link[rpart]{rpart}} models are treated specially by
-\code{plotmo}.  For these, \code{plotmo} predicts with \code{\link{na.pass}}
-so \code{plotmo} can be used with \code{rpart}'s default NA handling.)
-
-Keep the variable names in the original model formula simple.
-Use temporary variables or \code{\link{attach}} rather than using
-\code{$} and similar in formulas.
-
-\code{Plotmo} evaluates the model data in the \code{\link{environment}}
-used when the model was built, if that environment was saved with the model
-(typically this is the case if the formula interface was used to the
-model function).  If the environment was not saved with the model
-(typically if the \code{x,y} interface was used),
-the model data is evaluated in the environment in which \code{plotmo}
-is called.
-}
-\section{Alternatives}{
-
-An alternative approach is to use partial-dependence plots
-(e.g. \emph{The Elements of Statistical Learning} 10.13.2).
-\code{Plotmo} sets the \dQuote{other} variables to their median
-value, whereas in a partial-dependence plot at each plotted point the
-effect of the other variables is averaged.
-In general, partial-dependence plots and \code{plotmo} plots will
-differ, but for additive models the \emph{shape} of the curves will
-match identically.
-Eventually \code{plotmo} will be enhanced to draw
-partial-dependence plots.
-
-% There appears to be no general-purpose R function similar to
-% \code{plotmo} for drawing partial-dependence plots.
-% An example special purpose function is \code{\link[randomForest]{partialPlot}} in the
-% \code{\link[randomForest]{randomForest}} package.
-% Averaging over the sample at every point is a slow process
-% unless the effect of averaging can be
-% determined without actually doing the calculation.
-% That is not the case for most models (it is for CART trees).
-
-\code{\link[=termplot]{Termplot}} is effective but can be used only on
-models with a \code{predict} method that supports \code{type="terms"},
-and it does not generate degree2 plots.
-
-Some other possibilites for plotting the response on a per-predictor
-basis are partial-residual plots, partial-regression variable plots, and
-marginal-model plots (e.g.  \code{\link[car]{crPlots}},
-\code{\link[car]{avPlots}}, and \code{\link[car]{marginalModelPlot}} in the
-\code{\link[car]{car-package}}).
-These plots are orientated towards linear models.
-The \code{\link[effects]{effects-package}} package is also of interest.
-}
-\section{Which variables are plotted?}{
-
-The set of variables plotted for some common objects is listed below.
-This may leave out variables that you would like to see ---
-in that case use \code{all1=TRUE} and \code{all2=TRUE}.
-\describe{
-\item{\bold{o}\code{ earth}}{\code{degree1}: variables in additive (non interaction) terms\cr
-\code{degree2}: variables appearing together in interaction terms.}
-
-\item{\bold{o}\code{ rpart}}{\code{degree1}: variables used in the tree\cr
-\code{degree2}: parent-child pairs.}
-
-\item{\bold{o}\code{ randomForest}}{\code{degree1}: all variables\cr
-\code{degree2}: pairs of the four most important variables (ranked
-on the first column of \code{object$importance)}.}
-
-\item{\bold{o}\code{ gbm}}{\code{degree1}: variables with  \code{\link[gbm]{relative.influence} >= 1\%}\cr
-\code{degree2}: pairs of the four variables with the largest relative influence.}
-
-\item{\bold{o}\code{ lm, glm, gam, lda}, etc. are processed using \code{plotmo}'s default methods:}{\code{degree1}: all variables\cr
-\code{degree2}: variables in formula terms
-like \code{x1*x2}, \code{x1:x2} and \code{s(x1,x2)}.}
-%spacer
-}
-}
-\section{The \code{clip} argument}{
-
-With the default \code{clip=TRUE}, predicted values out of the
-expected range are not displayed.
-
-Generally, the \dQuote{expected range} is the range of the response
-\code{y} used when building the model.
-But that depends on the type of model, and \code{plotmo}
-knows about some special cases.
-For example, it knows that for some models we are predicting a
-probability, and it scales the axes accordingly, \code{0} to \code{1}.
-However, \code{plotmo} cannot know about every possible model and
-prediction \code{type}, and will sometimes determine the expected response range
-incorrectly.
-In that case use \code{clip=FALSE}.
-
-The default \code{clip} is \code{TRUE} because it is a useful sanity
-check to test that the predicted values are in the expected range.
-While not necessarily an error, predictions outside the expected range
-are usually something we want to know about.
-Also, with \code{clip=FALSE}, a few errant predictions can expand the
-entire y-axis, making it difficult to see the shape of the other
-predictions.
-}
-\section{Using \code{plotmo} on various models}{
-
-Here are some examples which illustrate \code{plotmo} on various
-objects.
-(The models here are just for illustrating \code{plotmo} and
-shouldn't be taken too seriously.)
-\preformatted{
-    # use a small set of variables for illustration
-    library(earth) # for ozone1 data
-    data(ozone1)
-    oz <- ozone1[, c("O3", "humidity", "temp", "ibt")]
-
-    lm.model <- lm(O3 ~ humidity + temp*ibt, data=oz)       # linear model
-    plotmo(lm.model, col.response="gray", nrug=-1)
-
-    library(rpart)                                          # rpart
-    rpart.model <- rpart(O3 ~ ., data=oz)
-    plotmo(rpart.model, all2=TRUE)
-
-    library(randomForest)                                   # randomForest
-    rf.model <- randomForest(O3~., data=oz)
-    plotmo(rf.model)
-    # partialPlot(rf.model, oz, temp) # compare to partial-dependence plot
-
-    library(gbm)                                            # gbm
-    gbm.model <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=1000)
-    plotmo(gbm.model)
-    # plot(gbm.model, i.var=2) # compare to partial-dependence plots
-    # plot(gbm.model, i.var=c(2,3))
-
-    library(mgcv)                                           # gam
-    gam.model <- gam(O3 ~ s(humidity)+s(temp)+s(ibt)+s(temp,ibt), data=oz)
-    plotmo(gam.model, level=.95, all2=TRUE)
-
-    library(nnet)                                           # nnet
-    set.seed(4)
-    nnet.model <- nnet(O3~., data=scale(oz), size=2, decay=0.01, trace=FALSE)
-    plotmo(nnet.model, type="raw", all2=T)
-
-    library(MASS)                                           # qda
-    lcush <- data.frame(Type=as.numeric(Cushings$Type),log(Cushings[,1:2]))
-    lcush <- lcush[1:21,]
-    qda.model <- qda(Type~., data=lcush)
-    plotmo(qda.model, type="class", all2=TRUE,
-       type2="contour", ngrid2=100, nlevels=2, drawlabels=FALSE,
-       col.response=as.numeric(lcush$Type)+1,
-       pch.response=as.character(lcush$Type))
-
-}
-}
-\section{Prediction intervals}{
-
-Use the \code{level} argument to plot pointwise confidence or prediction intervals.
-The \code{predict} method of the object must support this.
-Examples:
-\preformatted{
-  par(mfrow=c(2,3))
-  log.trees <- log(trees) # make the resids more homoscedastic
-                          # (necessary for lm)
-
-                                                             # lm
-  lm.model <- lm(Volume~Height, data=log.trees)
-  plot(lm.model, which=1, main="lm") # Residual vs Fitted graph
-  plotmo(lm.model, level=.90, col.response=2,
-         main="lm\n(conf and pred intervals)", do.par=F)
-
-                                                              # earth (requires earth 3.3)
-  library(earth)
-  earth.model <- earth(Volume~Height, data=log.trees,
-                       nfold=5, ncross=30, varmod.method="lm")
-  plotmo(earth.model, level=.90, col.response=2, main="earth", do.par=F)
-
-                                                              # quantreg
-  library(quantreg)
-  rq.model <- rq(Volume~Height, data=log.trees, tau=c(.05, .5, .95))
-  plotmo(rq.model, level=.90, col.response=2, main="rq", do.par=F)
-
-                                                              # quantregForest
-  # quantregForest is a layer on randomForest that allows prediction intervals
-  library(quantregForest)
-  x <- data.frame(Height=log.trees$Height)
-  qrf <- quantregForest(x, log.trees$Volume)
-  plotmo(qrf, level=.90, col.response=2, main="qrf", do.par=F)
-
-                                                              # gam
-  library(mgcv)
-  gam.model <- gam(Volume~s(Height), data=log.trees)
-  plotmo(gam.model, level=.90, col.response=2,
-         main="gam\n(conf not pred intervals)", do.par=F)
-
-}
-}
-\section{ }{ %force a paragraph break, \cr\cr gives a latex error
-Be aware of the distinction between the two types of interval:
-}
-\section{ }{
-(i) intervals for the prediction of the mean response
-(often called \emph{confidence intervals})
-}
-\section{ }{
-(ii) intervals for the prediction of a future value (often called
-\emph{prediction intervals}).
-}
-\section{ }{
-A reference is Section 3.5 of
-\href{http://cran.r-project.org/doc/contrib/Faraway-PRA.pdf}{Julian
-Faraway's online linear regression book}.
-Your object's \code{predict} method determines which of these
-get returned and plotted by \code{plotmo}.
-Currently only \code{lm} supports both types of interval
-on new data (see \code{predict.lm}'s
-\code{interval} argument), and both are plotted by \code{plotmo}.
-}
-\section{ }{
-Be aware of the assumptions made to generate the limits.
-At the very least, the model needs to fit the data adequately.  Most
-models will impose further conditions.
-For linear models the residuals must be homoscedastic.
-
-Examination of the "Residual versus Fitted" plot is the standard way
-of detecting issues.
-So for example, with linear models use \code{plot.lm(which=1)}
-and with earth models use \code{plot.which(which=3)}.
-Look at the the distribution of residual points to detect non-homoscedasity.
-Also look at the smooth line in the residuals plot to detect non-linearity.
-If this is highly curved, you cannot trust the intervals.
-% Look at the QQ plot to detect non-gaussianity.
-
-% For models that support heteroscedasity, the
-% normalized residuals should be approximately homoscedastic
-% (where \dQuote{normalization} here means dividing the residuals by
-% their estimated standard deviation).
-% For example, use \code{pearson=TRUE} in \code{plot.earth}.
-}
-\section{ }{
-One good place for more background on residual analysis is Chapter 8
-\emph{Regression Diagnostics: Residuals}
-in Sanford Weisberg
-\emph{Applied Linear Regression (2nd Edition)}.
-See also the prediction limits chapter
-in the vignette for the \code{\link[earth]{earth}} package.
-}
-% \section{ }{
-% (We mention that if \code{lm} was called with
-% \code{weights}, the prediction intervals returned by \code{predict.lm}
-% in our experience seem meaningless.)
-% }
-\section{ }{
-These are \emph{pointwise} limits.  They can only be interpreted in a
-pointwise fashion.
-So for non-parametric models they shouldn't be
-used to infer bumps or dips that are dependent on a range of the
-curve.  For that you need \emph{simultaneous} confidence bands, which
-none of the models above support.
-}
-\section{Extending plotmo}{
-\code{Plotmo} needs to access the data used to build the model.
-It does that with the method functions listed below.
-The default methods suffice for many objects.
-However, the default methods don't work (\code{plotmo} will issue
-an error message) if the model function did not save
-the call or data with the object in a standard fashion.
-Object-specific methods can usually be written to deal with such
-issues.
-See \code{plotmo.methods.*.R} in the \code{plotmo} source code for examples.
-The methods are:
-
-\describe{
-\item{\code{plotmo.prolog}}{ called before plotting begins, sanity check of the \code{object}}
-\item{\code{plotmo.predict}}{ invokes \code{predict} for each sub-plot}
-\item{\code{get.plotmo.x}}{ the model matrix \code{x}}
-\item{\code{get.plotmo.y}}{ the model response \code{y}}
-\item{\code{get.plotmo.default.type}}{ the value of the \code{type} argument when not specified by the user}
-\item{\code{get.plotmo.singles}}{ the vector of variables to be plotted in degree1 plots}
-\item{\code{get.plotmo.pairs}}{ the array of pairs to be plotted in degree2 plots}
-\item{\code{get.plotmo.ylim}}{ the value of \code{ylim} when not specified by the user}
-\item{\code{get.plotmo.clip.limits}}{ the clip range when \code{clip=TRUE}}
-\item{\code{plotmo.pint}}{ the prediction intervals for \code{plotmo}'s \code{level} argument}
-}
-}
-\section{Common error messages}{
-\bold{o}\code{ Error in match.arg(type): 'arg' should be one of ...}
-
-The message is probably issued by the \code{predict} method for your
-model \code{object}.
-Set \code{type} to a legal value as described
-on the help page for the \code{\link{predict}} method for your object.
-
-%spacer
-\bold{o}\code{ Error: predicted values are out of ylim, try clip=FALSE}
-
-Probably \code{plotmo} has incorrectly determined the expected range
-of the response, and hence also \code{ylim}.
-Re-invoke \code{plotmo} with \code{clip=FALSE}.
-See the section \dQuote{The \code{clip} argument}.
-
-%spacer
-\bold{o}\code{ Error: predict.lm(xgrid, type="response") returned the wrong length}
-
-\bold{o}\code{ Warning: 'newdata' had 100 rows but variable(s) found have 30 rows}
-
-\bold{o}\code{ Error: variable 'x' was fitted with type "nmatrix.2" but type "numeric" was supplied}
-
-\bold{o}\code{ Error in model.frame: invalid type (list) for variable 'x[,3]'}
-
-These and similar messages usually mean that \code{predict} is
-misinterpreting the new data generated by \code{plotmo}.
-
-The underlying issue is that many \code{predict} methods, including
-\code{predict.lm}, seem to reject any reasonably constructed new data
-if the function used to create the model was called in an
-unconventional way.
-The work-around is to simplify or standardize the
-way the model function is called.  Use a formula and a data frame, or
-at least explicitly name the variables rather than passing a
-matrix.  Use simple variable names (so \code{x1} rather than
-\code{dat$x1}, for example).
-
-If the symptoms persist after changing the way the model is called,
-and the model is not one of those listed in \dQuote{Which variables are
-plotted}, it is possible that the model class is not supported
-by \code{plotmo}.  See \dQuote{Extending plotmo}.
-
-%spacer
-\bold{o}\code{ Error: get.plotmo.x.default cannot get the x matrix}
-
-This and similar messages mean that \code{plotmo} cannot get the data
-it needs from the model \code{object}.
-
-You can try simplifying and standardizing the way the
-model function is called, as described above.
-Perhaps you need to use \code{keepxy} or similar in the call to the
-model function, so the data is attached to the object and available for
-\code{plotmo}.
-Is a variable that was used to build the model no longer available in
-the environment when \code{plotmo} is called?
-
-%spacer
-\bold{o}\code{ Error: this object is not supported by plotmo}
-
-\code{Plotmo}'s default methods are insufficient for your model object.
-See \dQuote{Extending plotmo} above (and contact the author --- this is often
-easy to fix).
-}
-\section{FAQ}{
-\bold{o} \emph{I am not seeing any interaction plots.  How can I change that?}
-
-Use \code{all2=TRUE}.
-By default, degree2 plots are drawn only for some types of model.
-See the section \dQuote{Which variables are plotted?}.
-
-\bold{o} \emph{The \code{persp} display is unnaturally jagged. How can I change that?}
-
-Use \code{clip=FALSE}.
-The jaggedness is probably an artifact of the way \code{\link{persp}} works
-at the boundaries.
-You can also try increasing \code{ngrid2}.
-
-\bold{o} \emph{The \code{image} display has blue \dQuote{holes} in it. What gives?}
-
-The holes are areas where the predicted response is out-of-range.
-Try using \code{clip=FALSE}.
-
-\bold{o} \emph{I want to add lines or points to a plot created by \code{plotmo}.
-and am having trouble getting my axis scaling right. Help?}
-
-Use \code{do.par=FALSE} or \code{do.par=2}.
-With the default \code{do.par=TRUE}, \code{plotmo} restores the
-\code{\link{par}} parameters and axis scales to
-their values before \code{plotmo} was called.
-}
 \author{Stephen Milborrow}
 \seealso{
+Please see the package vignette
+\dQuote{\href{../doc/plotmo-notes.pdf}{Notes on the \code{plotmo}} package}.
+
 There is section on \code{plotmo} in the \code{rpart.plot} vignette
 \dQuote{\href{http://www.milbo.org/rpart-plot/prp.pdf}{Plotting \code{rpart} trees with \code{prp}}}.
 }

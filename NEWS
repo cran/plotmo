@@ -1,14 +1,22 @@
 Changes to plotmo Package
 -------------------------
 
+--- 2.1.0  Nov 30, 2014
+
+Added a vignette "Notes on the plotmo package".
+
+Some more functions are now exported to allow 
+earth::plotmor to easily get the model data
+
+Some documentation touchups as usual.
+
 --- 2.0.0  Nov 19, 2014
 
 Plotting of prediction or confidence levels is now more comprehensive.
 We now allow both prediction and confidence intervals to be plotted
 for those predict methods that support it on new data (currently only
-lm, earth will shortly support it too).  The "se" argument is now
-deprecated and superseded by the "limit" argument (you will get a
-warning).
+lm).  The "se" argument is now deprecated and superseded by the
+"limit" argument (you will get a warning).
 
 Plotmo will now plot the model even if it is an intercept-only model.
 Use int.only.ok=FALSE for the old behaviour (i.e., issue an error for

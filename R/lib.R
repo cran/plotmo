@@ -31,12 +31,15 @@ is.zero <- function(x) length(x) == 1 && x == 0
 
 is.integral <- function(x) all(floor(x) == x)
 
-stopifnot.boolean <- function(b) # b==0 or b==1 is also ok
+check.boolean <- function(b) # b==0 or b==1 is also ok
 {
-    if(length(b) != 1 || !(is.logical(b) || is.numeric(b)) ||
-            is.na(b) || !(b == 0 || b == 1))
+    if(length(b) != 1)
         stop0("the ", deparse(substitute(b)),
               " argument is not FALSE or TRUE or 0 or 1")
+    if(!(is.logical(b) || is.numeric(b)) || is.na(b) || !(b == 0 || b == 1))
+        stop0("the ", deparse(substitute(b)),
+            " argument is not FALSE or TRUE or 0 or 1")
+    b != 0 # convert to logical
 }
 stopifnot.integer <- function(i, logical.acceptable=TRUE)
 {
@@ -84,138 +87,6 @@ warn.if.not.all.finite <- function(x, text="unknown")
         return(TRUE)
     }
     FALSE
-}
-# Check that an index vector specified by the user is ok to index an object.
-# We want to preclude confusing R messages or behaviour later.
-# An example is when max(indexVec) > len(object) which quietly returns NA
-# and can cause confusing downstream behaviour.
-# This returns a vector suitable for indexing into object (will be identical
-# to indexVec unless indexVec is a character vector).
-
-check.index.vec <- function(index.name, indexVec, object, colnames=NULL,
-                        check.empty = FALSE, use.as.col.index=FALSE,
-                        allow.negative.indices = TRUE,
-                        allow.duplicates = FALSE,
-                        allow.zeroes = FALSE, treat.NA.as.one=FALSE)
-{
-    check.logical.index.vec <- function()
-    {
-        if(check.empty) {
-            if(length(indexVec) == 0)
-                stop0("length(", index.name, ") == 0")
-            if(length(indexVec[indexVec == TRUE]) == 0)
-                stop0("\"", index.name, "\" is all FALSE")
-        }
-        # note that a single FALSE or TRUE is ok regardless of length(object)
-        if(length(indexVec) > len && length(indexVec) != 1) {
-            stop0("logical index vector \"", index.name, "\" is too long.\n",
-                  "       Its length is ", length(indexVec),
-                  " and the max allowed length is ", len)
-        }
-        indexVec
-    }
-    check.numeric.index.vec <- function()
-    {
-        if(check.empty) {
-            if(length(indexVec) == 0)
-                stop0("length(", index.name, ") == 0")
-            else if(all(indexVec == 0))
-                if(length(indexVec) == 1)
-                    stop0("\"", index.name, "\" is 0")
-                else
-                    stop0("\"", index.name, "\" is all zeroes")
-        }
-        if(!is.integral(indexVec))
-            stop0(index.name, " is not an integer")
-        if(any(indexVec < 0) && any(indexVec > 0))
-            stop0("mixed negative and positive values in \"", index.name, "\"")
-        if(!allow.zeroes && any(indexVec == 0) && length(indexVec) != 1)
-            warning0("zero in \"", index.name, "\"")
-        if(!allow.duplicates && any(duplicated(indexVec)))
-            warning0("duplicates in \"", index.name, "\"")
-        if(!allow.negative.indices && any(indexVec < 0))
-            stop0("negative value in \"", index.name, "\"")
-        if(any(abs(indexVec) > len)) {
-            if(len != 1)
-                stop0("out of range value in \"", index.name,
-                      "\" (allowed index range is 1:",  len, ")")
-            else if(treat.NA.as.one)
-                stop0("out of range value in \"", index.name,
-                      "\", the only legal value is 1 (or NA)")
-            else
-                stop0("out of range value in \"", index.name,
-                      "\" (the only legal value is 1)")
-        }
-        indexVec
-    }
-    check.character.index.vec <- function()
-    {
-        # like match but return multiple matches if present
-        matchm <- function(x, tab)
-        {
-             matches <- integer(0)
-             for(ix in seq_along(x)) {
-                this.x <- x[ix]
-                for(itab in 1:length(tab))
-                    if(this.x == tab[itab])
-                        matches <- c(matches, itab)
-             }
-             matches
-        }
-        if(length(colnames) == 0 || !is.character(colnames))
-            stop0(index.name,
-                  " specifies variable names but variable names are unavailable")
-        index <- NULL
-        for(name in indexVec) {
-            i <- grep(name, colnames)
-            if(length(i) == 0)
-                warning0("\"", name, "\" in ", index.name,
-                         " does not match any variables")
-            else
-                index <- c(index, i)
-        }
-        if(length(dim(object)) == 0)            # vector?
-            indexVec <- matchm(index, object)
-        else if(length(dim(object)) == 2)       # matrix?
-            indexVec <- c(matchm(index, object[,1]),
-                          matchm(index, object[,2]))
-        else
-            stop("internal error")              # not yet supported
-        unique(indexVec[!is.na(indexVec)])
-    }
-    #--- check.index.vec starts here
-    if(is.null(indexVec)) {
-        if(check.empty)
-           stop0("\"", index.name,
-                 "\" is NULL and cannot be used as an index vector")
-        return(NULL)
-    }
-    if(any(is.na(indexVec)))
-        stop0("NA in \"", index.name, "\"")
-    if(treat.NA.as.one && (is.na(indexVec)[1] && length(indexVec) == 1))
-        indexVec <- 1
-    if(!(NROW(indexVec) == 1 || NCOL(indexVec) == 1))
-        stop0("\"", index.name, "\" must be a vector not a matrix ",
-              "(\"", index.name, "\" has dimensions ",
-              NROW(indexVec), " x ", NCOL(indexVec), ")")
-
-    if(use.as.col.index)
-        len <- NCOL(object)         # index is for cols of object
-    else if(is.vector(object))
-        len <- length(object)
-    else
-        len <- NROW(object)         # index is for rows of object
-
-    if(is.logical(indexVec))
-        indexVec <- check.logical.index.vec()
-    else if(is.numeric(indexVec))
-        indexVec <- check.numeric.index.vec()
-    else if(is.character(indexVec))
-        indexVec <- check.character.index.vec()
-    else
-        warning0("index vector \"", index.name,
-            "\" has an unusual class \"", class(indexVec)[1], "\"")
-    indexVec
 }
 exists.and.not.null <- function(object, mode="any", argname="")
 {

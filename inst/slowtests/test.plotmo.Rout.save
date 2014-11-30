@@ -10,24 +10,26 @@
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (2014). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.4-5.
-  http://CRAN.R-project.org/package=rpart.plot
+  Stephen Milborrow (). rpart.plot: Plot rpart Models.  An Enhanced
+  Version of plot.rpart. R package version 1.5.0.
+  http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
-    title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
+    title = {rpart.plot: Plot rpart Models.  An Enhanced Version of plot.rpart},
     author = {Stephen Milborrow},
-    year = {2014},
-    note = {R package version 1.4-5},
-    url = {http://CRAN.R-project.org/package=rpart.plot},
+    note = {R package version 1.5.0},
+    url = {http://www.milbo.org/rpart-plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")'.
 
+Warning message:
+In citation("rpart.plot") :
+  no date field in DESCRIPTION file of package 'rpart.plot'
 > 
 > library(earth)
 Loading required package: plotmo
@@ -3675,17 +3677,15 @@ GCV 8810.409    RSS 2426927    GRSq 0.1937428    RSq 0.3228944
 + 
 +     # following should all use the x1 and y inside foo
 + 
-+ # TODO following fail when tested in plotmo 2.0.0 (did R's handling of scope change?)
-+ #
-+ #     cat("==lm.18.out\n")
-+ #     plotmo(lm.18.out,   trace=1, main="lm.18.out",
-+ #            do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
-+ #            col.response=2, pch.response=20)
-+ #
-+ #     cat("==lm.18\n")
-+ #     plotmo(lm.18,       trace=1, main="lm.18",
-+ #            do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
-+ #            col.response=2, pch.response=20)
++     cat("==lm.18.out\n")
++     plotmo(lm.18.out,   trace=1, main="lm.18.out",
++            do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
++            col.response=2, pch.response=20)
++ 
++     cat("==lm.18\n")
++     plotmo(lm.18,       trace=1, main="lm.18",
++            do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
++            col.response=2, pch.response=20)
 + 
 +     cat("==lm.18.keep\n")
 +     plotmo(lm.18.keep,  trace=1, main="lm.18.keep",
@@ -4429,6 +4429,88 @@ predict.earth(xgrid, type="response") column "oz[,1]" returned length 400 min -8
 Error : all predicted values are out of the range of the original response, try clip=FALSE
 
 Got error as expected
+==lm.18.out
+Using env attr(object$terms, ".Environment")
+
+--get.plotmo.x for lm object
+
+got x with colnames from object$call$formula
+
+x[9,2]:
+    x1 x2
+1    1  2
+2   18  3
+3    2  4
+...  4  5
+9    6 10
+
+nlevels: x1=6 x2=9 
+
+--get.plotmo.y for lm object
+
+got y from object$call$formula
+get.plotmo.y returned length 9 min 3 max 19
+             value 3 4 19 6 7 8 9 10 11 
+
+ylim NA NA 
+
+--plot.degree1(draw.plot=TRUE)
+
+ grid:    x1 x2
+           6  6
+
+
+plotmo.predict(type="response") for degree1 plot "x1" with newdata[6,2]:
+    x1 x2
+1    1  6
+2    2  6
+3    4  6
+...  5  6
+6   18  6
+
+predict.lm(xgrid, type="response") returned length 6 min 7 max 7
+                                   value 7 7 7 7 7 7 
+==lm.18
+Using env attr(object$terms, ".Environment")
+
+--get.plotmo.x for lm object
+
+got x with colnames from object$call$formula
+
+x[9,2]:
+    x1 x2
+1    1  2
+2   18  3
+3    2  4
+...  4  5
+9    6 10
+
+nlevels: x1=6 x2=9 
+
+--get.plotmo.y for lm object
+
+got y from object$call$formula
+get.plotmo.y returned length 9 min 3 max 19
+             value 3 4 19 6 7 8 9 10 11 
+
+ylim NA NA 
+
+--plot.degree1(draw.plot=TRUE)
+
+ grid:    x1 x2
+           6  6
+
+
+plotmo.predict(type="response") for degree1 plot "x1" with newdata[6,2]:
+    x1 x2
+1    1  6
+2    2  6
+3    4  6
+...  5  6
+6   18  6
+
+predict.lm(xgrid, type="response") returned length 6 min 4.830107 max 10.10783
+                                   value 10.10783 9.797372 9.176464 8.86601 8.555556 4.830107 
 ==lm.18.keep
 Using env attr(object$terms, ".Environment")
 
@@ -5192,16 +5274,16 @@ Got error as expected
 > # Expect Warning: "nonesuch1" in degree1 does not match any variables, ditto for degree2
 > plotmo(a80, degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis"),
 +        caption='degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis")')
-Warning: "nonesuch1" in degree1 does not match any variables
-Warning: "nonesuch2" in degree2 does not match any variables
+Warning: "nonesuch1" in degree1 does not match any names
+Warning: "nonesuch2" in degree2 does not match any names
 
  grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
         5760    5       64   62 2112.5  24 167.5 120 205.5
 
 > # Expect above warnings and also Warning: nothing to plot
 > plotmo(a80, degree1="nonesuch1", degree2="nonesuch2")
-Warning: "nonesuch1" in degree1 does not match any variables
-Warning: "nonesuch2" in degree2 does not match any variables
+Warning: "nonesuch1" in degree1 does not match any names
+Warning: "nonesuch2" in degree2 does not match any names
 Warning: plotmo: nothing to plot
 > 
 > # Test error handling when accessing the original data

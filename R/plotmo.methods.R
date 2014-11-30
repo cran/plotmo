@@ -180,11 +180,11 @@ plotmo.predict.default <- function(object, newdata, type, trace)
 # to the multiple responses of a multiple response model.  So we have to
 # modify the nresponse argument to select the appropriate column.
 
-plotmo.get.nresponse <- function(object, nresponse, y)
+get.plotmo.nresponse <- function(object, nresponse, y)
 {
-    UseMethod("plotmo.get.nresponse")
+    UseMethod("get.plotmo.nresponse")
 }
-plotmo.get.nresponse.default <- function(object, nresponse, y)
+get.plotmo.nresponse.default <- function(object, nresponse, y)
 {
     nresponse
 }

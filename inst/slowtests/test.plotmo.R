@@ -218,17 +218,15 @@ func1 <- function()
 
     # following should all use the x1 and y inside foo
 
-# TODO following fail when tested in plotmo 2.0.0 (did R's handling of scope change?)
-#
-#     cat("==lm.18.out\n")
-#     plotmo(lm.18.out,   trace=1, main="lm.18.out",
-#            do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
-#            col.response=2, pch.response=20)
-#
-#     cat("==lm.18\n")
-#     plotmo(lm.18,       trace=1, main="lm.18",
-#            do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
-#            col.response=2, pch.response=20)
+    cat("==lm.18.out\n")
+    plotmo(lm.18.out,   trace=1, main="lm.18.out",
+           do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
+           col.response=2, pch.response=20)
+
+    cat("==lm.18\n")
+    plotmo(lm.18,       trace=1, main="lm.18",
+           do.par=FALSE, degree1=1, clip=FALSE, ylim=c(0,20),
+           col.response=2, pch.response=20)
 
     cat("==lm.18.keep\n")
     plotmo(lm.18.keep,  trace=1, main="lm.18.keep",

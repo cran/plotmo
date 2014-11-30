@@ -14,14 +14,14 @@ Using env attr(object$terms, ".Environment")
 
 formula Kyphosis ~ .
 stripped formula Kyphosis~.
-get.data.for.formula: using x from "kyphosis" passed to rpart 
-about to eval model.frame(formula=Kyphosis~., data=structure(list(Kyphosis=structure(c(1L, 
-    1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 
-    1L, 1L, 1L, 1L, 2L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
-    1L, 1L, 1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 
-    1L, 1L, 1L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 
+get.data.for.formula: using x from "kyphosis" passed to rpart
+about to eval model.frame(formula=Kyphosis~., data=structure(list(Kyphosis=structure(c(1L,
+    1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 1L,
+    1L, 1L, 1L, 1L, 2L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
+    1L, 1L, 1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L,
+    1L, 1L, 1L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 1L,
     1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L
-    ), .Label=c("absent", "present"), class="factor"), Age=c(71L, 
+    ), .Label=c("absent", "present"), class="factor"), Age=c(71L,
     158L, 128L, 2L, 1L, 1L, 61L, 37L, 113L, 59L, 82L, 148L, 18L, ...
 got x with colnames from object$call$formula
 
@@ -33,7 +33,7 @@ x[81,3]:
 ...   2      5     1
 81   36      4    13
 
-nlevels: Age=64 Number=8 Start=16 
+nlevels: Age=64 Number=8 Start=16
 
 --get.plotmo.y for rpart object
 
@@ -41,16 +41,16 @@ got y from object$y
 get.plotmo.y returned length 81 min 1 max 2
              value 1 1 2 1 1 1 1 1 1 2 ...
 
-clip.limits 1 2 
+clip.limits 1 2
 
 --get.plotmo.singles for rpart object
 
-singles: 1 Age, 3 Start 
+singles: 1 Age, 3 Start
 
 --get.plotmo.pairs for rpart object
 
 pairs:
-     [,1]    [,2]     
+     [,1]    [,2]
 [1,] "1 Age" "3 Start"
 
 --plot.degree1(draw.plot=FALSE)
@@ -91,7 +91,7 @@ predict.rpart(xgrid, type="vec") returned length 320 min 1 max 2
                                  value 2 2 2 2 2 2 2 2 2 2 ...
 
 
-ylim 1 2 
+ylim 1 2
 
 --plot.degree1(draw.plot=TRUE)
 

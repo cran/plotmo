@@ -11,7 +11,7 @@ plotmo.predict.rq <- function(object, newdata, type, ...) # quantreg package
     if(is.null(object$tau))
         stop0("rq object has no \"tau\" field")
     # the following may return multiple responses,
-    # this is handled later in plotmo.get.nresponse.rq
+    # this is handled later in get.plotmo.nresponse.rq
     predict(object, newdata=newdata, type="none")
 }
 
@@ -23,7 +23,7 @@ plotmo.predict.rqs <- function(object, newdata, type, ...) # quantreg package
 # quantreg::predict.rq returns a column for each value in the tau arg
 # in the call to rq.  Select the column corresponding to tau=.5
 
-plotmo.get.nresponse.rq <- function(object, nresponse, y)
+get.plotmo.nresponse.rq <- function(object, nresponse, y)
 {
     if(is.na(nresponse) && NCOL(y) > 1) {
         nresponse <- which(object$tau == .5)
@@ -38,9 +38,9 @@ plotmo.get.nresponse.rq <- function(object, nresponse, y)
     nresponse
 }
 
-plotmo.get.nresponse.rqs <- function(object, nresponse, y)
+get.plotmo.nresponse.rqs <- function(object, nresponse, y)
 {
-    plotmo.get.nresponse.rq(object, nresponse, y)
+    get.plotmo.nresponse.rq(object, nresponse, y)
 }
 
 plotmo.pint.rq <- function(object, newdata, type, level, trace) # quantreg package

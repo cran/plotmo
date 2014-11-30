@@ -341,6 +341,7 @@ Loaded mda 0.4-4
 Converted mars(x=ozone1[, -1], y=ozone1[, 1], degree=2)
 
 to        earth(x=ozone1[, -1], y=ozone1[, 1], degree=2)
+
 > plotmo(a, do.par=FALSE, caption=caption, ylim=NA, trace=Trace)
 
  grid:    vh wind humidity temp    ibh dpg   ibt vis   doy

@@ -7,7 +7,7 @@
 #        It would be nice to use whatever NA handling the original model function
 #        used, but there seems to be no general way of knowing what that is.
 #        cf Michael Friendly's email
-# TODO allow do.par="mfrow(c1,2)"
+# TODO allow do.par="mfrow(1,2)" so user can set it manually
 # TODO would like to add a newdata argument, but NA handling seems insoluble
 # TODO add "add" option so can overlay graphs e.g. with different grid.levels.
 # TODO allow partial residual plots and variations
@@ -92,7 +92,7 @@ plotmo <- function(object = stop("no 'object' arg"),
     xflip        = FALSE,
     yflip        = FALSE,
     swapxy       = FALSE,
-    se           = 0, # deprecated
+    se           = 0,    # deprecated
     ...)
 {
     # call the plotting functions with draw.plot=FALSE to get the ylims
@@ -189,14 +189,15 @@ plotmo <- function(object = stop("no 'object' arg"),
     check.dots.args(type2, dots)
     func.name <- deparse(substitute(func))
     inverse.func.name <- deparse(substitute(inverse.func))
-    stopifnot.boolean(clip)
-    stopifnot.boolean(all1)
-    stopifnot.boolean(all2)
-    stopifnot.boolean(center)
-    stopifnot.boolean(swapxy)
-    stopifnot.boolean(xflip)
-    stopifnot.boolean(yflip)
-    stopifnot(length(do.par) == 1 && (do.par == 0 || do.par == 1 || do.par == 2))
+    clip   <- check.boolean(clip)
+    all1   <- check.boolean(all1)
+    all2   <- check.boolean(all2)
+    center <- check.boolean(center)
+    swapxy <- check.boolean(swapxy)
+    xflip  <- check.boolean(xflip)
+    yflip  <- check.boolean(yflip)
+    stopifnot(length(do.par) == 1)
+    stopifnot(do.par == 0 || do.par == 1 || do.par == 2)
     stopifnot.scalar(jitter.response)
     stopifnot(jitter.response >= 0 && jitter.response <= 5) # 5 is arbitrary
     if(all(is.na(col.response))) # allow NA to mean 0
@@ -239,27 +240,18 @@ plotmo <- function(object = stop("no 'object' arg"),
     old.seed <- .Random.seed
     set.seed(1)
     on.exit(set.seed(old.seed))
+    plotmo.prolog(object, env, deparse(substitute(object)))
+    # get the environment for evaluating the model data
+    parent.frame. <- parent.frame()
+    env <- get.model.env(object, parent.frame., trace)
     # clear global flag (used to print certain warnings only once)
     unlockBinding("printed.na.warning.global", asNamespace("plotmo"))
     printed.na.warning.global <<- FALSE        # note <<- not <-
     lockBinding("printed.na.warning.global", asNamespace("plotmo"))
-    plotmo.prolog(object, env, deparse(substitute(object)))
     # initialize the variables used to store global data
     unlockBinding("degree1.global", asNamespace("plotmo"))
     unlockBinding("degree2.global", asNamespace("plotmo"))
     degree1.global <<- degree2.global <<- NULL # note <<- not <-
-    # Get the environment in which the model function was originally called.
-    # If that is not available, use the environment in which plotmo was called.
-    .Environment <- attr(object$terms, ".Environment")
-    if(is.null(.Environment)) {
-        env <- parent.frame()
-        if(trace)
-            printf("Using env parent.frame()\n")
-    } else {
-        env <- .Environment
-        if(trace)
-            printf("Using env attr(object$terms, \".Environment\")\n")
-    }
     if(center && clip) {
         clip <- FALSE # otherwise incorrect clipping (TODO revisit)
         warning0("forcing clip=FALSE because center=TRUE ",
@@ -430,6 +422,26 @@ check.dots.args <- function(type2, dots)
         stop0("duplicated arguments ",
               paste.quoted.names(names[pmatch == pmatch[which(duplicated)[1]]]))
 }
+# Get the environment for evaluating the model data:
+#
+# If env is not null, return it.
+# Else get the environment in which the model function was originally called.
+# If that is not available, use the environment in which plotmo was called.
+
+get.model.env <- function(object, parent.frame., trace=0)
+{
+    .Environment <- attr(object$terms, ".Environment")
+    if(is.null(.Environment)) {
+        env <- parent.frame.
+        if(trace)
+            printf("Using env parent.frame()\n")
+    } else {
+        env <- .Environment
+        if(trace)
+            printf("Using env attr(object$terms, \".Environment\")\n")
+    }
+    env
+}
 do.par <- function(nfigs, cex, xlab, ylab)
 {
     nrows <- ceiling(sqrt(nfigs))
@@ -478,8 +490,6 @@ get.plotmo.clip.limits.wrapper <- function(object, env, type, y, trace)
 }
 get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1, int.only.ok)
 {
-    if(!is.numeric(degree1) && !is.logical(degree1) && !is.character(degree1))
-        stop0("degree1 must be an index vector (numeric, logical, or character)")
     if(trace >= 2)
         cat("\n--get.plotmo.singles for", class(object)[1], "object\n\n")
     singles <- get.plotmo.singles(object, env, x, trace >=2, all1)
@@ -492,7 +502,8 @@ get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1, int
     }
     nsingles <- length(singles)
     if(nsingles) {
-        degree1 <- check.index.vec("degree1", degree1, singles, colnames=colnames(x))
+        degree1 <- check.index(degree1, "degree1", singles, colnames=colnames(x),
+                               allow.empty=TRUE)
         singles <- singles[degree1]
     } else if(is.specified(degree1) && degree1[1] != 0)
         warning0("\"degree1\" specified but no degree1 plots")
@@ -507,8 +518,6 @@ get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1, int
 }
 get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
 {
-    if(!is.numeric(degree2) && !is.logical(degree2) && !is.character(degree2))
-        stop0("degree2 must be an index vector (numeric, logical, or character)")
     if(trace >= 2)
         cat("\n--get.plotmo.pairs for", class(object)[1], "object\n\n")
     pairs <- get.plotmo.pairs(object, env, x, trace >= 2, all2)
@@ -521,7 +530,8 @@ get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
         # order the pairs on the predictor order
         order <- order(pairs[,1], pairs[,2])
         pairs <- pairs[order, , drop=FALSE]
-        degree2 <- check.index.vec("degree2", degree2, pairs, colnames=colnames(x))
+        degree2 <- check.index(degree2, "degree2", pairs, colnames=colnames(x),
+                               allow.empty=TRUE)
         pairs <- pairs[degree2, , drop=FALSE]
     }
     if(trace >= 2) {
@@ -1568,7 +1578,7 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
     get.nresponse <- function()
     {
         stopifnot(length(nresponse) == 1)
-        nresponse <- plotmo.get.nresponse(object, nresponse, y)
+        nresponse <- get.plotmo.nresponse(object, nresponse, y)
         if(is.na(nresponse)) {
             if(NCOL(y) > 1) {
                 cat("\n")
@@ -1595,9 +1605,8 @@ check.and.print.y <- function(y, msg, nresponse, object, expected.len,
                       "\" cannot be used because the predicted response has no column names")
             nresponse <- match.choices(nresponse, colnames, "nresponse")
         }
-        check.index.vec("nresponse", nresponse, y,
-                        check.empty = TRUE, use.as.col.index=TRUE,
-                        allow.negative.indices=FALSE, treat.NA.as.one=TRUE)
+        check.index(nresponse, "nresponse", y,
+                    is.col.index=TRUE, allow.negatives=FALSE, treat.NA.as.one=TRUE)
         nresponse
     }
     #--- check.and.print.y starts here
@@ -1673,11 +1682,12 @@ get.and.check.subset <- function(x, object, env, trace)
     if(!is.valid(subset))
         subset <- NULL
     else {
-        check.index.vec("subset", subset, x, check.empty=TRUE, allow.duplicates=TRUE)
+        # duplicates are allowed in subsets so user can specify a bootstrap sample
+        check.index(subset, "subset", x, allow.dups=TRUE, allow.zeroes=TRUE)
         if(trace > 0) {
             cat0("got subset from ", msg, " length " , length(subset))
             print.first.few.elements.of.vector(subset, trace)
-           }
+        }
     }
     subset
 }
