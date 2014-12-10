@@ -13,12 +13,21 @@
 check.index <- function(index, index.name, object,
     colnames        = NULL,
     is.col.index    = FALSE,
-    allow.empty     = FALSE,
+    allow.empty     = FALSE, # if index is char will warn if necessary regardles of allow.empty
     allow.zeroes    = FALSE,
     allow.negatives = TRUE,
     allow.dups      = FALSE,
-    treat.NA.as.one = FALSE)
+    treat.NA.as.one = FALSE,
+    is.degree.spec  = FALSE) # special handling for degree1 and degree2 specs
 {
+    # check that the given index and object can be evaluated
+    try1 <- try(eval(index))
+    if(is.try.error(try1))
+        stop0("illegal ", index.name)
+    try1 <- try(eval(object))
+    if(is.try.error(try1))
+        stop0("illegal ", deparse(substitute(object)))
+
     is.col.index    <- check.boolean(is.col.index)
     allow.empty     <- check.boolean(allow.empty)
     allow.zeroes    <- check.boolean(allow.zeroes)
@@ -44,7 +53,8 @@ check.index <- function(index, index.name, object,
     len <- get.len(object, is.col.index)
 
     if(is.character(index)) # currently only works for column names of object
-        check.character.index(index, index.name, object, colnames, len, allow.empty)
+        check.character.index(index, index.name, object, colnames, len,
+                              is.col.index, allow.empty, is.degree.spec)
     else if(is.logical(index))
         check.logical.index(index, index.name, len, allow.empty)
     else if(is.numeric(index))
@@ -81,12 +91,15 @@ matchmult <- function(x, tab) # like match but return multiple matches if presen
 }
 # This does regex matching of index and returns an integer vector
 
-check.character.index <- function(index, index.name, object, names, len, allow.empty)
+check.character.index <- function(index, index.name, object, names, len,
+                                  is.col.index, allow.empty, is.degree.spec)
 {
     stopifnot(is.character(index))
     # certain regular expressions match everything, even if names not avail
     if(length(index) == 1 && index %in% c("", ".", ".*"))
         return(1:len)
+    if(is.col.index && is.null(names))
+        names <- colnames(object)
     if(length(names) == 0 || !is.character(names))
         stop0(index.name,
               " specifies names but the names are unavailable")
@@ -99,20 +112,15 @@ check.character.index <- function(index, index.name, object, names, len, allow.e
         else
             warning.names <- c(warning.names, name)
     }
-    if(is.null(dim(object)))                # vector?
-        new.index <- matchmult(matches, object)
-    else if(length(dim(object)) == 2)       # 2D matrix?
-        new.index <- c(matchmult(matches, object[,1]), matchmult(matches, object[,2]))
-    else
-        stop("that kind of object is not yet supported for ", index.name)
-    new.index <- unique(new.index[!is.na(new.index)])
-    if(!allow.empty && length(new.index) == 0) {
-        if(length(index > 1))
-            stop0(index.name, " = c(", paste.quoted.names(index),
-                  ") does not match any names")
+    if(is.degree.spec) {
+        if(is.null(dim(object)))          # vector, degree1
+            matches <- matchmult(matches, object)
+        else if(length(dim(object)) == 2) # 2D matrix, degree2
+            matches <- c(matchmult(matches, object[,1]), matchmult(matches, object[,2]))
         else
-            stop0(index.name, "=\"",  index, "\" does not match any names")
+            stop("that kind of object is not yet supported for ", index.name)
     }
+    new.index <- unique(matches[!is.na(matches)])
     for(name in warning.names)
         warning0("\"", name, "\" in ", index.name, " does not match any names")
     new.index

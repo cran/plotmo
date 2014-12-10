@@ -460,7 +460,6 @@ table(et$var):> print(table(et$var))
 > 
 > plotmo(a, trace=-1, ndiscrete=0,
 +        do.par=F, col.smooth="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
-Using env attr(object$terms, ".Environment")
 > 
 > #------------
 > plotmo(a, trace=0, ndiscrete=10,  main="integral var\nndiscrete=10", cex.lab=.8,

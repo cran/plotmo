@@ -205,7 +205,7 @@ get.fixed.grid.lev <- function(xcol, pred.name, grid.func, grid.levels)
         # look for pred.name in the grid.levels list, if found use its value
         iname <- which(pmatch(names(grid.levels), pred.name, duplicates.ok=TRUE) == 1)
         if(length(iname) > 1)
-            stop0("bad grid.levels argument (\"",
+            stop0("illegal grid.levels argument (\"",
                   names(grid.levels)[iname[1]], "\" and \"",
                   names(grid.levels)[iname[2]],
                   "\" both match \"", pred.name, "\")")
@@ -254,7 +254,7 @@ get.all.levs <- function(x, levels)
     #      Could remove this if convert levels to factors in a better way below?
     range <- range(as.numeric(x))
     if(range[1] < 1 || range[2] > length(levels))
-        stop0("internal error: bad factor range ", range[1], " ",  range[2],
+        stop0("internal error: illegal factor range ", range[1], " ",  range[2],
               " for levels ", paste.quoted.names(levels))
 
     if(is.ordered(x))

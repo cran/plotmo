@@ -8,7 +8,7 @@
 \alias{get.plotmo.x.wrapper}
 \alias{get.plotmo.x}
 \alias{get.plotmo.y.wrapper}
-\alias{get.plotmo.y_default}
+\alias{get.plotmo.y.default}
 \alias{get.plotmo.y}
 \alias{get.and.check.subset}
 \alias{check.index}
@@ -21,12 +21,12 @@ get.plotmo.type.wrapper(object, env, type, func.name="plotmo")
 \method{get.plotmo}{x}(object, env, trace)
 \method{get.plotmo}{x.wrapper}(object, env, trace)
 get.plotmo.y(object, env, y.column, expected.len, trace)
-get.plotmo.y_default(object, env, y.column, expected.len, trace)
+\method{get.plotmo.y}{default}(object, env, y.column, expected.len, trace)
 get.plotmo.nresponse(object, nresponse, y)
 get.and.check.subset(x, object, env, trace)
 check.index(index, index.name, object, colnames,
-    is.col.index, allow.empty, allow.zeroes,
-    allow.negatives, allow.dups, treat.NA.as.one)
+    is.col.index, allow.empty, allow.zeroes, allow.negatives,
+    allow.dups, treat.NA.as.one, is.degree.spec)
 
 }
 \arguments{
@@ -38,5 +38,5 @@ check.index(index, index.name, object, colnames,
 is.col.index}{See \code{check.index.R}.}
 
 \item{allow.empty, allow.zeroes, allow.negatives, allow.dups,
-treat.NA.as.one}{See \code{check.index.R}.}
+treat.NA.as.one,is.degree.spec}{See \code{check.index.R}.}
 }

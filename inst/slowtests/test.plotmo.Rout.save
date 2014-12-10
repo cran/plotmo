@@ -3426,7 +3426,6 @@ persp(temp:dpg) theta 235 ylim 1.43 37.4 cex 0.66
                               test 2 x 2 layout 
 > a <- earth(O3 ~ ., data=ozone1, nk=9, pmethod="n", degree=2)
 > plotmo(a, xlab="", ylab="", caption=caption, trace=-1) # trace=-1 inhibits "grid:" message
-Using env attr(object$terms, ".Environment")
 > 
 > caption <- "test 1 x 1 layout"
 > dopar(1,1,caption)
@@ -5020,10 +5019,10 @@ GCV 0.203801    RSS 206.7041    GRSq 0.1579841    RSq 0.1819833
 > 
 > # check detection of illegal grid.levels argument
 > expect.err(try(plotmo(a, grid.levels=list(pcla="1", pclass="2"))))
-Error : bad grid.levels argument ("pcla" and "pclass" both match "pclass")
+Error : illegal grid.levels argument ("pcla" and "pclass" both match "pclass")
 Got error as expected
 > expect.err(try(plotmo(a, grid.levels=list(pclass="1", pcla="2"))))
-Error : bad grid.levels argument ("pclass" and "pcla" both match "pclass")
+Error : illegal grid.levels argument ("pclass" and "pcla" both match "pclass")
 Got error as expected
 > expect.err(try(plotmo(a, grid.levels=list(pcla=1))))
 Error : illegal level for "pcla" in grid.levels (specify factor levels with a string)

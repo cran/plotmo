@@ -433,11 +433,11 @@ get.model.env <- function(object, parent.frame., trace=0)
     .Environment <- attr(object$terms, ".Environment")
     if(is.null(.Environment)) {
         env <- parent.frame.
-        if(trace)
+        if(trace > 0)
             printf("Using env parent.frame()\n")
     } else {
         env <- .Environment
-        if(trace)
+        if(trace > 0)
             printf("Using env attr(object$terms, \".Environment\")\n")
     }
     env
@@ -503,7 +503,7 @@ get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1, int
     nsingles <- length(singles)
     if(nsingles) {
         degree1 <- check.index(degree1, "degree1", singles, colnames=colnames(x),
-                               allow.empty=TRUE)
+                               allow.empty=TRUE, is.degree.spec=TRUE)
         singles <- singles[degree1]
     } else if(is.specified(degree1) && degree1[1] != 0)
         warning0("\"degree1\" specified but no degree1 plots")
@@ -531,7 +531,7 @@ get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
         order <- order(pairs[,1], pairs[,2])
         pairs <- pairs[order, , drop=FALSE]
         degree2 <- check.index(degree2, "degree2", pairs, colnames=colnames(x),
-                               allow.empty=TRUE)
+                               allow.empty=TRUE, is.degree.spec=TRUE)
         pairs <- pairs[degree2, , drop=FALSE]
     }
     if(trace >= 2) {
@@ -1045,7 +1045,7 @@ plot.degree1 <- function(
         # following happens with lm if you do e.g. ozone1$doy <- NULL after using ozone1
         # TODO I am not sure if this is enough to always catch such errors
         if(ipred > NCOL(x))
-            stop0("bad index=", ipred, " (missing column in x?) NCOL(x)=", NCOL(x))
+            stop0("illegal index=", ipred, " (missing column in x?) NCOL(x)=", NCOL(x))
 
         temp <- get.degree1.data(isingle)
             xframe             <- temp$xframe

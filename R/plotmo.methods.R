@@ -305,11 +305,6 @@ get.plotmo.y <- function(object, env, y.column, expected.len, trace)
         cat("\n--get.plotmo.y for", class(object)[1], "object\n\n")
     UseMethod("get.plotmo.y")
 }
-# TODO this allows earth to call get.plotmo.y.default without use of :::
-get.plotmo.y_default <- function(object, env, y.column, expected.len, trace)
-{
-    get.plotmo.y.default(object, env, y.column, expected.len, trace)
-}
 get.plotmo.y.default <- function(object, env, y.column, expected.len, trace)
 {
     bady <- function(y)
@@ -458,7 +453,7 @@ get.data.from.formula <- function(field, object, env, trace)
                 cat("entire x matrix is stored as the first element of evaluated.mf\n")
             evaluated.mf <- evaluated.mf[[1]]
         }
-        # Prevent misleading error msg later: bad index (missing column in x?)
+        # Prevent misleading error msg later: illegal index (missing column in x?)
         # caused by the following code (NIR has class "AsIs"):
         #    data(gasoline, package='pls')
         #    a <- earth(octane ~ NIR, data=gasoline)
@@ -470,7 +465,7 @@ get.data.from.formula <- function(field, object, env, trace)
     } else if(field == "y")
         evaluated.mf <- model.response(evaluated.mf, type="any")
     else
-        stop("internal error, bad field: ", field)
+        stop("internal error, illegal field: ", field)
     evaluated.mf
 }
 get.data.for.formula <- function(object, env, data.arg, field, trace)

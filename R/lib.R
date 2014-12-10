@@ -177,7 +177,7 @@ match.arg1 <- function(arg)     # match.arg1 returns an integer
 match.choices <- function(arg, choices, arg.name) # choices is a vector of strings
 {
     if(!is.character(arg) || length(arg) != 1)
-         stop0("bad \"", arg.name, "\" argument.\n",
+         stop0("illegal \"", arg.name, "\" argument.\n",
                "Choose one of: ", paste.quoted.names(choices))
     imatch <- pmatch(arg, choices)
     if(any(is.na(imatch))) {

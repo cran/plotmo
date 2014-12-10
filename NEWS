@@ -1,6 +1,14 @@
 Changes to plotmo Package
 -------------------------
 
+--- 2.2.0  Dec 10, 2014
+
+Fixed incorrect printing of some messages when trace=-1.
+
+Expansions to check.index for earth.
+
+Documentation touchups.
+
 --- 2.1.0  Nov 30, 2014
 
 Added a vignette "Notes on the plotmo package".

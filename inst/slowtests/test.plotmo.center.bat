@@ -2,7 +2,7 @@
 @rem Stephen Milborrow, Berea Apr 2011
 
 @echo === test.plotmo.center ===============================================
-@"\PROGRA~1\R\R-3.1.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.center.R
+@"C:\PROGRA~1\R\R-3.1.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.center.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.center.Rout:
 @echo.
