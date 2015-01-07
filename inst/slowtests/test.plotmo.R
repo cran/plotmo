@@ -433,6 +433,10 @@ plotmo(a20, nrug=-1, caption="Test plotmo with a vector main (and smooth args)",
        col.smooth="indianred", lwd.smooth=2, lty.smooth=2,  smooth.f=.1,
        col.response="gray", npoints=500)
 
+plotmo(a20, nrug=-1, caption="Test plotmo with pch.response=paste(1:nrow(ozone1))",
+       main=c("Humidity", "Temperature"), type2="im",
+       col.response=2, cex.response=.8, pch.response=paste(1:nrow(ozone1)), npoints=100)
+
 aflip <- earth(O3~vh + wind + humidity + temp, data=ozone1, degree=2)
 
 # test all1 and all2, with and without degree1 and degree2
@@ -584,6 +588,14 @@ plotmo(a, type="class", grid.levels=list(sex="ma"), caption="smooth: pclass, sex
        col.smooth="indianred", lwd.smooth=2,
        col.response=as.numeric(tit$pclass)+1, type2="im",
        pch.response=".", cex.response=3, jitter.response=.3)
+plotmo(a, type="class", grid.levels=list(sex="ma"), caption="smooth: pclass, sex=\"m\"",
+       col.smooth="indianred", lwd.smooth=2,
+       col.response=as.numeric(tit$pclass)+1, type2="im",
+       pch.response="o", jitter.response=.3)
+plotmo(a, type="class", grid.levels=list(sex="ma"), caption="smooth: pclass, sex=\"m\"",
+       col.smooth="indianred", lwd.smooth=2,
+       col.response=as.numeric(tit$pclass)+1, type2="im",
+       pch.response=paste(1:nrow(tit)), jitter.response=.3)
 
 # intercept only models
 

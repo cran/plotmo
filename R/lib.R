@@ -25,6 +25,8 @@ strip.white.space <- function(s) gsub("[ \t\n]", "", s)
 
 any1 <- function(x) any(x != 0) # like any but no warning if x not logical
 
+repl <- function(x, length.out) rep(x, length.out=length.out)
+
 is.try.error <- function(obj) class(obj)[1] == "try-error"
 
 is.zero <- function(x) length(x) == 1 && x == 0

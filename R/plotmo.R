@@ -278,16 +278,31 @@ plotmo <- function(object = stop("no 'object' arg"),
     if(clip)
         clip.limits <- get.plotmo.clip.limits.wrapper(object, env, type, y, trace)
     # singles is a vector of indices of predictors for degree1 plots
-    temp <- get.plotmo.singles.wrapper(object, env, x, trace, degree1, all1, int.only.ok)
-        intercept.only <- temp$intercept.only
-        singles <- temp$singles
-    nsingles <- length(singles)
+    temp <- get.plotmo.singles.wrapper(object, env, x, trace, degree1, all1)
+        some.singles <- temp$some.singles
+        singles      <- temp$singles
     # each row of pairs is the indices of two predictors for a degree2 plot
-    pairs <- get.plotmo.pairs.wrapper(object, env, x, trace, all2, degree2)
+    temp <- get.plotmo.pairs.wrapper(object, env, x, trace, all2, degree2)
+        some.pairs <- temp$some.pairs
+        pairs      <- temp$pairs
+    intercept.only <- !some.pairs && !some.singles
+    if(intercept.only && int.only.ok) {
+        if(!all(degree1 == 0)) {
+            singles <- 1 # plot the first predictor
+			if(trace >= 0)
+				warning0("intercept-only model, plotting anyway")
+        }
+    }
+    nsingles <- length(singles)
     npairs <- NROW(pairs)
     nfigs <- nsingles + npairs
     if(nfigs == 0) {
-        warning0("plotmo: nothing to plot")
+		if(trace >= 0) {
+			if(intercept.only)
+				warning0("plotmo: nothing to plot (intercept-only model)")
+			else
+				warning0("plotmo: nothing to plot")
+		}
         return(invisible())
     }
     ylims <- get.ylims(...) # check ylim arg and calculate min,max limits of y axis
@@ -488,24 +503,22 @@ get.plotmo.clip.limits.wrapper <- function(object, env, type, y, trace)
         cat("\nclip.limits", clip.limits, "\n")
     clip.limits # a two elem vec
 }
-get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1, int.only.ok)
+get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1)
 {
     if(trace >= 2)
         cat("\n--get.plotmo.singles for", class(object)[1], "object\n\n")
     singles <- get.plotmo.singles(object, env, x, trace >=2, all1)
-    intercept.only <- FALSE    # assume model is not an intercept-only model
-    if(length(singles))        # not intercept-only model?
+    some.singles <- FALSE
+    if(length(singles)) {
         singles <- sort(unique(singles))
-    else if(int.only.ok) {
-        singles <- 1           # use the first predictor for the plot (arbitrary)
-        intercept.only <- TRUE
+        some.singles <- TRUE
     }
     nsingles <- length(singles)
     if(nsingles) {
         degree1 <- check.index(degree1, "degree1", singles, colnames=colnames(x),
                                allow.empty=TRUE, is.degree.spec=TRUE)
         singles <- singles[degree1]
-    } else if(is.specified(degree1) && degree1[1] != 0)
+    } else if(is.specified(degree1) && degree1[1] != 0 && trace >= 0)
         warning0("\"degree1\" specified but no degree1 plots")
     if(trace >= 2) {
         if(nsingles)
@@ -513,18 +526,20 @@ get.plotmo.singles.wrapper <- function(object, env, x, trace, degree1, all1, int
         else
             cat("no singles\n")
     }
-    list(intercept.only=intercept.only,
-         singles=singles) # a vector of indices of predictors for degree1 plots
+    list(some.singles=some.singles,
+         singles     =singles) # a vector of indices of predictors for degree1 plots
 }
 get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
 {
     if(trace >= 2)
         cat("\n--get.plotmo.pairs for", class(object)[1], "object\n\n")
+    some.pairs <- FALSE
     pairs <- get.plotmo.pairs(object, env, x, trace >= 2, all2)
     if(!NROW(pairs) || !NCOL(pairs))
         pairs <- NULL
     npairs <- NROW(pairs)
     if(npairs) {
+        some.pairs <- TRUE
         # put lowest numbered predictor first and remove duplicate pairs
         pairs <- unique(t(apply(pairs, 1, sort)))
         # order the pairs on the predictor order
@@ -541,9 +556,10 @@ get.plotmo.pairs.wrapper <- function(object, env, x, trace, all2, degree2)
         } else
             cat("no pairs\n")
     }
-    if(npairs == 0 && is.specified(degree2) && degree2[1] != 0)
+    if(npairs == 0 && is.specified(degree2) && degree2[1] != 0 && trace >= 0)
         warning0("\"degree2\" specified but no degree2 plots")
-    pairs
+    list(some.pairs=some.pairs,
+         pairs     =pairs)
 }
 get.plotmo.x.wrapper <- function(object, env, trace)
 {
@@ -672,6 +688,13 @@ plotmo.pint.wrapper <- function(object, newdata, type, level, trace,
     if(trace > 0)
         print.first.few.rows(intervals, trace, "prediction intervals")
     intervals
+}
+points.or.text <- function(x, y, pch, col, cex)
+{
+    if(is.character(pch) && pch[1] != ".")
+        text(x=x, y=y, labels=pch, col=col, cex=pmax(.1, .9 * cex), xpd=NA)
+    else
+        points(x=x, y=y, pch=pch, col=col, cex=cex)
 }
 # plot degree one plots i.e. main effects
 
@@ -845,11 +868,11 @@ plot.degree1 <- function(
                     ifelse(y[iresponse] < .667, jitted.y[iresponse],            # middle points
                                                 jitted.y[iresponse] + 1 - max)) # top points
             }
-            points(jitter(as.numeric(x[iresponse, ipred]), factor=xjitter),
-                   jitted.y,
-                   col=rep(col.response, length.out=length.y)[iresponse], # recycle
-                   cex=rep(cex.response, length.out=length.y)[iresponse],
-                   pch=rep(pch.response, length.out=length.y)[iresponse])
+            points.or.text(jitter(as.numeric(x[iresponse, ipred]), factor=xjitter),
+                           jitted.y,
+                           repl(pch.response, length.y)[iresponse],
+                           repl(col.response, length.y)[iresponse],
+                           repl(cex.response, length.y)[iresponse])
         }
         draw.smooth <- function(x, ipred, y, unique.y, col.smooth, lty.smooth, lwd.smooth, smooth.f)
         {
@@ -1291,12 +1314,13 @@ plot.response.sites <- function(x, ipred1, ipred2, col, cex, pch,
         yjitter <- max(.8, 2 * jitter)
     else
         yjitter <- jitter
-
-    points(jitter(as.numeric(x1[iresponse]), factor=xjitter),
-           jitter(as.numeric(x2[iresponse]), factor=yjitter),
-           col=rep(col, length.out=nrow(x))[iresponse],
-           cex=rep(cex, length.out=nrow(x))[iresponse],
-           pch=rep(pch, length.out=nrow(x))[iresponse])
+    length.y <- length(x2)
+    y <- jitter(as.numeric(x2[iresponse]), factor=yjitter)
+    points.or.text(jitter(as.numeric(x1[iresponse]), factor=xjitter),
+                   y,
+                   repl(pch, length.y)[iresponse],
+                   repl(col, length.y)[iresponse],
+                   repl(cex, length.y)[iresponse])
 }
 plot.persp <- function(x, grid1, grid2, y.predict, pred.names, ipred1, ipred2,
                        trace, ylab, ylim, xflip, yflip, swapxy, ngrid2,

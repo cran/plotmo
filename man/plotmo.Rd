@@ -212,7 +212,8 @@ plotmo(object = stop("no 'object' arg"),
      Default is \code{0}.\cr
      Use \code{1} (or \code{TRUE}) to trace operation.\cr
      Use values greater than \code{1} for more detailed tracing.\cr
-     Use \code{-1} to inhibit the \code{grid:} message usually issued by \code{plotmo}.\cr
+     Use \code{-1} to inhibit the low level messages issued by \code{plotmo}
+     (like the \code{grid:} message and \code{"nothing to plot"} warnings).\cr\cr
 \cr
 \bold{The following arguments are for degree1 (main effect) plots}
   }

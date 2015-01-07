@@ -1,6 +1,14 @@
 Changes to plotmo Package
 -------------------------
 
+--- 2.2.1  
+
+If pch.response has type character, we now plot the 
+response points as text.
+
+Earth models with no degree1 terms but with degree2 terms were
+incorrectly labelled as intercept-only models.  Fixed that.
+
 --- 2.2.0  Dec 10, 2014
 
 Fixed incorrect printing of some messages when trace=-1.

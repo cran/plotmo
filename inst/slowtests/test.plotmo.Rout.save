@@ -11,7 +11,7 @@
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (). rpart.plot: Plot rpart Models.  An Enhanced
-  Version of plot.rpart. R package version 1.5.0.
+  Version of plot.rpart. R package version 1.5.1.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -19,7 +19,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot rpart Models.  An Enhanced Version of plot.rpart},
     author = {Stephen Milborrow},
-    note = {R package version 1.5.0},
+    note = {R package version 1.5.1},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -95,28 +95,28 @@ plotmo.predict(type="response") for degree1 plot "ibt" with newdata[50,9]:
 ... 5760    5       64   62 2112.5  24  -3.142857 120 205.5
 50  5760    5       64   62 2112.5  24 332.000000 120 205.5
 
-predict.earth(xgrid, type="response") column "O3" returned length 50 min 8.452701 max 91.70912
-                                      value 8.452701 8.667358 8.882016 9.096673 9.311331 9.525989 9.740646 9.955304 10.16996 10.38462 ...
+predict.earth(xgrid, type="response") column "O3" returned length 50 min -59.21537 max 15.74855
+                                      value 4.078332 4.406617 4.734902 5.063187 5.391473 5.719758 6.048043 6.376328 6.704613 7.032899 ...
 
 --plot.degree2(draw.plot=FALSE)
 
-plotmo.predict(type="response") for degree2 plot "humidity:temp" with newdata[400,9]:
-      vh wind humidity temp    ibh dpg   ibt vis   doy
-1   5760    5 19.00000   25 2112.5  24 167.5 120 205.5
-2   5760    5 22.89474   25 2112.5  24 167.5 120 205.5
-3   5760    5 26.78947   25 2112.5  24 167.5 120 205.5
-... 5760    5 30.68421   25 2112.5  24 167.5 120 205.5
-400 5760    5 93.00000   93 2112.5  24 167.5 120 205.5
+plotmo.predict(type="response") for degree2 plot "ibh:dpg" with newdata[400,9]:
+      vh wind humidity temp       ibh dpg   ibt vis   doy
+1   5760    5       64   62  111.0000 -69 167.5 120 205.5
+2   5760    5       64   62  368.3158 -69 167.5 120 205.5
+3   5760    5       64   62  625.6316 -69 167.5 120 205.5
+... 5760    5       64   62  882.9474 -69 167.5 120 205.5
+400 5760    5       64   62 5000.0000 107 167.5 120 205.5
 
-predict.earth(xgrid, type="response") column "O3" returned length 400 min -82.21486 max 22.13965
-                                      value 16.11186 16.11186 16.11186 16.11186 16.11186 16.11186 16.11186 16.11186 16.11186 16.11186 ...
+predict.earth(xgrid, type="response") column "O3" returned length 400 min 5.646739 max 14.25593
+                                      value 5.646739 7.868685 10.09063 12.31258 14.25593 14.25593 14.25593 14.25593 14.25593 14.25593 ...
 
-ylim 2.24599 34.86931 
+ylim 4.078332 15.74855 
 
  grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
         5760    5       64   62 2112.5  24 167.5 120 205.5
 
-persp(humidity:temp) theta 145 ylim 2.25 34.9 cex 0.83
+persp(ibh:dpg) theta 235 ylim 4.08 15.7 cex 0.83
 > 
 > caption <- "test 5 x 5 layout"
 > dopar(1,1,caption)
@@ -3542,23 +3542,24 @@ Call: earth(formula=doy~humidity+temp+wind, data=ozone1,
       degree=2)
 
                             coefficients
-(Intercept)                   155.732052
-h(32-humidity)                 -5.384844
-h(humidity-32)                  1.568423
-h(temp-49)                      0.870602
-h(3-wind)                      54.438499
-h(wind-3)                      -5.184916
-h(32-humidity) * h(temp-62)     1.823000
-h(32-humidity) * h(62-temp)     1.109964
-h(humidity-55) * h(49-temp)    -0.801500
-h(76-humidity) * h(49-temp)    -0.338291
-h(humidity-76) * h(49-temp)     4.249206
-h(47-temp) * h(wind-3)          1.545506
+(Intercept)                   172.680803
+h(32-humidity)                -26.692853
+h(humidity-32)                  1.462455
+h(3-wind)                      50.994030
+h(wind-3)                     -13.471964
+h(32-humidity) * h(62-temp)     2.230526
+h(32-humidity) * h(temp-45)     1.357565
+h(humidity-55) * h(49-temp)    -0.812373
+h(76-humidity) * h(49-temp)    -0.425416
+h(humidity-76) * h(49-temp)     4.222295
+h(47-temp) * h(wind-3)          2.294515
+h(temp-47) * h(wind-3)          0.488752
 
-Selected 12 of 70 terms, and 3 of 3 predictors 
-Importance: wind, temp, humidity
-Number of terms at each degree of interaction: 1 5 6
-GCV 8810.409    RSS 2426927    GRSq 0.1937428    RSq 0.3228944
+Selected 12 of 18 terms, and 3 of 3 predictors 
+Termination condition: Reached nk 21
+Importance: wind, humidity, temp
+Number of terms at each degree of interaction: 1 4 7
+GCV 8712.913    RSS 2400071    GRSq 0.2026648    RSq 0.3303872
 > plotmo(a, caption=caption, all2=TRUE)
 
  grid:    humidity temp wind
@@ -4665,29 +4666,29 @@ Call: earth(formula=depIndex~q_4+q_2102+q_2104+q_3105+q_3106+
       q_3107+q_3101+q_3104+q_7107, data=regDatCWD)
 
                      coefficients
-(Intercept)                   1.4
-h(0.788793-q_4)              -0.9
-h(q_4-0.925229)            -102.8
-h(q_4-0.944869)             140.0
+(Intercept)                   1.5
+h(0.788793-q_4)              -1.0
+h(q_4-0.788793)              -5.5
 h(q_2102- -0.681028)          1.2
 h(0.819545-q_2104)           -0.9
 h(0.854719-q_3105)           -0.7
 h(0.504476-q_3106)           -0.9
 h(q_4104- -0.681807)          1.0
 h(0.489482-q_6101)           -1.1
-h(0.919164-q_6103)           -1.2
-h(q_7104- -0.592134)          1.7
-h(q_7104-0.185275)           -1.4
+h(0.919164-q_6103)           -1.1
+h(q_7104- -0.592134)          1.4
+h(q_7104-0.539378)           -1.9
 h(-0.153738-q_3109)          -0.9
 h(q_3109- -0.153738)          1.1
-h(q_2111-0.978407)          143.5
-h(-0.696838-q_3107)           2.5
-h(q_7107- -0.669629)          0.2
+h(q_2111-0.978407)          141.6
+h(-0.696838-q_3107)           2.4
+h(q_7107- -0.669629)          0.3
 
-Selected 18 of 42 terms, and 13 of 16 predictors 
+Selected 17 of 31 terms, and 13 of 16 predictors 
+Termination condition: Reached nk 33
 Importance: q_6103, q_4104, q_2102, q_7104, q_3109, q_6101, q_2104, q_4, ...
-Number of terms at each degree of interaction: 1 17 (additive model)
-GCV 2.5    RSS 1440    GRSq 0.54    RSq 0.58
+Number of terms at each degree of interaction: 1 16 (additive model)
+GCV 2.5    RSS 1450    GRSq 0.54    RSq 0.58
 > plotmo(earthobj)
 
  grid:    q_4     q_2102      q_2104      q_3105      q_3106     q_4104
@@ -4767,29 +4768,29 @@ Call: earth(formula=a.rather.long.in.fact.very.long.name.for.the.response~
       a.rather.long.in.fact.very.long.name.q_3107+a.rather.long.in.fact.very.long.name.q_3101+...
 
                                                           coefficients
-(Intercept)                                                        1.4
-h(0.788793-a.rather.long.in.fact.very.long.name.q_4)              -0.9
-h(a.rather.long.in.fact.very.long.name.q_4-0.925229)            -102.8
-h(a.rather.long.in.fact.very.long.name.q_4-0.944869)             140.0
+(Intercept)                                                        1.5
+h(0.788793-a.rather.long.in.fact.very.long.name.q_4)              -1.0
+h(a.rather.long.in.fact.very.long.name.q_4-0.788793)              -5.5
 h(a.rather.long.in.fact.very.long.name.q_2102- -0.681028)          1.2
 h(0.819545-a.rather.long.in.fact.very.long.name.q_2104)           -0.9
 h(0.854719-a.rather.long.in.fact.very.long.name.q_3105)           -0.7
 h(0.504476-a.rather.long.in.fact.very.long.name.q_3106)           -0.9
 h(a.rather.long.in.fact.very.long.name.q_4104- -0.681807)          1.0
 h(0.489482-a.rather.long.in.fact.very.long.name.q_6101)           -1.1
-h(0.919164-a.rather.long.in.fact.very.long.name.q_6103)           -1.2
-h(a.rather.long.in.fact.very.long.name.q_7104- -0.592134)          1.7
-h(a.rather.long.in.fact.very.long.name.q_7104-0.185275)           -1.4
+h(0.919164-a.rather.long.in.fact.very.long.name.q_6103)           -1.1
+h(a.rather.long.in.fact.very.long.name.q_7104- -0.592134)          1.4
+h(a.rather.long.in.fact.very.long.name.q_7104-0.539378)           -1.9
 h(-0.153738-a.rather.long.in.fact.very.long.name.q_3109)          -0.9
 h(a.rather.long.in.fact.very.long.name.q_3109- -0.153738)          1.1
-h(a.rather.long.in.fact.very.long.name.q_2111-0.978407)          143.5
-h(-0.696838-a.rather.long.in.fact.very.long.name.q_3107)           2.5
-h(a.rather.long.in.fact.very.long.name.q_7107- -0.669629)          0.2
+h(a.rather.long.in.fact.very.long.name.q_2111-0.978407)          141.6
+h(-0.696838-a.rather.long.in.fact.very.long.name.q_3107)           2.4
+h(a.rather.long.in.fact.very.long.name.q_7107- -0.669629)          0.3
 
-Selected 18 of 42 terms, and 13 of 16 predictors 
+Selected 17 of 31 terms, and 13 of 16 predictors 
+Termination condition: Reached nk 33
 Importance: a.rather.long.in.fact.very.long.name.q_6103, ...
-Number of terms at each degree of interaction: 1 17 (additive model)
-GCV 2.5    RSS 1440    GRSq 0.54    RSq 0.58
+Number of terms at each degree of interaction: 1 16 (additive model)
+GCV 2.5    RSS 1450    GRSq 0.54    RSq 0.58
 > plot(a.rather.long.in.fact.very.long.name.for.the.modelA)
 > plotmo(a.rather.long.in.fact.very.long.name.for.the.modelA)
 
@@ -4836,67 +4837,30 @@ Call: earth(x=a.rather.long.in.fact.very.long.name.for.the.dataframe[,
       -1], y=a.rather.long.in.fact.very.long.name.for.the.response, 
       degree=3)
 
-                                                                                                                                                                                coefficients
-(Intercept)                                                                                                                                                                                3
-h(a.rather.long.in.fact.very.long.name.q_4-0.788793)                                                                                                                                      -7
-h(0.819545-a.rather.long.in.fact.very.long.name.q_2104)                                                                                                                                   -1
-h(0.854719-a.rather.long.in.fact.very.long.name.q_3105)                                                                                                                                    3
-h(a.rather.long.in.fact.very.long.name.q_3105-0.854719)                                                                                                                                  -16
-h(0.504476-a.rather.long.in.fact.very.long.name.q_3106)                                                                                                                                   -1
-h(a.rather.long.in.fact.very.long.name.q_4104- -0.681807)                                                                                                                                  1
-h(0.489482-a.rather.long.in.fact.very.long.name.q_6101)                                                                                                                                   -2
-h(0.919164-a.rather.long.in.fact.very.long.name.q_6103)                                                                                                                                   -2
-h(a.rather.long.in.fact.very.long.name.q_6103-0.919164)                                                                                                                                  -39
-h(0.539378-a.rather.long.in.fact.very.long.name.q_7104)                                                                                                                                   -2
-h(0.468785-a.rather.long.in.fact.very.long.name.q_4) * h(0.854719-a.rather.long.in.fact.very.long.name.q_3105)                                                                            13
-h(a.rather.long.in.fact.very.long.name.q_4-0.468785) * h(0.854719-a.rather.long.in.fact.very.long.name.q_3105)                                                                            -9
-h(0.788793-a.rather.long.in.fact.very.long.name.q_4) * h(0.938709-a.rather.long.in.fact.very.long.name.q_3105)                                                                           -13
-h(a.rather.long.in.fact.very.long.name.q_2102- -0.681028) * h(a.rather.long.in.fact.very.long.name.q_3106-0.859776)                                                                      -10
-h(-0.502874-a.rather.long.in.fact.very.long.name.q_2102) * h(0.489482-a.rather.long.in.fact.very.long.name.q_6101)                                                                         2
-h(a.rather.long.in.fact.very.long.name.q_2102- -0.502874) * h(0.489482-a.rather.long.in.fact.very.long.name.q_6101)                                                                        1
-h(a.rather.long.in.fact.very.long.name.q_2102-0.848061) * h(a.rather.long.in.fact.very.long.name.q_6101-0.489482)                                                                         68
-h(a.rather.long.in.fact.very.long.name.q_2102- -0.681028) * h(a.rather.long.in.fact.very.long.name.q_3104-0.0768025)                                                                       1
-h(a.rather.long.in.fact.very.long.name.q_2102- -0.681028) * h(0.0768025-a.rather.long.in.fact.very.long.name.q_3104)                                                                       1
-h(0.952487-a.rather.long.in.fact.very.long.name.q_2104) * h(0.919164-a.rather.long.in.fact.very.long.name.q_6103)                                                                          1
-h(a.rather.long.in.fact.very.long.name.q_3105-0.702836) * h(a.rather.long.in.fact.very.long.name.q_3106-0.504476)                                                                         24
-h(0.854719-a.rather.long.in.fact.very.long.name.q_3105) * h(a.rather.long.in.fact.very.long.name.q_7107- -0.118432)                                                                        1
-h(0.871457-a.rather.long.in.fact.very.long.name.q_3106) * h(a.rather.long.in.fact.very.long.name.q_3109- -0.153738)                                                                        1
-h(a.rather.long.in.fact.very.long.name.q_3106-0.871457) * h(a.rather.long.in.fact.very.long.name.q_3109- -0.153738)                                                                       40
-h(0.504476-a.rather.long.in.fact.very.long.name.q_3106) * h(0.966176-a.rather.long.in.fact.very.long.name.q_7107)                                                                          1
-h(-0.681807-a.rather.long.in.fact.very.long.name.q_4104) * h(a.rather.long.in.fact.very.long.name.q_2111-0.7575)                                                                         -40
-h(a.rather.long.in.fact.very.long.name.q_6101-0.489482) * h(a.rather.long.in.fact.very.long.name.q_3109-0.747689)                                                                         27
-h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(a.rather.long.in.fact.very.long.name.q_2111-0.978407)                                                                        153
-h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(a.rather.long.in.fact.very.long.name.q_3107- -0.650073)                                                                        1
-h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(-0.650073-a.rather.long.in.fact.very.long.name.q_3107)                                                                         2
-h(0.539378-a.rather.long.in.fact.very.long.name.q_7104) * h(a.rather.long.in.fact.very.long.name.q_2111- -0.530743)                                                                        1
-h(0.539378-a.rather.long.in.fact.very.long.name.q_7104) * h(-0.530743-a.rather.long.in.fact.very.long.name.q_2111)                                                                         3
-h(0.468785-a.rather.long.in.fact.very.long.name.q_4) * h(a.rather.long.in.fact.very.long.name.q_2102-0.955328) * h(0.854719-a.rather.long.in.fact.very.long.name.q_3105)                -379
-h(0.468785-a.rather.long.in.fact.very.long.name.q_4) * h(0.955328-a.rather.long.in.fact.very.long.name.q_2102) * h(0.854719-a.rather.long.in.fact.very.long.name.q_3105)                  -1
-h(0.788793-a.rather.long.in.fact.very.long.name.q_4) * h(a.rather.long.in.fact.very.long.name.q_3106- -0.585477) * h(a.rather.long.in.fact.very.long.name.q_6103-0.312102)                 2
-h(a.rather.long.in.fact.very.long.name.q_4-0.27028) * h(0.871457-a.rather.long.in.fact.very.long.name.q_3106) * h(a.rather.long.in.fact.very.long.name.q_3109- -0.153738)                 -2
-h(a.rather.long.in.fact.very.long.name.q_4-0.876373) * h(0.539378-a.rather.long.in.fact.very.long.name.q_7104) * h(a.rather.long.in.fact.very.long.name.q_2111- -0.530743)                34
-h(a.rather.long.in.fact.very.long.name.q_2102- -0.502874) * h(0.489482-a.rather.long.in.fact.very.long.name.q_6101) * h(0.917316-a.rather.long.in.fact.very.long.name.q_3109)             -1
-h(0.339529-a.rather.long.in.fact.very.long.name.q_2102) * h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(a.rather.long.in.fact.very.long.name.q_3107- -0.650073)             -1
-h(a.rather.long.in.fact.very.long.name.q_2102- -0.681028) * h(a.rather.long.in.fact.very.long.name.q_6103-0.953502) * h(0.0768025-a.rather.long.in.fact.very.long.name.q_3104)           185
-h(a.rather.long.in.fact.very.long.name.q_2102- -0.681028) * h(-0.535814-a.rather.long.in.fact.very.long.name.q_4103) * h(0.0768025-a.rather.long.in.fact.very.long.name.q_3104)            3
-h(a.rather.long.in.fact.very.long.name.q_2104-0.389336) * h(0.702836-a.rather.long.in.fact.very.long.name.q_3105) * h(a.rather.long.in.fact.very.long.name.q_3106-0.504476)               11
-h(a.rather.long.in.fact.very.long.name.q_2104-0.952487) * h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(a.rather.long.in.fact.very.long.name.q_3109- -0.00846062)          110
-h(0.946817-a.rather.long.in.fact.very.long.name.q_2104) * h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(a.rather.long.in.fact.very.long.name.q_3107- -0.650073)             -1
-h(a.rather.long.in.fact.very.long.name.q_2104-0.946817) * h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(a.rather.long.in.fact.very.long.name.q_3107- -0.650073)            -62
-h(0.702836-a.rather.long.in.fact.very.long.name.q_3105) * h(a.rather.long.in.fact.very.long.name.q_3106-0.504476) * h(a.rather.long.in.fact.very.long.name.q_4104-0.17818)                15
-h(0.702836-a.rather.long.in.fact.very.long.name.q_3105) * h(a.rather.long.in.fact.very.long.name.q_3106-0.504476) * h(0.17818-a.rather.long.in.fact.very.long.name.q_4104)                -4
-h(0.702836-a.rather.long.in.fact.very.long.name.q_3105) * h(a.rather.long.in.fact.very.long.name.q_3106-0.504476) * h(a.rather.long.in.fact.very.long.name.q_4104- -0.449068)             -6
-h(0.854719-a.rather.long.in.fact.very.long.name.q_3105) * h(a.rather.long.in.fact.very.long.name.q_3109-0.747689) * h(a.rather.long.in.fact.very.long.name.q_7107- -0.118432)            -10
-h(0.854719-a.rather.long.in.fact.very.long.name.q_3105) * h(0.747689-a.rather.long.in.fact.very.long.name.q_3109) * h(a.rather.long.in.fact.very.long.name.q_7107- -0.118432)             -1
-h(0.854719-a.rather.long.in.fact.very.long.name.q_3105) * h(a.rather.long.in.fact.very.long.name.q_4103-0.778364) * h(-0.118432-a.rather.long.in.fact.very.long.name.q_7107)              10
-h(0.854719-a.rather.long.in.fact.very.long.name.q_3105) * h(a.rather.long.in.fact.very.long.name.q_3101- -0.442177) * h(-0.118432-a.rather.long.in.fact.very.long.name.q_7107)            -1
-h(0.504476-a.rather.long.in.fact.very.long.name.q_3106) * h(-0.358116-a.rather.long.in.fact.very.long.name.q_3109) * h(0.966176-a.rather.long.in.fact.very.long.name.q_7107)              -1
-h(a.rather.long.in.fact.very.long.name.q_4104-0.559865) * h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(a.rather.long.in.fact.very.long.name.q_3107- -0.650073)             -2
+                                                                                                                                                                           coefficients
+(Intercept)                                                                                                                                                                        3.33
+h(0.788793-a.rather.long.in.fact.very.long.name.q_4)                                                                                                                              -0.98
+h(a.rather.long.in.fact.very.long.name.q_4-0.788793)                                                                                                                             -10.59
+h(a.rather.long.in.fact.very.long.name.q_2102- -0.681028)                                                                                                                          1.19
+h(0.819545-a.rather.long.in.fact.very.long.name.q_2104)                                                                                                                           -0.86
+h(0.854719-a.rather.long.in.fact.very.long.name.q_3105)                                                                                                                           -0.76
+h(0.504476-a.rather.long.in.fact.very.long.name.q_3106)                                                                                                                           -0.90
+h(a.rather.long.in.fact.very.long.name.q_4104- -0.681807)                                                                                                                          1.00
+h(0.489482-a.rather.long.in.fact.very.long.name.q_6101)                                                                                                                           -1.07
+h(0.919164-a.rather.long.in.fact.very.long.name.q_6103)                                                                                                                           -1.22
+h(0.539378-a.rather.long.in.fact.very.long.name.q_7104)                                                                                                                           -1.68
+h(-0.153738-a.rather.long.in.fact.very.long.name.q_3109)                                                                                                                          -1.94
+h(a.rather.long.in.fact.very.long.name.q_3109- -0.153738)                                                                                                                          1.15
+h(0.919164-a.rather.long.in.fact.very.long.name.q_6103) * h(-0.650073-a.rather.long.in.fact.very.long.name.q_3107)                                                                 1.97
+h(0.539378-a.rather.long.in.fact.very.long.name.q_7104) * h(a.rather.long.in.fact.very.long.name.q_2111- -0.530743)                                                                0.72
+h(-0.153738-a.rather.long.in.fact.very.long.name.q_3109) * h(0.84468-a.rather.long.in.fact.very.long.name.q_2111)                                                                  1.29
+h(a.rather.long.in.fact.very.long.name.q_4-0.876373) * h(0.539378-a.rather.long.in.fact.very.long.name.q_7104) * h(a.rather.long.in.fact.very.long.name.q_2111- -0.530743)        28.69
 
-Selected 55 of 99 terms, and 16 of 16 predictors 
+Selected 17 of 33 terms, and 12 of 16 predictors 
+Termination condition: Reached nk 33
 Importance: a.rather.long.in.fact.very.long.name.q_6103, ...
-Number of terms at each degree of interaction: 1 10 22 22
-GCV 2.3    RSS 940    GRSq 0.57    RSq 0.73
+Number of terms at each degree of interaction: 1 12 3 1
+GCV 2.5    RSS 1400    GRSq 0.54    RSq 0.6
 > plot(a.rather.long.in.fact.very.long.name.for.the.modelC)
 > plotmo(a.rather.long.in.fact.very.long.name.for.the.modelC)
 
@@ -4949,7 +4913,8 @@ pclass3rd * sexmale   0.19376843
 sexmale * h(16-age)   0.03221793
 sexmale * h(age-25)  -0.00471276
 
-Selected 7 of 15 terms, and 4 of 4 predictors 
+Selected 7 of 14 terms, and 4 of 4 predictors 
+Termination condition: Reached nk 21
 Importance: sexmale, pclass3rd, pclass2nd, age
 Number of terms at each degree of interaction: 1 2 4
 GCV 0.144733    RSS 146.7947    GRSq 0.4020269    RSq 0.4190703
@@ -5000,8 +4965,9 @@ pclass3rd * h(20-age)    0.02119903
 h(18-age) * h(sibsp-2)  -0.02049700
 h(age-18) * h(3-sibsp)  -0.00222502
 
-Selected 7 of 24 terms, and 4 of 4 predictors 
-Importance: pclass3rd, age, pclass2nd, sibsp
+Selected 7 of 17 terms, and 4 of 4 predictors 
+Termination condition: Reached nk 21
+Importance: pclass3rd, age, sibsp, pclass2nd
 Number of terms at each degree of interaction: 1 2 4
 GCV 0.203801    RSS 206.7041    GRSq 0.1579841    RSq 0.1819833
 > plotmo(a, caption="plotmo with mixed fac and non-fac degree2 terms", border=NA)
@@ -5068,8 +5034,9 @@ pclass3rd * h(20-age)   0.09857349
 h(18-age) * h(sibsp-2) -0.13401139
 h(age-18) * h(3-sibsp) -0.01084919
 
-Earth selected 7 of 24 terms, and 4 of 4 predictors 
-Importance: pclass3rd, age, pclass2nd, sibsp
+Earth selected 7 of 17 terms, and 4 of 4 predictors 
+Termination condition: Reached nk 21
+Importance: pclass3rd, age, sibsp, pclass2nd
 Number of terms at each degree of interaction: 1 2 4
 Earth GCV 0.203801    RSS 206.7041    GRSq 0.1579841    RSq 0.1819833
 
@@ -5149,6 +5116,15 @@ Expect warning below (missing single titles)
 +        main=c("Humidity", "Temperature"),
 +        col.smooth="indianred", lwd.smooth=2, lty.smooth=2,  smooth.f=.1,
 +        col.response="gray", npoints=500)
+
+ grid:    humidity temp   doy
+                64   62 205.5
+
+Warning: not enough elements in "main" (there are more plots than strings in "main")
+> 
+> plotmo(a20, nrug=-1, caption="Test plotmo with pch.response=paste(1:nrow(ozone1))",
++        main=c("Humidity", "Temperature"), type2="im",
++        col.response=2, cex.response=.8, pch.response=paste(1:nrow(ozone1)), npoints=100)
 
  grid:    humidity temp   doy
                 64   62 205.5
@@ -5240,7 +5216,7 @@ Got error as expected
 Error : "zlab" is illegal, use "ylab" instead ("z" taken to mean "zlab")
 Got error as expected
 > expect.err(try(plotmo(aflip, degree1=c(4,1)))) # out of range value in degree2 (allowed index range is 1:3)
-Error : out of range value in "degree1" (allowed index range is 1:2)
+Error : out of range value in "degree1" (allowed index range is 1:3)
 Got error as expected
 > expect.err(try(plotmo(aflip, none.such=TRUE))) # illegal argument "all1"
 Error : illegal argument "none.such"
@@ -5426,7 +5402,6 @@ Got error as expected
 > tit <- etitanic
 > tit <- tit[c(30:80,330:380,630:680), ]
 > a <- earth(survived~., data=tit, glm=list(family=binomial), degree=2)
-Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
 > plotmo(a, grid.levels=list(sex="ma"), caption="smooth: survived, sex=\"m\"",
 +        col.smooth="indianred", lwd.smooth=2,
 +        col.response=as.numeric(tit$survived)+2, pch.response=".", type2="im",
@@ -5445,6 +5420,22 @@ Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
  grid:    survived  sex age sibsp parch
                  0 male  29     0     0
 
+> plotmo(a, type="class", grid.levels=list(sex="ma"), caption="smooth: pclass, sex=\"m\"",
++        col.smooth="indianred", lwd.smooth=2,
++        col.response=as.numeric(tit$pclass)+1, type2="im",
++        pch.response="o", jitter.response=.3)
+
+ grid:    survived  sex age sibsp parch
+                 0 male  29     0     0
+
+> plotmo(a, type="class", grid.levels=list(sex="ma"), caption="smooth: pclass, sex=\"m\"",
++        col.smooth="indianred", lwd.smooth=2,
++        col.response=as.numeric(tit$pclass)+1, type2="im",
++        pch.response=paste(1:nrow(tit)), jitter.response=.3)
+
+ grid:    survived  sex age sibsp parch
+                 0 male  29     0     0
+
 > 
 > # intercept only models
 > 
@@ -5455,10 +5446,13 @@ Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
 > y <- runif(length(x))
 > earth.intercept.only <- earth(x, y)
 > plotmo(earth.intercept.only, do.par=FALSE, main="intercept-only model")
+Warning: intercept-only model, plotting anyway
 > plotmo(earth.intercept.only, do.par=FALSE, col.response=1, pch.response=20)
+Warning: intercept-only model, plotting anyway
 > library(rpart)
 > rpart.intercept.only <- rpart(y~x)
 > plotmo(rpart.intercept.only, do.par=FALSE)
+Warning: intercept-only model, plotting anyway
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot

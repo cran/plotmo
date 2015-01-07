@@ -364,35 +364,25 @@ to        earth(x=ozone1[, -1], y=ozone1[, 1], degree=2)
 Call: earth(formula=fa, data=ozone1, degree=2)
 
                              coefficients
-(Intercept)                    2.54691277
-h(67-humidity)                -0.00533139
-h(12-dpg)                     -0.01888053
-h(dpg-12)                      0.01415023
-h(194-ibt)                    -0.00447542
-h(92-doy)                     -0.01603637
-h(doy-92)                     -0.00189382
-h(5570-vh) * h(32-dpg)        -0.00030784
-h(vh-5570) * h(dpg-60)        -0.00014849
-h(vh-5570) * h(60-dpg)         0.00002718
-h(4-wind) * h(ibh-1108)       -0.00002354
-h(wind-4) * h(ibh-1108)       -0.00001311
-h(wind-4) * h(200-vis)         0.00029940
-h(8-wind) * h(200-vis)         0.00036951
-h(wind-8) * h(200-vis)        -0.00304865
-h(humidity-73) * h(52-temp)   -0.00921547
-h(51-humidity) * h(ibh-1108)  -0.00000613
-h(67-humidity) * h(ibh-4028)   0.00002053
-h(52-temp) * h(55-dpg)         0.00046044
-h(76-temp) * h(dpg-12)        -0.00052206
-h(1108-ibh) * h(doy-305)      -0.00001798
-h(12-dpg) * h(359-doy)         0.00002554
-h(dpg-12) * h(doy-129)        -0.00007982
-h(ibt-109) * h(doy-92)         0.00001373
+(Intercept)                    2.74534462
+h(temp-52)                     0.01907462
+h(12-dpg)                     -0.00925363
+h(dpg-12)                     -0.00610244
+h(194-ibt)                    -0.00528412
+h(200-vis)                     0.00219982
+h(92-doy)                     -0.01418022
+h(doy-92)                     -0.00232883
+h(wind-8) * h(200-vis)        -0.00364958
+h(humidity-73) * h(52-temp)   -0.00648895
+h(humidity-51) * h(ibh-1108)  -0.00000300
+h(1108-ibh) * h(doy-305)      -0.00001180
+h(1108-ibh) * h(305-doy)      -0.00000120
 
-Selected 24 of 94 terms, and 9 of 9 predictors 
-Importance: dpg, ibt, ibh, doy, temp, wind, vis, humidity, vh
-Number of terms at each degree of interaction: 1 6 17
-GCV 0.09830721    RSS 21.95893    GRSq 0.8249946    RSq 0.8808211
+Selected 13 of 21 terms, and 8 of 9 predictors 
+Termination condition: Reached nk 21
+Importance: temp, dpg, ibt, humidity, ibh, doy, vis, wind, vh-unused
+Number of terms at each degree of interaction: 1 7 5
+GCV 0.106792    RSS 28.93126    GRSq 0.80989    RSq 0.8429798
 > plot(a, do.par=FALSE)
 > plotmo(a, do.par=FALSE, degree1=2:3, degree2=c(1,2), col.response = "pink", col.smooth="indianred")
 
@@ -1470,7 +1460,6 @@ The following object is masked from 'package:faraway':
            87      4    13
 
 > plotmo(a, do.par=F, clip=F, degree1=0)
-Warning: plotmo: nothing to plot
 > par(mar=old.mar)
 > 
 > # kyphosis data, rpart models (also test ngrid2)
