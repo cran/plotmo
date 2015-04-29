@@ -1,16 +1,16 @@
 Package: plotmo
-Version: 2.2.1
-Title: Plot a Model's Response While Varying the Values of the
-        Predictors
+Version: 3.0.0
+Title: Plot a Model's Response and Residuals
 Author: Stephen Milborrow
 Maintainer: Stephen Milborrow <milbo@sonic.net>
+Depends: plotrix, TeachingDemos
 Description: Plot a model's response when varying one or two predictors
         while holding the other predictors constant.  A poor man's
-        partial dependence plot.
-Suggests: earth, rpart
+        partial dependence plot.  Also plot model residuals.
+Suggests: earth (>= 4.2.0), MASS, neuralnet, rpart, rpart.plot
 License: GPL-3
 URL: http://www.milbo.users.sonic.net
-Packaged: 2015-01-07 13:58:07 UTC; milbo
 NeedsCompilation: no
+Packaged: 2015-04-29 21:27:30 UTC; milbo
 Repository: CRAN
-Date/Publication: 2015-01-07 16:05:15
+Date/Publication: 2015-04-30 02:13:26

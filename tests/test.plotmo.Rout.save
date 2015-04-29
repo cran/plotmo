@@ -4,103 +4,18 @@
 > # This does a basic sanity test of plotmo.
 > # For more comprehensive tests, see plotmo/inst/slowtests.
 > library(plotmo)
+Loading required package: plotrix
+Loading required package: TeachingDemos
 > library(rpart)
 > data(kyphosis)
 > rpart.model <- rpart(Kyphosis~., data=kyphosis)
-> plotmo(rpart.model, type="vec", trace=2)
-Using env attr(object$terms, ".Environment")
-
---get.plotmo.x for rpart object
-
-formula Kyphosis ~ .
-stripped formula Kyphosis~.
-get.data.for.formula: using x from "kyphosis" passed to rpart
-about to eval model.frame(formula=Kyphosis~., data=structure(list(Kyphosis=structure(c(1L,
-    1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 1L,
-    1L, 1L, 1L, 1L, 2L, 2L, 1L, 2L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L,
-    1L, 1L, 1L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L,
-    1L, 1L, 1L, 2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 1L,
-    1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L
-    ), .Label=c("absent", "present"), class="factor"), Age=c(71L,
-    158L, 128L, 2L, 1L, 1L, 61L, 37L, 113L, 59L, 82L, 148L, 18L, ...
-got x with colnames from object$call$formula
-
-x[81,3]:
-    Age Number Start
-1    71      3     5
-2   158      3    14
-3   128      4     5
-...   2      5     1
-81   36      4    13
-
-nlevels: Age=64 Number=8 Start=16
-
---get.plotmo.y for rpart object
-
-got y from object$y
-get.plotmo.y returned length 81 min 1 max 2
-             value 1 1 2 1 1 1 1 1 1 2 ...
-
-clip.limits 1 2
-
---get.plotmo.singles for rpart object
-
-singles: 1 Age, 3 Start
-
---get.plotmo.pairs for rpart object
-
-pairs:
-     [,1]    [,2]
-[1,] "1 Age" "3 Start"
-
---plot.degree1(draw.plot=FALSE)
-
-plotmo.predict(type="vec") for degree1 plot "Age" with newdata[50,3]:
-           Age Number Start
-1     1.000000      4    13
-2     5.183673      4    13
-3     9.367347      4    13
-...  13.551020      4    13
-50  206.000000      4    13
-
-predict.rpart(xgrid, type="vec") returned length 50 min 1 max 2
-                                 value 1 1 1 1 1 1 1 1 1 1 ...
-
-plotmo.predict(type="vec") for degree1 plot "Start" with newdata[16,3]:
-    Age Number Start
-1    87      4     1
-2    87      4     2
-3    87      4     3
-...  87      4     5
-16   87      4    18
-
-predict.rpart(xgrid, type="vec") returned length 16 min 1 max 2
-                                 value 2 2 2 2 2 2 2 2 2 2 ...
-
---plot.degree2(draw.plot=FALSE)
-
-plotmo.predict(type="vec") for degree2 plot "Age:Start" with newdata[320,3]:
-            Age Number Start
-1       1.00000      4     1
-2      11.78947      4     1
-3      22.57895      4     1
-...    33.36842      4     1
-20.15 206.00000      4    18
-
-predict.rpart(xgrid, type="vec") returned length 320 min 1 max 2
-                                 value 2 2 2 2 2 2 2 2 2 2 ...
-
-
-ylim 1 2
-
---plot.degree1(draw.plot=TRUE)
+> plotmo(rpart.model, type="vec", trace=1)
+stats::predict(rpart.object, data.frame[3,3], type="vec")
+stats::fitted(object=rpart.object)
+fitted() was unsuccessful, will use predict()
+got model response from model.frame(Kyphosis~Age+Numb..., data=call$data, na.action="na.pass")
 
  grid:    Age Number Start
            87      4    13
-
-
---plot.degree2(draw.plot=TRUE)
-
-persp(Age:Start) theta 145 ylim 1 2 cex 0.83
 
 > 

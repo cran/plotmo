@@ -1,13 +1,24 @@
 Changes to plotmo Package
 -------------------------
 
---- 2.2.1  
+--- 3.0.0  Apr 29, 2015
+
+Added the plotres function.
+
+Reworked the internal functions that get the data from the model.
+
+Reparameterized the argument list of plotmo, but maintained
+backwards compatibility using the "dots" routines.
+
+--- 2.2.1  Jan 7, 2015
 
 If pch.response has type character, we now plot the 
 response points as text.
 
 Earth models with no degree1 terms but with degree2 terms were
 incorrectly labelled as intercept-only models.  Fixed that.
+
+Changes to match changes to earth's predict.varmod interval argument.
 
 --- 2.2.0  Dec 10, 2014
 
@@ -82,7 +93,7 @@ We no longer issue an incorrect err msg if data frame has an "AsIs" field.
 
 --- 1.2-6
 
-Removed an incorrect stopifnot.integer(y.column) in get.plotmo.y.wrapper
+Removed an incorrect stopifnot.integer(y.column) in plotmo_y.wrapper
 
 --- 1.2-5 Jun 11, 2011
 
@@ -95,7 +106,7 @@ Touchups to the documentation.
 --- 1.2-4 Apr 27, 2011
 
 Removed hooks for the earth package (which are no longer necessary
-  with earth 2.6-2).  The file plotmo.methods.R was deleted.
+with earth 2.6-2).  The file plotmo.methods.R was deleted.
 
 Added the grid argument.
 
