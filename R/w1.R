@@ -104,11 +104,6 @@ plot_w1 <- function(object,
 # TODO call.dot should be able to do this dropping for us but currently can't
 call.earth.modsel <- function(object, trace, grid.col, col=NA, lty=NA, ...)
 {
-    # TODO remove the following when earth 4.3.0 is on CRAN
-    try <- try(match.fun(earth::earth_plotmodsel), silent=TRUE)
-    if(is.try.err(try))
-        stop0("Please install earth version 4.3.0 or later")
-
     call.dots(earth::earth_plotmodsel, PREFIX="w1.",
              DROP="*", KEEP="PREFIX,PLOT.ARGS,PLOTMO.ARGS",
              trace=trace >= 1,

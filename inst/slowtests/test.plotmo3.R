@@ -150,6 +150,7 @@ tit.orgpclass$parch <- NULL
 stopifnot(names(tit.orgpclass) == names(tit))
 a.tit.orgpclass <- earth(pclass~., degree=2, data=tit.orgpclass)
 a.tit           <- earth(pclass~., degree=2, data=tit)
+expect.err(try(plotmo(a.tit)), "predict.earth returned multiple columns")
 # following two graphs should be identical
 plotmo1(a.tit.orgpclass, nresponse="1st",   all1=T, col.resp=3, type2="im")
 plotmo1(a.tit,           nresponse="first", all1=T, col.resp=3, type2="im")
@@ -250,7 +251,6 @@ library(MASS)                                           # qda
 lcush <- data.frame(Type=as.numeric(Cushings$Type),log(Cushings[,1:2]))
 lcush <- lcush[1:21,]
 qda.model.vignette <- qda(Type~., data=lcush)
-# TODO following puts pch response in the wrong place
 plotmo1(qda.model.vignette, type="class", all2=TRUE,
        type2="contour", ngrid2=100, nlevels=2, drawlabels=FALSE,
        pt.col=as.numeric(lcush$Type)+1,

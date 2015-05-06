@@ -2,7 +2,7 @@
 #
 # TODO Add support for plotmo's level argument (quantile regression).
 
-plotmo.prolog.gbm <- function(object, object.name, ...) # called when plotmo starts
+plotmo.prolog.gbm <- function(object, object.name, trace, ...) # invoked when plotmo starts
 {
     if(is.null(object$data)) # TODO could do more if object had a call component
         stop0("object$data is NULL, ",
@@ -27,16 +27,19 @@ order.gbm.vars.on.importance <- function(object)
     # return a vector of variable indices, most important vars first
     importance[!is.na(importance)]
 }
-plotmo.singles.gbm <- function(object, ...)
+plotmo.singles.gbm <- function(object, x, nresponse, trace, all1)
 {
     importance <- attr(object, "importance")
     stopifnot(!is.null(importance)) # uninitialized?
-    # indices of vars with importance >= 1%, max of 9 variables
-    importance[1: min(9, length(importance))]
+    if(all1)
+        return(importance)
+    # indices of vars with importance >= 1%, max of 10 variables
+    # (10 becauses plotmo.pairs returns 6, total is 16, therefore 4x4 grid)
+    importance[1: min(10, length(importance))]
 }
 plotmo.pairs.gbm <- function(object, ...)
 {
-    # pairs of four most important variables
+    # pairs of four most important variables (i.e. 6 plots)
     importance <- attr(object, "importance")
     stopifnot(!is.null(importance)) # uninitialized?
     form.pairs(importance[1: min(4, length(importance))])

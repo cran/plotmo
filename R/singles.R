@@ -95,7 +95,7 @@ get.all.pairs <- function(object, x, trace)
     if(length(singles) == 0)
         return(NULL) # no pairs (must be an intercept only model)
     singles <- unique(singles)
-    max <- 10
+    max <- 7 # note that 7 * 6 / 2 is 21 plots
     if(length(singles) > max) {
         warning0("too many predictors to plot all pairs,\n         ",
                  "so plotting degree2 plots for just the first ",

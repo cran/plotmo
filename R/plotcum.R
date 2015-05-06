@@ -112,6 +112,7 @@ draw.quantiles.on.right.side <- function(probs, q, annotation.cex)
 {
     y <- TeachingDemos::spread.labs(x=probs,
             mindiff=1.2 * annotation.cex * strheight("A"), min=-.1)
+    q[q < max(q) / 1e4] <- 0 # prevent labels like 2.22e-16
     text(1.01 * par("usr")[2], y, sprintf("%.3g", q),
          xpd=TRUE, cex=annotation.cex, adj=0)
 }

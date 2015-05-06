@@ -606,10 +606,11 @@ set.seed(1235)
 tit <- etitanic
 tit <- tit[c(30:80,330:380,630:680), ]
 a <- earth(survived~., data=tit, glm=list(family=binomial), degree=2)
-plotmo(a, grid.levels=list(sex="ma"), caption="smooth: survived, sex=\"m\"",
+plotmo(a, grid.levels=list(sex="ma"),
+       caption="smooth: survived, sex=\"m\"    jitter=1",
        smooth.col="indianred", smooth.lwd=2,
        col.response=as.numeric(tit$survived)+2, pt.pch=".", type2="im",
-       pt.cex=3, jitter=1)
+       pt.cex=3, jitter=1) # big jitter
 set.seed(1238)
 a <- earth(pclass~., data=tit)
 plotmo(a, type="class", nresponse=1,
@@ -617,19 +618,19 @@ plotmo(a, type="class", nresponse=1,
        caption="smooth: pclass, sex=\"m\"", SHOWCALL=TRUE,
        smooth.col="indianred", smooth.lwd=2,
        col.response=as.numeric(tit$pclass)+1, type2="im",
-       pt.pch=".", pt.cex=3, jitter.response=1)
+       pt.pch=".", pt.cex=3)
 plotmo(a, type="class", nresponse=1,
        grid.levels=list(sex="ma"),
-       caption="smooth: pclass, sex=\"m\"", SHOWCALL=TRUE,
+       caption="smooth: pclass, sex=\"m\"      jitter=.3", SHOWCALL=TRUE,
        smooth.col="indianred", smooth.lwd=2,
        col.response=as.numeric(tit$pclass)+1, type2="im",
-       pt.pch="x", jit=.3)
+       pt.pch="x", jit=.3) # small jitter
 plotmo(a, nresponse=1,
        type="class", grid.levels=list(sex="ma"),
        caption="smooth: pclass, sex=\"m\"",  SHOWCALL=TRUE,
        smooth.col="indianred", smooth.lwd=2,
        col.response=as.numeric(tit$pclass)+1, type2="im",
-       pt.pch=paste(1:nrow(tit)), jitter.resp=1)
+       pt.pch=paste(1:nrow(tit)))
 
 # test the extend argument
 

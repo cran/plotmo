@@ -168,7 +168,9 @@ Default is \code{3}.
 Special values \code{TRUE} and \code{-1} or mean all.\cr
 If \code{id.n} is negative (but not \code{-1})
 the \code{id.n} most positive and most negative
-residuals will be labeled in the plot.
+residuals will be labeled in the plot.\cr
+A current implementation restriction is that \code{id.n} is ignored
+when there are more than ten thousand cases.
 }
 \item{labels.id}{
 Residual labels.
@@ -249,8 +251,8 @@ are invoked for the model).
 }
 \item{npoints}{
 Number of points to be plotted.
-A sample of \code{npoints} is taken;
-the sample includes the biggest twenty or so residuals.
+A sample of \code{npoints} is taken; the sample includes the biggest
+twenty or so residuals.
 \cr
 The default is 3000 (not all, to avoid overplotting on large models).
 Use \code{npoints=TRUE} or \code{-1} for all points.

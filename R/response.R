@@ -75,7 +75,7 @@ plotmo_response <- function(object, newdata=NULL, trace=0,
         #            nresponse)
         meta$nresponse <- 1
     }
-    process.y(y, object, meta$nresponse, expected.len=expected.len,
+    process.y(y, object, meta$type, meta$nresponse, expected.len=expected.len,
               meta$resp.levs, trace, "plotmo_response")$y
 }
 # the model was created with the x,y interface (no formula)

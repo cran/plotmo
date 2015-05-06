@@ -7,7 +7,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     nresponse    = NA,
 
     pt.col       = 0,
-    jitter       = NULL,
+    jitter       = .5,
     smooth.col   = 0,
     level        = 0,
     func         = NULL,
@@ -76,7 +76,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     type2  <- match.choices(type2, c("persp", "contour", "image"), "type2")
     level  <- get.level(level, ...)
     pt.col <- get.pt.col(pt.col, ...)
-    jitter <- get.jitter.arg(jitter, ...)
+    jitter <- get.jitter(jitter, ...)
     ngrid1 <- get.ngrid1(ngrid1, ...)
     ngrid2 <- get.ngrid2(ngrid2, ...)
     smooth.col <- get.smooth.col(smooth.col, ...)
@@ -87,8 +87,8 @@ plotmo <- function(object = stop("no 'object' argument"),
     # set random seed for reproducibility if jitter is used
     rnorm(1) # seems to be necessary to make .Random.seed available
     old.seed <- .Random.seed
-    set.seed(2015)
     on.exit(set.seed(old.seed), add=TRUE)
+    set.seed(2015)
     if(!is.specified(degree1))   degree1   <- 0
     if(!is.specified(degree2))   degree2   <- 0
     if(!is.specified(nresponse)) nresponse <- NA
@@ -206,6 +206,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     }
     trace2(trace, "\n----Figuring out ylim\n")
     is.na.ylim <- !is.null(ylim) && anyNA(ylim)
+    jittered.y <- apply.jitter(as.numeric(y), jitter)
     # get.ylim will do dummy plots if necessary
     temp <- get.ylim(object=object,
         type=type, nresponse=nresponse, pt.col=pt.col,
@@ -222,7 +223,7 @@ plotmo <- function(object = stop("no 'object' argument"),
         pred.names=pred.names, abbr.pred.names=abbr.pred.names,
         nsingles=nsingles, npairs=npairs, nfigs=nfigs, uy=uy,
         is.na.ylim=is.na.ylim, is.int.only=is.int.only, trace2=trace2,
-        pairs=pairs, iresponse=iresponse, ...)
+        pairs=pairs, iresponse=iresponse, jittered.y=jittered.y, ...)
     ylim   <- temp$ylim
     trace2 <- temp$trace2
     if(nsingles)
@@ -237,7 +238,7 @@ plotmo <- function(object = stop("no 'object' argument"),
             draw.plot=TRUE, x=x, y=y, singles=singles, resp.levs=resp.levs,
             ux.list=ux.list, ndiscrete=ndiscrete,
             pred.names=pred.names, abbr.pred.names=abbr.pred.names,
-            nfigs=nfigs, uy=uy, xflip=xflip, ...)
+            nfigs=nfigs, uy=uy, xflip=xflip, jittered.y=jittered.y, ...)
     if(npairs)
         plot.degree2(object=object, degree2=degree2, all2=all2, center,
             ylim=if(is.na.ylim) NULL else ylim, # each graph has its own ylim?
@@ -256,7 +257,7 @@ plotmo <- function(object = stop("no 'object' argument"),
 }
 plotmo_prolog <- function(object, object.name, trace, ...)
 {
-    object <- plotmo.prolog(object, object.name, ...)
+    object <- plotmo.prolog(object, object.name, trace, ...)
     my.call <- call.as.char(n=2)
     callers.name <- callers.name()
     if(trace >= 2) {
@@ -298,7 +299,7 @@ get.ylim <- function(object,
     x, y, singles, resp.levs, ux.list, pred.names, abbr.pred.names,
     nsingles, npairs, nfigs, uy,
     is.na.ylim, is.int.only, trace2, pairs,
-    iresponse, ...)
+    iresponse, jittered.y, ...)
 {
     get.ylim.by.dummy.plots <- function(..., trace)
     {
@@ -306,11 +307,10 @@ get.ylim <- function(object,
         trace2(trace, "--get.ylim.by.dummy.plots\n")
         all.yhat <- NULL
         if(nsingles) { # get all.yhat by calling with draw.plot=FALSE
+            # have to use explicit arg names to prevent alias probs
+            # with dots, because the user can pass in any name with dots
             all.yhat <- c(all.yhat,
-                # have to use explicit arg names to prevent alias probs
-                # with dots, because the user can pass in any name with dots
-
-            plot.degree1(object=object, degree1=degree1, all1=all1,
+              plot.degree1(object=object, degree1=degree1, all1=all1,
                 center=center, ylim=ylim, nresponse=nresponse, type=type,
                 trace=trace, trace2=trace2, pt.col=pt.col,
                 jitter=jitter, iresponse=iresponse,
@@ -322,7 +322,7 @@ get.ylim <- function(object,
                 singles=singles, resp.levs=resp.levs,
                 ux.list=ux.list, ndiscrete=ndiscrete,
                 pred.names=pred.names, abbr.pred.names=abbr.pred.names,
-                nfigs=nfigs, uy=uy, xflip=xflip, ...))
+                nfigs=nfigs, uy=uy, xflip=xflip, jittered.y=jittered.y, ...))
         }
         if(npairs) {
             all.yhat <- c(all.yhat,
@@ -343,20 +343,22 @@ get.ylim <- function(object,
         }                            #  1    2   3    4  5
         q <- quantile(all.yhat, probs=c(0, .25, .5, .75, 1))
         ylim <- c(q[1], q[5]) # all the data
+        # iqr test to prevent clipping in some pathological cases
         iqr  <- q[4] - q[2]   # middle 50% of the data (inter-quartile range)
-        # the iqr test prevents clipping in some pathological cases
         if(clip && iqr > .05 * (max(y) - min(y))) {
             median <- q[3]
             ylim[1] <- max(ylim[1], median - 10 * iqr)
             ylim[2] <- min(ylim[2], median + 10 * iqr)
         }
-        if(is.specified(pt.col) || is.specified(smooth.col))
-            ylim <- range1(ylim, range1(y)) # ensure ylim big enough for resp points
-        if(length(uy) == 2 || length(uy) == 3) # binary or ternary reponse
-            ylim <- c(ylim[1] - .1, ylim[2] + .1)
-        else if(is.discrete(uy) && !is.null(jitter) && jitter > 0)
-            ylim <- c(ylim[1] - .4, ylim[2] + .4)
-        else if(is.specified(nrug)) # space for rug
+        if(is.specified(pt.col) || is.specified(smooth.col) || is.specified(level))
+            ylim <- range1(ylim, jittered.y) # ensure ylim big enough for resp points
+        else if(is.specified(smooth.col))
+            ylim <- range1(ylim, y)
+        # binary or ternary reponse?
+        # the range(uy) test is needed for binomial models specified using counts
+        else if(length(uy) <= 3 || range(y) == c(0,1))
+            ylim <- range1(ylim, y)
+        if(is.specified(nrug)) # space for rug
             ylim[1] <- ylim[1] - .1 * (ylim[2] - ylim[1])
         trace2(trace, "--done get.ylim.by.dummy.plots\n\n")
         # have called the plot functions, minimize tracing in further calls to them
@@ -408,18 +410,8 @@ do.degree2.par <- function(type2, nfigs, detailed.ticktype)
 plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
 {
     trace2(trace, "\n----plotmo_singles for %s object\n", class(object)[1])
-    # TODO remove the following when earth 4.3.0 is on CRAN
-    singles <- NULL
-    if(inherits(object, "earth")) {
-        # first try getting singles from the old version of earth
-        singles <-
-            try(earth:::get.plotmo.singles.earth(object=object,
-                            x=x, trace=trace, all1=all1), silent=TRUE)
-        if(is.try.err(singles))
-            singles <- NULL
-    }
-    if(is.null(singles))
-        singles <- plotmo.singles(object, x, nresponse, trace, all1)
+    singles <- plotmo.singles(object=object,
+                              x=x, nresponse=nresponse, trace=trace, all1=all1)
     some.singles <- FALSE
     if(length(singles)) {
         singles <- sort.unique(singles)
@@ -444,18 +436,7 @@ plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
 plotmo_pairs <- function(object, x, nresponse, trace, all2, degree2)
 {
     trace2(trace, "\n----plotmo_pairs for %s object\n", class(object)[1])
-    # TODO remove the following when earth 4.3.0 is on CRAN
-    pairs <- NULL
-    if(inherits(object, "earth")) {
-        # first try getting pairs from the old version of earth
-        pairs <-
-            try(earth:::get.plotmo.pairs.earth(object=object, x=x,
-                nresponse=nresponse, trace=trace), silent=TRUE)
-        if(is.try.err(pairs))
-            pairs <- NULL
-    }
-    if(is.null(pairs))
-        pairs <- plotmo.pairs(object, x, nresponse, trace, all2)
+    pairs <- plotmo.pairs(object, x, nresponse, trace, all2)
     if(!NROW(pairs) || !NCOL(pairs))
         pairs <- NULL
     npairs <- NROW(pairs)
@@ -498,15 +479,13 @@ get.pt.col <- function(pt.col, ...)
         pt.col <- 0
     pt.col
 }
-# jitter is a formal arg, but for back compat we also support jitter.response
-get.jitter.arg <- function(jitter, ...)
+get.jitter <- function(jitter, ...)
 {
-    if(is.null(jitter))
-        jitter <- dot("jitter.response", DEF=NULL, EX=0, ...)
-    check.numeric.scalar(jitter, null.ok=TRUE, logical.ok=TRUE)
-    if(!is.null(jitter) && jitter == TRUE)
-        jitter <- 1
-    if(!is.null(jitter) && (jitter < 0 || jitter > 100))
+    if(anyNA(jitter)) # allow jitter=NA
+        jitter <- 0
+    check.numeric.scalar(jitter, logical.ok=TRUE)
+    jitter <- as.numeric(jitter)
+    if(jitter < 0 || jitter > 100)
         stop0("jitter=", jitter, " is illegal")
     jitter
 }
@@ -721,7 +700,7 @@ plot.degree1 <- function( # plot all degree1 graphs
     draw.plot, # draw.plot=FALSE means get predictions but don't actually plot
     x, y, singles, resp.levs, ux.list, ndiscrete,
     pred.names, abbr.pred.names, nfigs, uy,
-    xflip,
+    xflip, jittered.y,
     ...)
 {
     get.degree1.data <- function(isingle)
@@ -822,12 +801,9 @@ plot.degree1 <- function( # plot all degree1 graphs
         #--- draw.degree1 starts here
         x1 <- x[,ipred]
         numeric.x <- jittered.x <- as.numeric(x1)
-        numeric.y <- jittered.y <- as.numeric(y)
-        jittered.x <- apply.jitter(numeric.x, jitter, ux.list[[ipred]],
-                                   is.factor(x1), trace, pred.names[ipred])
-        jittered.y <- apply.jitter(numeric.y, jitter, uy, is.factor(y), trace, "y")
-        preadjusted.ylim <- NULL
-        xlim <- get.degree1.xlim(ipred, xframe, ux.list, xflip, ...)
+        jittered.x <- apply.jitter(numeric.x, jitter)
+        xlim <- get.degree1.xlim(ipred, xframe, ux.list, ndiscrete,
+                                 pt.col, jittered.x, xflip, ...)
         # title of the current plot
         main <- dot("main", ...)
         main <- if(is.specified(main))
@@ -919,23 +895,22 @@ plot.degree1 <- function( # plot all degree1 graphs
     }
     all.yhat # numeric vector of all predicted values
 }
-get.degree1.xlim <- function(ipred, xframe, ux.list, xflip, ...)
+get.degree1.xlim <- function(ipred, xframe, ux.list, ndiscrete,
+                             pt.col, jittered.x, xflip, ...)
 {
     xlim <- dot("xlim", ...)
     if(is.specified(xlim))
         stopifnot(is.numeric(xlim), length(xlim) == 2)
     else {
         x1 <- xframe[,ipred]
-        ux <- ux.list[[ipred]]
-        nxlevs <- length(ux)
-        if(is.factor(x1))
-            xlim <- c(1, nxlevs)
-        else
-            xlim <- c(min(x1), max(x1))
-        if(is.factor(x1))
-            xlim <- c(xlim[1] - .4, xlim[2] + .4)
-        else if(is.discrete(ux))
+        xlim <- range1(x1)
+        if(is.factor(x1)) {
+            xlim[1] <- xlim[1] - .4
+            xlim[2] <- xlim[2] + .4
+        } else if(length(ux.list[[ipred]]) <= ndiscrete)
             xlim <- c(xlim[1] - .1, xlim[2] + .1)
+        if(is.specified(pt.col))
+            xlim <- range1(xlim, jittered.x)
     }
     xlim <- fix.lim(xlim)
     if(xflip) {
@@ -945,34 +920,11 @@ get.degree1.xlim <- function(ipred, xframe, ux.list, xflip, ...)
     }
     xlim
 }
-is.discrete <- function(ux) # ux is sorted(unique(x))
+apply.jitter <- function(x, jitter, adjust=1)
 {
-    if(length(ux) > 30)
-        return(FALSE)
-    if(length(ux) <= 5)
-        return(TRUE)
-    # it's discrete if the largest gap between values is not too big
-    max(diff(ux)) < .5 * ux[length(ux)] - ux[1]
-}
-apply.jitter <- function(x, jitter, ux, is.fac, trace=0, xname=NULL, adjust=1)
-{
-    if(!is.null(jitter) && jitter == 0)
+    if(jitter == 0)
         return(x)
-    jit <- 0
-    if(!is.null(jitter) > 0 || is.fac || is.discrete(ux)) {
-        nxvals <- length(ux)
-        jit <- 20 / nxvals^1.7 # empirical from looking at titanic graphs (Apr 2015)
-    }
-    if(jit < .1)
-        jit <- 0
-    if(!is.null(jitter))
-        jit <- max(jit, jitter)
-    if(jit != 0 && trace >= 3 && !is.null(xname))
-        printf("%-16.16s jit %4.1f length(ux) %d\n", xname, jit, length(ux))
-    if(jit == 0)
-        x
-    else # we use jitter amount=0 (same as S) for compatibility with plotres
-        jitter(x, factor=adjust * jit, amount=0)
+    jitter(x, factor=adjust * jitter)
 }
 get.iresponse <- function(npoints, ncases) # get indices of xrows
 {
@@ -1150,7 +1102,7 @@ draw.func <- function(func, object, xframe, ipred, center, trace, ...)
         print_summary(xframe, "Data for func", trace)
         if(!is.function(func))
             stop0("'func' is not a function");
-        y <- process.y(func(xframe), object, nresponse=1,
+        y <- process.y(func(xframe), object, type="response", nresponse=1,
                        nrow(xframe), expected.levs=NULL, trace, "func returned")$y
         if(center)
             y <- my.center(y, trace)
@@ -1334,8 +1286,8 @@ draw.response.sites <- function(x, ipred1, ipred2, pt.col, jitter,
         x2 <- x[,ipred2]
     }
     points.or.text(
-        x=apply.jitter(as.numeric(x1), jitter, ux.list[[ipred1]], is.factor(x1), adjust=1.5),
-        y=apply.jitter(as.numeric(x2), jitter, ux.list[[ipred2]], is.factor(x2), adjust=1.5),
+        x=apply.jitter(as.numeric(x1), jitter, adjust=1.5),
+        y=apply.jitter(as.numeric(x2), jitter, adjust=1.5),
         pt.col=pt.col, iresponse=iresponse, ...)
 }
 plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
@@ -1637,7 +1589,7 @@ apply.inverse.func <- function(inverse.func, y, object, trace)
     if(!is.null(inverse.func)) {
         if(!is.numeric(y[1]))
             stopf("inverse.func cannot be used on \"%s\" values", class(y[1])[1])
-        y <- process.y(inverse.func(y), object, nresponse=1,
+        y <- process.y(inverse.func(y), object, type="response", nresponse=1,
                        length(y), NULL, trace, "inverse.func")$y
     }
     y

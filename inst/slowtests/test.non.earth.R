@@ -335,7 +335,6 @@ etitanic2$sex <- as.numeric(etitanic$sex)
 etitanic2$sibsp <- NULL
 etitanic2$parch <- NULL
 lda.model <- lda(survived ~ ., data=etitanic2)
-expect.err(try(plotmo(lda.model, type="posterior"))) # predicted response has multiple columns ...
 set.seed(7)
 plotmo(lda.model, caption="lda", clip=F,
        col.response=as.numeric(etitanic2$survived)+2, type="posterior", nresponse=1, smooth.col="indianred",
@@ -405,7 +404,7 @@ old.mar <- par(mar=c(3, 3, 2, .5))  # small margins to pack figs in
 set.seed(9) # for jitter
 plotmo(a, do.par=F, type2="image",
        col.response=ifelse(kyphosis$Kyphosis=="present", "red", "lightblue"),
-       clip=F, jit=.5)
+       clip=F)
 plotmo(a, do.par=F, clip=F, degree1=0)
 par(mar=old.mar)
 
@@ -422,8 +421,10 @@ plotmo(fit1, nresp=2, degree1=FALSE, do.par=F, main="", type2="image", # test de
        image.col=gray(10:4/10), ngrid2=30)
 par(mar=c(.5, 0.5, 2, .5))  # b l t r small margins to pack figs in
 plotmo(fit1, type="class", degree1=NA, do.par=F, main="type=\"class\"")
-plotmo(fit1, type="prob", nresp=2, degree1=0, do.par=F, main="type=\"prob\"",
-       clip=F, ngrid2=50, persp.border=NA)
+# with type="prob" and response has two columns,
+# nresponse should automatically default to column 2
+plotmo(fit1, type="prob", degree1=0, do.par=F, main="type=\"prob\"",
+       clip=F, ngrid2=50, persp.border=NA, trace=1)
 plotmo(fit1, type="prob", nresp=2, degree1=NA, do.par=F, main="", type2="image",
        col.response=ifelse(kyphosis$Kyphosis=="present", "red", "lightblue"),
        pt.pch=20, image.col=gray(10:4/10), ngrid2=5)
@@ -551,12 +552,22 @@ print(summary(gbm.model))   # will also plot
 plotres(gbm.model, type2="im", col=ptit$survived+2, do.par=FALSE)
 par(mfrow=c(1,1))
 
+ozplus <- ozone1
+# add more variables so we can test all1 and all2
+ozplus$ltemp <- log(ozplus$temp)
+ozplus$lhum <- log(ozplus$humidity)
+ozplus$ltemphum <- log(ozplus$temp) + log(ozplus$humidity)
+ozplus$ibttemp <- ozplus$ibt * ozplus$temp
+ozplus <- data.frame(scale(ozplus))
 set.seed(2015)
-gbm.ozone1 <- gbm(O3~., data=ozone1, train.frac=.9, verbose=FALSE,
-               n.trees=100, cv.fold=2, shrinkage=.1)
+gbm.ozplus <- gbm(O3~., data=ozplus, train.frac=.9,
+               n.trees=100, cv.fold=2, shrinkage=.1, interact=3)
 # note that we get different RSquareds printed in the trace here
-plotres(gbm.ozone1, trace=1, SHOWCALL=TRUE)
-plotres(gbm.ozone1, predict.n.trees=42, trace=1, SHOWCALL=TRUE)
+plotres(gbm.ozplus, trace=1, SHOWCALL=TRUE)
+plotres(gbm.ozplus, predict.n.trees=42, trace=1, SHOWCALL=TRUE)
+plotmo(gbm.ozplus, trace=-1, SHOWCALL=TRUE)
+plotmo(gbm.ozplus, trace=-1, all1=TRUE, SHOWCALL=TRUE)
+plotmo(gbm.ozplus, trace=-1, all2=TRUE, SHOWCALL=TRUE)
 
 library(caret)
 set.seed(2015)
@@ -674,6 +685,16 @@ plotmo(nn, trace=1, col.response=2, all2=TRUE, SHOWCALL=TRUE)
 plotmo(nn, trace=1, col.response=2, predict.rep="best", SHOWCALL=TRUE)
 plotres(nn, trace=1, info=TRUE, SHOWCALL=TRUE)
 plotres(nn, trace=1, info=TRUE, predict.rep="best", SHOWCALL=TRUE)
+
+library(biglm)
+data(trees)
+ff <- log(Volume)~log(Girth)+log(Height)
+chunk1 <- trees[1:20,]
+chunk2 <- trees[20:31,]
+biglm <- biglm(ff,chunk1)
+biglm <- update(biglm, chunk2)
+plotmo(biglm, pt.col=2, SHOWCALL=TRUE)
+plotres(biglm, SHOWCALL=TRUE)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

@@ -40,7 +40,7 @@ plotmo_predict <- function(object, newdata, nresponse,
     yhat <- plotmo.predict(object=object, newdata=newdata, type=type, ...,
                            TRACE=if(trace >= 2) trace else trace.call.global)
 
-    temp <- process.y(yhat, object, nresponse,
+    temp <- process.y(yhat, object, type, nresponse,
                       expected.len=nrow(newdata), expected.levs, trace,
                       fname="predict")
 

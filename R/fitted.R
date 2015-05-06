@@ -17,7 +17,7 @@ plotmo_fitted <- function(object, trace, nresponse, type, ...)
     if(!is.try.err(fitted) && !is.null(fitted)) {
         # if(trace.call.global >= 1 && trace < 2)
         #     print_summary(fitted, "fitted is ", details=-1)
-        temp <- process.y(fitted, object, nresponse, expected.len=NULL,
+        temp <- process.y(fitted, object, type, nresponse, expected.len=NULL,
                           expected.levs=NROW(fitted), trace, "fitted(object)")
         fitted <- temp$y
     } else { # fitted(object) failed

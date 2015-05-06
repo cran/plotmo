@@ -54,8 +54,8 @@ plot.gbmx <- function(object=stop("no 'object' argument"),
     if(is.specified(n.trees))
         vert.line(n.trees, col.n.trees, 1, 0)
 
-    offset <- 0 # offset is to distinguish overplotted vertical lines
     legend.text <- legend.col <- legend.lty <- legend.n <- NULL
+    offset <- 0 # offset is to distinguish overplotted vertical lines
 
     # train
     lines(object$train.error, type="l", col=col[1])
@@ -130,8 +130,8 @@ draw.oob <- function(object, offset, col)
     }
     stopifnot(length(object$oobag.improve) == object$n.trees) # paranoia
 
-    # to calculate min use same smoothing as gbm.perf
-    # (but actual plot is unsmoothed, else tend to smooth away left part of curve)
+    # to calculate min use same smoothing as gbm.perf, for compatibility
+    # (but plot itself is unsmoothed, else tend to smooth away left part of curve)
     min <- min.smoothed.oob(object)
     vert.line(min, col, 3, offset)
 
@@ -149,9 +149,9 @@ draw.oob <- function(object, offset, col)
 min.smoothed.oob <- function(object) # same algorithm as gbm.perf (gbm version 2.1.1)
 {
   x <- 1:object$n.trees
-  smoother <- loess(object$oobag.improve~x,
+  smoother <- loess(object$oobag.improve ~ x,
                     na.action=na.omit, # paranoia, prevent warnings from loess
-                    enp.target=min(max(4,length(x)/10),50))
+                    enp.target=min(max(4, length(x) /10 ), 50 ))
   x[which.min(-cumsum(smoother$fitted))]
 }
 # print the best n for each plot along the top of the graph

@@ -61,7 +61,8 @@ plotmo_rinfo <- function(object, type=NULL, residtype=type, nresponse=1,
 "forcing nresponse %g to 1 because response - fitted has one column\n", nresponse)
             nresponse <- 1
         }
-        resids <- process.y(resids, object, nresponse, expected.len=nrow(fitted),
+        resids <- process.y(resids, object, type, nresponse, 
+                            expected.len=nrow(fitted),
                             expected.levs=expected.levs, trace, "residuals")$y
         trace2(trace,
             "generated the residuals using plotmo_predict() and plotmo_y()\n")
@@ -95,7 +96,7 @@ plotmo_resids <- function(object, type, residtype, nresponse, trace, ...)
     if(trace >= 2)
         print_summary(resids, "residuals is ",
                       details=if(trace>=2) 2 else -1)
-    list(resids = process.y(resids, object, nresponse,
+    list(resids = process.y(resids, object, type, nresponse,
                     expected.len=NULL, expected.levs=NULL,
                     trace, "residuals")$y,
         labs=if(!is.null(names(resids))) names(resids) else rownames(resids))

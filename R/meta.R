@@ -96,7 +96,7 @@ plotmo_meta <- function(object, type, nresponse, trace,
     nresponse.org <- nresponse
 
     nresponse <- plotmo_nresponse(yhat, object, nresponse, trace,
-                                  sprintf("predict.%s", class(object)[1]))
+                    sprintf("predict.%s", class(object)[1]), type)
     stopifnot(!is.na(nresponse))
     trace2(trace,
         "nresponse=%g%s ncol(fitted) %d ncol(predict) %d ncol(y) %s\n",
@@ -227,7 +227,7 @@ plotmo_resplevs <- function(object, plotmo_fitted, yfull, trace)
 #
 # returns list(y, resp.levs, resp.class)
 
-process.y <- function(y, object, nresponse,
+process.y <- function(y, object, type, nresponse,
                       expected.len, expected.levs, trace, fname)
 {
     if(is.null(y))
@@ -250,7 +250,7 @@ process.y <- function(y, object, nresponse,
         y <- my.data.frame(y, trace, stringsAsFactors=FALSE)
     else {
         check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
-        nresponse <- plotmo_nresponse(y, object, nresponse, trace, fname)
+        nresponse <- plotmo_nresponse(y, object, nresponse, trace, fname, type)
         stopifnot(!is.na(nresponse), nresponse >= 1, nresponse <= NCOL(y))
         resp.name <- colname(y, nresponse, fname)
         y <- get.specified.col.and.force.numeric(y, nresponse, resp.name,
@@ -272,7 +272,7 @@ process.y <- function(y, object, nresponse,
         trace2(trace, "\n")
         warning0("non-finite values returned by ", fname)
     }
-    # Error mesage for the aftermath of:
+    # Error message for the aftermath of:
     #   "Warning: 'newdata' had 100 rows but variable(s) found have 30 rows"
     if(!is.null(expected.len) && expected.len != nrow(y))
         stopf("%s returned the wrong length (got %d but expected %d)",
@@ -330,14 +330,17 @@ get.specified.col.and.force.numeric <- function(y, nresponse, resp.name,
     colnames(y) <- resp.name
     y
 }
-plotmo_nresponse <- function(y, object, nresponse, trace, fname)
+plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response")
 {
     check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
     colnames <- safe.colnames(y)
     nresponse.org <- nresponse
     if(is.na(nresponse)) {
-        nresponse <- plotmo.convert.na.nresponse(object, nresponse, y)
-        if(is.na(nresponse)) {
+        nresponse <- plotmo.convert.na.nresponse(object, nresponse, y, type)
+        if(!is.na(nresponse)) {
+            if(trace > 0 && nresponse != 1)
+                printf("set nresponse=%s\n", paste(nresponse))
+        } else { # nresponse is NA
             # fname returned multiple columns (see above) but nresponse is not specified
             cat("\n")
             print_summary(y, fname, trace=2)
@@ -391,12 +394,17 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname)
              " to nresponse=", nresponse, "\n")
     nresponse
 }
-plotmo.convert.na.nresponse <- function(object, nresponse, yhat)
+plotmo.convert.na.nresponse <- function(object, nresponse, yhat, type="response")
 {
     UseMethod("plotmo.convert.na.nresponse")
 }
-plotmo.convert.na.nresponse.default <- function(object, nresponse, yhat)
+plotmo.convert.na.nresponse.default <- function(object, nresponse, yhat, type)
 {
     stopifnot(is.na(nresponse))
-    if(NCOL(yhat) == 1) 1 else NA
+    if(NCOL(yhat) == 1)
+        1
+    else if(NCOL(yhat) == 2 && substr(type, 1, 1) == "p")
+        2     # probability (also works for posterior as in lda models)
+    else
+        NA
 }

@@ -122,14 +122,16 @@ order.randomForest.vars.on.importance <- function(object, x)
     # vector of var indices, most important vars first
     order(importance[,1], decreasing=TRUE)
 }
-plotmo.singles.randomForest <- function(object, x, ...)
+plotmo.singles.randomForest <- function(object, x, nresponse, trace, all1)
 {
     importance <- order.randomForest.vars.on.importance(object, x)
+    if(all1)
+        return(importance)
     if(is.null(importance))
         seq_len(NCOL(x)) # all variables
-    # 9 most important variables
-    # (9 becauses plotmo.pairs returns 16, total is 25)
-    importance[seq_len(min(9, length(importance)))]
+    # 10 most important variables
+    # (10 becauses plotmo.pairs returns 6, total is 16, therefore 4x4 grid)
+    importance[seq_len(min(10, length(importance)))]
 }
 plotmo.pairs.randomForest <- function(object, x, ...)
 {
@@ -139,8 +141,31 @@ plotmo.pairs.randomForest <- function(object, x, ...)
     importance <- order.randomForest.vars.on.importance(object, x)
     if(is.null(importance))
         return(NULL)
-    # pairs of four most important variables
+    # pairs of four most important variables (i.e. 6 plots)
     form.pairs(importance[1: min(4, length(importance))])
+}
+possible.biglm.warning <- function(object, trace)
+{
+    if(inherits(object, "biglm")) {
+        n <- check.integer.scalar(object$n, min=1)
+        y <- plotmo.y.default(object, trace, naked=TRUE, expected.len=NULL)$field
+        if(NROW(y) != n)
+            warnf("plotting %g cases but the model was built with %g cases\n",
+                  NROW(y), n)
+    }
+}
+plotmo.predict.biglm <- function(object, newdata, type, ..., TRACE) # biglm package
+{
+    # predict.biglm: newdata must include the response even though it isn't needed
+    # The following extracts the response from the formula, converts it to a
+    # string, then "nakens" it (converts e.g. "log(Volume)" to plain "Volume").
+    resp.name <- naken(format(formula(object)[[2]]))
+    if(TRACE >= 1)
+        printf("plotmo.predict.biglm: adding dummy response \"%s\" to newdata\n",
+               resp.name)
+    data <- data.frame(NONESUCH.RESPONSE=1, newdata)
+    colnames(data) <- c(resp.name, colnames(newdata))
+    plotmo.predict.default(object, data, type=type, ..., TRACE=TRACE)
 }
 # TODO Following commented out because polyreg is not supported by plotmo
 # So with this commented out we support plotmo(fda.object)

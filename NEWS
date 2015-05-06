@@ -1,6 +1,24 @@
 Changes to plotmo Package
 -------------------------
 
+--- 3.1.0  May 6, 2015
+
+Removed references to functions in old versions of earth.
+
+Simplified the way xlim and ylim are calculated internally.
+
+Simplified the way jitter is handled.
+
+If type="probability" or similar, and the response has two 
+columns, nresponse now automatically defaults to column 2.
+
+Added support for biglm objects.  The predict.biglm method
+(unnecessarily) requires that newdata has a response column, so 
+plotmo adds a dummy response column before calling predict.biglm.
+
+We now find the data argument for formula models even if the argument
+is unnamed.
+
 --- 3.0.0  Apr 29, 2015
 
 Added the plotres function.

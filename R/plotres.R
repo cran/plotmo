@@ -88,6 +88,8 @@ plotres <- function(object = stop("no 'object' argument"),
     npoints   <- temp$npoints     # special values have been converted
     rsq       <- temp$rsq         # r-squared on the training data
 
+    possible.biglm.warning(object, trace)
+
     nfigs <- length(which) * length(vinfo$icolumns)
     if(nfigs == 0) {
         if(trace >= 0)

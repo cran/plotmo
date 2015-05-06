@@ -12,7 +12,7 @@ See the \href{../doc/plotmo-notes.pdf}{\code{plotmo}} vignette.
 \usage{
 plotmo(object=stop("no 'object' argument"),
     type=NULL, nresponse=NA,
-    pt.col=0, jitter=NULL, smooth.col=0, level=0,
+    pt.col=0, jitter=.5, smooth.col=0, level=0,
     func=NULL, inverse.func=NULL, nrug=0, grid.col=0,
     type2="persp",
     degree1=TRUE, all1=FALSE, degree2=TRUE, all2=FALSE,
@@ -44,7 +44,8 @@ This can be a column index or column name
 The color of response points (or response sites in degree2 plots).
 This refers to the response \code{y} in the data
 used to build the model.
-Note that the displayed points are jittered (see the \code{jitter} argument).
+Note that the displayed points are jittered by default
+(see the \code{jitter} argument).
 \cr
 Default is \code{0}, display no response points.
 \cr
@@ -58,7 +59,7 @@ To label the points, set \code{pt.pch} to a character vector.
 }
 \item{jitter}{
 Applies only if \code{pt.col} is specified.\cr
-The default is \code{jitter=NULL}, meaning automatically jitter the points.
+The default is \code{jitter=.5}, automatically apply some jitter to the points.
 Points are jittered horizontally and vertically.\cr
 Use \code{jitter=0} to disable this automatic jittering.
 Otherwise something like \code{jitter=1}, but the optimum value is data dependent.

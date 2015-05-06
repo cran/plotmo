@@ -279,7 +279,11 @@ get.plotres.data <- function(object, object.name, which, standardize, delever,
     if(!npoints.was.neg && nrow(fitted) > nmax) {
         if(trace >= 1)
             printf("using %g of %g residuals%s\n",
-                   nmax, ncases, if(id.n > 0) ", forcing id.n to 0" else "")
+                nmax, ncases,
+                if(id.n > 0)
+                    ", forcing id.n=0 because of that (implementation restriction)"
+                else
+                    "")
         # see comment in plotres for use of V4LEVER here
         isubset <- get.isubset(rinfo$resids, nmax, id.n,
                                use.all=(vinfo$nversus == V4LEVER), rinfo$scale)

@@ -103,7 +103,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 stats::model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
@@ -161,7 +161,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 stats::model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
@@ -192,7 +192,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 stats::model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
@@ -343,7 +343,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 model.env is R_GlobalEnv
@@ -416,7 +416,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 model.env is R_GlobalEnv
@@ -462,7 +462,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 model.env is R_GlobalEnv
@@ -1000,7 +1000,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
 stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
@@ -1058,7 +1058,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
 stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
@@ -1089,7 +1089,7 @@ formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
 argument 2 of the call is 'data'
-eval(call["data"]], R_GlobalEnv)
+eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
 stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
@@ -1180,12 +1180,12 @@ predict after processing with nresponse=1 is [400,1]:
 400 33.46847
 --done get.ylim.by.dummy.plots
 
-ylim c(2, 34)    clip TRUE
+ylim c(1.912, 34.07)    clip TRUE
 
 --plot.degree1(draw.plot=TRUE)
 graphics::plot.default(x=c(48,48.92,49.8...), y=c(16.01,16.01,1...), type="n",
                        main="a.glob oz", xlab="", ylab="", xaxt="s", yaxt="s",
-                       xlim=c(48,93), ylim=c(2,34))
+                       xlim=c(47.95,93.05), ylim=c(1.91,34.07))
 --plot.degree2(draw.plot=TRUE)
 assuming the environment of the earth model is that of plotmo's caller: env(caption)
 plotmo trace 2: plotmo(object=ad.glob, type2="im", degree1=1, degree2=1,
@@ -1371,12 +1371,12 @@ predict after processing with nresponse=1 is [400,1]:
 400 33.46847
 --done get.ylim.by.dummy.plots
 
-ylim c(2, 34)    clip TRUE
+ylim c(1.912, 34.07)    clip TRUE
 
 --plot.degree1(draw.plot=TRUE)
 graphics::plot.default(x=c(48,48.92,49.8...), y=c(16.01,16.01,1...), type="n",
                        main="ad.glob oz", xlab="", ylab="", xaxt="s", yaxt="s",
-                       xlim=c(48,93), ylim=c(2,34))
+                       xlim=c(47.95,93.05), ylim=c(1.91,34.07))
 --plot.degree2(draw.plot=TRUE)
  grid:    temp humidity
             80       68
@@ -1558,7 +1558,7 @@ predict after processing with nresponse=1 is [50,1]:
 50   4.830107
 graphics::plot.default(x=c(1,1.347,1.694...), y=c(10.11,10,9.89...), type="n",
                        main="lm.18.keep", xlab="", ylab="", xaxt="s", yaxt="s",
-                       xlim=c(1,18), ylim=c(0,20))
+                       xlim=c(1,18.04), ylim=c(0,20))
 ==lm.18.frame
 > 
 > caption <- "test earth formula versus x,y model"
@@ -2333,10 +2333,11 @@ Got error as expected
 > tit <- etitanic
 > tit <- tit[c(30:80,330:380,630:680), ]
 > a <- earth(survived~., data=tit, glm=list(family=binomial), degree=2)
-> plotmo(a, grid.levels=list(sex="ma"), caption="smooth: survived, sex=\"m\"",
+> plotmo(a, grid.levels=list(sex="ma"),
++        caption="smooth: survived, sex=\"m\"    jitter=1",
 +        smooth.col="indianred", smooth.lwd=2,
 +        col.response=as.numeric(tit$survived)+2, pt.pch=".", type2="im",
-+        pt.cex=3, jitter=1)
++        pt.cex=3, jitter=1) # big jitter
  grid:    pclass  sex age sibsp parch
              1st male  29     0     0
 > set.seed(1238)
@@ -2346,15 +2347,15 @@ Got error as expected
 +        caption="smooth: pclass, sex=\"m\"", SHOWCALL=TRUE,
 +        smooth.col="indianred", smooth.lwd=2,
 +        col.response=as.numeric(tit$pclass)+1, type2="im",
-+        pt.pch=".", pt.cex=3, jitter.response=1)
++        pt.pch=".", pt.cex=3)
  grid:    survived  sex age sibsp parch
                  0 male  29     0     0
 > plotmo(a, type="class", nresponse=1,
 +        grid.levels=list(sex="ma"),
-+        caption="smooth: pclass, sex=\"m\"", SHOWCALL=TRUE,
++        caption="smooth: pclass, sex=\"m\"      jitter=.3", SHOWCALL=TRUE,
 +        smooth.col="indianred", smooth.lwd=2,
 +        col.response=as.numeric(tit$pclass)+1, type2="im",
-+        pt.pch="x", jit=.3)
++        pt.pch="x", jit=.3) # small jitter
  grid:    survived  sex age sibsp parch
                  0 male  29     0     0
 > plotmo(a, nresponse=1,
@@ -2362,7 +2363,7 @@ Got error as expected
 +        caption="smooth: pclass, sex=\"m\"",  SHOWCALL=TRUE,
 +        smooth.col="indianred", smooth.lwd=2,
 +        col.response=as.numeric(tit$pclass)+1, type2="im",
-+        pt.pch=paste(1:nrow(tit)), jitter.resp=1)
++        pt.pch=paste(1:nrow(tit)))
  grid:    survived  sex age sibsp parch
                  0 male  29     0     0
 > 

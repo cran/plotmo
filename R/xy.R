@@ -78,20 +78,7 @@ plotmo_y <- function(object, nresponse=NULL, trace=0,
            if(is.null(nresponse)) "NULL" else format(nresponse),
            class(object)[1])
 
-    # TODO remove the following when earth 4.3.0 is on CRAN
-    y <- NULL
-    if(inherits(object, "earth")) {
-        # try getting y from the old version of earth
-        y <- try(earth:::get.plotmo.y.earth(object=object, nresponse=1,
-                              expected.len=expected.len, trace=trace),
-                 silent=TRUE)
-        if(is.null(y) || is.try.err(y)) # new version of earth
-            y <- NULL
-        else
-            warning0("please install earth version 4.3.0 or later")
-    }
-    if(is.null(y)) # not earth, or new version of earth
-        y <- plotmo.y(object, trace, naked=is.null(nresponse), expected.len)
+    y <- plotmo.y(object, trace, naked=is.null(nresponse), expected.len)
     do.subset <- TRUE
     # plotmo.y.default returns list(field, do.subset), so handle that
     if(is.list(y) && !is.data.frame(y) && !is.null(y$do.subset)) {
@@ -108,7 +95,8 @@ plotmo_y <- function(object, nresponse=NULL, trace=0,
             trace2(trace, "to yield y[%d,%d]\n", NROW(y), NCOL(y))
         }
     }
-    process.y(y, object, nresponse, expected.len, resp.levs, trace, "plotmo_y")
+    process.y(y, object, type="response", nresponse, 
+              expected.len, resp.levs, trace, "plotmo_y")
 }
 # Note that the naked argument is irrelevant unless the response was
 # pecified with a wrapper function like log(Volume) instead of plain Volume.
@@ -543,6 +531,7 @@ get.model.frame <- function(object, field, trace, naked,
         data.source <- "newdata"
     } else {
         # use object$model if possible (e.g. lm)
+        # TODO the following code really belongs in get.data.for.model.frame?
         x <- object[["model"]]
         # Drop column named "(weights)" created by lm() if called with weights
         # (must drop else x will be rejected because non-naked colname).
@@ -616,38 +605,59 @@ get.data.for.model.frame <- function(object, trace)
         list(data=data, source=source)
     }
     # try object$data e.g. earth models with formula and keepxy=T
-
     data <- object[["data"]]
     if(is.good.data(data, "object$data", trace))
         return(ret(NULL, data, "object$data"))
 
-    # try object$call$data
-
+    # look for the data in object$call
     call <- object[["call"]]
     if(is.null(call))
         return(ret("object$call is NULL so cannot get the data from the call"))
     if(!is.call(call))
         return(ret("object$call is not actually a call so cannot get the data from the call"))
     data <- NULL
-    idata <- match(c("data"), names(call), 0) # may be 0, that's ok
-    if(!idata)
-        return(ret("object$call has no 'data' argument"))
-    trace2(trace, "argument %g of the call is 'data'\n", idata-1)
-                                    # e.g. earth(formula=O3~., data=ozone1)
-    data <- eval.trace(call[[idata]], model.env(object), trace=trace,
-                       expr.name=sprintf("call[%s]]", quotify(names(call)[idata])))
-    if(is.good.data(data, "call$data", trace)) {
+    argname <- "NULL"
+    # try object$call$data
+    idata <- match(c("data"), names(call), 0)
+    if(idata > 0) {
+        trace2(trace, "argument %g of the call is 'data'\n", idata-1)
+        argname <- "call$data"
+        data <- eval.trace(call[[idata]], model.env(object), trace=trace, expr.name=argname)
+        is.good.data(data, argname, trace) # purely for tracing
+    } else {
+        # no object$call$data, search for an arg that looks like good data
+        trace2(trace,
+"object$call has no arg named 'data', will search for an arg that looks like data\n")
+        if(length(call) >= 3) { # start at 3 to ignore fname and first arg (the formula)
+            for(icall in 3:length(call)) {
+                arg <- call[[icall]]
+                if(class(arg)[1] == "name") { # paranoia, will always be true?
+                    argname <- sprintf("call$%s", quotify(as.character(arg)))
+                    data <- eval.trace(arg, model.env(object), trace=trace, expr.name=argname)
+                    if(is.good.data(data, argname, trace=trace)) {
+                        trace2(trace, "%s appears to be the model data\n", argname)
+                        idata <- icall
+                        break
+                    } else {
+                        trace2(trace, "%s is not the model data\n", argname)
+                        data <- NULL
+                    }
+                }
+            }
+        }
+    }
+    if(is.good.data(data, argname)) {
         # following needed for e.g. nnet(O3~., data=scale(ozone1), size=2)
         # Else get Error in model.frame.default: 'data' must be a data.frame.
         if(!is.data.frame(data)) {
             data <- try(my.data.frame(data, trace))
             # invoke is.good.data purely for issuing trace messages
             is.good.data(data, sprintf(
-                "call$data converted from \"%s\" to \"data.frame\"",
-                class(data)[1]), trace)
+                "%s converted from \"%s\" to \"data.frame\"",
+                argname, class(data)[1]), trace)
         }
     }
-    ret(NULL, data, "call$data")
+    ret(NULL, data, argname)
 }
 # return a formula with an environment, or an error string
 
@@ -664,7 +674,7 @@ get.model.formula <- function(object, trace, naked)
         if(iform <- match(c("formula"), names(call), 0))
             return(iform)
         # no arg named "formula" in call, so look for a formula elsewhere in call
-        # TODO for which model was this code added?
+        # TODO for which model was this code added? I think it's needed if formula arg is unnamed?
         call <- as.list(call)
         # start at 2 to skip call[1] which is the function name
         for(iform in 2:length(call)) {

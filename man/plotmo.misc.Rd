@@ -55,7 +55,7 @@ get.plotmo.y(object, env, y.column, expected.len, trace)
 plotmo_fitted(object, trace, nresponse, type, ...)
 plotmo_cum(rinfo, info, nfigs=1, add=FALSE,
            cum.col1, grid.col, jitter=0, cum.grid="percentages", ...)
-plotmo_nresponse(y, object, nresponse, trace, fname)
+plotmo_nresponse(y, object, nresponse, trace, fname, type="response")
 plotmo_rinfo(object, type=NULL, residtype=type, nresponse=1,
     standardize=FALSE, delever=FALSE, trace=0,
     leverage.msg="returned as NA", expected.levs=NULL, labels.id=NULL, ...)
@@ -72,11 +72,11 @@ plotmo_y(object, nresponse=NULL, trace=0, expected.len=NULL,
 \method{plotmo.singles}{default}(object, x, nresponse, trace, all1)
 \method{plotmo.y}{default}(object, trace, naked, expected.len)
 # plotmo methods
-plotmo.convert.na.nresponse(object, nresponse, yhat)
+plotmo.convert.na.nresponse(object, nresponse, yhat, type="response")
 plotmo.pairs(object, x, nresponse, trace, all2)
 plotmo.pint(object, newdata, type, level, trace)
 plotmo.predict(object, newdata, type, ..., TRACE)
-plotmo.prolog(object, env, object.name, ...)
+plotmo.prolog(object, object.name, trace, ...)
 plotmo.residtype(object, ...)
 plotmo.singles(object, x, nresponse, trace, all1)
 plotmo.type(object, ...)
