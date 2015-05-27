@@ -286,7 +286,7 @@ get.plotres.data <- function(object, object.name, which, standardize, delever,
                     "")
         # see comment in plotres for use of V4LEVER here
         isubset <- get.isubset(rinfo$resids, nmax, id.n,
-                               use.all=(vinfo$nversus == V4LEVER), rinfo$scale)
+                     use.all=(vinfo$nversus == V4LEVER), rinfo$scale)
         fitted           <- fitted      [isubset, , drop=FALSE]
         rinfo$resids     <- rinfo$resids[isubset, , drop=FALSE]
         rinfo$scale      <- rinfo$scale [isubset]
@@ -746,7 +746,7 @@ get.isubset <- function(x, nsubset, nbiggest=0, use.all=FALSE, scale=NULL)
 {
     check.vec(x, "x passed to get.isubset", length(x))
     ix <- seq_len(length(x))
-    if(nsubset > 0 && nsubset < length(x) && !use.all){
+    if(nsubset > 0 && nsubset < length(x) && !use.all) { # TODO move this into caller
         # take a sample, but make sure it includes the 20 biggest absolute values
         nsubset <- min(nsubset, length(x))
         nbiggest <- min(max(20, nbiggest), nsubset)

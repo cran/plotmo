@@ -95,7 +95,7 @@ plotmo_y <- function(object, nresponse=NULL, trace=0,
             trace2(trace, "to yield y[%d,%d]\n", NROW(y), NCOL(y))
         }
     }
-    process.y(y, object, type="response", nresponse, 
+    process.y(y, object, type="response", nresponse,
               expected.len, resp.levs, trace, "plotmo_y")
 }
 # Note that the naked argument is irrelevant unless the response was
@@ -1113,7 +1113,7 @@ get.and.check.subset <- function(x, object, trace)
         subset <- NULL
     else {
         # duplicates are allowed in subsets so user can specify a bootstrap sample
-        check.index(subset, "subset", x, allow.dups=TRUE, allow.zeroes=TRUE)
+        check.index(subset, "subset", x, allow.dups=TRUE, allow.zeros=TRUE)
         if(trace >= 2) {
             cat0("got subset from ", msg, " length " , length(subset))
             print.first.few.elements.of.vector(subset, trace)

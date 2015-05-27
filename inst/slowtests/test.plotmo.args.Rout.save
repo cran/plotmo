@@ -73,6 +73,7 @@ Got error as expected from try(plotmo(a, lw = 2, trace = 1, thresh = 0.9, SHOWCA
  grid:    temp wind
           53.5    4
 > plotmo(a, pt.col=c(1,2,3), pt.pch=paste(1:nrow(oz2)), pt.cex=.8, type2="co", degree1=0, do.par=F)
+Warning: plotmo: nothing to plot
 > plotmo(a, col=2, SHOWCALL=TRUE) # will cause red response points
  grid:    temp wind
           53.5    4
@@ -139,6 +140,7 @@ before par: cex=0.83 col.main=#456789 col.axis=black mar=3331 mfcol=22
           53.5    4
 > plotmo(a, do.par=FALSE, degree1=1, degree2=1, persp.ticktype="d",
 +           main="do.par=FALSE persp.ticktype=\"d\"")
+Warning: 'degree2' specified but no degree2 plots
  grid:    temp wind
           53.5    4
 > # all of these should have been restored

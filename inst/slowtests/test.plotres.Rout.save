@@ -306,7 +306,8 @@ plotmo_y[81,1]:
 > 
 > library(gam)
 Loading required package: splines
-Loaded gam 1.09.1
+Loading required package: foreach
+Loaded gam 1.12
 
 > gam.package.loaded  <- "package:gam"  %in% search()
 > mgcv.package.loaded <- "package:mgcv" %in% search()
@@ -331,7 +332,7 @@ Loaded gam 1.09.1
 > 
 > library(mda)
 Loading required package: class
-Loaded mda 0.4-4
+Loaded mda 0.4-6
 
 > mars <- mars(ozone1[,2:3], ozone1[,1], degree=2)
 > mars.to.earth <- mars.to.earth(mars)

@@ -655,8 +655,8 @@ degree2.xgrid.global <- NULL
 # TODO Following is ugly.  I would prefer to have two namespace level
 # variables, degree1.data.global and degree2.data.global, similar to the
 # above two variables.  But CRAN check won't allow
-# unlockBinding(degree1.data.global, "plotmo") so we can update those
-# variables.  Also, we can't directly use assignInMyNamespace for these
+# unlockBinding(degree1.data.global, asNamespace("plotmo")) so we can update
+# those variables.  Also, we can't directly use assignInMyNamespace for these
 # variables because we need to update individual list elements.
 
 make.static.list <- function() {

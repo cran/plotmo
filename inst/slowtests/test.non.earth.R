@@ -549,7 +549,7 @@ plotmo(gbm.model, persp.ticktype="d", persp.nticks=2, do.par=F,
 plotmo(gbm.model, type2="im", do.par=F,
        col.response=ptit$survived+2, pt.pch=20, pt.cex=.5)
 print(summary(gbm.model))   # will also plot
-plotres(gbm.model, type2="im", col=ptit$survived+2, do.par=FALSE)
+plotres(gbm.model, col=ptit$survived+2, do.par=FALSE)
 par(mfrow=c(1,1))
 
 ozplus <- ozone1
@@ -581,6 +581,7 @@ plotres(caret.earth.mod, type="raw", trace=1, SHOWCALL=TRUE)
 
 set.seed(2015)
 bag <- bagEarth(O3~., data=ozone1, degree=2, B=3)
+print(bag$fit)
 # pairs are plotted correctly (I think)
 plotmo(bag, type="response", trace=1, SHOWCALL=TRUE)
 

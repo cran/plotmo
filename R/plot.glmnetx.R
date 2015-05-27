@@ -199,7 +199,7 @@ add.s.line <- function(lambda, x, beta, s, grid.col, col1, s.col, ...)
     which <- which.max(diff(y))
     call.plot(text.on.white, PREFIX="s.",
             force.x=log.s, force.y=(y[which]+y[which+1]) / 2,
-            force.label= # gsub below drops leading and trailing zeroes for compactness
+            force.label= # gsub below drops leading and trailing zeros for compactness
                 if(s == 0) "s=0"
                 else        paste0("s=", gsub("^0|0$|\\.0*$", "", signif(s,2))),
             force.col=s.col, def.cex=.8, def.srt=90, def.xpd=NA, ...)

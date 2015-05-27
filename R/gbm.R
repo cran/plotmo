@@ -53,8 +53,8 @@ plotmo.x.gbm <- function(object, ...)
 
     ntrain <- as.integer(object$train.fraction * nrow(object$data$x.order))
     x <- matrix(object$data$x, ncol=ncol(object$data$x.order))
-    colnames(x) <- colnames(object$data$x.order)
     x <- data.frame(x[seq_len(ntrain), ])
+    colnames(x) <- colnames(object$data$x.order)
 
     # convert numeric columns that are actually factors
     # TODO this only works correctly if default ordering of factors was used

@@ -54,7 +54,7 @@ plot.gbmx <- function(object=stop("no 'object' argument"),
     if(is.specified(n.trees))
         vert.line(n.trees, col.n.trees, 1, 0)
 
-    legend.text <- legend.col <- legend.lty <- legend.n <- NULL
+    legend.text <- legend.col <- legend.lty <- legend.vert <- legend.n <- NULL
     offset <- 0 # offset is to distinguish overplotted vertical lines
 
     # train
@@ -64,6 +64,7 @@ plot.gbmx <- function(object=stop("no 'object' argument"),
                      else sprintf("train (frac %g)", object$train.fraction))
     legend.col  <- c(legend.col, col[1])
     legend.lty  <- c(legend.lty, 1)
+    legend.vert <- c(legend.vert, FALSE)
     legend.n    <- which.min(object$train.error)
 
     # test (aka valid.error)
@@ -76,6 +77,7 @@ plot.gbmx <- function(object=stop("no 'object' argument"),
                          sprintf("test (frac %g)", 1-object$train.fraction))
         legend.col  <- c(legend.col, col[2])
         legend.lty  <- c(legend.lty, 1)
+        legend.vert <- c(legend.vert, FALSE)
         legend.n    <- c(legend.n, min)
     }
     # CV
@@ -88,6 +90,7 @@ plot.gbmx <- function(object=stop("no 'object' argument"),
         legend.text <- c(legend.text, sprintf("CV (%g fold)", object$cv.folds))
         legend.col  <- c(legend.col, col[3])
         legend.lty  <- c(legend.lty, 1)
+        legend.vert <- c(legend.vert, FALSE)
         legend.n    <- c(legend.n, min)
     }
     # OOB
@@ -98,18 +101,22 @@ plot.gbmx <- function(object=stop("no 'object' argument"),
                          if(is.na(min)) "OOB not plotted" else "OOB (rescaled)")
         legend.col  <- c(legend.col, col[4])
         legend.lty  <- c(legend.lty, 2)
+        legend.vert <- c(legend.vert, FALSE)
         legend.n    <- c(legend.n, min)
     }
     if(is.specified(n.trees)) {
         legend.text <- c(legend.text, "predict n.trees")
         legend.col  <- c(legend.col, col.n.trees)
         legend.lty  <- c(legend.lty, 1)
+        legend.vert <- c(legend.vert, TRUE)
         legend.n    <- c(legend.n, n.trees)
     }
     box() # replot box because vert.line overplots it slightly
     if(is.specified(legend.x))
-        legend(x=legend.x, y=legend.y, legend=legend.text,
-               col=legend.col, lty=legend.lty, bg="white", cex=legend.cex)
+        elegend(x=legend.x, y=legend.y,
+                legend=legend.text, col=legend.col, lty=legend.lty,
+                vert=legend.vert, # vert is supported by elegend but not by legend
+                bg="white", cex=legend.cex)
 
     toplabs(legend.n, legend.text, legend.col, legend.cex)
 }

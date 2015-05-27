@@ -376,7 +376,7 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
             stop0("nresponse=\"", nresponse,
                   "\" cannot be used because the predicted response has no column names")
         # TODO investigate [1] e.g. for plotmo(a1h.update2, nresponse="numd")
-        nresponse <- imatch.choices(nresponse, colnames)[1]
+        nresponse <- imatch.choices(nresponse, colnames, err.msg.has.index=TRUE)[1]
     }
     check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
     # note that msg is inhibited for trace<0, see trace1 in plotmo_rinfo

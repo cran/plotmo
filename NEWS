@@ -1,6 +1,11 @@
 Changes to plotmo Package
 -------------------------
 
+--- 3.1.1  May 27, 2015
+
+Removed references needed for old versions of earth.  Fixed a
+gbm column naming issue.  Other minor code and document updates.
+
 --- 3.1.0  May 6, 2015
 
 Removed references to functions in old versions of earth.
@@ -9,11 +14,11 @@ Simplified the way xlim and ylim are calculated internally.
 
 Simplified the way jitter is handled.
 
-If type="probability" or similar, and the response has two 
+If type="probability" or similar, and the response has two
 columns, nresponse now automatically defaults to column 2.
 
 Added support for biglm objects.  The predict.biglm method
-(unnecessarily) requires that newdata has a response column, so 
+(unnecessarily) requires that newdata has a response column, so
 plotmo adds a dummy response column before calling predict.biglm.
 
 We now find the data argument for formula models even if the argument
@@ -30,7 +35,7 @@ backwards compatibility using the "dots" routines.
 
 --- 2.2.1  Jan 7, 2015
 
-If pch.response has type character, we now plot the 
+If pch.response has type character, we now plot the
 response points as text.
 
 Earth models with no degree1 terms but with degree2 terms were
@@ -50,7 +55,7 @@ Documentation touchups.
 
 Added a vignette "Notes on the plotmo package".
 
-Some more functions are now exported to allow 
+Some more functions are now exported to allow
 earth::plotmor to easily get the model data
 
 Some documentation touchups as usual.

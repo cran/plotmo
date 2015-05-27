@@ -39,18 +39,6 @@ and other packages.
 You can ignore these.
 }
 \usage{
-# for earth 4.2.0, these will go away
-check.index(index, index.name, object, colnames = NULL, is.col.index =
-    FALSE, allow.empty = FALSE, allow.zeroes = FALSE, allow.negatives =
-    TRUE, allow.dups = FALSE, treat.NA.as.one = FALSE, is.degree.spec =
-    FALSE)
-get.plotmo.type.wrapper(object, env, type, func.name="plotmo")
-get.plotmo.x.wrapper(object, env, trace=0)
-get.plotmo.y.wrapper(object, env, y.column, expected.len, trace)
-get.plotmo.y.default(object, env, y.column, expected.len, trace)
-get.plotmo.pairs(object, env, x, trace, all2)
-get.plotmo.singles(object, env, x, trace, all1)
-get.plotmo.y(object, env, y.column, expected.len, trace)
 # for earth
 plotmo_fitted(object, trace, nresponse, type, ...)
 plotmo_cum(rinfo, info, nfigs=1, add=FALSE,
@@ -88,27 +76,16 @@ plotmo.y(object, trace, naked, expected.len)
 \item{add}{-}
 \item{all1}{-}
 \item{all2}{-}
-\item{allow.dups}{-}
-\item{allow.empty}{-}
-\item{allow.negatives}{-}
-\item{allow.zeroes}{-}
-\item{colnames}{-}
 \item{convert.glm.response}{-}
 \item{cum.col1}{-}
 \item{cum.grid}{-}
 \item{delever}{-}
-\item{env}{-}
 \item{expected.len}{-}
 \item{expected.levs}{-}
 \item{fname}{-}
-\item{func.name}{-}
 \item{grid.col}{-}
-\item{index.name}{-}
-\item{index}{-}
 \item{info}{-}
 \item{inverse.func}{-}
-\item{is.col.index}{-}
-\item{is.degree.spec}{-}
 \item{jitter}{-}
 \item{labels.id}{-}
 \item{level}{-}
@@ -126,10 +103,8 @@ plotmo.y(object, trace, naked, expected.len)
 \item{standardize}{-}
 \item{TRACE}{-}
 \item{trace}{-}
-\item{treat.NA.as.one}{-}
 \item{type}{-}
 \item{x}{-}
-\item{y.column}{-}
 \item{yfull}{-}
 \item{yhat}{-}
 \item{y}{-}

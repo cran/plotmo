@@ -211,7 +211,6 @@ Error : the level argument is not allowed when the predicted values are strings
 Got error as expected from try(plotmo1(mod.earth.tit, level = 0.9, degree2 = 0, type = "class"))
 > 
 > mod.earth.sex <- earth(sex~., data=tit, degree=2, nfold=3, ncross=3, varmod.method="earth", glm=list(family=binomial))
-Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
 > plotmo1(mod.earth.sex)
 plotmo1(object=mod.earth.sex)
  grid:    pclass survived age sibsp  logage
@@ -231,7 +230,6 @@ plotmo1(object=mod.earth.sex,level=0.9,type="earth")
 > 
 > # tit[,3] is sex
 > mod.earth.tit <- earth(tit[,-3], tit[,3], degree=2, nfold=3, ncross=3, varmod.method="earth", glm=list(family=binomial))
-Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
 > plotmo1(mod.earth.tit)
 plotmo1(object=mod.earth.tit)
  grid:    pclass survived age sibsp  logage
@@ -260,12 +258,12 @@ plotmo1(object=mod.earth.tit,level=0.9,type="earth")
 > expect.err(try(plotmo(a.tit)), "predict.earth returned multiple columns")
 
 predict.earth[88,3]:
-       class2 classthird     first
-1   0.2430193  0.4077868 0.3491940
-2   0.2568335  0.4806064 0.2625601
-3   0.2789363  0.5971179 0.1239458
-... 0.2574259  0.5249996 0.2175745
-88  0.2789363  0.5971179 0.1239458
+       class2 classthird      first
+1   0.3179514  0.3141272 0.36792134
+2   0.3179514  0.3141272 0.36792134
+3   0.2400614  0.6754849 0.08445368
+... 0.2180022  0.5645160 0.21748179
+88  0.2400614  0.6754849 0.08445368
 
 Error : predict.earth returned multiple columns (see above) but nresponse is not specified
        Use the nresponse argument to specify a column.
@@ -298,11 +296,11 @@ plotmo1(object=mod.earth.pclass)
 
 predict.earth[88,3]:
        class2 classthird     first
-1   0.4378198  0.3059952 0.2561850
-2   0.2021886  0.6380142 0.1597972
-3   0.2015422  0.6257187 0.1727391
-... 0.1912003  0.4289911 0.3798086
-88  0.2002495  0.6011277 0.1986228
+1   0.3197580  0.2991394 0.3811026
+2   0.3197580  0.2991394 0.3811026
+3   0.2490258  0.6472095 0.1037648
+... 0.1984114  0.5220475 0.2795411
+88  0.2490258  0.6472095 0.1037648
 
 Error : predict.earth returned multiple columns (see above) but nresponse is not specified
        Use the nresponse argument to specify a column.
@@ -341,11 +339,11 @@ plotmo1(object=mod.earth.tit)
 
 predict.earth[88,3]:
        class2 classthird     first
-1   0.4378198  0.3059952 0.2561850
-2   0.2021886  0.6380142 0.1597972
-3   0.2015422  0.6257187 0.1727391
-... 0.1912003  0.4289911 0.3798086
-88  0.2002495  0.6011277 0.1986228
+1   0.3197580  0.2991394 0.3811026
+2   0.3197580  0.2991394 0.3811026
+3   0.2490258  0.6472095 0.1037648
+... 0.1984114  0.5220475 0.2795411
+88  0.2490258  0.6472095 0.1037648
 
 Error : predict.earth returned multiple columns (see above) but nresponse is not specified
        Use the nresponse argument to specify a column.
@@ -414,7 +412,7 @@ plotmo1(object=lm.model.vignette,level=0.9)
 library(mda)
 > library(mda)
 Loading required package: class
-Loaded mda 0.4-4
+Loaded mda 0.4-6
 
 > mars.model.vignette1 <- mars(oz[,-1], oz[,1], degree=2)
 > plotmo1(mars.model.vignette1)

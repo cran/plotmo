@@ -69,7 +69,7 @@ plotres <- function(object = stop("no 'object' argument"),
     if(is.specified(grid.col) && is.logical(grid.col) && grid.col) # grid.col=TRUE
         grid.col <- "lightgray"
     check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
-    # set random seed for reproducibility if jitter is used
+    # set random seed for reproducibility if jitter or isubset is used
     rnorm(1) # seems to be necessary to make .Random.seed available
     old.seed <- .Random.seed
     set.seed(2015)

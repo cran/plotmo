@@ -61,7 +61,7 @@ plotmo_rinfo <- function(object, type=NULL, residtype=type, nresponse=1,
 "forcing nresponse %g to 1 because response - fitted has one column\n", nresponse)
             nresponse <- 1
         }
-        resids <- process.y(resids, object, type, nresponse, 
+        resids <- process.y(resids, object, type, nresponse,
                             expected.len=nrow(fitted),
                             expected.levs=expected.levs, trace, "residuals")$y
         trace2(trace,
