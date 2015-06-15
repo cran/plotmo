@@ -84,7 +84,8 @@ plotmo <- function(object = stop("no 'object' argument"),
     nrug <- get.nrug(nrug, ...)
     extend <- check.numeric.scalar(extend)
     stopifnot(extend > -.3, extend <= 10) # .3 prevents shrinking to nothing, 10 is arb
-    # set random seed for reproducibility if jitter is used
+    # TODO revisit this, causes issues because the following for example produces
+    # the identical last two plots: for(i in 1:3) a <- earth(.., nfold=3); plot(a)
     rnorm(1) # seems to be necessary to make .Random.seed available
     old.seed <- .Random.seed
     on.exit(set.seed(old.seed), add=TRUE)

@@ -1,6 +1,11 @@
 Changes to plotmo Package
 -------------------------
 
+--- 3.1.2  Jun 15, 2015
+
+Added the new vignette "Guidelines for S3 Regression Models".
+Documentation touchups.
+
 --- 3.1.1  May 27, 2015
 
 Removed references needed for old versions of earth.  Fixed a

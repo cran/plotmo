@@ -1,12 +1,12 @@
 > # test.ltut.R: test modified version of linmod example in
 > #              Friedrich Leisch "Creating R Packages: A Tutorial"
 > #
-> # Contains three version of linmod (grep for ###)
-> #   1. original
+> # Contains three version of linmod (grep for "### ")
+> #   1. original code from tutorial
 > #   2. minimal changes for plotmo
-> #   3. production version
+> #   3. production version (includes error checks)
 > 
-> options(warn=1) # print warnings as they occur
+> options(warn=2) # treat warnings as errors
 > 
 > if(!interactive())
 +     postscript(paper="letter")
@@ -33,6 +33,29 @@
 +     stopifnot(coef(fit) == coef(ref))
 +     if(check.coef.names)
 +         stopifnot(names(coef(fit)) == names(coef(ref)))
++ 
++     # following commented out because fit$coefficients is 3x1 and ref$coefficients is a vector.
++     # Note that fit$coefficients is 3x1 to allow multiple response models in some cases, becomes 3x2.
++     # stopifnot(identical(dim(fit$coefficients), dim(ref$coefficients)))
++     stopifnot(length(fit$coefficients) == length(ref$coefficients))
++     stopifnot(max(abs(fit$coefficients - ref$coefficients)) < 1e-10)
++ 
++     # following commented out because fit$residuals is nx2 and ref$residuals is a vector
++     # stopifnot(identical(dim(fit$residuals), dim(ref$residuals)))
++     stopifnot(length(fit$residuals) == length(ref$residuals))
++     stopifnot(max(abs(fit$residuals - ref$residuals)) < 1e-10)
++ 
++     # stopifnot(identical(dim(fit$fitted.values), dim(ref$fitted.values)))
++     stopifnot(length(fit$fitted.values) == length(ref$fitted.values))
++     stopifnot(max(abs(fit$fitted.values - ref$fitted.values)) < 1e-10)
++ 
++     if(!is.null(fit$vcov) && !is.null(ref$vcov)) {
++         stopifnot(identical(dim(fit$vcov), dim(ref$vcov)))
++         stopifnot(length(fit$vcov) == length(ref$vcov))
++         stopifnot(max(abs(fit$vcov - ref$vcov)) < 1e-10)
++     }
++     # stopifnot(max(abs(fit$sigma - ref$sigma)) < 1e-10)
++     stopifnot(max(abs(fit$df - ref$df)) < 1e-10)
 + 
 +     stopifnot(max(abs(fitted(fit) - fitted(ref))) < 1e-10)
 +     stopifnot(names(fitted(fit)) == names(fitted(ref)))
@@ -206,26 +229,27 @@ Got error as expected from try(plotmo(fit2))
 > plotmo.predict.linmod <- NULL
 > 
 > ### minimal changes version
-> ### version of linmod suitable for functions like plotmo ###########
+> ## new version of linmod
 > 
 > linmod <- function(...) UseMethod("linmod")
 > 
-> linmod.fit <- function(x, y)                # first column of x is intercept
-+ {
+> linmod.fit <- function(x, y) # internal function, not for the casual user
++ {                            # first column of x is the intercept (all 1s)
++ 
 +     qx <- qr(x)                             # QR-decomposition of x
 +     coef <- solve.qr(qx, y)                 # compute (x'x)^(-1) x'y
-+     df <- nrow(x) - ncol(x)                 # degrees of freedom
-+     sigma2 <- sum((y - x %*% coef)^2) / df  # stddev of residuals
-+     vcov <- sigma2 * chol2inv(qx$qr)        # covar mat is sigma^2 * (x'x)^-1
++     df.residual <- nrow(x) - ncol(x)        # degrees of freedom
++     sigma2 <- sum((y - x %*% coef)^2) / df.residual  # variance of residuals
++     vcov <- sigma2 * chol2inv(qx$qr)        # covar mat is sigma^2 * (x'x)^(-1)
 +     colnames(vcov) <- rownames(vcov) <- colnames(x)
-+     fitted.values <- as.vector(qr.fitted(qx, y))
++     fitted.values <- qr.fitted(qx, y)
 + 
 +     fit <- list(coefficients  = coef,
 +                 residuals     = y - fitted.values,
 +                 fitted.values = fitted.values,
 +                 vcov          = vcov,
 +                 sigma         = sqrt(sigma2),
-+                 df            = df)
++                 df.residual   = df.residual)
 + 
 +     class(fit) <- "linmod"
 +     fit
@@ -233,7 +257,8 @@ Got error as expected from try(plotmo(fit2))
 > linmod.default <- function(x, y, ...)
 + {
 +     x <- cbind("(Intercept)"=1, as.matrix(x))
-+     fit <- linmod.fit(x, as.matrix(y)) # as.matrix rather than as.vector allows multiple response models
++     # as.matrix rather than as.vector allows multiple response models
++     fit <- linmod.fit(x, as.matrix(y))
 +     fit$call <- match.call()
 +     fit
 + }
@@ -243,7 +268,6 @@ Got error as expected from try(plotmo(fit2))
 +     terms <- attr(mf, "terms")
 +     x <- model.matrix(terms, mf)
 +     y <- model.response(mf)
-+ 
 +     fit <- linmod.fit(x, y)
 +     fit$terms <- terms
 +     fit$call <- match.call()
@@ -253,10 +277,10 @@ Got error as expected from try(plotmo(fit2))
 + {
 +     if(is.null(newdata))
 +         y <- fitted(object)
-+     else{
-+         if(is.null(object$terms))                   # x,y interface
-+             x <- cbind(1, as.matrix(newdata))
-+         else{                                       # formula interface
++     else {
++         if(is.null(object$terms))              # x,y interface
++             x <- cbind(1, as.matrix(newdata))  # columns must be in same order as orig x
++         else {                                 # formula interface
 +             terms <- delete.response(object$terms)
 +             x <- model.matrix(terms, model.frame(terms, as.data.frame(newdata)))
 +         }
@@ -267,6 +291,79 @@ Got error as expected from try(plotmo(fit2))
 > cat("==with the new version we are ok\n")
 ==with the new version we are ok
 > fit1.form <- linmod(Volume~., data=tr)
+> cat("==print.default(fit1.form)\n")
+==print.default(fit1.form)
+> print.default(fit1.form)
+$coefficients
+(Intercept)       Girth      Height 
+-57.9876589   4.7081605   0.3392512 
+
+$residuals
+      tree1       tree2       tree3       tree4       tree5       tree6 
+ 5.46234035  5.74614837  5.38301873  0.52588477 -1.06900844 -1.31832696 
+      tree7       tree8       tree9      tree10      tree11      tree12 
+-0.59268807 -1.04594918  1.18697860 -0.28758128  2.18459773 -0.46846462 
+     tree13      tree14      tree15      tree16      tree17      tree18 
+-0.06846462  0.79384587 -4.85410969 -5.65220290  2.21603352 -6.40648192 
+     tree19      tree20      tree21      tree22      tree23      tree24 
+-4.90097760 -3.79703501  0.11181561 -4.30831896  0.91474029 -3.46899800 
+     tree25      tree26      tree27      tree28      tree29      tree30 
+-2.27770232  4.45713224  3.47624891  4.87148717 -2.39932888 -2.89932888 
+     tree31 
+ 8.48469518 
+
+$fitted.values
+    tree1     tree2     tree3     tree4     tree5     tree6     tree7     tree8 
+ 4.837660  4.553852  4.816981 15.874115 19.869008 21.018327 16.192688 19.245949 
+    tree9    tree10    tree11    tree12    tree13    tree14    tree15    tree16 
+21.413021 20.187581 22.015402 21.468465 21.468465 20.506154 23.954110 27.852203 
+   tree17    tree18    tree19    tree20    tree21    tree22    tree23    tree24 
+31.583966 33.806482 30.600978 28.697035 34.388184 36.008319 35.385260 41.768998 
+   tree25    tree26    tree27    tree28    tree29    tree30    tree31 
+44.877702 50.942868 52.223751 53.428513 53.899329 53.899329 68.515305 
+
+$vcov
+            (Intercept)       Girth      Height
+(Intercept)  74.6189461  0.43217138 -1.05076889
+Girth         0.4321714  0.06983578 -0.01786030
+Height       -1.0507689 -0.01786030  0.01693933
+
+$sigma
+[1] 3.881832
+
+$df.residual
+[1] 28
+
+$terms
+Volume ~ Girth + Height
+attr(,"variables")
+list(Volume, Girth, Height)
+attr(,"factors")
+       Girth Height
+Volume     0      0
+Girth      1      0
+Height     0      1
+attr(,"term.labels")
+[1] "Girth"  "Height"
+attr(,"order")
+[1] 1 1
+attr(,"intercept")
+[1] 1
+attr(,"response")
+[1] 1
+attr(,".Environment")
+<environment: R_GlobalEnv>
+attr(,"predvars")
+list(Volume, Girth, Height)
+attr(,"dataClasses")
+   Volume     Girth    Height 
+"numeric" "numeric" "numeric" 
+
+$call
+linmod.formula(formula = Volume ~ ., data = tr)
+
+attr(,"class")
+[1] "linmod"
 > stopifnot(abs(predict(fit1.form, newdata=data.frame(Girth=10, Height=80)) - 16.234045) < 1e-5)
 > stopifnot(sum(abs(predict(fit1.form, newdata=as.matrix(tr[1:3,])) - c(4.8376597, 4.5538516, 4.8169813))) < 1e-5)
 > 
@@ -275,6 +372,79 @@ Got error as expected from try(plotmo(fit2))
 check fit1.form vs lm.tr
 > 
 > fit1.mat <- linmod(tr[,1:2], tr[,3]) # note no need for intercept term
+> cat("==print.default(fit1.mat)\n")
+==print.default(fit1.mat)
+> print.default(fit1.form)
+$coefficients
+(Intercept)       Girth      Height 
+-57.9876589   4.7081605   0.3392512 
+
+$residuals
+      tree1       tree2       tree3       tree4       tree5       tree6 
+ 5.46234035  5.74614837  5.38301873  0.52588477 -1.06900844 -1.31832696 
+      tree7       tree8       tree9      tree10      tree11      tree12 
+-0.59268807 -1.04594918  1.18697860 -0.28758128  2.18459773 -0.46846462 
+     tree13      tree14      tree15      tree16      tree17      tree18 
+-0.06846462  0.79384587 -4.85410969 -5.65220290  2.21603352 -6.40648192 
+     tree19      tree20      tree21      tree22      tree23      tree24 
+-4.90097760 -3.79703501  0.11181561 -4.30831896  0.91474029 -3.46899800 
+     tree25      tree26      tree27      tree28      tree29      tree30 
+-2.27770232  4.45713224  3.47624891  4.87148717 -2.39932888 -2.89932888 
+     tree31 
+ 8.48469518 
+
+$fitted.values
+    tree1     tree2     tree3     tree4     tree5     tree6     tree7     tree8 
+ 4.837660  4.553852  4.816981 15.874115 19.869008 21.018327 16.192688 19.245949 
+    tree9    tree10    tree11    tree12    tree13    tree14    tree15    tree16 
+21.413021 20.187581 22.015402 21.468465 21.468465 20.506154 23.954110 27.852203 
+   tree17    tree18    tree19    tree20    tree21    tree22    tree23    tree24 
+31.583966 33.806482 30.600978 28.697035 34.388184 36.008319 35.385260 41.768998 
+   tree25    tree26    tree27    tree28    tree29    tree30    tree31 
+44.877702 50.942868 52.223751 53.428513 53.899329 53.899329 68.515305 
+
+$vcov
+            (Intercept)       Girth      Height
+(Intercept)  74.6189461  0.43217138 -1.05076889
+Girth         0.4321714  0.06983578 -0.01786030
+Height       -1.0507689 -0.01786030  0.01693933
+
+$sigma
+[1] 3.881832
+
+$df.residual
+[1] 28
+
+$terms
+Volume ~ Girth + Height
+attr(,"variables")
+list(Volume, Girth, Height)
+attr(,"factors")
+       Girth Height
+Volume     0      0
+Girth      1      0
+Height     0      1
+attr(,"term.labels")
+[1] "Girth"  "Height"
+attr(,"order")
+[1] 1 1
+attr(,"intercept")
+[1] 1
+attr(,"response")
+[1] 1
+attr(,".Environment")
+<environment: R_GlobalEnv>
+attr(,"predvars")
+list(Volume, Girth, Height)
+attr(,"dataClasses")
+   Volume     Girth    Height 
+"numeric" "numeric" "numeric" 
+
+$call
+linmod.formula(formula = Volume ~ ., data = tr)
+
+attr(,"class")
+[1] "linmod"
 > 
 > stopifnot(abs(predict(fit1.mat, newdata=data.frame(Girth=10, Height=80)) - 16.234045) < 1e-5)
 > stopifnot(sum(abs(predict(fit1.mat, newdata=tr[1:3,1:2]) - c(4.8376597, 4.5538516, 4.8169813))) < 1e-5)
@@ -459,6 +629,10 @@ Got error as expected from try(lm(pclass ~ ., data = tit))
 Error in qr.coef(a, b) : 
   (converted from warning) NAs introduced by coercion
 Got error as expected from try(linmod(pclass ~ ., data = tit))
+> expect.err(try(linmod(tit$pclass, tit$survived)), "(converted from warning) NAs introduced by coercion")
+Error in qr.default(x) : 
+  (converted from warning) NAs introduced by coercion
+Got error as expected from try(linmod(tit$pclass, tit$survived))
 > # # production version
 > # expect.err(try(linmod(pclass~., data=tit)), "y is not numeric or logical")
 > options(warn=1)
@@ -482,15 +656,9 @@ Warning in Ops.factor(y, z$residuals) : '-' not meaningful for factors
 > check(fit10a.form, lm10a)
 check fit10a.form vs lm10a
 > 
-> # production version: (minimal version just gives warnings and builds lousy model)
-> # expect.err(try(linmod(tit[,"pclass"], tit[,"age"])), "x is not numeric or logical")
-> 
-> # minimal version
 > expect.err(try(linmod(paste(1:10), 1:10)), "requires numeric/complex matrix/vector arguments")
 Error in x %*% coef : requires numeric/complex matrix/vector arguments
 Got error as expected from try(linmod(paste(1:10), 1:10))
-> # production version
-> # expect.err(try(linmod(paste(1:10), 1:10)), "x is not numeric or logical")
 > 
 > lm11 <- lm(as.numeric(pclass)~., data=tit)
 > fit11.form <- linmod(as.numeric(pclass)~., data=tit)
@@ -588,18 +756,18 @@ Got error as expected from try(linmod(y3 ~ x3))
 > 
 > linmod <- function(...) UseMethod("linmod")
 > 
-> linmod.fit <- function(x, y)                # first column of x is intercept
-+ {
+> linmod.fit <- function(x, y) # internal function, not for the casual user
++ {                            # first column of x is the intercept
 +     if(anyNA(x))
 +         stop("NA in x")
 +     if(!is.numeric(x[[1]]) && !is.logical(x[[1]]))
-+         stop("x is not numeric or logical")
++         stop("non-numeric column in x")
 +     if(anyNA(y))
 +         stop("NA in y")
 +     if(!is.numeric(y[[1]]) && !is.logical(y[[1]]))
 +         stop("y is not numeric or logical")
 + 
-+     # ensure all columns in x are named
++     # ensure all columns in x are named (needed for names in vcov etc.)
 +     missing.colnames <-
 +         if(is.null(colnames(x))) 1:NCOL(x)
 +         else                     nchar(colnames(x)) == 0
@@ -611,11 +779,11 @@ Got error as expected from try(linmod(y3 ~ x3))
 +     if(qx$rank < ncol(x))
 +         stop("x is singular")
 +     coef <- solve.qr(qx, y)                # compute (x'x)^(-1) x'y
-+     df <- nrow(x) - ncol(x)                # degrees of freedom
-+     # TODO consider issuing a warning here if df is 0
-+     sigma2 <- sum((y - x %*% coef)^2) / df # stddev of residuals
++     df.residual <- nrow(x) - ncol(x)       # degrees of freedom
++     # TODO consider issuing a warning here if df.residual is 0
++     sigma2 <- sum((y - x %*% coef)^2) / df.residual # stddev of residuals
 +     vcov <- sigma2 * chol2inv(qx$qr)       # covar mat is sigma^2 * (x'x)^-1
-+     fitted.values <- as.vector(qr.fitted(qx, y))
++     fitted.values <- qr.fitted(qx, y)
 + 
 +     colnames(vcov) <- rownames(vcov) <- colnames(x)
 +     names(fitted.values) <- rownames(x)
@@ -629,7 +797,7 @@ Got error as expected from try(linmod(y3 ~ x3))
 +                 fitted.values = fitted.values,
 +                 vcov          = vcov,
 +                 sigma         = sqrt(sigma2),
-+                 df            = df)
++                 df.residual   = df.residual)
 + 
 +     class(fit) <- "linmod"
 +     fit
@@ -658,9 +826,9 @@ Got error as expected from try(linmod(y3 ~ x3))
 +     if(is.null(newdata))
 +         y <- fitted(object)
 +     else{
-+         if(is.null(object$terms))                       # x,y interface
-+             x <- cbind(1, as.matrix(newdata))
-+         else{                                           # formula interface
++         if(is.null(object$terms)) {                 # x,y interface
++             x <- cbind(1, as.matrix(newdata))       # columns must be in the same order as orig x
++         } else {                                    # formula interface
 +             terms <- delete.response(object$terms)
 +             # Note that the following code can issue quite obscure
 +             # error messages for bad newdata.  For example
@@ -679,7 +847,7 @@ Got error as expected from try(linmod(y3 ~ x3))
 +         if(anyNA(x))
 +             stop("NA in x")
 +         if(!is.numeric(x[[1]]) && !is.logical(x[[1]]))
-+             stop("x is not numeric or logical")
++             stop("non-numeric column in x")
 +         y <- as.vector(x %*% coef(object))
 +     }
 +     y
@@ -861,8 +1029,8 @@ pclass=factor, survived=logical, sex=factor, age=numeric, sibsp=integer, parch=i
 check fit9.form vs lm9
 > 
 > expect.err(try(linmod(tit[,c(1,3,4,5,6)], tit[,"survived"])),
-+            "x is not numeric or logical")
-Error in linmod.fit(x, as.matrix(y)) : x is not numeric or logical
++            "non-numeric column in x")
+Error in linmod.fit(x, as.matrix(y)) : non-numeric column in x
 Got error as expected from try(linmod(tit[, c(1, 3, 4, 5, 6)], tit[, "survived"]))
 > fit9a.form <- lm.fit(data.matrix(cbind("(Intercept)"=1, tit[,c(1,3,4,5,6)])), tit[,"survived"])
 > lm9 <- lm.fit(data.matrix(cbind("(Intercept)"=1, tit[,c(1,3,4,5,6)])), tit[,"survived"])
@@ -891,8 +1059,8 @@ Warning in Ops.factor(y, z$residuals) : '-' not meaningful for factors
 > expect.err(try(linmod(pclass~., data=tit)), "y is not numeric or logical")
 Error in linmod.fit(x, y) : y is not numeric or logical
 Got error as expected from try(linmod(pclass ~ ., data = tit))
-> expect.err(try(linmod(tit[,-1], tit[,1])), "x is not numeric or logical")
-Error in linmod.fit(x, as.matrix(y)) : x is not numeric or logical
+> expect.err(try(linmod(tit[,-1], tit[,1])), "non-numeric column in x")
+Error in linmod.fit(x, as.matrix(y)) : non-numeric column in x
 Got error as expected from try(linmod(tit[, -1], tit[, 1]))
 > expect.err(try(linmod(1:10, paste(1:10))), "y is not numeric or logical")
 Error in linmod.fit(x, as.matrix(y)) : y is not numeric or logical
@@ -903,12 +1071,12 @@ Got error as expected from try(linmod(1:10, paste(1:10)))
 > check(fit10a.form, lm10a)
 check fit10a.form vs lm10a
 > 
-> expect.err(try(linmod(tit[,"pclass"], tit[,"age"])), "x is not numeric or logical")
-Error in linmod.fit(x, as.matrix(y)) : x is not numeric or logical
+> expect.err(try(linmod(tit[,"pclass"], tit[,"age"])), "non-numeric column in x")
+Error in linmod.fit(x, as.matrix(y)) : non-numeric column in x
 Got error as expected from try(linmod(tit[, "pclass"], tit[, "age"]))
 > 
-> expect.err(try(linmod(paste(1:10), 1:10)), "x is not numeric or logical")
-Error in linmod.fit(x, as.matrix(y)) : x is not numeric or logical
+> expect.err(try(linmod(paste(1:10), 1:10)), "non-numeric column in x")
+Error in linmod.fit(x, as.matrix(y)) : non-numeric column in x
 Got error as expected from try(linmod(paste(1:10), 1:10))
 > 
 > lm11 <- lm(as.numeric(pclass)~., data=tit)
@@ -941,9 +1109,12 @@ Error in linmod.fit(x, y) : y is not numeric or logical
 Got error as expected from try(linmod(string ~ ., df.with.string))
 > 
 > vec <- c(1,2,3,4,3)
-> expect.err(try(linmod(df.with.string, vec)), "x is not numeric or logical")
-Error in linmod.fit(x, as.matrix(y)) : x is not numeric or logical
+> expect.err(try(linmod(df.with.string, vec)), "non-numeric column in x")
+Error in linmod.fit(x, as.matrix(y)) : non-numeric column in x
 Got error as expected from try(linmod(df.with.string, vec))
+> expect.err(try(linmod(tit$pclass, tit$survived)), "non-numeric column in x")
+Error in linmod.fit(x, as.matrix(y)) : non-numeric column in x
+Got error as expected from try(linmod(tit$pclass, tit$survived))
 > 
 > cat("==x is singular\n")
 ==x is singular
@@ -989,8 +1160,8 @@ Got error as expected from try(linmod(x, y))
 > 
 > data4 <- data.frame(s=c("a", "b", "c", "a", "a"), num=c(1,9,4,2,6), y=c(1,2,3,5,3), stringsAsFactors=T)
 > stopifnot(sapply(data4, class) == c("factor", "numeric", "numeric"))
-> expect.err(try(linmod(data4[,1:2], data4[,3])), "x is not numeric or logical")
-Error in linmod.fit(x, as.matrix(y)) : x is not numeric or logical
+> expect.err(try(linmod(data4[,1:2], data4[,3])), "non-numeric column in x")
+Error in linmod.fit(x, as.matrix(y)) : non-numeric column in x
 Got error as expected from try(linmod(data4[, 1:2], data4[, 3]))
 > 
 > # following gives no error (and matches lm)

@@ -111,8 +111,8 @@ foo <- function()
 foo()
 
 # test id.n and npoints
+set.seed(1066)
 a20 <- earth(Volume~., data=trees, ncr=3, nfo=3, varmod.method="lm", keepxy=TRUE)
-set.seed(2015)
 par(mfrow=c(2,2), oma=c(0,0,3,0), mar=c(4, 3, 3, 1.5), mgp=c(1.5, 0.4, 0), tcl=-.3, cex=1)
 plot(a20, which=3, standardize=TRUE, smooth.col=0, id.n=-1, main="a20-00, smooth.col=0, id.n=-1",
      caption="test id.n and npoints")
@@ -148,7 +148,8 @@ plotres(a20, which=3, col.smooth=4, smooth.lwd=2, smooth.lty=2,
 plotres(a20, which=4, qq.col=3,
              qqline.col="lightblue", qqline.lty=2, main="a20-05 qq.col=3")
 plotres(a20, which=4, qqline.col=0, main="a20-06 qqline.col=0")
-mod.earth.tit <- earth(tit[,-3], tit[,3], degree=2, nfold=3, ncross=3, varmod.method="earth", keepxy=TRUE)
+# set.seed(1066)
+# mod.earth.tit <- earth(tit[,-3], tit[,3], degree=2, nfold=3, ncross=3, varmod.method="earth", keepxy=TRUE)
 plot(0,0)
 plot(a20, which=1, col.grid="pink", col.rsq=3, lty.rsq=1, main="a20-07 col.grid=\"pink\", col.rsq=3, lty.rsq=1")
 

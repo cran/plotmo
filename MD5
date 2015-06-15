@@ -1,6 +1,6 @@
-ec31e374c7bf07f859b9660d4bc9eec8 *DESCRIPTION
+370df42098049ea3db843962ff2ea1bf *DESCRIPTION
 fabed560ec772636f68cc27d5fc5c873 *NAMESPACE
-ae9184b3c4c0b7dab53105a1863addd7 *NEWS
+4801ebf8ef799ccd656477ab455423a8 *NEWS
 dfa3ff26501f8c3a83c47cad0a731a15 *R/as.char.R
 cf8879f24088412959519db243fd40b4 *R/backcompat.R
 a03a7b43a540df30ed0e93f1cf76ffb9 *R/bx.R
@@ -21,7 +21,7 @@ f15b1c5d7b887117b119acf686711a55 *R/glmnet.R
 9c8f4bd28f5346514f61fdef62afb3d8 *R/plot.gbmx.R
 331cd97c3f8adcacba0f2744f7413c46 *R/plot.glmnetx.R
 ab36a17444b65c6a16172da4ecb2d234 *R/plotcum.R
-bf9d6025035d2075027bcad7b562fe8a *R/plotmo.R
+8b2abeb0a12ee531b8a254eec030b2dd *R/plotmo.R
 e8becf80f68f7cdf130feb106da78bf3 *R/plotqq.R
 8be0ba1bd972ab4da2ce321c1f4761fb *R/plotres.R
 4d44eaf0c743d4a182def97a3342ff9b *R/plotresids.R
@@ -38,9 +38,10 @@ cf4ca4a6d564b913ae9068165ba4cc69 *R/stop.if.dots.R
 d2c6a2e01ecfcf212254881b84a87c31 *R/type.R
 a956bb34755e38d328f53eac009e040c *R/w1.R
 3d617f592eeb34e91e0ed94e1fb46fb7 *R/xy.R
-fec483e46dd61269b7d4e1faad0da6b9 *inst/doc/index.html
-40964e510d11ae5eb4b20bba58af954c *inst/doc/plotmo-notes.pdf
-5f31bda303e93da664be52f2f74e67ad *inst/doc/plotres-notes.pdf
+3f7f314f15b744369ba958c6eadf83bd *inst/doc/index.html
+1b52a70dab80be217565e9a6a3449210 *inst/doc/modguide.pdf
+50f3af0578094c51dd3e56c56d711319 *inst/doc/plotmo-notes.pdf
+e15b41efae187242d6addd70e2cab210 *inst/doc/plotres-notes.pdf
 568ca6b47cbc2e71e73b6c3f40f63b5b *inst/slowtests/README.txt
 8048857e7fb20875a2832c76cb8f8266 *inst/slowtests/make.bat
 054ae9b3d92daeb2496f369b22056357 *inst/slowtests/test.center.R
@@ -58,8 +59,8 @@ e469867e5075dd9792365e2f10b27941 *inst/slowtests/test.emma.bat
 dcf6be9c0ae5174980c839effbc9e1fc *inst/slowtests/test.glmnet.R
 407dd829e09f8afdec96cf30c2de7105 *inst/slowtests/test.glmnet.Rout.save
 96f7f5f5f7057d5f183c497156b5e315 *inst/slowtests/test.glmnet.bat
-40f52ce21f010e29b60e4e4e7694ded7 *inst/slowtests/test.ltut.R
-2a80c12fccd01bde39f12f360be665e2 *inst/slowtests/test.ltut.Rout.save
+3395fbc12c9f13ace5f32a79802860b8 *inst/slowtests/test.ltut.R
+64e7e2aeb60b58c705c2333b639cbfc1 *inst/slowtests/test.ltut.Rout.save
 8e5a5f089e2f2f09b8dabf0278359085 *inst/slowtests/test.ltut.bat
 a44b77061a787700859c8e9a420abb6d *inst/slowtests/test.non.earth.R
 f96af002b4d48ec4331e1c153f171362 *inst/slowtests/test.non.earth.Rout.save
@@ -79,8 +80,8 @@ e5c9749f31d367c4078e29f90a8a9090 *inst/slowtests/test.plotmo.args.R
 14a643017bf8e4bcf49288b8446990cc *inst/slowtests/test.plotmo3.R
 a5565334e758d2b3ab80061bff689802 *inst/slowtests/test.plotmo3.Rout.save
 769a176420b831ec34749c211be1a991 *inst/slowtests/test.plotmo3.bat
-c6e5ada3604840505ad2d14d7ef375df *inst/slowtests/test.plotres.R
-676b66123fcc965792a9579286698c25 *inst/slowtests/test.plotres.Rout.save
+c53aa4bc2e7be79f3592df0489ef5c85 *inst/slowtests/test.plotres.R
+2a94ca380aca34b0fd9f5f0d991b7557 *inst/slowtests/test.plotres.Rout.save
 d5d6c6951222b73a1ee10c79c0fd7451 *inst/slowtests/test.plotres.bat
 55b743d8e00f6e639f77fc12040cb847 *inst/slowtests/test.printcall.R
 6163204eacf76bda320b6894fd554944 *inst/slowtests/test.printcall.Rout.save
