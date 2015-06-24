@@ -639,7 +639,7 @@ fda.earth <- fda(Species~., data=iris, keep.fitted=TRUE, method=earth, keepxy=TR
 fda.polyreg <- fda(Species~., data=iris, keep.fitted=TRUE, keepxy=TRUE)
 fda.bruto <- fda(Species~., data=iris, keep.fitted=TRUE, method=bruto)
 
-# this object is nor supported by plotmo
+# 'fda.polyreg$fit' does not have a 'call' field or 'x' and 'y' fields
 expect.err(try(plotmo(fda.polyreg$fit, type="variates", nresponse=1, clip=F, do.par=F)))
 
 plot(1, main="plotmo with fda", xaxt="n", yaxt="n", xlab="", ylab="",

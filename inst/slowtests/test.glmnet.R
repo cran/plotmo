@@ -75,8 +75,11 @@ plotres1(mod.glmnet.xmat)
 
 set.seed(2015)
 mod.cv.glmnet.xmat <- cv.glmnet(xmat, tit[,4], nfolds=3)
-mod.cv.glmnet.xmat$x <- as.data.frame(xmat)
-mod.cv.glmnet.xmat$y <- tit[,4]
+
+# following was needed before plotmo 3.1.3 (before adding plotmo.prolog.cv.glmnet)
+# mod.cv.glmnet.xmat$x <- as.data.frame(xmat)
+# mod.cv.glmnet.xmat$y <- tit[,4]
+
 cat("==Test plotmo trace=1 and lambda.min\n")
 plotmo1(mod.cv.glmnet.xmat, predict.s="lambda.min", trace=1)
 cat("==Test plotmo trace=2 and lambda.min\n")

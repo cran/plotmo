@@ -956,29 +956,27 @@ handle.nonvector.vars <- function(object, x, field, trace)
 {
     if(!is.data.frame(x))
         return(x)
-
-    # which columns of x have two or more dimensions?
-    ndims.of.each.column <- sapply(x, function(x) length(dim(x)))
-    which <- which(ndims.of.each.column > 1)
-    if(length(which) == 0)
-        return(x) # we are ok, all columns of x are vectors
-
+    ndims.of.each.var <- sapply(x, function(x) NCOL(x))
+    if(all(ndims.of.each.var == 1)) {
+        # we are ok: NCOL is 1 for all variables (even though some
+        # may not be vectors i.e. they could be single column mats)
+        return(x)
+    }
     msg <- sprintf(
         "%s variable on the %s side of the formula is a matrix or data.frame",
-        if(length(which) == 1) "the" else "a",
+        if(ncol(x) == 1) "the" else "a",
         if(field == "x") "right" else "left")
 
-    # We issue the warning only if this is the rhs, because we seem to be able
-    # to recover when the lhs is a non vector.  Thus we don't issue warnings
-    # for valid models like earth(cbind(O3,doy)~., data=ozone1) and
-    # glm(cbind(damage, 6-damage)~temp, family=binomial, data=orings).
-
-    if(field == "x")
+    if(field == "x") {
+        # We issue the warning only if this is the rhs, because we seem to be able
+        # to recover when the lhs is a non vector.  Thus we correctly don't issue 
+        # warnings for valid models like earth(cbind(O3,doy)~., data=ozone1) and
+        # glm(cbind(damage, 6-damage)~temp, family=binomial, data=orings).
         warning0(msg)
-    else if(trace >= 2) {
+    } else if(trace >= 2) {
         printf("%s\n", msg)
-        printf("number of dimensions of each column of %s is %s and ",
-               field, paste.trunc(ndims.of.each.column))
+        printf("the number of dimensions of each variable in %s is %s and ",
+               field, paste.trunc(ndims.of.each.var))
         # details is 1 not 2 below else huge output
         print_summary(x, sprintf("%s is ", field), trace, details=-1)
     }
@@ -986,9 +984,9 @@ handle.nonvector.vars <- function(object, x, field, trace)
     # for the rhs this only sometimes works --- there may be downstream
     # problems, typically in predict (because the column names are wrong?).
 
-    if(ndims.of.each.column[1] > 1) { # first column is not a vector
+    if(ndims.of.each.var[1] > 1) { # first variable is not a vector
         trace2(trace, "replacing %s with %s[[1]]%s\n", field, field,
-               if(length(ndims.of.each.column) == 1) ""
+               if(length(ndims.of.each.var) == 1) ""
                else ", ignoring remaining columns")
         org.colnames <- colnames(x)
         x <- x[[1]]

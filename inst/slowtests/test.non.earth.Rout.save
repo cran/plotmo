@@ -167,7 +167,7 @@ formula is valid, now looking for data for the model.frame
 object$model is usable and has column names response temp
 model.frame[,1] is usable and has column name response
 the variable on the left side of the formula is a matrix or data.frame
-number of dimensions of each column of y is 2 and y is [23,1] with colname response
+the number of dimensions of each variable in y is 2 and y is [23,1] with colname response
 replacing y with y[[1]]
 y colnames were "response" and now "response[,1]" "response[,2]"
 plotmo_y returned[23,2]:
@@ -196,7 +196,7 @@ formula is valid, now looking for data for the model.frame
 object$model is usable and has column names response temp
 model.frame[,1] is usable and has column name response
 the variable on the left side of the formula is a matrix or data.frame
-number of dimensions of each column of y is 2 and y is [23,1] with colname response
+the number of dimensions of each variable in y is 2 and y is [23,1] with colname response
 replacing y with y[[1]]
 y colnames were "response" and now "response[,1]" "response[,2]"
 got model response from object$model
@@ -1396,7 +1396,7 @@ plotmo_y[75,1]:
 > fda.polyreg <- fda(Species~., data=iris, keep.fitted=TRUE, keepxy=TRUE)
 > fda.bruto <- fda(Species~., data=iris, keep.fitted=TRUE, method=bruto)
 > 
-> # this object is nor supported by plotmo
+> # 'fda.polyreg$fit' does not have a 'call' field or 'x' and 'y' fields
 > expect.err(try(plotmo(fda.polyreg$fit, type="variates", nresponse=1, clip=F, do.par=F)))
 Error : 'fda.polyreg$fit' does not have a 'call' field or 'x' and 'y' fields
 Got error as expected

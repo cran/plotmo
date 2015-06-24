@@ -88,8 +88,11 @@ plotres1(object=mod.glmnet.xmat)
 > 
 > set.seed(2015)
 > mod.cv.glmnet.xmat <- cv.glmnet(xmat, tit[,4], nfolds=3)
-> mod.cv.glmnet.xmat$x <- as.data.frame(xmat)
-> mod.cv.glmnet.xmat$y <- tit[,4]
+> 
+> # following was needed before plotmo 3.1.3 (before adding plotmo.prolog.cv.glmnet)
+> # mod.cv.glmnet.xmat$x <- as.data.frame(xmat)
+> # mod.cv.glmnet.xmat$y <- tit[,4]
+> 
 > cat("==Test plotmo trace=1 and lambda.min\n")
 ==Test plotmo trace=1 and lambda.min
 > plotmo1(mod.cv.glmnet.xmat, predict.s="lambda.min", trace=1)
@@ -97,7 +100,7 @@ plotmo1(object=mod.cv.glmnet.xmat,predict.s="lambda.min",trace=1)
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.min")
 stats::fitted(object=cv.glmnet.object)
 fitted() was unsuccessful, will use predict()
-got model response from object$y
+got model response from object$call$y
 
  grid:    survived sibsp  logage
                  0     0 3.06991
@@ -109,9 +112,14 @@ plotmo1(object=mod.cv.glmnet.xmat,predict.s="lambda.min",trace=2)
 assuming the environment of the cv.glmnet model is that of plotmo's caller: env(..., call, caption, object, SHOWCALL, trace)
 plotmo trace 2: plotmo(object, trace=trace, SHOWCALL=SHOWCALL, caption=caption,
                        ...)
-object class is "cv.glmnet" with no object$call
+object$call is glmnet(x=xmat, y=tit[, 4])
 --plotmo_x for cv.glmnet object
-object$x is usable and has column names survived sibsp logage
+object$x is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
+formula(object) did not return a formula
+no formula in object$call
+eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
+object$call$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -123,7 +131,12 @@ plotmo_x returned[88,3]:
 ----Metadata: plotmo_predict with nresponse=NULL and newdata=NULL
 plotmo_predict with NULL newdata (nrows=3), using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
-object$x is usable and has column names survived sibsp logage
+object$x is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
+formula(object) did not return a formula
+no formula in object$call
+eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
+object$call$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -149,7 +162,12 @@ stats::fitted(object=cv.glmnet.object)
 fitted() was unsuccessful, will use predict()
 plotmo_predict with NULL newdata, using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
-object$x is usable and has column names survived sibsp logage
+object$x is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
+formula(object) did not return a formula
+no formula in object$call
+eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
+object$call$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -177,12 +195,16 @@ got fitted values by calling predict (see above)
 
 ----Metadata: plotmo_y with nresponse=NULL
 --plotmo_y with nresponse=NULL for cv.glmnet object
-object$y is usable but without colnames so we will keep on searching
+object$y is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
 formula(object) did not return a formula
-object$call is NULL so cannot get the formula from the call
-object$call is NULL so cannot get object$call$y
-object$call is NULL so cannot use argn
-object$y is usable but without colnames but we will use it anyway
+no formula in object$call
+eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
+object$call$y is usable but without colnames so we will keep on searching
+names(call) is "" "x" "y"
+the name of argument 2 is "y" so we will not process it with argn
+object$y is NULL
+call$y is usable but without colnames but we will use it anyway
 plotmo_y returned[88,1] with no column names:
     NA
 1   29
@@ -202,13 +224,17 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 
 ----Metadata: plotmo_y with nresponse=1
 --plotmo_y with nresponse=1 for cv.glmnet object
-object$y is usable but without colnames so we will keep on searching
+object$y is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
 formula(object) did not return a formula
-object$call is NULL so cannot get the formula from the call
-object$call is NULL so cannot get object$call$y
-object$call is NULL so cannot use argn
-object$y is usable but without colnames but we will use it anyway
-got model response from object$y
+no formula in object$call
+eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
+object$call$y is usable but without colnames so we will keep on searching
+names(call) is "" "x" "y"
+the name of argument 2 is "y" so we will not process it with argn
+object$y is NULL
+call$y is usable but without colnames but we will use it anyway
+got model response from object$call$y
 plotmo_y returned[88,1] with no column names:
     NA
 1   29
@@ -285,7 +311,7 @@ residuals() was unsuccessful
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.1se")
 stats::fitted(object=cv.glmnet.object)
 fitted() was unsuccessful, will use predict()
-got model response from object$y
+got model response from object$call$y
 graphics::plot(cv.glmnet.object)
 
 training rsq 0.13
@@ -296,7 +322,7 @@ plotres1(object=mod.cv.glmnet.xmat,predict.s="lambda.1se",trace=2)
 assuming the environment of the cv.glmnet model is that of plotres's caller: env(..., call, caption, object, SHOWCALL, trace)
 plotres trace 2: plotres(object, trace=trace, SHOWCALL=SHOWCALL,
                          caption=caption, ...)
-object class is "cv.glmnet" with no object$call
+object$call is glmnet(x=xmat, y=tit[, 4])
 
 ----Metadata: plotmo_resids(object, type="response", nresponse=NULL)
 doTryCatch invoked call.dots
@@ -320,7 +346,12 @@ residuals() was unsuccessful
 ----Metadata: plotmo_predict with nresponse=NULL and newdata=NULL
 plotmo_predict with NULL newdata (nrows=3), using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
-object$x is usable and has column names survived sibsp logage
+object$x is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
+formula(object) did not return a formula
+no formula in object$call
+eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
+object$call$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -346,7 +377,12 @@ stats::fitted(object=cv.glmnet.object)
 fitted() was unsuccessful, will use predict()
 plotmo_predict with NULL newdata, using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
-object$x is usable and has column names survived sibsp logage
+object$x is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
+formula(object) did not return a formula
+no formula in object$call
+eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
+object$call$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -374,12 +410,16 @@ got fitted values by calling predict (see above)
 
 ----Metadata: plotmo_y with nresponse=NULL
 --plotmo_y with nresponse=NULL for cv.glmnet object
-object$y is usable but without colnames so we will keep on searching
+object$y is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
 formula(object) did not return a formula
-object$call is NULL so cannot get the formula from the call
-object$call is NULL so cannot get object$call$y
-object$call is NULL so cannot use argn
-object$y is usable but without colnames but we will use it anyway
+no formula in object$call
+eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
+object$call$y is usable but without colnames so we will keep on searching
+names(call) is "" "x" "y"
+the name of argument 2 is "y" so we will not process it with argn
+object$y is NULL
+call$y is usable but without colnames but we will use it anyway
 plotmo_y returned[88,1] with no column names:
     NA
 1   29
@@ -399,13 +439,17 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 
 ----Metadata: plotmo_y with nresponse=1
 --plotmo_y with nresponse=1 for cv.glmnet object
-object$y is usable but without colnames so we will keep on searching
+object$y is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
 formula(object) did not return a formula
-object$call is NULL so cannot get the formula from the call
-object$call is NULL so cannot get object$call$y
-object$call is NULL so cannot use argn
-object$y is usable but without colnames but we will use it anyway
-got model response from object$y
+no formula in object$call
+eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
+object$call$y is usable but without colnames so we will keep on searching
+names(call) is "" "x" "y"
+the name of argument 2 is "y" so we will not process it with argn
+object$y is NULL
+call$y is usable but without colnames but we will use it anyway
+got model response from object$call$y
 plotmo_y returned[88,1] with no column names:
     NA
 1   29
@@ -429,12 +473,16 @@ resp.levs is NULL
 --plotmo_response for newdata: NULL
 using attr(object,".Environment") saved with cv.glmnet model: env(..., call, caption, object, SHOWCALL, trace)
 --plotmo_y with nresponse=1 for cv.glmnet object
-object$y is usable but without colnames so we will keep on searching
+object$y is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
 formula(object) did not return a formula
-object$call is NULL so cannot get the formula from the call
-object$call is NULL so cannot get object$call$y
-object$call is NULL so cannot use argn
-object$y is usable but without colnames but we will use it anyway
+no formula in object$call
+eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
+object$call$y is usable but without colnames so we will keep on searching
+names(call) is "" "x" "y"
+the name of argument 2 is "y" so we will not process it with argn
+object$y is NULL
+call$y is usable but without colnames but we will use it anyway
 plotmo_y returned[88,1] with no column names:
     NA
 1   29
@@ -467,7 +515,12 @@ plotmo_response after processing with nresponse=1 is [88,1]:
 --plotmo_predict for plotmo_rsq1
 plotmo_predict with NULL newdata, using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
-object$x is usable and has column names survived sibsp logage
+object$x is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
+formula(object) did not return a formula
+no formula in object$call
+eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
+object$call$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -511,7 +564,12 @@ stats::residuals(object=cv.glmnet.object, type="response")
 calling predict because residuals was unsuccessful
 plotmo_predict with NULL newdata, using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
-object$x is usable and has column names survived sibsp logage
+object$x is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
+formula(object) did not return a formula
+no formula in object$call
+eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
+object$call$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -536,12 +594,16 @@ predict after processing with nresponse=1 is [88,1]:
 ...  34.86219
 1308 33.66008
 --plotmo_y with nresponse=1 for cv.glmnet object
-object$y is usable but without colnames so we will keep on searching
+object$y is NULL (and it has no colnames)
+object$call is glmnet(x=xmat, y=tit[, 4])
 formula(object) did not return a formula
-object$call is NULL so cannot get the formula from the call
-object$call is NULL so cannot get object$call$y
-object$call is NULL so cannot use argn
-object$y is usable but without colnames but we will use it anyway
+no formula in object$call
+eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
+object$call$y is usable but without colnames so we will keep on searching
+names(call) is "" "x" "y"
+the name of argument 2 is "y" so we will not process it with argn
+object$y is NULL
+call$y is usable but without colnames but we will use it anyway
 plotmo_y returned[88,1] with no column names:
     NA
 1   29
