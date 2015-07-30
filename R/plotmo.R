@@ -101,6 +101,8 @@ plotmo <- function(object = stop("no 'object' argument"),
     }
     # get x so we can get the predictor names and ux.list
     x <- plotmo_x(object, trace)
+    if(NCOL(x) == 0 || NROW(x) == 0)
+        stop("x is empty")
     if(special.trace) # special value of trace was used?
         return(invisible(x))
     meta <- plotmo_meta(object, type, nresponse, trace,
@@ -284,7 +286,7 @@ get.pred.names <- function(colnames.x, nfigs)
     else if(nrows >= 6) { minlength <- 7;  def.cex.main <- .8  }
     else if(nrows >= 5) { minlength <- 8;  def.cex.main <- 1   }
     else if(nrows >= 4) { minlength <- 9;  def.cex.main <- 1.1 }
-    stopifnot(!is.null(colnames.x)) # plotmo_x always returns colnames
+    stopifnot(!is.null(colnames.x)) # plotmo_x always returns colnames (unless no columns)
     list(pred.names      = colnames.x,
          abbr.pred.names = abbreviate(strip.space(colnames.x),
                                       minlength=minlength, method="both.sides"),
@@ -758,7 +760,7 @@ plot.degree1 <- function( # plot all degree1 graphs
                 points.or.text(x=jittered.x, y=jittered.y, pt.col=pt.col,
                                iresponse=iresponse, ...)
             draw.smooth1(smooth.col, x, ipred, y, ux.list, ndiscrete, center, ...)
-            # formal args for plot.factor, needed because CAN check
+            # formal args for plot.factor, needed because "CRAN check"
             # doesn't allow ":::" and plot.factor isn't public
             plot.factor.formals <- c("x", "y", "legend.text")
 

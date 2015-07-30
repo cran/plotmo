@@ -38,21 +38,15 @@ check.lm <- function(fit, ref, check.coef.names=TRUE)
     if(check.coef.names)
         stopifnot(names(coef(fit)) == names(coef(ref)))
 
-    # Following commented out because fit$coefficients
-    # is an n x 1 matrix but ref$coefficients is a vector.
-    # Note that fit$coefficients is n x 1 (and not a vector) to allow
-    # multiple response models in some cases (it becomes n x nresponse).
-    #$$
-    # stopifnot(identical(dim(fit$coefficients), dim(ref$coefficients)))
-
+    stopifnot(identical(dim(fit$coefficients), dim(ref$coefficients)))
     stopifnot(length(fit$coefficients) == length(ref$coefficients))
     stopifnot(almost.equal(fit$coefficients, ref$coefficients))
 
-    # stopifnot(identical(dim(fit$residuals), dim(ref$residuals)))
+    stopifnot(identical(dim(fit$residuals), dim(ref$residuals)))
     stopifnot(length(fit$residuals) == length(ref$residuals))
     stopifnot(almost.equal(fit$residuals, ref$residuals))
 
-    # stopifnot(identical(dim(fit$fitted.values), dim(ref$fitted.values)))
+    stopifnot(identical(dim(fit$fitted.values), dim(ref$fitted.values)))
     stopifnot(length(fit$fitted.values) == length(ref$fitted.values))
     stopifnot(almost.equal(fit$fitted.values, ref$fitted.values))
 
@@ -326,7 +320,7 @@ expect.err(try(linmod(y2~x2)), "'size' cannot exceed nrow(x) = 2")
 
 x3 <- matrix(1:10, ncol=2)
 y3 <- c(1,2,9,4,5)
-# TODO following gives a lousy error message (should be "columns of x are collinear")
+# production version will give a better error message
 expect.err(try(linmod(y3~x3)), "singular matrix 'a' in 'solve'")
 
 cat("==nrow(x) does not match length(y)\n")
@@ -596,11 +590,11 @@ cat("==x is singular\n")
 set.seed(1)
 x2 <- matrix(rnorm(6), nrow=2)
 y2 <- c(1,2)
-expect.err(try(linmod(y2~x2)), "'x' is singular")
+expect.err(try(linmod(y2~x2)), "'x' is singular (it has 4 columns but its rank is 2)")
 
 x3 <- matrix(1:10, ncol=2)
 y3 <- c(1,2,9,4,5)
-expect.err(try(linmod(y3~x3)), "'x' is singular")
+expect.err(try(linmod(y3~x3)), "'x' is singular (it has 3 columns but its rank is 2)")
 
 expect.err(try(linmod(trees[1,1:2], trees[1,3])), "'x' is singular (it has 3 columns but its rank is 1)")
 
@@ -655,6 +649,8 @@ stopifnot(sum(abs(predict(a41, newdata=data5[1:3,1:2]) - c(2.71429, 2.00000, 3.0
 data6 <- data.frame(s=c("a", "b", "c", "a9", "a"), num=c(1,9,4,2,6), y=c(1,2,3,5,3), stringsAsFactors=T)
 expect.err(try(predict(a41, newdata=data6[1:3,1:2])), "ncol(newdata) is 4 but should be 3")
 
+expect.err(try(predict(a41, newdata=data.frame(s=1, num=2, y=3))), "ncol(newdata) is 2 but should be 3")
+
 expect.err(try(predict(a41, newdata=1:9)), "object 's' not found") # issued by model.matrix in predict.linmod
 
 expect.err(try(predict(a41, newdata=data.frame())), "'newdata' is empty")
@@ -678,9 +674,6 @@ expect.err(try(predict(a42, newdata=newdata.with.NA)), "NA in 'newdata'")
 
 a43 <- linmod(Volume~.,data=trees)
 expect.err(try(predict(a43, newdata=newdata.with.NA)), "NA in 'newdata'")
-
-# TODO ncol(newdata) is 3 but should be 3
-# expect.err(try(predict(a41, newdata=data.frame(s=1, num=2, y=3))), "xxx")
 
 y6 <- 1:5
 x6 <- data.frame()
@@ -739,8 +732,7 @@ a56.form <- linmod(Volume~1, data=trees)
 print(summary(a56.form))
 stopifnot(length(coef(a56.form)) == 1)
 plotres(a56.form)
-# TODO following gives error: gen.colnames(x, "x", "x", trace, xname = "x"): length(prefix) <= NCOL(x) is not TRUE
-# plotmo(a56.form)
+expect.err(try(plotmo(a56.form)), "x is empty")
 expect.err(try(linmod(rep(1, length.out=nrow(trees)), trees$Volume)), "'x' is singular (it has 2 columns but its rank is 1)")
 
 # various tests for bad args

@@ -412,7 +412,7 @@ plotmo1(object=lm.model.vignette,level=0.9)
 library(mda)
 > library(mda)
 Loading required package: class
-Loaded mda 0.4-6
+Loaded mda 0.4-7
 
 > mars.model.vignette1 <- mars(oz[,-1], oz[,1], degree=2)
 > plotmo1(mars.model.vignette1)

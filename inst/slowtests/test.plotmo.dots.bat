@@ -1,6 +1,6 @@
 @rem test.plotmo.dots.R:  test handling of dots arguments
 
-@"C:\PROGRA~1\R\R-3.2.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.dots.R
+@"C:\PROGRA~1\R\R-3.2.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.dots.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.dots.Rout:
 @echo.

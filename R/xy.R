@@ -969,7 +969,7 @@ handle.nonvector.vars <- function(object, x, field, trace)
 
     if(field == "x") {
         # We issue the warning only if this is the rhs, because we seem to be able
-        # to recover when the lhs is a non vector.  Thus we correctly don't issue 
+        # to recover when the lhs is a non vector.  Thus we correctly don't issue
         # warnings for valid models like earth(cbind(O3,doy)~., data=ozone1) and
         # glm(cbind(damage, 6-damage)~temp, family=binomial, data=orings).
         warning0(msg)

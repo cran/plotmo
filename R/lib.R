@@ -309,6 +309,8 @@ fix.lim <- function(lim)
 
 gen.colnames <- function(x, prefix="x", alt.prefix=prefix, trace=0, xname=NULL)
 {
+    if(NCOL(x) == 0)
+        return(NULL)
     # If prefix is long and has characters like ( or [ then use the
     # alternate prefix.  This is sometimes necessary when prefix is
     # generated using deparse and the arg is something like

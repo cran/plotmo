@@ -167,6 +167,30 @@ plotmo.predict.biglm <- function(object, newdata, type, ..., TRACE) # biglm pack
     colnames(data) <- c(resp.name, colnames(newdata))
     plotmo.predict.default(object, data, type=type, ..., TRACE=TRACE)
 }
+plotmo.predict.boosting <- function(object, newdata,  # adabag package
+    type="prob", newmfinal=length(object$trees), ...)
+{
+    stopifnot(inherits(object, "boosting") || inherits(object, "bagging"))
+    predict <- predict(object, newdata=newdata, newmfinal=newmfinal, ...)
+    # adabag (version 4.0) returns a list, so use the type arg to select what we want
+    # note that data.frames are lists, hence must check both below
+    if(is.list(predict) && !is.data.frame(predict))
+        predict <-
+            switch(match.arg(type, c("response", "votes", "prob", "class")),
+                response = predict$prob, # plotmo default, same as prob
+                votes    = predict$votes,
+                prob     = predict$prob,
+                class    = predict$class)
+
+    stopifnot(!is.null(predict), NROW(predict) == NROW(newdata))
+    predict
+}
+plotmo.predict.bagging <- function(object, newdata,  # adabag package
+    type="prob", newmfinal=length(object$trees), ...)
+{
+    plotmo.predict.boosting(object, newdata=newdata,
+                            type=type, newmfinal=newmfinal, ...)
+}
 # TODO Following commented out because polyreg is not supported by plotmo
 # So with this commented out we support plotmo(fda.object)
 # but not plotmo(fda.object$fit).

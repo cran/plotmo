@@ -664,7 +664,7 @@ draw.rlm.line <- function(which, versus1, resids, nversus, ...)
     # robust linear regression of trans.resids on x
     # na.omit is needed if some versus1 (or resids) were nonpos so log(versus1) is NA
     rlm <- MASS::rlm(trans.resids~x, method="MM", na.action="na.omit")
-    call.dots(graphics::abline,
+    call.dots(abline,
         force.coef = coef(rlm),
         force.col  = "lightblue",
         force.lwd  = dot("smooth.lwd lwd.smooth lwd.loess",

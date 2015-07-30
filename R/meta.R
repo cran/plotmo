@@ -234,11 +234,10 @@ process.y <- function(y, object, type, nresponse,
         stop0(fname, " NULL")
     if(length(y) == 0)
         stop0(fname, " zero length")
+    print_summary(y, sprintf("%s returned", fname), trace)
     if(is.list(y) && !is.data.frame(y)) # data.frames are lists, hence must check both
         stop0(fname, " list, was expecting a vector, matrix, or data.frame\n",
               "       list(", list.as.char(y), ")")
-    nresponses <- NCOL(y)
-    print_summary(y, sprintf("%s returned", fname), trace)
     returned.resp.levs <- if(length(dim(y)) == 2) levels(y[,1]) else levels(y[1])
     resp.class <- class(y[1])
     colnames <- NULL

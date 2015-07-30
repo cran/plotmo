@@ -1,7 +1,7 @@
 @rem test.non.earth.bat: test plotmo on non-earth models
 @rem Stephen Milborrow, Basley KwaZulu-Natal Mar 2011
 
-@"C:\PROGRA~1\R\R-3.2.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.non.earth.R
+@"C:\PROGRA~1\R\R-3.2.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.non.earth.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.non.earth.Rout:
 @echo.

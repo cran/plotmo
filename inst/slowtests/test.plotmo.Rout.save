@@ -5,7 +5,7 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 3.2.0 (2015-04-16)"
+[1] "R version 3.2.1 (2015-06-18)"
 > print(citation("rpart.plot"))
 
 To cite package 'rpart.plot' in publications use:

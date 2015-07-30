@@ -184,9 +184,9 @@ stopifnot(plotmo:::expand.drop("a", prefix="prefix.", func=nchar) == ">PREFIX|>E
 
 stopifnot(plotmo:::expand.drop("a", prefix="prefix.", func=nchar, include.standard.prefixes=TRUE) == ">STANDARDPREFIXES|^force\\.|^def\\.|^drop\\.|>PREFIX|^prefix\\.|>EXPLICIT|^a")
 
-stopifnot(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=base::nchar) == ">FORMALS|^x|^type|^allowNA|>PREFIX|>EXPLICIT")
+stopifnot(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=base::nchar) == ">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT")
 
-stopifnot(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=base::nchar, include.standard.prefixes=TRUE) == ">FORMALS|^x|^type|^allowNA|>STANDARDPREFIXES|^force\\.|^def\\.|^drop\\.|>PREFIX|^prefix\\.|>EXPLICIT")
+stopifnot(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=base::nchar, include.standard.prefixes=TRUE) == ">FORMALS|^x|^type|^allowNA|^keepNA|>STANDARDPREFIXES|^force\\.|^def\\.|^drop\\.|>PREFIX|^prefix\\.|>EXPLICIT")
 
 expect.err(try(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=NULL)), "\"FORMALS\" specified in DROP, but FUNC is NULL")
 
@@ -195,9 +195,9 @@ expect.err(try(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=base::c)),
 foo99 <- function(...) NULL
 expect.err(try(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=foo99)), "\"FORMALS\" specified but formals(FUNC) returned only \"...\"")
 
-stopifnot(plotmo:::expand.drop("a,FORMALS", prefix="prefix.", func=base::nchar) == ">FORMALS|^x|^type|^allowNA|>PREFIX|>EXPLICIT|^a")
+stopifnot(plotmo:::expand.drop("a,FORMALS", prefix="prefix.", func=base::nchar) == ">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^a")
 
-stopifnot(plotmo:::expand.drop("a,FORMALS", prefix="prefix.", func=base::nchar, include.standard.prefixes=TRUE) == ">FORMALS|^x|^type|^allowNA|>STANDARDPREFIXES|^force\\.|^def\\.|^drop\\.|>PREFIX|^prefix\\.|>EXPLICIT|^a")
+stopifnot(plotmo:::expand.drop("a,FORMALS", prefix="prefix.", func=base::nchar, include.standard.prefixes=TRUE) == ">FORMALS|^x|^type|^allowNA|^keepNA|>STANDARDPREFIXES|^force\\.|^def\\.|^drop\\.|>PREFIX|^prefix\\.|>EXPLICIT|^a")
 
 expect.err(try(plotmo:::expand.drop("", prefix="prefix.", func=base::nchar)), "DROP is an empty string")
 
@@ -223,13 +223,13 @@ stopifnot(plotmo:::expand.drop("abc,PLOT.ARGS", prefix="lines.", func=base::ncha
 ">PREFIX|>EXPLICIT|^abc|>PLOT_ARGS|^add$|^adj$|^bty$|^cex$|^cex\\.axis$|^cex\\.lab$|^cex\\.main$|^cex\\.sub$|^col$|^col\\.axis$|^col\\.lab$|^col\\.main$|^col\\.sub$|^crt$|^family$|^font$|^font$|^font\\.axis$|^font\\.lab$|^font\\.main$|^font\\.sub$|^lend$|^ljoin$|^lmitre$|^lty$|^lwd$|^main$|^pch$|^srt$|^xaxp$|^xaxs$|^xaxt$|^xlab$|^xlim$|^xlog$|^xpd$|^yaxp$|^yaxs$|^yaxt$|^ylab$|^ylim$|^ylog$")
 
 stopifnot(plotmo:::expand.drop("abc,FORMALS,PLOT.ARGS", prefix="lines.", func=base::nchar) ==
-">FORMALS|^x|^type|^allowNA|>PREFIX|>EXPLICIT|^abc|>PLOT_ARGS|^add$|^adj$|^bty$|^cex$|^cex\\.axis$|^cex\\.lab$|^cex\\.main$|^cex\\.sub$|^col$|^col\\.axis$|^col\\.lab$|^col\\.main$|^col\\.sub$|^crt$|^family$|^font$|^font$|^font\\.axis$|^font\\.lab$|^font\\.main$|^font\\.sub$|^lend$|^ljoin$|^lmitre$|^lty$|^lwd$|^main$|^pch$|^srt$|^xaxp$|^xaxs$|^xaxt$|^xlab$|^xlim$|^xlog$|^xpd$|^yaxp$|^yaxs$|^yaxt$|^ylab$|^ylim$|^ylog$")
+">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PLOT_ARGS|^add$|^adj$|^bty$|^cex$|^cex\\.axis$|^cex\\.lab$|^cex\\.main$|^cex\\.sub$|^col$|^col\\.axis$|^col\\.lab$|^col\\.main$|^col\\.sub$|^crt$|^family$|^font$|^font$|^font\\.axis$|^font\\.lab$|^font\\.main$|^font\\.sub$|^lend$|^ljoin$|^lmitre$|^lty$|^lwd$|^main$|^pch$|^srt$|^xaxp$|^xaxs$|^xaxt$|^xlab$|^xlim$|^xlog$|^xpd$|^yaxp$|^yaxs$|^yaxt$|^ylab$|^ylim$|^ylog$")
 
 stopifnot(plotmo:::expand.drop("abc,FORMALS,PAR.ARGS", prefix="lines.", func=base::nchar) ==
-">FORMALS|^x|^type|^allowNA|>PREFIX|>EXPLICIT|^abc|>PAR_ARGS|^adj$|^ann$|^ask$|^bg$|^bty$|^cex$|^cex\\.axis$|^cex\\.lab$|^cex\\.main$|^cex\\.sub$|^col\\.axis$|^col\\.lab$|^col\\.main$|^col\\.sub$|^crt$|^err$|^family$|^fg$|^fig$|^fin$|^font$|^font\\.axis$|^font\\.lab$|^font\\.main$|^font\\.sub$|^lab$|^las$|^lend$|^lheight$|^ljoin$|^lmitre$|^lty$|^mai$|^mar$|^mex$|^mfcol$|^mfg$|^mfrow$|^mgp$|^mkh$|^new$|^oma$|^omd$|^omi$|^pch$|^pin$|^plt$|^ps$|^pty$|^srt$|^tck$|^tcl$|^usr$|^xaxp$|^xaxs$|^xaxt$|^xlog$|^xpd$|^yaxp$|^yaxs$|^yaxt$|^ylbias$|^ylog$")
+">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PAR_ARGS|^adj$|^ann$|^ask$|^bg$|^bty$|^cex$|^cex\\.axis$|^cex\\.lab$|^cex\\.main$|^cex\\.sub$|^col\\.axis$|^col\\.lab$|^col\\.main$|^col\\.sub$|^crt$|^err$|^family$|^fg$|^fig$|^fin$|^font$|^font\\.axis$|^font\\.lab$|^font\\.main$|^font\\.sub$|^lab$|^las$|^lend$|^lheight$|^ljoin$|^lmitre$|^lty$|^mai$|^mar$|^mex$|^mfcol$|^mfg$|^mfrow$|^mgp$|^mkh$|^new$|^oma$|^omd$|^omi$|^pch$|^pin$|^plt$|^ps$|^pty$|^srt$|^tck$|^tcl$|^usr$|^xaxp$|^xaxs$|^xaxt$|^xlog$|^xpd$|^yaxp$|^yaxs$|^yaxt$|^ylbias$|^ylog$")
 
 stopifnot(plotmo:::expand.drop("abc,FORMALS,PLOTMO.ARGS", prefix="lines.", func=base::nchar) ==
-">FORMALS|^x|^type|^allowNA|>PREFIX|>EXPLICIT|^abc|>PLOTMO_ARGS|^caption\\.|^cex\\.|^col\\.|^contour\\.|^cum\\.|^degree1\\.|^degree2\\.|^density\\.|^filled\\.contour\\.|^font\\.|^func\\.|^grid\\.|^heatmap\\.|^image\\.|^jitter\\.|^legend\\.|^label\\.|^level\\.|^line\\.|^lines\\.|^lty\\.|^lty\\.|^lwd\\.|^main\\.|^mtext\\.|^nresiduals|^par\\.|^pch\\.|^persp\\.|^plot\\.|^plotmath\\.|^qq\\.|^qqline\\.|^pt\\.|^response\\.|^rug\\.|^smooth\\.|^text\\.|^title\\.|^vfont\\.")
+">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PLOTMO_ARGS|^caption\\.|^cex\\.|^col\\.|^contour\\.|^cum\\.|^degree1\\.|^degree2\\.|^density\\.|^filled\\.contour\\.|^font\\.|^func\\.|^grid\\.|^heatmap\\.|^image\\.|^jitter\\.|^legend\\.|^label\\.|^level\\.|^line\\.|^lines\\.|^lty\\.|^lty\\.|^lwd\\.|^main\\.|^mtext\\.|^nresiduals|^par\\.|^pch\\.|^persp\\.|^plot\\.|^plotmath\\.|^qq\\.|^qqline\\.|^pt\\.|^response\\.|^rug\\.|^smooth\\.|^text\\.|^title\\.|^vfont\\.")
 
 test.deprefix <- function(expected, ..., FNAME="test.deprefix", KEEP=NULL)
 {
@@ -639,8 +639,8 @@ plot2(lmfit, residuals.type="pearson", ylab="pearson residuals", main="plot2")
 plot3 <- function(object, ..., TRACE=2)
 {
     resids <- plotmo:::call.dots(stats::residuals,
-                                 DROP="PLOTALL,predict.,plot.", TRACE=TRACE,
-                                 force.object=object, ...)
+                                 DROP="plotmo:::PLOTARGS,predict.,plot.", 
+                                 TRACE=TRACE, force.object=object, ...)
 
     fitted <- plotmo:::call.dots(stats::predict,
                                  force.object=object, TRACE=TRACE, ...)
