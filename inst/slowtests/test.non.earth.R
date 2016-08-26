@@ -697,6 +697,18 @@ biglm <- update(biglm, chunk2)
 plotmo(biglm, pt.col=2, SHOWCALL=TRUE)
 plotres(biglm, SHOWCALL=TRUE)
 
+library(adabag)
+data(iris)
+set.seed(2015)
+# mfinal=3 for speed during testing
+mod.boosting <- boosting(Species~., data=iris, mfinal=3)
+mod.bagging <- bagging(Species~., data=iris, mfinal=3)
+dopar(4, 4, caption="adabag package")
+plotmo(mod.boosting, nresponse=1, ylim=c(0,1), do.par=FALSE) # default type="prob"
+plotmo(mod.boosting, type="class", do.par=FALSE)
+plotmo(mod.bagging, nresponse=1, ylim=c(0,1), do.par=FALSE)
+plotmo(mod.bagging, nresponse=1, type="votes", do.par=FALSE)
+
 if(!interactive()) {
     dev.off()         # finish postscript plot
     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs

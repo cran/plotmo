@@ -37,8 +37,8 @@ export(plotmo_standardizescale)
 export(plotmo_type)
 export(plotmo_y)
 S3method(plotmo.y, default)
-importFrom("grDevices", "as.graphicsAnnot", "gray", "xy.coords")
-     importFrom("graphics", "abline", "axis", "box", "grid", "image",
+importFrom("grDevices", "as.graphicsAnnot", "col2rgb", "gray", "xy.coords")
+importFrom("graphics", "abline", "axis", "box", "grid", "image",
      "legend", "lines", "mtext", "par", "plot", "points",
      "polygon", "rect", "segments", "strheight", "strwidth",
      "text", "xinch", "yinch")

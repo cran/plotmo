@@ -29,12 +29,12 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call test.dots.bat
                         @if %errorlevel% NEQ 0 goto error
-@rem for a thorough test, we also run \b\earth\inst\slowtests\make.bat
-@cd \b\earth\inst\slowtests
+@rem for a thorough test, we also run \a\r\earth\inst\slowtests\make.bat
+@cd \a\r\earth\inst\slowtests
                         @if %errorlevel% NEQ 0 goto error
 @call make.bat
                         @if %errorlevel% NEQ 0 goto error
-@cd \b\plotmo\inst\slowtests
+@cd \a\r\plotmo\inst\slowtests
 @goto done
 :error
 @echo ==== ERROR ====

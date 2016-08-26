@@ -1,5 +1,5 @@
 Package: plotmo
-Version: 3.1.4
+Version: 3.1.5
 Title: Plot a Model's Response and Residuals
 Author: Stephen Milborrow
 Maintainer: Stephen Milborrow <milbo@sonic.net>
@@ -11,6 +11,6 @@ Suggests: earth (>= 4.3.0), MASS, neuralnet, rpart, rpart.plot
 License: GPL-3
 URL: http://www.milbo.users.sonic.net
 NeedsCompilation: no
-Packaged: 2015-07-30 09:33:47 UTC; milbo
+Packaged: 2016-08-26 16:59:39 UTC; milbo
 Repository: CRAN
-Date/Publication: 2015-07-30 19:07:26
+Date/Publication: 2016-08-26 20:35:42

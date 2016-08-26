@@ -1,7 +1,7 @@
 # dot.R: functions to access dot arguments
 # Stephen Milborrow Mar 2015 Durban
 #
-# TODO when match.call is fixed (R 3.2.0), remove the dots arg in all these funcs
+# TODO when match.call is fixed (R 3.2.1), remove the dots arg in all these funcs
 #      i.e. use the parent's dots
 
 dot <- function(ARGNAME, ..., DEF=NA, EX=TRUE, NEW=NA)
@@ -85,7 +85,7 @@ process.exact <- function(argname, exact)
     if(length(exact) > length(argname))
         stop0("length(EX)=", length(exact),
               " is greater than length(ARGNAME)=", length(argname))
-    rep(exact, length.out=length(argname)) # recycle
+    recycle(exact, argname)
 }
 process.new <- function(new, argname, defname) # returns NA or a string
 {

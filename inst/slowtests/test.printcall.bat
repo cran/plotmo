@@ -1,6 +1,6 @@
 @rem test.printcall.R:  test printcall
 
-@"C:\PROGRA~1\R\R-3.2.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.printcall.R
+@"C:\PROGRA~1\R\R-3.3.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.printcall.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.printcall.Rout:
 @echo.

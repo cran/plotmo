@@ -5,31 +5,29 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 3.2.1 (2015-06-18)"
+[1] "R version 3.3.1 (2016-06-21)"
 > print(citation("rpart.plot"))
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (). rpart.plot: Plot rpart Models.  An Enhanced
-  Version of plot.rpart. R package version 1.5.3.
-  http://www.milbo.org/rpart-plot
+  Stephen Milborrow (2016). rpart.plot: Plot 'rpart' Models: An
+  Enhanced Version of 'plot.rpart'. R package version 2.0.1.
+  https://CRAN.R-project.org/package=rpart.plot
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
-    title = {rpart.plot: Plot rpart Models.  An Enhanced Version of plot.rpart},
+    title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    note = {R package version 1.5.3},
-    url = {http://www.milbo.org/rpart-plot},
+    year = {2016},
+    note = {R package version 2.0.1},
+    url = {https://CRAN.R-project.org/package=rpart.plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")'.
 
-Warning message:
-In citation("rpart.plot") :
-  no date field in DESCRIPTION file of package 'rpart.plot'
 > 
 > library(earth)
 Loading required package: plotmo
@@ -1427,14 +1425,14 @@ plotmo_x returned[9,2]:
 calling predict.lm with NULL newdata
 stats::predict(lm.object, NULL, type="response")
 predict returned[9,1] with no column names:
-           NA
+             
 1    8.098674
 2    3.323243
 3    8.792796
 ...  8.674176
 9   10.564707
 predict after processing with nresponse=NULL is [9,1] with no column names:
-           NA
+             
 1    8.098674
 2    3.323243
 3    8.792796
@@ -1444,14 +1442,14 @@ predict after processing with nresponse=NULL is [9,1] with no column names:
 ----Metadata: plotmo_fitted with nresponse=NULL
 stats::fitted(object=lm.object)
 fitted(object) returned[9,1] with no column names:
-           NA
+             
 1    8.098674
 2    3.323243
 3    8.792796
 ...  8.674176
 9   10.564707
 fitted(object) after processing with nresponse=NULL is [9,1] with no column names:
-           NA
+             
 1    8.098674
 2    3.323243
 3    8.792796
@@ -1544,7 +1542,7 @@ newdata[50,2]:
 50  18.000000  6
 stats::predict(lm.object, data.frame[50,2], type="response")
 predict returned[50,1] with no column names:
-           NA
+             
 1   10.107826
 2   10.000117
 3    9.892409

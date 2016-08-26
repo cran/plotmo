@@ -412,7 +412,7 @@ plotmo1(object=lm.model.vignette,level=0.9)
 library(mda)
 > library(mda)
 Loading required package: class
-Loaded mda 0.4-7
+Loaded mda 0.4-9
 
 > mars.model.vignette1 <- mars(oz[,-1], oz[,1], degree=2)
 > plotmo1(mars.model.vignette1)
@@ -535,7 +535,7 @@ plotmo1(object=mod.lars.xmat,nresponse=4,do.par=F)
 > plotres(mod.lars.xmat, trace=0, nresponse=4)
 
 plotmo_y[88,1] with no column names:
-    NA
+      
 1   29
 2   24
 3   25
@@ -553,7 +553,7 @@ Using the GLPK callable library version 4.47
 Loading required package: glmnet
 Loading required package: Matrix
 Loading required package: foreach
-Loaded glmnet 2.0-2
+Loaded glmnet 2.0-5
 
 
 Attaching package: 'cosso'

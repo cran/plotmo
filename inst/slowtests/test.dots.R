@@ -639,7 +639,7 @@ plot2(lmfit, residuals.type="pearson", ylab="pearson residuals", main="plot2")
 plot3 <- function(object, ..., TRACE=2)
 {
     resids <- plotmo:::call.dots(stats::residuals,
-                                 DROP="plotmo:::PLOTARGS,predict.,plot.", 
+                                 DROP="plotmo:::PLOTARGS,predict.,plot.",
                                  TRACE=TRACE, force.object=object, ...)
 
     fitted <- plotmo:::call.dots(stats::predict,

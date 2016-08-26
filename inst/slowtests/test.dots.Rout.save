@@ -1073,7 +1073,7 @@ plot(x=c(-11,0,11,22,3...), y=c(12,4,-2,-6,-8...), main="plot2", ylab="pearson
 > plot3 <- function(object, ..., TRACE=2)
 + {
 +     resids <- plotmo:::call.dots(stats::residuals,
-+                                  DROP="plotmo:::PLOTARGS,predict.,plot.", 
++                                  DROP="plotmo:::PLOTARGS,predict.,plot.",
 +                                  TRACE=TRACE, force.object=object, ...)
 + 
 +     fitted <- plotmo:::call.dots(stats::predict,

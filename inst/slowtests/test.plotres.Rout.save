@@ -333,7 +333,7 @@ Loaded gam 1.12
 > 
 > library(mda)
 Loading required package: class
-Loaded mda 0.4-7
+Loaded mda 0.4-9
 
 > mars <- mars(ozone1[,2:3], ozone1[,1], degree=2)
 > mars.to.earth <- mars.to.earth(mars)

@@ -45,10 +45,9 @@ plotmo_qq <- function(rinfo, info, nfigs,
     pt.col <- dot("qq.col col.residuals col.resid col", EX=c(0,1,1,1), DEF=pt.col, NEW=1, ...)
     # recycle
     pt.col <- repl(pt.col, length(resids))
-
     pt.cex <- dot("response.cex cex.response", DEF=1, ...)
-    pt.cex <- dot("pt.cex cex.points cex.point", EX=c(0,1,1), DEF=pt.cex, NEW=1, ...)
-    pt.cex <- dot("qq.cex cex.qq cex.residuals cex", EX=c(0,1,1,1), DEF=pt.cex, NEW=1, ...)
+    pt.cex <- dot("pt.cex cex.points cex.point cex", EX=c(0,1,1,1), DEF=pt.cex, NEW=1, ...)
+    pt.cex <- dot("qq.cex cex.qq cex.residuals", EX=c(0,1,1), DEF=pt.cex, NEW=1, ...)
     pt.cex <- pt.cex * pt.cex(length(resids), npoints)
     pt.cex <- repl(pt.cex, length(resids))
 

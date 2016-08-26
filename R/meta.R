@@ -299,8 +299,11 @@ get.specified.col.and.force.numeric <- function(y, nresponse, resp.name,
     if(is.factor(y[1])) {
         trace2(trace, "converted to numeric from factor with levels %s\n",
                quotify.trunc(levels(y)))
+        # plotmo 3.1.5 (aug 2016): Use as.vector to drop attributes,
+        # else all.equal fails when expected.levs has "ordered" attribute.
+        all.equal <- isTRUE(all.equal(as.vector(expected.levs), levels(y[1])))
         # TODO this may be a bogus warning
-        if(!is.null(expected.levs) && !all.equal(expected.levs, levels(y[1])))
+        if(!is.null(expected.levs) && !all.equal)
             warning0(fname, " returned a factor with levels ",
                      quotify.trunc(levels(y[1])),
                      " (expected levels ", quotify.trunc(expected.levs), ")")

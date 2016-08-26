@@ -4,12 +4,13 @@
 # (i)   new type "rlambda"  ("r" for reverse) with new args s and nresponse
 # (ii)  use dots package so can change xlab, ylab, col, etc. using dot args
 # (iii) label is now the nbr of labels to display, special value TRUE means all
-# (iv)  new argument grid.col to optionally add a grid
-# (v)   simplicity of original plot.glmnet code is gone :(
+# (iv)  different palette for coef lines
+# (v)   new argument grid.col to optionally add a grid
+# (vi)  simplicity of original plot.glmnet code is gone :(
 #
-# This code is based on glmnet version 2.0-1.
+# This code is based on glmnet version 2.0-5 (march 2016).
 
-plot.glmnetx <- function(x, xvar=c("norm","lambda","rlambda","dev"), label=20,
+plot.glmnetx <- function(x, xvar=c("norm","lambda","rlambda","dev"), label=10,
                          grid.col=NA, s=NA, nresponse=1, norm=NULL, ...)
 {
     object <- x
@@ -30,6 +31,7 @@ plot.glmnetx <- function(x, xvar=c("norm","lambda","rlambda","dev"), label=20,
     #     legend("topleft", legend="only one coefficient is nonzero", bty="n")
     #     return()
     # }
+    coef.col <- get.coef.col(..., beta=beta, ibeta=ibeta)  # color of coef lines
     beta <- as.matrix(beta[ibeta, , drop=FALSE])
     xvar <- match.arg(xvar)
     switch(xvar,
@@ -66,11 +68,12 @@ plot.glmnetx <- function(x, xvar=c("norm","lambda","rlambda","dev"), label=20,
     # named index of varnames to be printed on right of plot, NULL if none
     iname <- get.iname(beta, ibeta, label)
 
-    opar <- par("mar", "cex.axis", "cex.lab")
-    on.exit(par(mar=opar$mar, cex.axis=opar$cex.axis, cex.lab=opar$cex.lab))
+    opar <- par("mar", "mgp", "cex.axis", "cex.lab")
+    on.exit(par(mar=opar$mar, mgp=opar$mgp, cex.axis=opar$cex.axis,
+                cex.lab=opar$cex.lab))
     mar4 <- opar$mar[4] # right hand margin
     if(length(iname)) {
-        cex.names <- min(1, max(.5, 2 / sqrt(length(iname)))) # seems reasonable
+        cex.names <- min(1, max(.5, 2.5 / sqrt(length(iname)))) # seems reasonable
         # ensure right margin is big enough for the varnames
         # can't use strwidth because no plot yet, so just estimate
         mar4 <- max(opar$mar[4] + 1,
@@ -79,8 +82,8 @@ plot.glmnetx <- function(x, xvar=c("norm","lambda","rlambda","dev"), label=20,
     # set mar[3] for top axis label and mar[4] for right hand labels
     par(mar=c(opar$mar[1:2], max(opar$mar[3], 3), mar4))
     par(cex.axis=.8)
-    # line colors, max is 6 in default to avoid yellow, rep_len to recycle
-    col <- rep_len(dot("col", DEF=1:6, ...), length(ibeta))
+    par(mgp=c(1.5, .4, 0)) # squash axis annotations TODO not sure if this is best
+
     ylab <- "Coefficients"
     if(is.list(object$beta)) # multiple response model?
         ylab <- paste0(ylab, ": Response ", rownames(object$dfmat)[nresponse])
@@ -88,24 +91,41 @@ plot.glmnetx <- function(x, xvar=c("norm","lambda","rlambda","dev"), label=20,
     # any arg prefixed with def. can be overridden by a user-specifed arg in dots
     # main="" because we will later manually add a top axis instead of main
     call.plot(graphics::matplot, force.x=x, force.y=t(beta), force.main="",
-        force.col=col, def.xlim=xlim, def.xlab=xlab, def.ylab=ylab,
+        force.col=coef.col, def.xlim=xlim, def.xlab=xlab, def.ylab=ylab,
         def.lty=1, def.lwd=1, def.type="l", ...)
 
     abline(h=0, col="gray", lty=3) # zero axis line
-    maybe.grid(x=x, beta=beta, grid.col=grid.col, col1=col, ...)
-    if(xvar == "rlambda") {
-        # args are named below to prevent potential clash with argnames in dots
-        annotate.rlambda(lambda=object$lambda, x=x, beta=beta, s=s,
-                         grid.col=grid.col, col1=col, ...)
-        main <- "Lambda"
-    } else {
-        top.axis(object, x, nresponse, approx.f)
-        main <- "Degrees of Freedom"
+    maybe.grid(x=x, beta=beta, grid.col=grid.col, coef.col=coef.col, ...)
+    if(!is.dot("main")) { # if no w1.main argument specified by caller
+        if(xvar == "rlambda") {
+            # args are named below to prevent potential clash with argnames in dots
+            annotate.rlambda(lambda=object$lambda, x=x, beta=beta, s=s,
+                             grid.col=grid.col, coef.col=coef.col, ...)
+            main <- "Lambda"
+        } else {
+            top.axis(object, x, nresponse, approx.f)
+            main <- "Degrees of Freedom"
+        }
     }
     mtext(dot("main", DEF=main, ...), side=3,
-          line=1.8, cex=par("cex") * par("cex.lab"))
+          line=1.5, cex=par("cex") * par("cex.lab"))
     if(length(iname))
-        right.labs(beta, iname, cex.names, col)
+        right.labs(beta, iname, cex.names, coef.col)
+}
+get.coef.col <- function(..., beta, ibeta)
+{
+    # default colors are distinguishable yet harmonious (at least to my eye)
+    # adjacent colors are as different as easily possible
+    def.col <- c("black", "gray50", "red", "orangered4", "darkorange", "#D02080")
+
+    # get col arg from dots if specified, else use def.col
+    col <- dot("col", DEF=def.col, ...)
+
+    # the colors must stay in the above order as we move down rhs of plot
+    order <- order(beta[ibeta, ncol(beta)], decreasing=TRUE)
+    coef.col <- vector(mode="character", length(ibeta))
+    coef.col[order] <- rep_len(col, length(ibeta))
+    coef.col
 }
 get.iname <- function(beta, ibeta, label)
 {
@@ -122,24 +142,23 @@ get.iname <- function(beta, ibeta, label)
     }
     iname # named index of varnames to be printed, NULL if none
 }
-maybe.grid <- function(x, beta, grid.col, col1, ...)
+maybe.grid <- function(x, beta, grid.col, coef.col, ...)
 {
     if(is.specified(grid.col[1])) {
         grid(col=grid.col, lty=1)
         # replot over the grid (using add=TRUE)
-        # col1 is not called col, to prevent a clash with col which may be in dots
         call.plot(graphics::matplot, force.x=x, force.y=t(beta), force.main="",
-            force.add=TRUE, force.col=col1,
+            force.add=TRUE, force.col=coef.col,
             def.lty=1, def.lwd=1, def.type="l", ...)
     }
 }
-right.labs <- function(beta, iname, cex.names, col) # varnames on right of plot
+right.labs <- function(beta, iname, cex.names, coef.col) # varnames on right of plot
 {
     usr <- par("usr")
     text(x=usr[2] + .01 * (usr[2] - usr[1]),
          y=TeachingDemos::spread.labs(beta[iname, ncol(beta)],
                                       mindiff=1.2 * cex.names * strheight("X")),
-         labels=names(iname), cex=cex.names, col=col[iname], adj=0, xpd=NA)
+         labels=names(iname), cex=cex.names, col=coef.col[iname], adj=0, xpd=NA)
 }
 top.axis <- function(object, x, nresponse, approx.f)
 {
@@ -155,7 +174,7 @@ top.axis <- function(object, x, nresponse, approx.f)
 # Draw the top axis of an rlambda plot.  Also draw a labeled vertical
 # line at lambda=s, if s isn't NA.  Dot arguments prefixed with "s". can
 # be used set the annotation attributes e.g. s.col=NA or s.col=0 for no vert line.
-annotate.rlambda <- function(lambda, x, beta, s, grid.col, col1, ...)
+annotate.rlambda <- function(lambda, x, beta, s, grid.col, coef.col, ...)
 {
     check.numeric.scalar(s, null.ok=TRUE, na.ok=TRUE)
     s.col <- dot("s.col", DEF=1, ...)
@@ -169,12 +188,11 @@ annotate.rlambda <- function(lambda, x, beta, s, grid.col, col1, ...)
     if(add.s.line && s <= labs[1])
         labs[1] <- ""
     axis(3, at=at, labels=labs)
-
-    if(add.s.line)
+    if(add.s.line) # add vertical line showing s?
         add.s.line(lambda=lambda, x=x, beta=beta, s=s,
-                   grid.col=grid.col, col1=col1, s.col=s.col, ...)
+                   grid.col=grid.col, coef.col=coef.col, s.col=s.col, ...)
 }
-add.s.line <- function(lambda, x, beta, s, grid.col, col1, s.col, ...)
+add.s.line <- function(lambda, x, beta, s, grid.col, coef.col, s.col, ...)
 {
     line.col <- "gray"
     line.lty <- 1
@@ -188,7 +206,7 @@ add.s.line <- function(lambda, x, beta, s, grid.col, col1, s.col, ...)
 
     # replot over the vertical line (using add=TRUE)
     call.plot(graphics::matplot, force.x=x, force.y=t(beta), force.main="",
-              force.add=TRUE, force.col=col1,
+              force.add=TRUE, force.col=coef.col,
               def.lty=1, def.lwd=1, def.type="l", ...)
 
     # add s label on vertical line
@@ -204,8 +222,10 @@ add.s.line <- function(lambda, x, beta, s, grid.col, col1, s.col, ...)
                 else        paste0("s=", gsub("^0|0$|\\.0*$", "", signif(s,2))),
             force.col=s.col, def.cex=.8, def.srt=90, def.xpd=NA, ...)
 }
-# return NULL or an integer vector
-# reproduced here so don't have to import glmnet
+# Return NULL or an integer vector
+# Reproduced here (from glmnet version 2.0-5, march 2016)
+# so don't have to import glmnet into plotmo.
+
 nonzeroCoef = function (beta, bystep = FALSE)
 {
 ### bystep = FALSE means which variables were ever nonzero

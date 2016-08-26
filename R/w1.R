@@ -50,9 +50,11 @@ plot_w1 <- function(object,
         }
     } else if(inherits(object, "rpart")) {
         if(requireNamespace("rpart.plot", quietly=TRUE))
-            call.w1(rpart.plot::rpart.plot, ...)
+            # # plotmo 3.1.5 (aug 2016): use prp not rpart.plot for a more
+            # minimal plot because there isn't much space using (mfrow=c(2,2))
+            call.w1(rpart.plot::prp, def.box.palette="auto", ...)
         else {
-            printf("Use the \"rpart.plot\" package for better rpart plots\n")
+            printf("Please install the \"rpart.plot\" package for better rpart plots.\n")
             plot(object, compress=TRUE, uniform=TRUE)
             text(object, xpd=NA)
         }

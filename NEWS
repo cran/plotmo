@@ -1,6 +1,23 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.1.5  Aug 26, 2016
+
+The pt.cex argument now works correctly in plotres QQ plots.
+
+Changed default colors in plot.glmnetx.  The colors stay in the order
+they are passed to plot.glmnetx as we move down the rhs of the plot.
+
+Extended test suite to include adabag package.
+
+Fixed code in meta.R which assumed all.equal() always
+returned TRUE or FALSE.
+
+Merged the library source file lib.R with the earth
+and rpart.plot packages's lib.R.
+
+Updated and extended vignettes.
+
 --- 3.1.4  Jul 29, 2015
 
 Added support for the adabag package.

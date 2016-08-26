@@ -90,10 +90,22 @@ cat("==Test plotres trace=2 and lambda.1se\n")
 plotres1(mod.cv.glmnet.xmat, predict.s="lambda.1se", trace=2)
 
 set.seed(2015)
-x <- matrix(rnorm(100*20),100,20)
+x <- matrix(rnorm(100*20),100,20) # 20 variables
 y <- rnorm(100)
 mod.glmnet.x <- glmnet(x,y)
 plotmo1(mod.glmnet.x)
+
+# test w1.label
+old.mfrow <- par(mfrow=c(2,3))
+old.cex <- par(cex=1)
+old.mar <- par(mar=c(3,3,3,1))
+plotres(mod.glmnet.x, which=1,                w1.main="default w1.label")
+plotres(mod.glmnet.x, which=1, w1.label=5,    w1.main="w1.label=5")
+plotres(mod.glmnet.x, which=1, w1.label=0,    w1.main="w1.label=0")
+plotres(mod.glmnet.x, which=1, w1.label=TRUE, w1.main="w1.label=TRUE")
+plotres(mod.glmnet.x, which=1, w1.label=100,  w1.main="w1.label=100")
+par(mfrow=old.mfrow)
+par(cex=1)
 
 # glmnet with sparse matrices
 set.seed(2015)
@@ -164,7 +176,7 @@ stopifnot(par("cex.lab") == ocex.lab)
 # test some args for plot.glmnetx
 plotres(glmnet, predict.s=.05, SHOWCALL=TRUE, trace=0, col.main=2,
         w1.xlab="my xlab", w1.ylab="my ylab", w1.main="my main",
-        w1.col=terrain.colors(n=5))
+        w1.col=4:1)
 
 old.par <- par(no.readonly=TRUE)
 plotres(glmnet, predict.s=.05, SHOWCALL=TRUE, which=c(1,3), grid.col="gray", do.par=2)
@@ -190,8 +202,6 @@ plot(x=predict(glmnet.multresp, newx=x, s=0)[,1,1],
      pch=20, xlab="Fitted", ylab="Residuals",
      main="Manually calculated residuals, nresponse=1, s=0")
 abline(h=0, col="gray")
-
-plotres(glmnet.multresp, nresponse=2, w1.label=5, trace=1, SHOWCALL=TRUE)
 
 graphics::par(mfrow=c(2,2), mgp=c(1.5,0.4,0), tcl=-0.3, cex.main=1,
               font.main=1, mar=c(4,3,1.2,0.8), oma=c(0,0,4,0), cex=0.83)
