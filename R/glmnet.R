@@ -2,21 +2,21 @@
 
 plotmo.prolog.glmnet <- function(object, object.name, trace, ...) # invoked when plotmo starts
 {
-    # stash (possibly user specified) s for use by plot.glmnetx and predict.glmnet
-    s <- dot("predict.s", ...)
+    # stash (possibly user specified) s for use by plot_glmnet and predict.glmnet
+    s <- dota("predict.s", ...)     # get xlim from dots, NA if not in dots
     check.numeric.scalar(s, na.ok=TRUE)
     if(is.na(s))
-        s <- dot("s", ...)
+        s <- dota("s", ...)         # get s from dots, NA if not in dots
     check.numeric.scalar(s, na.ok=TRUE)
     # if s is unspecified, use s=0 to match plotmo.predict.glmnet
     if(is.na(s))
         s <- 0
-    attr(object, "s") <- s # stash it for later
+    attr(object, "plotmo.s") <- s   # stash it for later
     object
 }
 plotmo.predict.glmnet <- function(object, newdata, type, ..., TRACE)
 {
-    s <- attr(object, "s") # get the predict.glmnet s
+    s <- attr(object, "plotmo.s") # get the predict.glmnet s
     stopifnot(!is.null(s)) # uninitialized?
     # newx for predict.glmnet must be a matrix not a dataframe,
     # so here we use plotmo.predict.defaultm (not plotmo.predict.default)
@@ -26,14 +26,17 @@ plotmo.predict.glmnet <- function(object, newdata, type, ..., TRACE)
         colnames(yhat) <- paste0("s=", signif(s,2))
     yhat
 }
-plotmo.singles.glmnet <- function(object, x, nresponse, trace, all1)
+plotmo.singles.glmnet <- function(object, x, nresponse, trace, all1, ...)
 {
     # return the indices of the 25 biggest coefs, but exclude zero coefs
-    s <- attr(object, "s") # get the predict.glmnet s
+    s <- attr(object, "plotmo.s") # get the predict.glmnet s
     stopifnot(!is.null(s)) # uninitialized?
     lambda.index <- which.min(abs(object$lambda - s)) # index into object$lambda
     trace2(trace, "plotmo.singles.glmnet: s %g lambda.index %g\n", s, lambda.index)
-    beta <- as.vector(object$beta[, lambda.index]) # as.vector converts from dgCMatrix
+    beta <- object$beta
+    if(is.list(beta)) # multiple response model?
+        beta <- beta[[nresponse]]
+    beta <- as.vector(beta[, lambda.index]) # as.vector converts from dgCMatrix
     order <- order(abs(beta), decreasing=TRUE)
     max.nsingles <- if(all1) Inf else 25
     # extract the biggest coefs
@@ -56,4 +59,41 @@ plotmo.predict.cv.glmnet <- function(object, newdata, type, ..., TRACE)
     # newx for predict.glmnet must be a matrix not a dataframe,
     # so here we use plotmo.predict.defaultm (not plotmo.predict.default)
     plotmo.predict.defaultm(object, newdata, type=type, ..., TRACE=TRACE)
+}
+# glmnet family="binomial", y is a vector of 1s and 2s.
+# convert 1s and 2s to 0s and 1s to match predicted values
+plotmo.y.lognet <- function(object, trace, naked, expected.len, nresponse, ...)
+{
+    # plotmo.y.default returns list(field=y, do.subset=do.subset)
+    list <- plotmo.y.default(object, trace, naked, expected.len)
+    list$do.subset <- FALSE      # glmnet doesn't support subset so don't even try
+    # TODO following only works correctly if default ordering of factor was used?
+    list$field <-as.numeric(list$field) # as.numeric needed if y is a factor
+    list$field - min(list$field)        # convert 1s and 2s to 0s and 1s
+}
+# glmnet family="multinomial"
+plotmo.y.multnet <- function(object, trace, naked, expected.len, nresponse, ...)
+{
+    # plotmo.y.default returns list(field=y, do.subset=do.subset)
+    list <- plotmo.y.default(object, trace, naked, expected.len)
+    list$do.subset <- FALSE # glmnet doesn't support subset so don't even try
+    if(is.null(nresponse))  # plotmo uses nresponse=NULL in initial checking
+        nresponse <- 1
+    if(NCOL(list$field) > 1) # if y is multiple columns assume it's an indicator matrix
+        y <- list$field
+    else {                   # else convert it to an indicator matrix
+        # TODO following only works correctly if default ordering of factor was used?
+        y1 <- as.numeric(list$field) # as.numeric needed if y is a factor
+        stopifnot(min(y1) == 1 && max(y1) >  1) # sanity check
+        # convert y1 to an indicator matrix of 0s and 1s (NA_real_ to avoid type convert)
+        y <- matrix(NA_real_, nrow=length(y1), ncol=max(y1))
+        for(i in 1:max(y1))
+            y[,i] <- as.numeric(y1 == nresponse)
+    }
+    y
+}
+# glmnet family="mgaussian"
+plotmo.y.mrelnet <- function(object, trace, naked, expected.len, nresponse, ...)
+{
+    plotmo.y.multnet(object, trace, naked, expected.len, nresponse, ...)
 }

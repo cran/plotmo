@@ -13,6 +13,7 @@ data(etitanic)
 options(warn=1) # print warnings as they occur
 if(!interactive())
     postscript(paper="letter")
+set.seed(2016)
 make.space.for.caption <- function(caption="CAPTION")
 {
     oma <- par("oma")
@@ -122,6 +123,7 @@ func1 <- function()
 {
     caption <- "test environments and finding the correct data"
     dopar(4,4,caption)
+    set.seed(2016)
 
     plotmo(a.glob, do.par=FALSE, main="a.glob oz",
           degree1=1, all2=1, degree2=1, type2="im",
@@ -407,6 +409,7 @@ plotmo(a, type="link", ylim=c(0, 1), clip=FALSE, caption="type=\"link\" plotmo g
 plotmo(a, type="class", ylim=c(0, 1), caption="type=\"class\" plotmo glm with mixed fac and non-fac degree2 terms")
 plotmo(a, ylim=c(0, 1), caption="default type (\"response\")\nplotmo glm with mixed fac and non-fac degree2 terms")
 # now with different type2s
+set.seed(2016)
 plotmo(a, do.par=FALSE, type2="persp", persp.theta=-20, degree1=FALSE, grid.levels=list(pclass="2nd"))
 mtext("different type2s", outer=TRUE, font=2, line=1.5, cex=1)
 plotmo(a, do.par=FALSE, type2="contour", degree1=FALSE, grid.levels=list(pclass="2nd"))

@@ -4,7 +4,7 @@ plotmo.prolog <- function(object, object.name, trace, ...) # gets called at the 
 {
     UseMethod("plotmo.prolog")
 }
-plotmo.prolog.default <- function(object, object.name, trace, ...)
+plotmo.prolog.default <- function(object, object.name, ...)
 {
     # prevent confusing downstream errors by doing an initial check here
     if(is.null(object$call) && is.null(object[["x"]]))

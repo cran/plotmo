@@ -1,14 +1,18 @@
 # linmod.milbo.tutorial.R:
 #
 # linmod code from Stephen Milborrow "Guidelines for S3 Regression Models"
+#
+## A simple linear model (new version of linmod from Friedrich Leisch's tutorial).
+## Functions like print.linmod in the tutorial don't need to be modified for tools
+## like plotmo, and don't appear in the code below.
 
 linmod <- function(...) UseMethod("linmod")
 
 linmod.fit <- function(x, y) # internal function, not for the casual user
 {                            # first column of x is the intercept (all 1s)
 
-    qx <- qr(x)                         # QR-decomposition of x
     y <- as.vector(as.matrix(y))        # necessary when y is a data.frame
+    qx <- qr(x)                         # QR-decomposition of x
     coef <- solve.qr(qx, y)             # compute (x'x)^(-1) x'y
     df.residual <- nrow(x) - ncol(x)    # degrees of freedom
     sigma2 <- sum((y - x %*% coef)^2) / df.residual  # variance of residuals

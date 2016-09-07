@@ -6,6 +6,7 @@ library(plotmo)
 library(earth)
 data(ozone1)
 data(etitanic)
+set.seed(2016)
 
 get.tit <- function()
 {

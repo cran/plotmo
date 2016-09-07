@@ -5,7 +5,7 @@
 #
 # Please see also www.milbo.org/doc/modguide.pdf.
 #
-# Tests for this code may be found in test.ltut.bat in the plotmo package.
+# Comprehensive tests for this code are in test.ltut.R in the plotmo package.
 
 linmod <- function(...) UseMethod("linmod")
 
@@ -80,9 +80,7 @@ check.linmod.y <- function(x, y)
 {
     # as.vector(as.matrix(y)) is necessary when y is a data.frame
     # (as.vector alone on a data.frame returns a data.frame)
-    # we transform y in multiple steps for a clearer traceback() if error
-    y <- as.matrix(y)
-    y <- as.vector(y)
+    y <- as.vector(as.matrix(y))
     if(length(y) == 0)
         stop("'y' is empty")
     if(anyNA(y))
@@ -132,6 +130,7 @@ predict.linmod <- function(object = stop("no 'object' argument"),
                            ...)
 {
     # following commented because by default plotmo passes a type arg to predict
+    # (uncomment this if a type arg is added to predict.linmod)
     # stop.if.dot.arg.used(...)
 
     if(is.null(newdata))
@@ -213,10 +212,9 @@ print.summary.linmod <- function(x = stop("no 'x' argument"), ...)
 }
 # stop.if.dot.arg.used will cause an error message if any args are passed to it.
 # We use it to test if any dots arg of the calling function was used, for
-# functions that must have a dots arg (to match the generic method) but
-# don't actually use the dots.
-#
-# TODO R version 3.3-0 will have a function chkDots which should be used instead
+# functions that must have a dots arg (to match the generic method) but don't
+# actually use the dots.  This helps the user catch mistyped or illegal args.
+# R version 3.3-0 or higher has a function chkDots which could be used instead.
 
 stop.if.dot.arg.used <- function()
 {

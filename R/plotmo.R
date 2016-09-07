@@ -84,12 +84,6 @@ plotmo <- function(object = stop("no 'object' argument"),
     nrug <- get.nrug(nrug, ...)
     extend <- check.numeric.scalar(extend)
     stopifnot(extend > -.3, extend <= 10) # .3 prevents shrinking to nothing, 10 is arb
-    # TODO revisit this, causes issues because the following for example produces
-    # the identical last two plots: for(i in 1:3) a <- earth(.., nfold=3); plot(a)
-    rnorm(1) # seems to be necessary to make .Random.seed available
-    old.seed <- .Random.seed
-    on.exit(set.seed(old.seed), add=TRUE)
-    set.seed(2015)
     if(!is.specified(degree1))   degree1   <- 0
     if(!is.specified(degree2))   degree2   <- 0
     if(!is.specified(nresponse)) nresponse <- NA
@@ -195,9 +189,9 @@ plotmo <- function(object = stop("no 'object' argument"),
         # TODO document what happens here and in plotres if only one plot
         oldpar <- par(no.readonly=TRUE)
         # need xlab etc. so so we can figure out margin sizes in do.par
-        xlab <- dot("xlab", DEF="", ...)
-        ylab <- dot("ylab", DEF="", ...)
-        main <- dot("main",         ...)
+        xlab <- dota("xlab", DEF="", ...)
+        ylab <- dota("ylab", DEF="", ...)
+        main <- dota("main",         ...)
         do.par(nfigs=nfigs, caption=caption, main1=main,
                xlab1=xlab, ylab1=ylab, trace=trace, def.cex.main=def.cex.main, ...)
         if(do.par == 1)
@@ -270,7 +264,7 @@ plotmo_prolog <- function(object, object.name, trace, ...)
         else
             printf.wrap("object$call is %s\n", strip.deparse(object$call))
     }
-    SHOWCALL <- dot("SHOWCALL", ...)
+    SHOWCALL <- dota("SHOWCALL", ...)
     if(!is.specified(SHOWCALL))
         my.call <- NULL
     list(object=object, my.call=my.call)
@@ -472,7 +466,7 @@ get.pt.col <- function(pt.col, ...)
 {
     pt.col <- pt.col
     if(!is.specified(pt.col) && !is.dot("col", ...))
-        pt.col <- dot("col.response", EX=0, ...) # partial match, "col" excluded above
+        pt.col <- dota("col.response", EX=0, ...) # partial match, "col" excluded above
     # if any other response argument is specified, set the response color
     if(!is.specified(pt.col) &&
             is.dot("pch cex.response pch.response pt.cex pt.pch",
@@ -494,7 +488,7 @@ get.jitter <- function(jitter, ...)
 }
 get.smooth.col <- function(smooth.col, ...)
 {
-    smooth.col <- dot("col.smooth", DEF=smooth.col, ...) # back compat
+    smooth.col <- dota("col.smooth", DEF=smooth.col, ...) # back compat
     # if any other smooth argument is specified, set the smooth color
     if(!is.specified(smooth.col) &&
             is.dot("lty.smooth lwd.smooth lwd.loess smooth.lty smooth.lwd",
@@ -534,7 +528,7 @@ get.level <- function(level, ...)
     # some code for backward compatibility (se is now deprecated)
     se <- 0
     if(is.dot("se", ...))
-        se <- dot("se", ...)
+        se <- dota("se", ...)
     check.numeric.scalar(se, logical.ok=TRUE)
     if(se && level) # both specified?
         stop0("plotmo's 'se' argument is deprecated, please use 'level' instead")
@@ -614,10 +608,10 @@ points.or.text <- function(..., x, y, pt.col, iresponse)
 {
     stopifnot(!is.na(pt.col))
 
-    cex <- dot("pt.cex cex.response", DEF=1, EX=c(0,1), NEW=1, ...)
+    cex <- dota("pt.cex cex.response", DEF=1, EX=c(0,1), NEW=1, ...)
     cex <- cex * pt.cex(NROW(x))
 
-    pch <- dot("pt.pch pch.response pch", DEF=20, EX=c(0,1,1), NEW=1, ...)
+    pch <- dota("pt.pch pch.response pch", DEF=20, EX=c(0,1,1), NEW=1, ...)
 
     # recycle then select only iresponse points
     n <- length(y)
@@ -793,11 +787,11 @@ plot.degree1 <- function( # plot all degree1 graphs
             draw.smooth1(smooth.col, x, ipred, y, ux.list, ndiscrete, center, ...)
             call.plot(graphics::lines.default, PREFIX="degree1.",
                 force.x = xframe[,ipred], force.y = yhat,
-                force.col = dot("degree1.col col.degree1 col",
+                force.col = dota("degree1.col col.degree1 col",
                                 EX=c(0,1,1), DEF=1, NEW=1, ...),
-                force.lty = dot("degree1.lty lty.degree1 lty",
+                force.lty = dota("degree1.lty lty.degree1 lty",
                                 EX=c(0,1,1), DEF=1, NEW=1, ...),
-                force.lwd = dot("degree1.lwd lwd.degree1 lwd",
+                force.lwd = dota("degree1.lwd lwd.degree1 lwd",
                                 EX=c(0,1,1), DEF=1, NEW=1, ...),
                 ...)
         }
@@ -808,7 +802,7 @@ plot.degree1 <- function( # plot all degree1 graphs
         xlim <- get.degree1.xlim(ipred, xframe, ux.list, ndiscrete,
                                  pt.col, jittered.x, xflip, ...)
         # title of the current plot
-        main <- dot("main", ...)
+        main <- dota("main", ...)
         main <- if(is.specified(main))
                     repl(main, isingle)[isingle]
                 else {
@@ -823,11 +817,11 @@ plot.degree1 <- function( # plot all degree1 graphs
         if(yaxis.is.levs)
             ylevnames <- abbreviate(resp.levs, minlength=6, strict=TRUE)
         yaxis.is.levs <- FALSE # TODO should only do this if response is a string or a factor
-        xlab <- dot("xlab", ...)
+        xlab <- dota("xlab", ...)
         xlab <- if(is.null(xlab))           abbr.pred.names[ipred]
                 else if(is.specified(xlab)) repl(xlab, isingle)[isingle]
                 else                        ""
-        ylab <- dot("ylab", DEF=NULL, ...)
+        ylab <- dota("ylab", DEF=NULL, ...)
         ylab <- if(is.specified(ylab)) repl(ylab, isingle)[isingle]
                 else                   ""
 
@@ -849,7 +843,7 @@ plot.degree1 <- function( # plot all degree1 graphs
                   cex=par("cex") * cex.lab, line=.5, las=get.las(ylevnames))
         if(center &&
                 !is.specified(grid.col) &&
-                !is.specified(dot("col.grid", ...)))
+                !is.specified(dota("col.grid", ...)))
             abline(h=0, col="gray", lwd=.6) # gray line at y=0
         if(is.int.only) # make it obvious that this is an intercept-only model
             legend("topleft", "intercept-only model", bg="white")
@@ -875,7 +869,7 @@ plot.degree1 <- function( # plot all degree1 graphs
     # is.int.only test because we don't call get.ylim.by.dummy.plots for int only models
     if((!draw.plot || is.int.only) && trace >= 0 && ncol(xgrid) > 1)
         print.grid.values(xgrid, trace)
-    cex.lab <- dot("cex.lab", DEF=.8 * par("cex.main"), ...)
+    cex.lab <- dota("cex.lab", DEF=.8 * par("cex.main"), ...)
     irug <- get.degree1.irug(nrug, x, draw.plot, ...) # get indices of rug points, if any
     all.yhat <- NULL
     for(isingle in seq_along(singles)) {
@@ -901,7 +895,7 @@ plot.degree1 <- function( # plot all degree1 graphs
 get.degree1.xlim <- function(ipred, xframe, ux.list, ndiscrete,
                              pt.col, jittered.x, xflip, ...)
 {
-    xlim <- dot("xlim", ...)
+    xlim <- dota("xlim", ...)
     if(is.specified(xlim))
         stopifnot(is.numeric(xlim), length(xlim) == 2)
     else {
@@ -965,17 +959,17 @@ draw.smooth1 <- function(smooth.col, x, ipred, y, ux.list, ndiscrete, center, ..
             force.x    = levels,
             force.y    = smooth,
             force.col  = smooth.col,
-            force.lty  = dot("smooth.lty lty.smooth",
+            force.lty  = dota("smooth.lty lty.smooth",
                              EX=c(0,1), DEF=1, NEW=1, ...),
-            force.lwd  = dot("smooth.lwd lwd.smooth lwd.loess",
+            force.lwd  = dota("smooth.lwd lwd.smooth lwd.loess",
                              EX=c(0,1,1), DEF=1, NEW=1, ...),
-            force.pch  = dot("smooth.pch", DEF=20, EX=0, ...),
+            force.pch  = dota("smooth.pch", DEF=20, EX=0, ...),
             def.type   = "b",
             ...)
     } else {
         # For less smoothing (so we can better judge earth inflection points),
         # we use a default value for f lower than the default 2/3.
-        smooth.f <- dot("smooth.f loess.f", DEF=.5, NEW=1, ...)
+        smooth.f <- dota("smooth.f loess.f", DEF=.5, NEW=1, ...)
         check.numeric.scalar(smooth.f)
         stopifnot(smooth.f > .01, smooth.f < 1)
         smooth <- lowess(x1, y, f=smooth.f)
@@ -984,10 +978,10 @@ draw.smooth1 <- function(smooth.col, x, ipred, y, ux.list, ndiscrete, center, ..
             force.x      = smooth$x,
             force.y      = y,
             force.col    = smooth.col,
-            force.lty    = dot("smooth.lty lty.smooth", EX=c(0,1), DEF=1, NEW=1, ...),
-            force.lwd    = dot("smooth.lwd lwd.smooth lwd.loess",
-                               EX=c(0,1,1), DEF=1, NEW=1, ...),
-            force.pch    = dot("smooth.pch", DEF=20, EX=0, ...),
+            force.lty    = dota("smooth.lty lty.smooth", EX=c(0,1), DEF=1, NEW=1, ...),
+            force.lwd    = dota("smooth.lwd lwd.smooth lwd.loess",
+                                EX=c(0,1,1), DEF=1, NEW=1, ...),
+            force.pch    = dota("smooth.pch", DEF=20, EX=0, ...),
             ...)
     }
 }
@@ -1021,28 +1015,28 @@ get.degree1.irug <- function(nrug, x, draw.plot, ...) # indices of xrows for rug
 }
 draw.grid <- function(grid.col, nx=NULL, ...)
 {
-    if(is.specified(grid.col) || is.specified(dot("col.grid", ...))) {
+    if(is.specified(grid.col) || is.specified(dota("col.grid", ...))) {
         if(is.specified(grid.col) && is.logical(grid.col) && grid.col)
             grid.col <- "lightgray"
         grid.col <- if(is.specified(grid.col)) grid.col
-                    else dot("col.grid", DEF="lightgray", ...)
+                    else dota("col.grid", DEF="lightgray", ...)
         # grid() doesn't have a dots arg so we invoke call.plot without dots
         call.plot(graphics::grid,
-                  force.nx  = dot("grid.nx",  DEF=nx,   ...),
-                  force.ny  = dot("grid.ny",  DEF=NULL, ...),
+                  force.nx  = dota("grid.nx",  DEF=nx,   ...),
+                  force.ny  = dota("grid.ny",  DEF=NULL, ...),
                   force.col = grid.col,
-                  force.lty = dot("grid.lty", DEF=1,    ...),
-                  force.lwd = dot("grid.lwd", DEF=1,    ...))
+                  force.lty = dota("grid.lty", DEF=1,    ...),
+                  force.lwd = dota("grid.lwd", DEF=1,    ...))
     }
 }
 get.level.shades <- function(intervals, ...)
 {
-    level.shade <- dot("level.shade shade.pints", DEF="mistyrose2", ...)
+    level.shade <- dota("level.shade shade.pints", DEF="mistyrose2", ...)
     if(is.null(intervals$lwr) || is.null(intervals$cint.lwr))
         c(level.shade, level.shade)
     else { # use level.shade2 only if two kinds of intervals
         # use exact match here because level.shade2 is also matched by level.shade
-        level.shade2 <- dot("level.shade2 shade2.pints", DEF="mistyrose4", ...)
+        level.shade2 <- dota("level.shade2 shade2.pints", DEF="mistyrose4", ...)
         c(level.shade, level.shade2)
     }
 }
@@ -1113,12 +1107,12 @@ draw.func <- function(func, object, xframe, ipred, center, trace, ...)
                   force.x   = xframe[,ipred],
                   force.y   = y,
                   def.type  = "l",
-                  force.col = dot("func.col col.func",
-                                  EX=c(0,1), DEF="lightblue3", NEW=1, ...),
-                  force.lty = dot("func.lty lty.func",
-                                  EX=c(0,1), DEF=1, NEW=1, ...),
-                  force.lwd = dot("func.lwd lwd.func",
-                                  EX=c(0,1), DEF=2, NEW=1, ...),
+                  force.col = dota("func.col col.func",
+                                   EX=c(0,1), DEF="lightblue3", NEW=1, ...),
+                  force.lty = dota("func.lty lty.func",
+                                   EX=c(0,1), DEF=1, NEW=1, ...),
+                  force.lwd = dota("func.lwd lwd.func",
+                                   EX=c(0,1), DEF=2, NEW=1, ...),
                   ...)
     }
 }
@@ -1177,7 +1171,7 @@ plot.degree2 <- function(  # plot all degree2 graphs
         name1 <- abbr.pred.names[ipred1]
         name2 <- abbr.pred.names[ipred2]
         # title of the current plot
-        main <- dot("main", ...)
+        main <- dota("main", ...)
         main <- if(is.specified(main))
                     repl(main, nsingles+ipair)[nsingles+ipair]
                  else {
@@ -1222,7 +1216,7 @@ plot.degree2 <- function(  # plot all degree2 graphs
     trace2(trace, "--plot.degree2(draw.plot=%s)\n", if(draw.plot) "TRUE" else "FALSE")
     stopifnot(npairs > 0)
     # need ticktype to determine degree2 margins
-    ticktype <- dot("persp.ticktype", DEF="simple", EX=0, ...)
+    ticktype <- dota("persp.ticktype", DEF="simple", EX=0, ...)
     ticktype <- match.choices(ticktype, c("simple", "detailed"), "ticktype")
     if(draw.plot && do.par) {
         opar=par("mar", "mgp")
@@ -1304,7 +1298,7 @@ plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
             vals <- yhat[diag1, diag2]
             (vals[!is.na(vals)])[1] # return first non NA in vals
         }
-        theta <- dot("persp.theta theta", EX=c(0,1), ...)
+        theta <- dota("persp.theta theta", EX=c(0,1), ...)
         if(is.na(theta)) {  # no user specified theta?
             # rotate graph so highest point is farthest (this could be improved)
             theta <- -35
@@ -1335,11 +1329,11 @@ plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
         temp <- name1;  name1  <- name2;  name2  <- temp # swap name1 and name2
         yhat <- t(yhat)
     }
-    zlab <- dot("ylab", DEF="", ...) # use ylab as zlab if specified
+    zlab <- dota("ylab", DEF="", ...) # use ylab as zlab if specified
     zlab <- repl(zlab, nsingles+ipair)[nsingles+ipair]
-    cex.lab <- dot("persp.cex.lab",
-                   # make the labels small if multiple figures
-                   DEF=if(def.cex.main < 1) .8 * def.cex.main else 1, ...)
+    cex.lab <- dota("persp.cex.lab",
+                    # make the labels small if multiple figures
+                    DEF=if(def.cex.main < 1) .8 * def.cex.main else 1, ...)
 
     # persp ignores mgp so prefix a newline to space the axis label
     # we also prepend spaces else bottom of label tends to get cut off
@@ -1377,8 +1371,8 @@ plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
         force.xlab    = xlab,
         force.ylab    = ylab,
         force.theta   = theta,
-        force.phi     = dot("persp.phi phi",    EX=c(0,1), DEF=30, ...),
-        force.d       = dot("persp.d   dvalue", EX=c(0,1), DEF=1,  ...),
+        force.phi     = dota("persp.phi phi",    EX=c(0,1), DEF=30, ...),
+        force.d       = dota("persp.d   dvalue", EX=c(0,1), DEF=1,  ...),
         force.main    = main2,
         def.cex.lab   = cex.lab,
         def.cex.axis  = cex.lab,
@@ -1386,8 +1380,8 @@ plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
         def.ticktype  = "simple",
         def.nticks    = 5,
         def.cex       = cex1,
-        force.col     = dot("persp.col col.persp",
-                            EX=c(0,1), DEF="lightblue", NEW=1, ...),
+        force.col     = dota("persp.col col.persp",
+                             EX=c(0,1), DEF="lightblue", NEW=1, ...),
         def.border    = NULL,
         def.shade     = .5,
         ...)
@@ -1440,7 +1434,7 @@ plot.contour <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
     }
     levels <- get.contour.levs(yhat)
     labels <- signif(levels, 2) # else contour prints labels like 0.0157895
-    cex.lab <- par("cex") * dot("cex.lab", DEF=1, ...)
+    cex.lab <- par("cex") * dota("cex.lab", DEF=1, ...)
 
     # We use suppressWarnings below to suppress the warning "all z values are
     # equal" This warning may be issued multiple times and may be annoying to
@@ -1547,8 +1541,8 @@ plot.image <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
     # default col: white high values (snowy mountain tops), dark low values (dark depths)
     if(swapxy)
         image.with.lightblue.na(grid1=grid2, grid2=grid1, yhat=t(yhat),
-            force.col     = dot("image.col col.image", EX=c(0,1),
-                                DEF=gray((0:10)/10), NEW=1, ...),
+            force.col     = dota("image.col col.image", EX=c(0,1),
+                                 DEF=gray((0:10)/10), NEW=1, ...),
             force.main    = main2,
             force.xlim    = ylim,
             force.ylim    = xlim,
@@ -1559,8 +1553,8 @@ plot.image <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
             ...)
     else
         image.with.lightblue.na(grid1=grid1, grid2=grid2, yhat=yhat,
-            force.col     = dot("image.col col.image", EX=c(0,1),
-                                DEF=gray((0:10)/10), NEW=1, ...),
+            force.col     = dota("image.col col.image", EX=c(0,1),
+                                 DEF=gray((0:10)/10), NEW=1, ...),
             force.main    = main2,
             force.xlim    = xlim,
             force.ylim    = ylim,
@@ -1570,7 +1564,7 @@ plot.image <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
             force.ylab    = ylab,
             ...)
 
-    cex.lab <- par("cex") * dot("cex.lab", DEF=1, ...)
+    cex.lab <- par("cex") * dota("cex.lab", DEF=1, ...)
 
     if(use.fac.names1) {
         levnames1 <- abbreviate(levnames1, minlength=6, strict=TRUE)

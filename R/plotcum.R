@@ -9,7 +9,7 @@ plotmo_cum <- function(rinfo, info, nfigs=1, add=FALSE,
     xlab <- rinfo$name
     xlab <- sprintf("abs(%ss)", xlab)
     cum.grid <- match.choices(cum.grid, c("none", "grid", "percentages"))
-    annotation.cex <- .7 * dot("cum.cex", DEF=1, ...)
+    annotation.cex <- .7 * dota("cum.cex", DEF=1, ...)
     if(!add && info && cum.grid == "percentages") {
         # ensure right margin big enough for right hand labels
         old.mar <- par("mar")
@@ -19,15 +19,15 @@ plotmo_cum <- function(rinfo, info, nfigs=1, add=FALSE,
         }
     }
     if(is.na(cum.col1))
-        cum.col1 <- dot("cum.col", DEF=1, ...)
+        cum.col1 <- dota("cum.col", DEF=1, ...)
     cum.col1 <- cum.col1[1] # no recycling
 
     # user can set xlim and ylim if this is the only figure
-    xlim <- dot("xlim", DEF=NULL, ...)
+    xlim <- dota("xlim", DEF=NULL, ...)
     if(nfigs > 1 || !is.specified(xlim))
         xlim <- range(abs(rinfo$scale * rinfo$resids), na.rm=TRUE)
     xlim <- fix.lim(xlim)
-    ylim <- dot("ylim", DEF=NULL, ...)
+    ylim <- dota("ylim", DEF=NULL, ...)
     if(nfigs > 1 || !is.specified(ylim))
         ylim <- c(ylim=if(info) -.1 else 0,
                   ymax=if(cum.grid == "percentages") 1 + annotation.cex * .06
@@ -37,7 +37,7 @@ plotmo_cum <- function(rinfo, info, nfigs=1, add=FALSE,
     call.plot(stats::plot.stepfun, PREFIX="cum.", drop.cum.grid=1,
         force.x          = ecdf,
         force.add        = add,
-        force.main       = dot("main", DEF="Cumulative Distribution", ...),
+        force.main       = dota("main", DEF="Cumulative Distribution", ...),
         force.xlim       = xlim,
         force.ylim       = ylim,
         force.xlab       = xlab,

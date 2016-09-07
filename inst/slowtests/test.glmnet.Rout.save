@@ -73,7 +73,6 @@ Loaded glmnet 2.0-5
 +     plotres(object, trace=trace, SHOWCALL=SHOWCALL, caption=caption, ...)
 + }
 > tit <- get.tit()
-> 
 > set.seed(2015)
 > xmat <- as.matrix(tit[,c(2,5,6)])
 > set.seed(2015)
@@ -81,10 +80,23 @@ Loaded glmnet 2.0-5
 > # plotmo on glmnet mods is boring but we test it anyway
 > plotmo1(mod.glmnet.xmat)
 plotmo1(object=mod.glmnet.xmat)
- grid:    survived sibsp  logage
-                 0     0 3.06991
+ plotmo grid:    survived sibsp  logage
+                        0     0 3.06991
 > plotres1(mod.glmnet.xmat)
 plotres1(object=mod.glmnet.xmat)
+> 
+> # compare to plot.glmnet
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(4,2), mar=c(3,6,3.5,6)) # extra side margins for more square plots
+> plot_glmnet(mod.glmnet.xmat, main="mod.glmnet.xmat\ncompare to plot.glmnet")
+> plot(0,0)
+> plot_glmnet(mod.glmnet.xmat, xvar="norm", col=c(3,2,1))
+> plot(mod.glmnet.xmat, xvar="norm")
+> plot_glmnet(mod.glmnet.xmat, xvar="lambda")
+> plot(mod.glmnet.xmat, xvar="lambda")
+> plot_glmnet(mod.glmnet.xmat, xvar="dev")
+> plot(mod.glmnet.xmat, xvar="dev")
+> par(old.par)
 > 
 > set.seed(2015)
 > mod.cv.glmnet.xmat <- cv.glmnet(xmat, tit[,4], nfolds=3)
@@ -102,8 +114,8 @@ stats::fitted(object=cv.glmnet.object)
 fitted() was unsuccessful, will use predict()
 got model response from object$call$y
 
- grid:    survived sibsp  logage
-                 0     0 3.06991
+ plotmo grid:    survived sibsp  logage
+                        0     0 3.06991
 
 > cat("==Test plotmo trace=2 and lambda.min\n")
 ==Test plotmo trace=2 and lambda.min
@@ -274,8 +286,8 @@ graphics::par(mfrow=c(2,2), mgp=c(1.5,0.4,0), tcl=-0.3, font.main=2,
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
 
- grid:    survived sibsp  logage
-                 0     0 3.06991
+ plotmo grid:    survived sibsp  logage
+                        0     0 3.06991
 
 degree1 plot 1 survived
 newdata[2,3]:
@@ -645,27 +657,56 @@ training rsq 0.13
 > set.seed(2015)
 > x <- matrix(rnorm(100*20),100,20) # 20 variables
 > y <- rnorm(100)
-> mod.glmnet.x <- glmnet(x,y)
-> plotmo1(mod.glmnet.x)
-plotmo1(object=mod.glmnet.x)
- grid:    x1          x2         x3         x4        x5         x6         x7
- -0.02229245 -0.03060877 0.02595536 -0.2306748 0.2048663 -0.2711153 0.04214883
-         x8         x9        x10         x11        x12         x13       x14
- -0.1573321 0.05656354 -0.2789684 -0.01729983 0.05494411 -0.04358897 -0.184689
-         x15         x16        x17       x18       x19       x20
- -0.01875314 -0.08998893 0.05206396 0.1317551 -0.033794 0.1125339
+> mod <- glmnet(x,y)
+> plotmo1(mod)
+plotmo1(object=mod)
+ plotmo grid:    x1          x2         x3         x4        x5         x6
+        -0.02229245 -0.03060877 0.02595536 -0.2306748 0.2048663 -0.2711153
+         x7         x8         x9        x10         x11        x12         x13
+ 0.04214883 -0.1573321 0.05656354 -0.2789684 -0.01729983 0.05494411 -0.04358897
+       x14         x15         x16        x17       x18       x19       x20
+ -0.184689 -0.01875314 -0.08998893 0.05206396 0.1317551 -0.033794 0.1125339
 > 
 > # test w1.label
-> old.mfrow <- par(mfrow=c(2,3))
-> old.cex <- par(cex=1)
-> old.mar <- par(mar=c(3,3,3,1))
-> plotres(mod.glmnet.x, which=1,                w1.main="default w1.label")
-> plotres(mod.glmnet.x, which=1, w1.label=5,    w1.main="w1.label=5")
-> plotres(mod.glmnet.x, which=1, w1.label=0,    w1.main="w1.label=0")
-> plotres(mod.glmnet.x, which=1, w1.label=TRUE, w1.main="w1.label=TRUE")
-> plotres(mod.glmnet.x, which=1, w1.label=100,  w1.main="w1.label=100")
-> par(mfrow=old.mfrow)
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(2,3))
 > par(cex=1)
+> par(mar=c(3,3,3,1))
+> plotres(mod, which=1,                w1.main="default w1.label")
+> plotres(mod, which=1, w1.label=5,    w1.main="w1.label=5")
+> plotres(mod, which=1, w1.label=0,    w1.main="w1.label=0")
+> plotres(mod, which=1, w1.label=TRUE, w1.main="w1.label=TRUE")
+> plotres(mod, which=1, w1.label=100,  w1.main="w1.label=100")
+> par(old.par)
+> 
+> # test w1 and non w1 args passed
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(2,2), mar=c(4,4,4,4), cex=1)
+> 
+> plot_glmnet(mod, w1.col=3:4, w1.xvar="norm",
++             main="plot_glmnet\nw1.col=3:4 w1.xvar=\"norm\"")
+> 
+> plot_glmnet(mod, col=3:4, xvar="norm",
++             main="plot_glmnet\ncol=3:4 xvar=\"norm\"")
+> 
+> plot_glmnet(mod, col=3:4, w1.col=1:2,
++             w1.xvar="norm", xvar="lambda",
++             main="plot_glmnet\ncol=3:4 w1.col=1:2\nw1.xvar=\"norm\", xvar=\"lambda\"")
+> 
+> par(old.par)
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(3,2), mar=c(3,4,4,4), cex=1)
+> 
+> plotres(mod, which=c(1,3), do.par=FALSE, w1.col=3:4, w1.xvar="norm",
++         w1.main="plotres\nw1.col=3:4 w1.xvar=\"norm\"")
+> 
+> plotres(mod, which=c(1,3), do.par=FALSE, col=3:4, xvar="norm",
++         w1.main="plotres\nplotres\ncol=3:4 xvar=\"norm\"")
+> 
+> plotres(mod, which=c(1,3), do.par=FALSE, col=3:4, w1.col=1:2,
++         w1.main="plotres\ncol=3:4 w1.col=1:2")
+> 
+> par(old.par)
 > 
 > # glmnet with sparse matrices
 > set.seed(2015)
@@ -691,15 +732,17 @@ plotmo1(object=mod.glmnet.x)
 plotmo1(object=mod.glmnet.sx,all2=TRUE)
 Warning: too many predictors to plot all pairs,
          so plotting degree2 plots for just the first 7 predictors
- grid:    x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18 x19
-           0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0   0
- x20
-   0
+ plotmo grid:    x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18
+                  0  0  0  0  0  0  0  0  0   0   0   0   0   0   0   0   0   0
+ x19 x20
+   0   0
+> plotres(mod.glmnet.sx)
 > 
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(2,4), mar=c(3,3,3,1), mgp=c(1.5,0.5,0), oma=c(0,0,2.5,0))
 > y <- trees$Volume
 > x <- as.matrix(data.frame(Girth=trees$Girth, Height=trees$Height))
 > glmnet <- glmnet(x, y)
-> par(mfrow=c(2,4), mar=c(3,3,3,1), mgp=c(1.5,0.5,0), oma=c(0,0,2.5,0))
 > plotres(glmnet, do.par=FALSE, caption="glmnet and lm: top and bottom should be the same")
 > lm <- lm(Volume~., data=trees)
 > plotres(lm, do.par=FALSE, SHOWCALL=TRUE)
@@ -714,7 +757,7 @@ stats::predict(elnet.object, matrix[3,2], type="response", s=0)
 stats::fitted(object=elnet.object)
 fitted() was unsuccessful, will use predict()
 got model response from object$call$y
-plot.glmnetx(elnet.object, xvar="rlambda", grid.col=0, s=0, nresponse=1)
+plot_glmnet(elnet.object, xvar="rlambda", grid.col=0, s=0, nresponse=1)
 
 training rsq 0.95
 > plotres(glmnet, trace=1, do.par=FALSE, which=c(1,3), predict.s=5, SHOWCALL=TRUE)
@@ -724,32 +767,10 @@ stats::predict(elnet.object, matrix[3,2], type="response", s=5)
 stats::fitted(object=elnet.object)
 fitted() was unsuccessful, will use predict()
 got model response from object$call$y
-plot.glmnetx(elnet.object, xvar="rlambda", grid.col=0, s=5, nresponse=1)
+plot_glmnet(elnet.object, xvar="rlambda", grid.col=0, s=5, nresponse=1)
 
 training rsq 0.84
-> 
-> printf("======== glmnet multinomial (multnet)\n")
-======== glmnet multinomial (multnet)
-> set.seed(2015)
-> n <- 20
-> p <- 3
-> nresp <- 2
-> x <- matrix(rnorm(n*p),n,p)
-> y <- rep(1:nresp, each=n/nresp)
-> fit3 <- glmnet(x, y, family="multinomial")
-> # TODO why are all the residuals positive?
-> plotres(fit3, nresponse=1, caption="why are all the residuals positive?")
-> # TODO seems to work but prints plotmo_y, why?
-> plotres(fit3, nresponse=2, SHOWCALL=TRUE)
-
-plotmo_y[20,1] with no column names:
-     
-1   1
-2   1
-3   1
-... 1
-20  2
-
+> par(old.par)
 > 
 > printf("======== glmnet additional tests\n")
 ======== glmnet additional tests
@@ -761,6 +782,7 @@ plotmo_y[20,1] with no column names:
 > glmnet <- glmnet(x,y)
 > plotres(glmnet, SHOWCALL=TRUE, caption="glmnet: y <- rowSums(x[,1:3]^3)")
 > plotres(glmnet, SHOWCALL=TRUE, w1.xvar="norm")
+> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(1,1))
 > omar <- par("mar")
 > ocex.axis <- par("cex.axis")
@@ -769,11 +791,17 @@ plotmo_y[20,1] with no column names:
 > stopifnot(par("mar") == omar)
 > stopifnot(par("cex.axis") == ocex.axis)
 > stopifnot(par("cex.lab") == ocex.lab)
+> par(old.par)
 > 
-> # test some args for plot.glmnetx
+> # test some args for plot_glmnet
 > plotres(glmnet, predict.s=.05, SHOWCALL=TRUE, trace=0, col.main=2,
-+         w1.xlab="my xlab", w1.ylab="my ylab", w1.main="my main",
++         w1.xlab="my xlab", w1.ylab="my ylab",
++         w1.main="test some args for plot_glmnet1",
 +         w1.col=4:1)
+> 
+> plot_glmnet(glmnet, trace=0, col.main=2, main="test some args for plot_glmnet2",
++         xlab="my xlab", ylab="my ylab",
++         col=4:1, ylim=c(-2,4)) # TODO xlim=c(-5,3))
 > 
 > old.par <- par(no.readonly=TRUE)
 > plotres(glmnet, predict.s=.05, SHOWCALL=TRUE, which=c(1,3), grid.col="gray", do.par=2)
@@ -831,7 +859,7 @@ Warning in eval(expr, envir, enclos) :
 Error in eval(expr, envir, enclos) : 
   ..6 used in an incorrect context, no ... to look in
 
-plot.glmnetx(elnet.object, xvar="rlambda", grid.col=0, col=..6, s=0,
+plot_glmnet(elnet.object, xvar="rlambda", grid.col=0, col=..6, s=0,
     nresponse=1)
 
 Error in eval(expr, envir, enclos) : 
@@ -839,75 +867,359 @@ Error in eval(expr, envir, enclos) :
 Error : cannot evaluate 'col'
 Got error as expected from try(plotres(glmnet, w1.col = nonesuch))
 > 
-> printf("======== glmnet additional tests, multiple response models\n")
-======== glmnet additional tests, multiple response models
+> printf("======== glmnet multinomial (multnet)\n")
+======== glmnet multinomial (multnet)
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(3,4), mar=c(3,3,3,1))
+> set.seed(2016)
+> n <- 200
+> p <- 4
+> x <- matrix(rnorm(n*p), n, p)
+> colnames(x) <- paste("x", 1:ncol(x), sep="")
+> 
+> # "1" is correlated of x[,1], "4" is correlated with x[,2], "2" and "3" not correlated
+> y <- ifelse(x[,1] > 0.5, 1,
++      ifelse(x[,2] > 0.0, 4,
++      sample(c(2,3), size=nrow(x), replace=TRUE)))
+> print(cov(x, y))
+         [,1]
+x1 -0.8882327
+x2  0.3631842
+x3 -0.1397361
+x4 -0.1073129
+> y <- factor(y)
+> 
+> # TODO Following causes the following warning:
+> #      Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda value not reached after maxit=100000 iterations; solutions for larger lambdas returned
+> multinomial.mod <- glmnet(x, y, family="multinomial")
+Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda value not reached after maxit=100000 iterations; solutions for larger lambdas returned
+> 
+> plotres(multinomial.mod, nresponse=1, w1.main="nresponse=1",
++         main="family=\"multinomial\"",
++         smooth.col=0, info=TRUE,
++         trace=0, which=c(1,3), do.par=FALSE, xlim=c(-.2,1.2), ylim=c(-1.2, 1.2))
+> 
+> plotres(multinomial.mod, nresponse=2, w1.main="nresponse=2",
++         smooth.col=0, info=TRUE,
++         trace=0, which=c(1,3), do.par=FALSE, xlim=c(-.2,1.2), ylim=c(-1.2, 1.2))
+> 
+> plotres(multinomial.mod, nresponse=3, w1.main="nresponse=3",
++         smooth.col=0, info=TRUE,
++         trace=0, which=c(1,3), do.par=FALSE, xlim=c(-.2,1.2), ylim=c(-1.2, 1.2))
+> 
+> plotres(multinomial.mod, nresponse=4, w1.main="nresponse=4",
++         smooth.col=0, info=TRUE,
++         trace=0, which=c(1,3), do.par=FALSE, xlim=c(-.2,1.2), ylim=c(-1.2, 1.2))
+> 
+> par(mgp=c(1.5, .4, 0))
+> plot(multinomial.mod, xvar="norm") # compare to plot.glmnet
+> par(old.par)
+> 
+> # compare to earth
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(4,3), mar=c(3,3,1,1))
+> yfac <- factor(c("a","b","c","d")[y])
+> earth.mod <- earth(x, yfac, trace=0)
+> 
+> plotres(earth.mod, nresponse=1,
++         main=sprintf("multiresponse\nnresponse=1   rsq %.2g", earth.mod$rsq.per.response[1]),
++         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
++         smooth.col=0, info=TRUE,
++         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
+> plotmo(earth.mod, nresponse=1, do.par=FALSE)
+ plotmo grid:    x1        x2         x3         x4
+        -0.01157106 0.1530614 0.04853916 0.02097713
+> 
+> plotres(earth.mod, nresponse=2,
++         main=sprintf("nresponse=2   rsq %.2g", earth.mod$rsq.per.response[2]),
++         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
++         smooth.col=0, info=TRUE,
++         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
+> plotmo(earth.mod, nresponse=2, do.par=FALSE)
+ plotmo grid:    x1        x2         x3         x4
+        -0.01157106 0.1530614 0.04853916 0.02097713
+> 
+> plotres(earth.mod, nresponse=3,
++         main=sprintf("nresponse=3   rsq %.2g", earth.mod$rsq.per.response[3]),
++         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
++         smooth.col=0, info=TRUE,
++         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
+> plotmo(earth.mod, nresponse=3, do.par=FALSE)
+ plotmo grid:    x1        x2         x3         x4
+        -0.01157106 0.1530614 0.04853916 0.02097713
+> 
+> plotres(earth.mod, nresponse=4,
++         main=sprintf("nresponse=4   rsq %.2g", earth.mod$rsq.per.response[4]),
++         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
++         smooth.col=0, info=TRUE,
++         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
+> plotmo(earth.mod, nresponse=4, do.par=FALSE)
+ plotmo grid:    x1        x2         x3         x4
+        -0.01157106 0.1530614 0.04853916 0.02097713
+> 
+> print(summary(earth.mod))
+Call: earth(x=x, y=yfac, trace=0)
+
+                           a          b          c          d
+(Intercept)      -0.00757870  0.4432975  0.4017799  0.1625013
+h(x1-0.333835)    2.90475107 -0.7112605 -0.6373112 -1.5561794
+h(x1-0.698191)   -2.95394902  0.7167487  0.6402382  1.5969621
+h(x2- -0.245697)  0.00932898 -0.8145817 -0.7411707  1.5464235
+h(x2-0.22821)    -0.00551057  0.8463104  0.7706250 -1.6114248
+
+Selected 5 of 14 terms, and 2 of 4 predictors
+Termination condition: Reached nk 21
+Importance: x1, x2, x3-unused, x4-unused
+Number of terms at each degree of interaction: 1 4 (additive model)
+
+           GCV       RSS      GRSq       RSq
+a   0.01207950  2.203362 0.9450413 0.9493713
+b   0.10288452 18.766651 0.2421261 0.3018359
+c   0.09939644 18.130408 0.2062516 0.2687877
+d   0.07064966 12.886850 0.7015683 0.7250805
+All 0.28501012 51.987271 0.6027773 0.6340728
+> 
+> par(old.par)
+> 
+> printf("======== binomial model\n")
+======== binomial model
+> 
+> set.seed(2016)
+> n <- 50
+> p <- 4
+> x <- matrix(rnorm(n*p), n, p)
+> colnames(x) <- paste("x", 1:ncol(x), sep="")
+> y <- ifelse(x[,1] + x[,2] + .1 * rnorm(p) > .5, TRUE, FALSE)
+Warning in x[, 1] + x[, 2] + 0.1 * rnorm(p) :
+  longer object length is not a multiple of shorter object length
+> print(cov(x, y))
+          [,1]
+x1  0.27061931
+x2  0.22414218
+x3 -0.01039018
+x4 -0.08333667
+> y <- factor(y)
+> binomial.mod <- glmnet(x, y, family="binomial")
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(2,3), mar=c(3,3,1,1))
+> plotres(binomial.mod, info=T, predict.s=.02, which=c(1,3), do.par=FALSE, w1.main="binomial.mod")
+> plot(binomial.mod)
+> earth.mod <- earth(x, y)
+> plotres(earth.mod, info=T, predict.s=.02, which=c(1,3), do.par=FALSE)
+Warning: predict.earth ignored argument 's'
+> par(old.par)
+> par(mfrow=c(2,4), mar=c(3,3,1,1))
+> plotmo(binomial.mod, do.par=FALSE)
+ plotmo grid:    x1          x2        x3         x4
+         -0.2965405 -0.03311923 0.2416254 0.01017809
+> plotmo(earth.mod, do.par=FALSE, main="binomial earth.mod")
+ plotmo grid:    x1          x2        x3         x4
+         -0.2965405 -0.03311923 0.2416254 0.01017809
+> par(old.par)
+> 
+> printf("======== glmnet family=\"mgaussian\"\n")
+======== glmnet family="mgaussian"
 > set.seed(2015)
+> p <- 10
+> n <- 30
 > x <- cbind((1:n)/n, matrix(rnorm(n*(p-1)),n,p-1))
 > colnames(x) <- paste0("x", 1:p)
 > # ymultresp <- cbind(rowSums(x[,1:5]^3), rowSums(x[,5:p]^3), 1:n)
 > set.seed(1)
 > ymultresp <- cbind(x[,1]+.001*rnorm(n), rowSums(x[,2:5]^3), rnorm(n))
-> glmnet.multresp <- glmnet(x, ymultresp, family="mgaussian")
-> 
-> plotres(glmnet.multresp, nresponse=1, SHOWCALL=TRUE, which=c(1:3), do.par=2)
+> glmnet.mgaussian <- glmnet(x, ymultresp, family="mgaussian")
+> plotres(glmnet.mgaussian, nresponse=1, SHOWCALL=TRUE, which=c(1:3), do.par=2, info=1)
 > # manually calculate the residuals
-> plot(x=predict(glmnet.multresp, newx=x, s=0)[,1,1],
-+      y=ymultresp[,1] - predict(glmnet.multresp, newx=x, s=0)[,1,1],
+> plot(x=predict(glmnet.mgaussian, newx=x, s=0)[,1,1],
++      y=ymultresp[,1] - predict(glmnet.mgaussian, newx=x, s=0)[,1,1],
 +      pch=20, xlab="Fitted", ylab="Residuals",
 +      main="Manually calculated residuals, nresponse=1, s=0")
 > abline(h=0, col="gray")
+> plotres(glmnet.mgaussian, nresponse=2, SHOWCALL=TRUE, which=c(1:3), do.par=2, info=1)
+> # manually calculate the residuals
+> plot(x=predict(glmnet.mgaussian, newx=x, s=0)[,2,1],
++      y=ymultresp[,2] - predict(glmnet.mgaussian, newx=x, s=0)[,2,1],
++      pch=20, xlab="Fitted", ylab="Residuals",
++      main="Manually calculated residuals, nresponse=2, s=0")
+> abline(h=0, col="gray")
+> plotmo(glmnet.mgaussian, nresponse=1, SHOWCALL=TRUE)
+ plotmo grid:    x1          x2        x3         x4         x5          x6
+          0.5166667 0.002216547 0.3749872 -0.1927516 -0.3806807 -0.03575992
+         x7        x8         x9       x10
+ 0.01386232 0.0135174 0.04028881 0.0426105
+> plotmo(glmnet.mgaussian, nresponse=2, SHOWCALL=TRUE)
+ plotmo grid:    x1          x2        x3         x4         x5          x6
+          0.5166667 0.002216547 0.3749872 -0.1927516 -0.3806807 -0.03575992
+         x7        x8         x9       x10
+ 0.01386232 0.0135174 0.04028881 0.0426105
 > 
+> old.par <- par(no.readonly=TRUE)
 > graphics::par(mfrow=c(2,2), mgp=c(1.5,0.4,0), tcl=-0.3, cex.main=1,
 +               font.main=1, mar=c(4,3,1.2,0.8), oma=c(0,0,4,0), cex=0.83)
-> plotres(glmnet.multresp, nresponse=2, SHOWCALL=TRUE, which=3, do.par=FALSE,
-+         caption="glmnet.multresp compare to manually calculated residuals")
-> plot(x=predict(glmnet.multresp, newx=x, s=0)[,2,1],
-+      y=ymultresp[,2] - predict(glmnet.multresp, newx=x, s=0)[,2,1],
+> 
+> plotres(glmnet.mgaussian, nresponse=2, SHOWCALL=TRUE, which=3, do.par=FALSE,
++         caption="glmnet.mgaussian compare to manually calculated residuals")
+> plot(x=predict(glmnet.mgaussian, newx=x, s=0)[,2,1],
++      y=ymultresp[,2] - predict(glmnet.mgaussian, newx=x, s=0)[,2,1],
 +      pch=20, xlab="Fitted", ylab="Residuals",
 +      main="Manual residuals, nresponse=2, s=0")
 > abline(h=0, col="gray")
 > 
-> plotres(glmnet.multresp, nresponse=2, predict.s=.5, SHOWCALL=TRUE, which=3, do.par=FALSE)
-> plot(x=predict(glmnet.multresp, newx=x, s=.5)[,2,1],
-+      y=ymultresp[,2] - predict(glmnet.multresp, newx=x, s=.5)[,2,1],
+> plotres(glmnet.mgaussian, nresponse=2, predict.s=.5, SHOWCALL=TRUE, which=3, do.par=FALSE)
+> plot(x=predict(glmnet.mgaussian, newx=x, s=.5)[,2,1],
++      y=ymultresp[,2] - predict(glmnet.mgaussian, newx=x, s=.5)[,2,1],
 +      pch=20, xlab="Fitted", ylab="Residuals",
 +      main="Manual residuals, nresponse=2, s=.5")
 > abline(h=0, col="gray")
 > 
-> plotres(glmnet.multresp, predict.s=.05, nresponse=3, info=TRUE, SHOWCALL=TRUE) # essentially random
+> plotres(glmnet.mgaussian, predict.s=.05, nresponse=3, info=TRUE, SHOWCALL=TRUE) # essentially random
+> 
+> par(old.par)
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(2,3), mar=c(3,3,3,.5), oma=c(0,0,3,0), mgp=c(1.5,0.4,0), tcl=-0.3)
 > 
 > data(trees)
 > set.seed(2015)
-> par(mfrow=c(2,3), mar=c(3,3,3,.5), oma=c(0,0,3,0), mgp=c(1.5,0.4,0), tcl=-0.3)
 > # variable with a long name
 > x50 <- cbind(trees[,1:2], Girth12345678901234567890=rnorm(nrow(trees)))
 > mod.with.long.name <- glmnet(data.matrix(x50),data.matrix(trees$Volume))
-> plotres(mod.with.long.name, which=1, caption="test plot.glmnetx with x50 and x60")
+> plotres(mod.with.long.name, which=1, caption="test plot_glmnet with x50 and x60")
 > 
 > # one inactive variable (all coefs are zero for variable "rand")
-> # (this requires set.seed(2015) above and formation of x50 above)
+> set.seed(2015)
 > x60 <- cbind(trees[,1], rand=rnorm(nrow(trees)), trees[,2])
 > # complicate the issue: use an unnamed column (column 3)
 > colnames(x60) <- c("Girth", "rand", "")
 > mod.with.inactive.var <- glmnet(data.matrix(x60),data.matrix(trees$Volume))
-> stopifnot(all(mod.with.inactive.var$beta["rand",] == 0))
+> mod.with.inactive.var$beta["rand",] = 0 # TODO hack force inactive variable
 > plotres(mod.with.inactive.var, which=1)
 > plotres(mod.with.inactive.var, which=1, w1.xvar="norm")
 > # compare to plot.glmnet (but note that labels aren't always plotted unless par=c(1,1)?)
 > plot(mod.with.inactive.var, xvar="norm", label=TRUE)
 > # plotmo calls the unnamed column "x3", fair enough
 > plotmo(mod.with.inactive.var, do.par=FALSE, pt.col=2)
- grid:    Girth       rand x3
-           12.9 -0.1614194 76
+ plotmo grid:    Girth        rand x3
+                  12.9 0.004544606 76
 > 
 > # single active variable
 > x70 <- cbind(trees[,1,drop=F], 0)
 > a <- glmnet(data.matrix(x70), data.matrix(trees$Volume))
+> par(old.par)
+> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2), mar=c(3,3,2,4))
 > plotres(a, which=1, predict.s=1, caption="single active variable")
 > plotres(a, which=1, w1.xvar="norm")
 > plotres(a, which=1, w1.xvar="lambda")
 > plotres(a, which=1, w1.xvar="dev")
+> 
+> #--- test interaction of w1. and non w1 args -------------------------------------
+> 
+> #--- glmnet model, which=1 ---
+> 
+> par(old.par)
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(4,3), mar=c(3, 3, 4, 1), mgp=c(2, 0.6, 0))
+> 
+> plotres(mod.glmnet.xmat, which=1,
++         w1.xlim=c(6,-6),
++         w1.ylim=c(-5,5),
++         w1.col=1:2,
++         w1.main="TEST INTERACTION OF W1 ARGS PAGE 1 (which=1)\n\nwhich=1 w1.xlim=c(6,-6)\nw1.ylim=c(-5,5)) w1.col=1:2,")
+> 
+> plotres(mod.glmnet.xmat, which=1, cex.main=1.2,
++         xlim=c(9,-9),
++         ylim=c(-60,60),
++         col=3:4,
++         w1.main="which=1 xlim=c(9,-9)\nylim=c(-60,60)) col=3:4,")
+> 
+> plotres(mod.glmnet.xmat, which=1, cex.main=1,
++         xlim=c(9,-9), w1.xlim=c(6,-6),
++         ylim=c(-60,60), w1.ylim=c(-5,5),
++         w1.col=1:2, col=3:4,
++         w1.main="which=1 xlim=c(9,-9), w1.xlim=c(6,-6)\nylim=c(-60,60), w1.ylim=c(-5,5)) w1.col=1:2, col=3:4")
+> 
+> #--- glmnet model, which=c(1,3,4) ---
+> 
+> plotres(mod.glmnet.xmat, which=c(1,3,4), cex.main=1,
++         ylim=c(-70,70),    xlim=c(-20, 60),
++         col=2:3, do.par=FALSE,
++         w1.main="TEST INTERACTION OF W1 ARGS PAGE 1 (which=c(1,3,4))\nlim=c(-70,70), xlim=c(-20, 60)")
+> 
+> plotres(mod.glmnet.xmat, which=c(1,3,4), cex.main=1.2,
++         ylim=c(-70,70),    xlim=c(-20, 60), qq.xlim=c(-7,5),
++         col=2:3, do.par=FALSE,
++         w1.main="ylim=c(-70,70), xlim=c(-20, 60)\nqq.xlim=c(-7,5)")
+> 
+> plotres(mod.glmnet.xmat, which=c(1,3,4), cex.main=1.2,
++         w1.ylim=c(-7,7), w1.xlim=c(4,-4),     col=2:3, do.par=FALSE,
++         w1.main="w1.ylim=c(-7,7), w1.xlim=c(4,-4)")
+> 
+> # plotres(mod.glmnet.xmat, which=c(1,3,4), cex.main=.9,
+> #         w1.ylim=c(-7,7), ylim=c(-20,20),
+> #         qq.xlim=c(-7,5), col=2:3, do.par=FALSE,
+> #         qq.ylim=c(-100,100),
+> #         main="w1.ylim=c(-7,7) ylim=c(-20,20)\nqq.xlim=c(-7,5) qq.ylim=c(-100,100)")
+> 
+> par(old.par)
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(3,3), mar=c(3, 3, 4, 1), mgp=c(2, 0.6, 0))
+> 
+> plotres(mod.glmnet.xmat, which=c(1,3,4), do.par=FALSE, #  w1.main="which=c(1,3,4)",
++         w1.xlim=c(6,-6),
++         w1.ylim=c(-5,5),
++         w1.col=2:3,
++         w1.main="TEST INTERACTION OF W1 ARGS PAGE 2\n\nwhich=c(1,3,4) w1.xlim=c(6,-6)\nw1.ylim=c(-5,5)) w1.col=2:3")
+> 
+> plotres(mod.glmnet.xmat, which=c(1,3,4), w1.cex.main=1,  do.par=FALSE, # w1.main="which=c(1,3,4)",
++         xlim=c(-20,70),
++         ylim=c(-60,60),
++         w1.col=2:3,
++         col=3:4,
++         w1.main="which=c(1,3,4) ylim=c(-60,60))\nw1.col=2:3, col=3:4")
+> 
+> plotres(mod.glmnet.xmat, which=c(1,3,4), w1.cex.main=1, do.par=FALSE, # w1.main="which=c(1,3,4)",
++         xlim=c(-20,70), w1.xlim=c(6,-6),
++         ylim=c(-60,60), w1.ylim=c(-5,5),
++         col=3:4,
++         w1.main="which=c(1,3,4) xlim=c(9,-9), w1.xlim=c(6,-6)\nylim=c(-60,60), w1.ylim=c(-5,5)) w1.col=1:2, col=3:4")
+> 
+> par(old.par)
+> 
+> #-- make sure that we can work with all families
+> 
+> set.seed(2016)
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(3,3), mar=c(3,3,3,1))
+> n <- 100
+> p <- 4
+> x <- matrix(rnorm(n*p), n, p)
+> g2 <- sample(1:2, n, replace=TRUE)
+> for(family in c("gaussian","binomial","poisson")) {
++     mod <- glmnet(x,g2,family=family)
++     plot(mod, xvar="lambda")
++     plotres(mod, w1.xvar="lambda", main=paste("family", family),
++             which=c(1,3), do.par=FALSE)
++ }
+> # cox
+> library(plotmo)
+> n <- 100
+> p <- 20
+> nzc <- trunc(p/10)
+> set.seed(2016)
+> beta <- rnorm(nzc)
+> x7 <- matrix(rnorm(n*p), n, p)
+> beta <- rnorm(nzc)
+> fx <- x7[,seq(nzc)] %*% beta/3
+> hx <- exp(fx)
+> ty <- rexp(n, hx)
+> tcens <- rbinom(n=n, prob=.3, size=1)# censoring indicator
+> y <- cbind(time=ty, status=1-tcens) # y=Surv(ty,1-tcens) with library(survival)
+> glmnet.cox <- glmnet(x=x7, y=y, family="cox")
+> plot(glmnet.cox)
+> title("glmnet.cox", line=2)
+> plot_glmnet(glmnet.cox, xvar="norm")
+> plotres(glmnet.cox, which=3, do.par=FALSE)
+> par(old.par)
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot

@@ -37,16 +37,16 @@ plotmo_pint <- function(object, newdata, type, level, trace, ipred, inverse.func
 #  (i)  lwr, upr               intervals for prediction of new data
 #  (ii) cint.lwr, cint.upr     intervals for prediction of mean response
 
-plotmo.pint <- function(object, newdata, type, level, trace)
+plotmo.pint <- function(object, newdata, type, level, trace, ...)
 {
     UseMethod("plotmo.pint")
 }
-plotmo.pint.default <- function(object, newdata, type, level, trace)
+plotmo.pint.default <- function(object, ...)
 {
     stop0("the level argument is not supported for ",
           class(object)[1], " objects")
 }
-plotmo.pint.lm <- function(object, newdata, type, level, trace)
+plotmo.pint.lm <- function(object, newdata, type, level, ...)
 {
     # lm objects with weights do not support confidence intervals on new data
     if(!is.null(object$weights))

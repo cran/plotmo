@@ -2,7 +2,9 @@
 
 plotmo_qq <- function(rinfo, info, nfigs,
                       grid.col, smooth.col,
-                      id.n, iresids, npoints, ...)
+                      id.n, iresids, npoints,
+                      force.auto.resids.ylim,
+                      ...)
 {
     old.pty <- par("pty")
     par(pty="s") # square
@@ -12,15 +14,17 @@ plotmo_qq <- function(rinfo, info, nfigs,
     resids <- rinfo$scale * rinfo$resids
     # qqnorm sets NAs in trans.resids (leverage==1) to NA in
     # qq$x and qq$y, and thus NAs don't get plotted (R PR#3750)
-    main <- dot("main", DEF=sprintf("%s QQ", rinfo$name), ...)
+    main <- dota("main", DEF=sprintf("%s QQ", rinfo$name), ...)
     qq <- qqnorm(resids, main=main, plot.it=FALSE)
     id.indices <- get.id.indices(resids, id.n)
     xlim <- NULL
     ylim <- NULL
-    if(nfigs == 1) { # user can set xlim and ylim if this is the only figure
-        xlim <- dot("xlim", DEF=NULL, ...)
-        ylim <- dot("ylim", DEF=NULL, ...)
-    }
+    if(nfigs == 1) # user can set xlim only if this is the only figure
+        xlim <- dota("xlim", DEF=xlim, ...)
+    if(!force.auto.resids.ylim)
+        ylim <- dota("ylim", DEF=ylim, ...)
+    xlim <- dota("qq.xlim", DEF=xlim, ...)
+    ylim <- dota("qq.ylim", DEF=ylim, ...)
     if(!is.specified(xlim) && !is.null(id.indices)) { # extra space for point labs?
         min <- min(qq$x, na.rm=TRUE)
         max <- max(qq$x, na.rm=TRUE)
@@ -39,20 +43,23 @@ plotmo_qq <- function(rinfo, info, nfigs,
     ylim <- fix.lim(ylim)
 
     # allow col.response as an argname for compat with old plotmo
-    pt.col <- dot("col.response col.resp", DEF=1, ...)
-    pt.col <- dot("pt.col col.points col.point col.residuals col.resid col",
-                     EX=c(0,1,1,1,1,1), DEF=pt.col, NEW=1, ...)
-    pt.col <- dot("qq.col col.residuals col.resid col", EX=c(0,1,1,1), DEF=pt.col, NEW=1, ...)
+    pt.col <- dota("col.response col.resp", DEF=1, ...)
+    pt.col <- dota("pt.col col.points col.point col.residuals col.resid col",
+                   EX=c(0,1,1,1,1,1), DEF=pt.col, NEW=1, ...)
+    pt.col <- dota("qq.col col.residuals col.resid col",
+                   EX=c(0,1,1,1), DEF=pt.col, NEW=1, ...)
     # recycle
     pt.col <- repl(pt.col, length(resids))
-    pt.cex <- dot("response.cex cex.response", DEF=1, ...)
-    pt.cex <- dot("pt.cex cex.points cex.point cex", EX=c(0,1,1,1), DEF=pt.cex, NEW=1, ...)
-    pt.cex <- dot("qq.cex cex.qq cex.residuals", EX=c(0,1,1), DEF=pt.cex, NEW=1, ...)
+    pt.cex <- dota("response.cex cex.response", DEF=1, ...)
+    pt.cex <- dota("pt.cex cex.points cex.point cex",
+                   EX=c(0,1,1,1), DEF=pt.cex, NEW=1, ...)
+    pt.cex <- dota("qq.cex cex.qq cex.residuals",
+                   EX=c(0,1,1), DEF=pt.cex, NEW=1, ...)
     pt.cex <- pt.cex * pt.cex(length(resids), npoints)
     pt.cex <- repl(pt.cex, length(resids))
 
-    pt.pch <- dot("response.pch pch.response", DEF=20, ...)
-    pt.pch <- dot(
+    pt.pch <- dota("response.pch pch.response", DEF=20, ...)
+    pt.pch <- dota(
         "qq.pch pt.pch pch.points pch.point pch.residuals pch",
         EX=c(1,0,0,1,1,1), DEF=pt.pch, NEW=1, ...)
     pt.pch <- repl(pt.pch, length(resids))
@@ -77,9 +84,9 @@ plotmo_qq <- function(rinfo, info, nfigs,
     drop.line.col(...)
     if(is.specified(grid.col))
         grid(col=grid.col, lty=1)
-    qqline.col <- dot("qqline.col", DEF="gray", ...)
-    qqline.lwd <- dot("qqline.lwd", DEF=1,      ...)
-    qqline.lty <- dot("qqline.lty", DEF=1,      ...)
+    qqline.col <- dota("qqline.col", DEF="gray", ...)
+    qqline.lwd <- dota("qqline.lwd", DEF=1,      ...)
+    qqline.lty <- dota("qqline.lty", DEF=1,      ...)
     if(is.specified(qqline.col) &&
        is.specified(qqline.lwd) &&
        is.specified(qqline.lty))
@@ -118,8 +125,8 @@ plotmo_qq <- function(rinfo, info, nfigs,
             x      = qq$x[id.indices], y=qq$y[id.indices],
             labels = rinfo$labs[id.indices],
             offset = .33, xpd=NA,
-            font   = dot("label.font", DEF=1, ...)[1],
-            cex    = .8 * dot("label.cex", DEF=1, ...)[1],
-            col    = dot("label.col",
-                        DEF=if(is.specified(smooth.col)) smooth.col else 2, ...)[1])
+            font   = dota("label.font", DEF=1, ...)[1],
+            cex    = .8 * dota("label.cex", DEF=1, ...)[1],
+            col    = dota("label.col",
+                      DEF=if(is.specified(smooth.col)) smooth.col else 2, ...)[1])
 }

@@ -57,7 +57,7 @@ plotmo.predict <- function(object, newdata, type, ..., TRACE)
     UseMethod("plotmo.predict")
 }
 # this handles a common mistake
-plotmo.predict.list <- function(object, newdata, type, ..., TRACE)
+plotmo.predict.list <- function(object, ...)
 {
     stop0("object does not have a predict method")
 }

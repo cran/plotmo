@@ -282,6 +282,7 @@ process.y <- function(y, object, type, nresponse,
                           fname,
                           if(is.null(nresponse)) "NULL" else format(nresponse)),
                   trace)
+
     list(y          = y, # n x 1 numeric, column name is original y column name
          resp.levs  = returned.resp.levs,
          resp.class = resp.class)
@@ -382,7 +383,10 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
     }
     check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
     # note that msg is inhibited for trace<0, see trace1 in plotmo_rinfo
-    if(nresponse > NCOL(y) && trace >= 0) {
+    # TODO this causes a spurious trace message with cv.glmnet models with nresponse=2
+    #      message is plotmo_y[500,1] with no column names. So I changed the if statement.
+    # if(nresponse > NCOL(y) && trace >= 0) {
+    if(nresponse > NCOL(y) && trace > 0) {
         cat("\n")
         print_summary(y, fname, trace=2)
         cat("\n")
@@ -396,11 +400,11 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
              " to nresponse=", nresponse, "\n")
     nresponse
 }
-plotmo.convert.na.nresponse <- function(object, nresponse, yhat, type="response")
+plotmo.convert.na.nresponse <- function(object, nresponse, yhat, type="response", ...)
 {
     UseMethod("plotmo.convert.na.nresponse")
 }
-plotmo.convert.na.nresponse.default <- function(object, nresponse, yhat, type)
+plotmo.convert.na.nresponse.default <- function(object, nresponse, yhat, type, ...)
 {
     stopifnot(is.na(nresponse))
     if(NCOL(yhat) == 1)

@@ -7,11 +7,11 @@
 # returns the indices of all predictors.  The object specific methods
 # typically return only the predictors actually used in the model.
 
-plotmo.singles <- function(object, x, nresponse, trace, all1)
+plotmo.singles <- function(object, x, nresponse, trace, all1, ...)
 {
     UseMethod("plotmo.singles")
 }
-plotmo.singles.default <- function(object, x, nresponse, trace, all1)
+plotmo.singles.default <- function(object, x, nresponse, trace, all1, ...)
 {
     seq_len(NCOL(x))
 }
@@ -33,7 +33,7 @@ plotmo.singles.default <- function(object, x, nresponse, trace, all1)
 #
 # It is ok to return NULL or a matrix with zero rows.
 
-plotmo.pairs <- function(object, x, nresponse=1, trace=0, all2=FALSE)
+plotmo.pairs <- function(object, x, nresponse=1, trace=0, all2=FALSE, ...)
 {
     if(all2) # TODO include all1 in this?
         return(get.all.pairs(object, x, trace))
@@ -49,7 +49,7 @@ plotmo.pairs <- function(object, x, nresponse=1, trace=0, all2=FALSE)
 # use the term.labels.  An lm formula like Volume~(Girth*Height2)-Height
 # has term.labels "Girth" "Height2" "Girth:Height2"
 
-plotmo.pairs.default <- function(object, x, nresponse, trace, all2)
+plotmo.pairs.default <- function(object, x, nresponse, trace, all2, ...)
 {
     formula.vars <- NULL
     formula <- try(formula(object), silent=trace < 2)
@@ -121,7 +121,7 @@ form.pairs <- function(varnames) # return a two column matrix, each row is a pai
 #
 # TODO this would probably be done best by processing the parse tree
 
-plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace)
+plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace, ...)
 {
     trace2(trace, "plotmo.pairs.from.term.labels\n")
     trace2(trace, "term.labels: %s\n", quotify.trunc(term.labels), "\n")

@@ -8,6 +8,7 @@ data(etitanic)
 options(warn=1) # print warnings as they occur
 if(!interactive())
     postscript(paper="letter")
+set.seed(2016)
 et <- etitanic[, c("survived", "pclass", "sex", "age")]
 et$pclassn <- as.numeric(et$pclass)
 et <- et[c(30:80,330:380,630:680), ]

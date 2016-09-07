@@ -1,12 +1,5 @@
 \name{plotmo.misc}
 \alias{check.index}
-\alias{get.plotmo.pairs}
-\alias{get.plotmo.singles}
-\alias{get.plotmo.type.wrapper}
-\alias{get.plotmo.x.wrapper}
-\alias{get.plotmo.y.default}
-\alias{get.plotmo.y.wrapper}
-\alias{get.plotmo.y}
 \alias{plotmo.convert.na.nresponse}
 \alias{plotmo.pairs.default}
 \alias{plotmo.pairs}
@@ -56,20 +49,20 @@ plotmo_standardizescale(object)
 plotmo_type(object, trace, fname="plotmo", type, ...)
 plotmo_y(object, nresponse=NULL, trace=0, expected.len=NULL,
     resp.levs=NULL, convert.glm.response=!is.null(nresponse))
-\method{plotmo.pairs}{default}(object, x, nresponse, trace, all2)
-\method{plotmo.singles}{default}(object, x, nresponse, trace, all1)
-\method{plotmo.y}{default}(object, trace, naked, expected.len)
+\method{plotmo.pairs}{default}(object, x, nresponse, trace, all2, ...)
+\method{plotmo.singles}{default}(object, x, nresponse, trace, all1, ...)
+\method{plotmo.y}{default}(object, trace, naked, expected.len, ...)
 # plotmo methods
-plotmo.convert.na.nresponse(object, nresponse, yhat, type="response")
-plotmo.pairs(object, x, nresponse, trace, all2)
-plotmo.pint(object, newdata, type, level, trace)
+plotmo.convert.na.nresponse(object, nresponse, yhat, type="response", ...)
+plotmo.pairs(object, x, nresponse, trace, all2, ...)
+plotmo.pint(object, newdata, type, level, trace, ...)
 plotmo.predict(object, newdata, type, ..., TRACE)
 plotmo.prolog(object, object.name, trace, ...)
 plotmo.residtype(object, ...)
-plotmo.singles(object, x, nresponse, trace, all1)
+plotmo.singles(object, x, nresponse, trace, all1, ...)
 plotmo.type(object, ...)
-plotmo.x(object, trace)
-plotmo.y(object, trace, naked, expected.len)
+plotmo.x(object, trace, ...)
+plotmo.y(object, trace, naked, expected.len, nresponse=1, ...)
 }
 \arguments{
 \item{\dots}{-}

@@ -6,6 +6,7 @@ library(earth)
 data(ozone1)
 data(etitanic)
 options(warn=1) # print warnings as they occur
+set.seed(2016)
 if(!interactive())
     postscript(paper="letter")
 dopar <- function(nrows, ncols, caption = "")
@@ -527,107 +528,6 @@ plotmo(a, type="prob", nresponse="pre", caption="randomForest kyphosis", ndiscre
 # TODO residuals are in range 0 to 1
 plotres(a, type="prob", nresponse="pre", caption="plotres randomForest kyphosis")
 
-# gbm
-library(gbm)
-library(rpart.plot) # for ptitanic, want data with NAs for testing
-data(ptitanic)
-ptit <- ptitanic[c(1:10,400:410,600:610),] # small data for fast test
-ptit <- ptitanic
-ptit$survived <- ptit$survived == "survived"
-temp <- ptit$pclass # put pclass at the end so can check ordering of importances
-ptit$pclass <- NULL
-ptit$pclass <- factor(as.numeric(temp), labels=c("first", "second", "third"))
-set.seed(1010)
-gbm.model <- gbm(survived~., data=ptit, train.frac=.95, verbose=TRUE,
-                 n.trees=30, shrinkage=.1) # small number of trees for fast test
-
-par(mfrow=c(4,4))
-par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
-par(mgp=c(1.5, .5, 0))      # flatten axis elements
-plotmo(gbm.model, persp.ticktype="d", persp.nticks=2, do.par=F,
-       degree1=0, degree2=3, main="gbm model", caption="gbm models")
-plotmo(gbm.model, type2="im", do.par=F,
-       col.response=ptit$survived+2, pt.pch=20, pt.cex=.5)
-print(summary(gbm.model))   # will also plot
-plotres(gbm.model, col=ptit$survived+2, do.par=FALSE)
-par(mfrow=c(1,1))
-
-ozplus <- ozone1
-# add more variables so we can test all1 and all2
-ozplus$ltemp <- log(ozplus$temp)
-ozplus$lhum <- log(ozplus$humidity)
-ozplus$ltemphum <- log(ozplus$temp) + log(ozplus$humidity)
-ozplus$ibttemp <- ozplus$ibt * ozplus$temp
-ozplus <- data.frame(scale(ozplus))
-set.seed(2015)
-gbm.ozplus <- gbm(O3~., data=ozplus, train.frac=.9,
-               n.trees=100, cv.fold=2, shrinkage=.1, interact=3)
-# note that we get different RSquareds printed in the trace here
-plotres(gbm.ozplus, trace=1, SHOWCALL=TRUE)
-plotres(gbm.ozplus, predict.n.trees=42, trace=1, SHOWCALL=TRUE)
-plotmo(gbm.ozplus, trace=-1, SHOWCALL=TRUE)
-plotmo(gbm.ozplus, trace=-1, all1=TRUE, SHOWCALL=TRUE)
-plotmo(gbm.ozplus, trace=-1, all2=TRUE, SHOWCALL=TRUE)
-
-library(caret)
-set.seed(2015)
-caret.earth.mod <- train(O3~., data=ozone1, method="earth",
-                         tuneGrid=data.frame(degree=2, nprune=10))
-# TODO pairs are not plotted
-plotmo(caret.earth.mod, type="raw", trace=1, SHOWCALL=TRUE)
-# but the pairs are plotted here
-plotmo(caret.earth.mod$finalModel, trace=1, SHOWCALL=TRUE)
-plotres(caret.earth.mod, type="raw", trace=1, SHOWCALL=TRUE)
-
-set.seed(2015)
-bag <- bagEarth(O3~., data=ozone1, degree=2, B=3)
-print(bag$fit)
-# pairs are plotted correctly (I think)
-plotmo(bag, type="response", trace=1, SHOWCALL=TRUE)
-
-set.seed(2015)
-a.bag1 <- bagEarth(trees[,-3], trees[,3], degree=2, B = 3)
-plotres(a.bag1, trace=1, SHOWCALL=TRUE)
-plotmo(a.bag1, trace=1, SHOWCALL=TRUE, all2=TRUE, caption="bagEarth, trees")
-
-# TODO following doesn't work properly, factors are plotted as continuous?
-a.bag3 <- bagEarth(survived~., data=etitanic, degree=2, B=3)
-plotmo(a.bag3, clip=F, caption="bagEarth, etitanic", trace=1, SHOWCALL=TRUE)
-plotres(a.bag3, clip=F, trace=1, SHOWCALL=TRUE)
-
-# example by Max Kuhn on stackoverflow
-set.seed(2015)
-etit <- etitanic
-etit$survived <- factor(ifelse(etit$survived == 1, "yes", "no"),
-                       levels = c("yes", "no"))
-# TODO pairs are not plotted
-caret.earth.mod2 <- train(survived ~ .,
-            data = etit,
-            method = "earth",
-            tuneGrid = data.frame(degree = 2, nprune = 9),
-            trControl = trainControl(method = "none",
-                                     classProbs = TRUE))
-plotmo(caret.earth.mod2, type="raw", trace=1, SHOWCALL=TRUE)
-plotres(caret.earth.mod2, type="raw", trace=1, SHOWCALL=TRUE)
-
-data(ozone1)
-a <- train(O3 ~ ., data = ozone1,  method = "earth",
-            tuneGrid = data.frame(degree = 2, nprune = 14))
-plotmo(a, type="raw", trace=1, SHOWCALL=TRUE)
-plotres(a, type="raw", trace=1, SHOWCALL=TRUE)
-
-library(nnet)
-data(iris3)
-set.seed(301)
-samp <- c(sample(1:50,25), sample(51:100,25), sample(101:150,25))
-ird <- data.frame(rbind(iris3[,,1], iris3[,,2], iris3[,,3]),
-                  species=factor(c(rep("seto",50), rep("vers", 50), rep("virg", 50))))
-ir.nn2 <- nnet(species ~ ., data = ird, subset = samp, size = 2, rang = 0.1,
-               decay = 5e-4, maxit = 20)
-plotmo(ir.nn2, nresponse=1, type="class", all2=T, degree2=2:6)
-plotmo(ir.nn2, nresponse=2, clip=F, all2=T, degree2=1:5)
-plotres(ir.nn2, nresponse=2)
-
 #--- fda ------------------------------------------------------------------------------
 
 par(mfrow=c(1,1))
@@ -686,6 +586,18 @@ plotmo(nn, trace=1, col.response=2, all2=TRUE, SHOWCALL=TRUE)
 plotmo(nn, trace=1, col.response=2, predict.rep="best", SHOWCALL=TRUE)
 plotres(nn, trace=1, info=TRUE, SHOWCALL=TRUE)
 plotres(nn, trace=1, info=TRUE, predict.rep="best", SHOWCALL=TRUE)
+
+library(nnet)
+data(iris3)
+set.seed(301)
+samp <- c(sample(1:50,25), sample(51:100,25), sample(101:150,25))
+ird <- data.frame(rbind(iris3[,,1], iris3[,,2], iris3[,,3]),
+                  species=factor(c(rep("seto",50), rep("vers", 50), rep("virg", 50))))
+ir.nn2 <- nnet(species ~ ., data = ird, subset = samp, size = 2, rang = 0.1,
+               decay = 5e-4, maxit = 20)
+plotmo(ir.nn2, nresponse=1, type="class", all2=T, degree2=2:6)
+plotmo(ir.nn2, nresponse=2, clip=F, all2=T, degree2=1:5)
+plotres(ir.nn2, nresponse=2)
 
 library(biglm)
 data(trees)

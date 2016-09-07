@@ -1,6 +1,6 @@
 # methods.R: plotmo method functions for miscellaneous objects
 
-plotmo.x.mars <- function(object, trace) # mda package
+plotmo.x.mars <- function(object, trace, ...) # mda package
 {
     # like plotmo.x.default but ignore object$x
     get.x.or.y(object, "x", trace, try.object.x.or.y=FALSE)
@@ -32,7 +32,7 @@ plotmo.predict.mvr <- function(object, newdata, type, ..., TRACE) # pls package
     }
     y
 }
-plotmo.predict.quantregForest <- function(object, newdata, type, ..., TRACE)
+plotmo.predict.quantregForest <- function(object, newdata, ..., TRACE)
 {
     # the following calls predict.quantregForest
     plotmo.predict.default(object, newdata, def.quantiles=.5, ..., TRACE=TRACE)
@@ -98,17 +98,17 @@ get.lda.yhat <- function(object, yhat, type, trace)
 }
 plotmo.type.varmod <- function(object, ...) "se"
 
-plotmo.x.varmod <- function(object, trace)
+plotmo.x.varmod <- function(object, trace, ...)
 {
     attr(object$parent, ".Environment") <-
         get.model.env(object$parent, "object$parent", trace)
     plotmo.x(object$parent, trace)
 }
-plotmo.y.varmod <- function(object, trace, naked, expected.len)
+plotmo.y.varmod <- function(object, trace, naked, expected.len, nresponse, ...)
 {
     attr(object$residmod, ".Environment") <-
         get.model.env(object$residmod, "object$residmod", trace)
-    plotmo.y(object$residmod, trace, naked, expected.len)
+    plotmo.y(object$residmod, trace, naked, expected.len, nresponse)
 }
 order.randomForest.vars.on.importance <- function(object, x)
 {
@@ -122,7 +122,7 @@ order.randomForest.vars.on.importance <- function(object, x)
     # vector of var indices, most important vars first
     order(importance[,1], decreasing=TRUE)
 }
-plotmo.singles.randomForest <- function(object, x, nresponse, trace, all1)
+plotmo.singles.randomForest <- function(object, x, nresponse, trace, all1, ...)
 {
     importance <- order.randomForest.vars.on.importance(object, x)
     if(all1)
@@ -196,30 +196,17 @@ plotmo.predict.bagging <- function(object, newdata,  # adabag package
 # but not plotmo(fda.object$fit).
 # If it were not commented out, we would support neither.
 #
-# plotmo.singles.fda <- function(object, x, nresponse, trace, all1)
+# plotmo.singles.fda <- function(object, x, nresponse, trace, all1, ...)
 # {
 #     trace2(trace, "Invoking plotmo_x for embedded fda object\n")
 #     x <- plotmo_x(object$fit, trace)
 #     plotmo.singles(object$fit, x, nresponse, trace, all1)
 # }
-# plotmo.pairs.fda <- function(object, x, nresponse, trace, all2)
+# plotmo.pairs.fda <- function(object, x, nresponse, trace, all2, ...)
 # {
 #     trace2(trace, "Invoking plotmo_x for embedded fda object\n")
 #     x <- plotmo_x(object$fit, trace)
 #     plotmo.pairs(object$fit, x, nresponse, trace, all2)
-# }
-
-# TODO following code sometimes gives bogus pairs
-# plotmo.pairs.train <- function(object, x, nresponse, trace, all2) # caret package
-# {
-#     submod <- object$finalModel
-#     # check that submod looks like an S3 model
-#     if(!is.null(submod) && is.list(object))
-#         plotmo.pairs(submod, x, nresponse, trace, all2)
-#     else {
-#         warning0("unrecognized \"train\" object") # should never get here
-#         plotmo.pairs(object, x, nresponse, trace, all2)
-#     }
 # }
 
 # # Simple interface for the AMORE package.

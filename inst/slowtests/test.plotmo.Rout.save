@@ -38,6 +38,7 @@ Loading required package: TeachingDemos
 > options(warn=1) # print warnings as they occur
 > if(!interactive())
 +     postscript(paper="letter")
+> set.seed(2016)
 > make.space.for.caption <- function(caption="CAPTION")
 + {
 +     oma <- par("oma")
@@ -80,8 +81,8 @@ stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
 got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
 
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 
 > 
 > caption <- "test 4 x 4 layout with ylab"
@@ -241,8 +242,8 @@ graphics::par(mfrow=c(4,4), mgp=c(1.5,0.4,0), tcl=-0.3, font.main=2,
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
 
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 
 degree1 plot 1 temp
 newdata[50,9]:
@@ -539,8 +540,8 @@ graphics::par(mfrow=c(3,3), mgp=c(1.5,0.4,0), tcl=-0.3, font.main=2,
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
 
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 
 degree1 plot 1 temp
 newdata[50,9]:
@@ -763,16 +764,16 @@ persp(temp:dpg) theta 235
                               test 2 x 2 layout 
 > a <- earth(O3 ~ ., data=ozone1, nk=9, pmethod="n", degree=2)
 > plotmo(a, caption=caption)
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > 
 > caption <- "test 1 x 1 layout"
 > dopar(1,1,caption)
                               test 1 x 1 layout 
 > a <- earth(O3 ~ ., data=ozone1, nk=4, pmethod="n", degree=2)
 > plotmo(a, caption=caption)
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > 
 > caption <- "test plotmo basic params"
 > a <- earth(O3 ~ ., data=ozone1, degree=2)
@@ -780,18 +781,18 @@ persp(temp:dpg) theta 235
                               test plotmo basic params 
 > plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, caption=caption,
 +         main="test main", xlab="test xlab", ylab="test ylab")
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a, do.par=FALSE, degree1=F, degree2=4, grid.func=mean, persp.col="white", ngrid2=10, persp.phi=40)
 > plotmo(a, do.par=FALSE, degree1=1, degree1.lty=2, degree1.lwd=4, degree1.col=2, nrug=300, degree2=F, main="nrug=300")
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, main="nrug=-1")
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a, do.par=FALSE, degree1=1, nrug=500, ngrid1=50, degree2=F, main="ngrid1=50 nrug=500")
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a, do.par=FALSE, degree1=NA, degree2=1, persp.phi=60) # graph args
 > 
 > caption <- "test plotmo xlim and ylim"
@@ -799,13 +800,13 @@ persp(temp:dpg) theta 235
 > dopar(5,3,caption)
                               test plotmo xlim and ylim 
 > plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, caption=caption, xlab="ylim=default")
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, ylim=NA, xlab="ylim=NA")
 > plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, ylim=c(0,20), xlab="ylim=c(0,20)")
 > plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, xlim=c(190,250), xlab="xlim=c(190,250)")
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, xlim=c(190,250), ylim=c(11,18), xlab="xlim=c(190,250), ylim=c(11,18)")
 > 
 > # term.plot calls predict.earth with an se parameter, even with termplot(se=FALSE)
@@ -833,8 +834,8 @@ Warning: predict.earth ignored argument 'se.fit'
 > caption <- "test all1=TRUE"
 > a <- earth(doy ~ humidity + temp + wind, data=ozone1, degree=2)
 > plotmo(a, caption=caption, all1=TRUE, persp.ticktype="d", persp.nticks=2)
- grid:    humidity temp wind
-                64   62    5
+ plotmo grid:    humidity temp wind
+                       64   62    5
 > caption <- "test all2=TRUE"
 > print(summary(a))
 Call: earth(formula=doy~humidity+temp+wind, data=ozone1, degree=2)
@@ -856,8 +857,8 @@ Importance: wind, temp, humidity
 Number of terms at each degree of interaction: 1 3 5
 GCV 8954.829    RSS 2590958    GRSq 0.1805267    RSq 0.2771303
 > plotmo(a, caption=caption, all2=TRUE)
- grid:    humidity temp wind
-                64   62    5
+ plotmo grid:    humidity temp wind
+                       64   62    5
 > 
 > oz <- ozone1[150:200,c("O3","temp","humidity","ibh")]
 > a.glob <- earth(O3~temp+humidity, data=oz, degree=2)
@@ -866,6 +867,7 @@ GCV 8954.829    RSS 2590958    GRSq 0.1805267    RSq 0.2771303
 + {
 +     caption <- "test environments and finding the correct data"
 +     dopar(4,4,caption)
++     set.seed(2016)
 + 
 +     plotmo(a.glob, do.par=FALSE, main="a.glob oz",
 +           degree1=1, all2=1, degree2=1, type2="im",
@@ -1127,8 +1129,8 @@ pairs:
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
 
- grid:    temp humidity
-            80       68
+ plotmo grid:    temp humidity
+                   80       68
 
 degree1 plot 1 temp
 newdata[50,2]:
@@ -1179,12 +1181,12 @@ predict after processing with nresponse=1 is [400,1]:
 400 33.851866
 --done get.ylim.by.dummy.plots
 
-ylim c(1.912, 34.07)    clip TRUE
+ylim c(1.936, 33.94)    clip TRUE
 
 --plot.degree1(draw.plot=TRUE)
 graphics::plot.default(x=c(48,48.92,49.8...), y=c(7.99,8.279,8...), type="n",
                        main="a.glob oz", xlab="", ylab="", xaxt="s", yaxt="s",
-                       xlim=c(47.95,93.05), ylim=c(1.91,34.07))
+                       xlim=c(47.98,93.08), ylim=c(1.94,33.94))
 --plot.degree2(draw.plot=TRUE)
 assuming the environment of the earth model is that of plotmo's caller: env(caption)
 plotmo trace 2: plotmo(object=ad.glob, type2="im", degree1=1, degree2=1,
@@ -1318,8 +1320,8 @@ pairs:
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
 
- grid:    temp humidity
-            80       68
+ plotmo grid:    temp humidity
+                   80       68
 
 degree1 plot 1 temp
 newdata[50,2]:
@@ -1370,34 +1372,34 @@ predict after processing with nresponse=1 is [400,1]:
 400 33.851866
 --done get.ylim.by.dummy.plots
 
-ylim c(1.912, 34.07)    clip TRUE
+ylim c(1.931, 34)    clip TRUE
 
 --plot.degree1(draw.plot=TRUE)
 graphics::plot.default(x=c(48,48.92,49.8...), y=c(7.99,8.279,8...), type="n",
                        main="ad.glob oz", xlab="", ylab="", xaxt="s", yaxt="s",
-                       xlim=c(47.95,93.05), ylim=c(1.91,34.07))
+                       xlim=c(48,93), ylim=c(1.93,34))
 --plot.degree2(draw.plot=TRUE)
- grid:    temp humidity
-            80       68
- grid:    temp humidity
-            80       68
- grid:    temp humidity
-           800      680
- grid:    temp humidity
-           800      680
- grid:    temp humidity
-           800      680
- grid:    temp humidity
-           800      680
+ plotmo grid:    temp humidity
+                   80       68
+ plotmo grid:    temp humidity
+                   80       68
+ plotmo grid:    temp humidity
+                  800      680
+ plotmo grid:    temp humidity
+                  800      680
+ plotmo grid:    temp humidity
+                  800      680
+ plotmo grid:    temp humidity
+                  800      680
                               test environments and finding the correct data, continued 
- grid:    temp humidity
-             8      6.8
- grid:    temp humidity
-             8      6.8
- grid:    temp humidity
-           800      680
- grid:    temp humidity
-           800      680
+ plotmo grid:    temp humidity
+                    8      6.8
+ plotmo grid:    temp humidity
+                    8      6.8
+ plotmo grid:    temp humidity
+                  800      680
+ plotmo grid:    temp humidity
+                  800      680
 Expect error msg: formal argument "do.par" matched by multiple actual arguments
 Error in plotmo(a.oz10, do.par = FALSE, main = "func1:a.oz10", degree1 = 1,  : 
   formal argument "do.par" matched by multiple actual arguments
@@ -1565,12 +1567,12 @@ graphics::plot.default(x=c(1,1.347,1.694...), y=c(10.11,10,9.89...), type="n",
 > # mtext(caption, outer=TRUE, font=2, line=1.5, cex=1)
 > a <- earth(O3 ~ ., data=ozone1, degree=2)
 > plotmo(a, caption="test earth formula versus xy model (formula)")
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > a <- earth(ozone1[, -1], ozone1[,1], degree=2)
 > plotmo(a, caption="test earth formula versus xy model (xy)")
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > 
 > # single predictor
 > caption <- "test earth(O3~wind, data=ozone1, degree=2), single predictor"
@@ -1643,8 +1645,8 @@ Importance: q_6103, q_4104, q_2102, q_7104, q_3109, q_6101, q_2104, q_4, ...
 Number of terms at each degree of interaction: 1 12 (additive model)
 GCV 2.5    RSS 1509    GRSq 0.53    RSq 0.57
 > plotmo(earthobj5)
- grid:    q_4     q_2102      q_2104      q_3105      q_3106     q_4104
-   0.05726625 0.01725001 0.004659335 -0.01826179 -0.00913319 0.01401429
+ plotmo grid:    q_4     q_2102      q_2104      q_3105      q_3106     q_4104
+          0.05726625 0.01725001 0.004659335 -0.01826179 -0.00913319 0.01401429
       q_6101     q_6103     q_7104      q_3109     q_4103     q_2111
  -0.04790454 0.03681165 0.01827148 -0.09899272 -0.0623349 0.01007481
       q_3107      q_3101       q_3104     q_7107
@@ -1736,8 +1738,8 @@ Number of terms at each degree of interaction: 1 12 (additive model)
 GCV 2.5    RSS 1509    GRSq 0.53    RSq 0.57
 > plot(a.rather.long.in.fact.very.long.name.for.the.modelA)
 > plotmo(a.rather.long.in.fact.very.long.name.for.the.modelA)
- grid:    a.rather.long.in.fact.very.long.name.q_4
-                                        0.05726625
+ plotmo grid:    a.rather.long.in.fact.very.long.name.q_4
+                                               0.05726625
  a.rather.long.in.fact.very.long.name.q_2102
                                   0.01725001
  a.rather.long.in.fact.very.long.name.q_2104
@@ -1807,8 +1809,8 @@ Number of terms at each degree of interaction: 1 12 5 1
 GCV 2.4    RSS 1374    GRSq 0.54    RSq 0.6
 > plot(a.rather.long.in.fact.very.long.name.for.the.modelC)
 > plotmo(a.rather.long.in.fact.very.long.name.for.the.modelC)
- grid:    a.rather.long.in.fact.very.long.name.q_4
-                                        0.05726625
+ plotmo grid:    a.rather.long.in.fact.very.long.name.q_4
+                                               0.05726625
  a.rather.long.in.fact.very.long.name.q_2102
                                   0.01725001
  a.rather.long.in.fact.very.long.name.q_2104
@@ -1859,24 +1861,24 @@ Importance: sexmale, pclass3rd, pclass2nd, age
 Number of terms at each degree of interaction: 1 1 5
 GCV 0.1442766    RSS 146.3318    GRSq 0.4039126    RSq 0.4209023
 > plotmo(a, caption="plotmo with facs: pclass+sex+age")
- grid:    pclass    sex age
-             1st female  28
+ plotmo grid:    pclass    sex age
+                    1st female  28
 > plotmo(a, caption="plotmo with facs: pclass+sex+age, all1=T, grid.col=\"gray\"", all1=T, grid.col="gray")
- grid:    pclass    sex age
-             1st female  28
+ plotmo grid:    pclass    sex age
+                    1st female  28
 > plotmo(a, caption="plotmo with facs: pclass+sex+age, all2=T, col.grid=\"green\"", all2=T, col.grid="green")
- grid:    pclass    sex age
-             1st female  28
+ plotmo grid:    pclass    sex age
+                    1st female  28
 > plotmo(a, caption="plotmo with facs: pclass+sex+age, all1=T, all2=T, grid=2", all1=T, all2=T, grid.col=2)
- grid:    pclass    sex age
-             1st female  28
+ plotmo grid:    pclass    sex age
+                    1st female  28
 > plotmo(a, clip=FALSE, degree2=FALSE, caption="plotmo (no degree2) with facs: pclass+sex+age")
- grid:    pclass    sex age
-             1st female  28
+ plotmo grid:    pclass    sex age
+                    1st female  28
 > plotmo(a, clip=FALSE, grid.levels=list(pclass="2n", sex="ma"),
 +        caption="plotmo with grid.levels: pclass+sex+age")
- grid:    pclass  sex age
-             2nd male  28
+ plotmo grid:    pclass  sex age
+                    2nd male  28
 > # in above tests, all degree2 terms use facs
 > # now build a model with some degree2 term that use facs, some that don't
 > a <- earth(survived ~ pclass+age+sibsp, data=etitanic, degree=2)
@@ -1898,13 +1900,13 @@ Importance: pclass3rd, age, pclass2nd, sibsp
 Number of terms at each degree of interaction: 1 4 2
 GCV 0.2040487    RSS 206.9554    GRSq 0.1569604    RSq 0.1809888
 > plotmo(a, caption="plotmo with mixed fac and non-fac degree2 terms", persp.border=NA)
- grid:    pclass age sibsp
-             1st  28     0
+ plotmo grid:    pclass age sibsp
+                    1st  28     0
 > plotmo(a, caption="plotmo with mixed fac and non-fac degree2 terms and grid.levels",
 +        grid.levels=list(pclass="2n", age=20), # test partial matching of grid levels, and numeric preds
 +        persp.ticktype="d", persp.nticks=2)
- grid:    pclass age sibsp
-             2nd  20     0
+ plotmo grid:    pclass age sibsp
+                    2nd  20     0
 > 
 > # check detection of illegal grid.levels argument
 > expect.err(try(plotmo(a, grid.levels=list(pcla="1", pclass="2"))))
@@ -1972,6 +1974,7 @@ GLM null.deviance 1414.62 (1045 dof)   deviance 1212.212 (1039 dof)   iters 5
 > plotmo(a, type="class", ylim=c(0, 1), caption="type=\"class\" plotmo glm with mixed fac and non-fac degree2 terms")
 > plotmo(a, ylim=c(0, 1), caption="default type (\"response\")\nplotmo glm with mixed fac and non-fac degree2 terms")
 > # now with different type2s
+> set.seed(2016)
 > plotmo(a, do.par=FALSE, type2="persp", persp.theta=-20, degree1=FALSE, grid.levels=list(pclass="2nd"))
 > mtext("different type2s", outer=TRUE, font=2, line=1.5, cex=1)
 > plotmo(a, do.par=FALSE, type2="contour", degree1=FALSE, grid.levels=list(pclass="2nd"))
@@ -1987,22 +1990,22 @@ GLM null.deviance 1414.62 (1045 dof)   deviance 1212.212 (1039 dof)   iters 5
 > dopar(2, 2)
                                
 > plotmo(a20, nrug=-1)
- grid:    humidity temp   doy
-                64   62 205.5
+ plotmo grid:    humidity temp   doy
+                       64   62 205.5
 > 
 > plotmo(a20, nrug=200, caption="Test plotmo with a vector main (and npoints=200)",
 +        main=c("Humidity", "Temperature", "Day of year", "Humidity: Temperature", "Temperature: Day of Year"),
 +        col.response="darkgray", pt.pch=".", cex.response=3, npoints=200) # cex.response tests back compat
- grid:    humidity temp   doy
-                64   62 205.5
+ plotmo grid:    humidity temp   doy
+                       64   62 205.5
 > 
 > cat("Expect warning below (missing double titles)\n")
 Expect warning below (missing double titles)
 > plotmo(a20, nrug=-1, caption="Test plotmo with a vector main (and plain smooth)",
 +        main=c("Humidity", "Temperature", "Day of year", "Humidity: Temperature", "Temp: Doy"),
 +        smooth.col="indianred")
- grid:    humidity temp   doy
-                64   62 205.5
+ plotmo grid:    humidity temp   doy
+                       64   62 205.5
 > 
 > cat("Expect warning below (missing single titles)\n")
 Expect warning below (missing single titles)
@@ -2010,30 +2013,30 @@ Expect warning below (missing single titles)
 +        main=c("Humidity", "Temperature"),
 +        smooth.col="indianred", smooth.lwd=2, smooth.lty=2, smooth.f=.1,
 +        col.response="gray", npoints=500)
- grid:    humidity temp   doy
-                64   62 205.5
+ plotmo grid:    humidity temp   doy
+                       64   62 205.5
 > 
 > plotmo(a20, nrug=-1, caption="Test plotmo with pt.pch=paste(1:nrow(ozone1))",
 +        type2="im",
 +        col.response=2, pt.cex=.8, pt.pch=paste(1:nrow(ozone1)), npoints=100)
- grid:    humidity temp   doy
-                64   62 205.5
+ plotmo grid:    humidity temp   doy
+                       64   62 205.5
 > 
 > aflip <- earth(O3~vh + wind + humidity + temp, data=ozone1, degree=2)
 > 
 > # test all1 and all2, with and without degree1 and degree2
 > plotmo(aflip, all2=T, caption="all2=T", npoints=TRUE)
- grid:    vh wind humidity temp
-        5760    5       64   62
+ plotmo grid:    vh wind humidity temp
+               5760    5       64   62
 > plotmo(aflip, all2=T, degree2=c(4, 2), caption="all2=T, degree2=c(4, 2)")
- grid:    vh wind humidity temp
-        5760    5       64   62
+ plotmo grid:    vh wind humidity temp
+               5760    5       64   62
 > plotmo(aflip, all1=T, caption="all1=T")
- grid:    vh wind humidity temp
-        5760    5       64   62
+ plotmo grid:    vh wind humidity temp
+               5760    5       64   62
 > plotmo(aflip, all1=T, degree1=c(3,1), degree2=NA, caption="all1=T, degree1=c(3,1), degree2=NA")
- grid:    vh wind humidity temp
-        5760    5       64   62
+ plotmo grid:    vh wind humidity temp
+               5760    5       64   62
 > 
 > options(warn=2)
 > expect.err(try(plotmo(aflip, no.such.arg=9))) # Warning: predict.earth ignored unrecognized argument "no.such.arg"
@@ -2087,12 +2090,12 @@ Got error as expected
 > a80 <- earth(O3~., data=ozone1, degree=2)
 > plotmo(a80, degree1="i", degree2="t",
 +        caption='degree1="i", degree2="t"')
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a80, degree1="^temp$", degree2="^dpg$",
 +        caption='degree1="^temp$", degree2="^dpg$"')
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > # Expect Warning: "nonesuch1" in degree1 does not match any variables, ditto for degree2
 > plotmo(a80, degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis"),
 +        caption='degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis")')
@@ -2100,8 +2103,8 @@ Warning: "nonesuch1" in degree1 does not match any names
          Available names are "vh" "wind" "humidity" "temp" "ibh" "dpg" "ibt" "vis" "doy"
 Warning: "nonesuch2" in degree2 does not match any names
          Available names are "vh" "wind" "humidity" "temp" "ibh" "dpg" "ibt" "vis" "doy"
- grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-        5760    5       64   62 2112.5  24 167.5 120 205.5
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
 > # Expect above warnings and also Warning: nothing to plot
 > plotmo(a80, degree1="nonesuch1", degree2="nonesuch2")
 Warning: "nonesuch1" in degree1 does not match any names
@@ -2173,8 +2176,8 @@ Got error as expected
 + }
 > foo3()
 Warning: the variable on the right side of the formula is a matrix or data.frame
- grid:    c1  c2
-         5.5 6.5
+ plotmo grid:    c1  c2
+                5.5 6.5
 Warning: 'newdata' had 50 rows but variables found have 10 rows
 Error : predict returned the wrong length (got 10 but expected 50)
 Got error as expected
@@ -2186,8 +2189,8 @@ Got error as expected
 + }
 > foo3a()
 Warning: the variable on the right side of the formula is a matrix or data.frame
- grid:    c1  c2
-         5.5 6.5
+ plotmo grid:    c1  c2
+                5.5 6.5
 Warning: 'newdata' had 11 rows but variables found have 10 rows
 Error : predict returned the wrong length (got 10 but expected 11)
 Got error as expected
@@ -2198,8 +2201,8 @@ Got error as expected
 +     expect.err(try(plotmo(a.foo4))) # Error : predict.lm(xgrid, type="response") returned a response of the wrong length.
 + }
 > foo4()
- grid:    x[,1] x[,2]
-            5.5   6.5
+ plotmo grid:    x[,1] x[,2]
+                   5.5   6.5
 Warning: 'newdata' had 50 rows but variables found have 10 rows
 Error : predict returned the wrong length (got 10 but expected 50)
 Got error as expected
@@ -2261,8 +2264,8 @@ Got error as expected
 +     expect.err(try(plotmo(a.foo8))) # Error : predict returned the wrong length (got 10 but expected 8)
 + }
 > foo8()
- grid:    x[,i] x[,2]
-            5.5   6.5
+ plotmo grid:    x[,i] x[,2]
+                   5.5   6.5
 Warning: 'newdata' had 50 rows but variables found have 10 rows
 Error : predict returned the wrong length (got 10 but expected 50)
 Got error as expected
@@ -2300,10 +2303,10 @@ Got error as expected
 +     plotmo(a.foo9b, col.resp=2, do.par=FALSE)
 + }
 > foo9a()
- grid:    x1  x2
-         5.5 6.5
- grid:    x1  x2
-         5.5 6.5
+ plotmo grid:    x1  x2
+                5.5 6.5
+ plotmo grid:    x1  x2
+                5.5 6.5
 > 
 > foo20.func <- function()
 + {
@@ -2317,10 +2320,10 @@ Got error as expected
 +     plotmo(foo20, degree1=1:2, col.resp=2, do.par=FALSE)
 + }
 > foo20.func()
- grid:    x1  x2
-         5.5 6.5
- grid:    x1  x2
-         5.5 6.5
+ plotmo grid:    x1  x2
+                5.5 6.5
+ plotmo grid:    x1  x2
+                5.5 6.5
 > 
 > set.seed(1235)
 > tit <- etitanic
@@ -2331,8 +2334,8 @@ Got error as expected
 +        smooth.col="indianred", smooth.lwd=2,
 +        col.response=as.numeric(tit$survived)+2, pt.pch=".", type2="im",
 +        pt.cex=3, jitter=1) # big jitter
- grid:    pclass  sex age sibsp parch
-             1st male  29     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    1st male  29     0     0
 > set.seed(1238)
 > a <- earth(pclass~., data=tit)
 > plotmo(a, type="class", nresponse=1,
@@ -2341,35 +2344,35 @@ Got error as expected
 +        smooth.col="indianred", smooth.lwd=2,
 +        col.response=as.numeric(tit$pclass)+1, type2="im",
 +        pt.pch=".", pt.cex=3)
- grid:    survived  sex age sibsp parch
-                 0 male  29     0     0
+ plotmo grid:    survived  sex age sibsp parch
+                        0 male  29     0     0
 > plotmo(a, type="class", nresponse=1,
 +        grid.levels=list(sex="ma"),
 +        caption="smooth: pclass, sex=\"m\"      jitter=.3", SHOWCALL=TRUE,
 +        smooth.col="indianred", smooth.lwd=2,
 +        col.response=as.numeric(tit$pclass)+1, type2="im",
 +        pt.pch="x", jit=.3) # small jitter
- grid:    survived  sex age sibsp parch
-                 0 male  29     0     0
+ plotmo grid:    survived  sex age sibsp parch
+                        0 male  29     0     0
 > plotmo(a, nresponse=1,
 +        type="class", grid.levels=list(sex="ma"),
 +        caption="smooth: pclass, sex=\"m\"",  SHOWCALL=TRUE,
 +        smooth.col="indianred", smooth.lwd=2,
 +        col.response=as.numeric(tit$pclass)+1, type2="im",
 +        pt.pch=paste(1:nrow(tit)))
- grid:    survived  sex age sibsp parch
-                 0 male  29     0     0
+ plotmo grid:    survived  sex age sibsp parch
+                        0 male  29     0     0
 > 
 > # test the extend argument
 > 
 > plotmo(a, nresponse=1,             pt.col=2, degree2=0, SHOWCALL=TRUE,
 +        caption="test extend: extend=0 (reference plot)")
- grid:    survived    sex age sibsp parch
-                 0 female  29     0     0
+ plotmo grid:    survived    sex age sibsp parch
+                        0 female  29     0     0
 > plotmo(a, nresponse=1, extend=.5, pt.col=2, SHOWCALL=TRUE,
 +        caption="test extend: extend=.5")
- grid:    survived    sex age sibsp parch
-                 0 female  29     0     0
+ plotmo grid:    survived    sex age sibsp parch
+                        0 female  29     0     0
 > plotmo(a, nresponse=1, degree1=0, extend=.2, pt.col=2, SHOWCALL=TRUE) # nothing to plot
 Warning: plotmo: nothing to plot
 > 
@@ -2378,8 +2381,8 @@ Warning: plotmo: nothing to plot
 > plotmo(a, extend=.5, pt.col=2, SHOWCALL=TRUE,
 +        caption="test extend: extend=.5")
 Warning: extend=0.5: will not plot degree2 plots (extend is not yet implemented for degree2 plots)
- grid:    pclass age
-             1st  28
+ plotmo grid:    pclass age
+                    1st  28
 > 
 > # intercept only models
 > 

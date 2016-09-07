@@ -1,6 +1,25 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.2.0  Sep 7, 2016
+
+The functions plot_gbm and plot_glmnet are now exported and available
+for the user.  These functions have been enhanced for this version.
+
+Improved support for gbm and glmnet and related models.
+
+The plotres function now works better with caret "train" models
+(but caret support is still a bit minimal).
+
+We now print "plotmo grid:" instead of just "grid:" for context when
+it's printed from within a body of code.
+
+Removed deprecated interface functions like get.plotmo.pairs.
+
+Updated dot library functions for eventual move to a dots package.
+
+Revamped the vignettes.
+
 --- 3.1.5  Aug 26, 2016
 
 The pt.cex argument now works correctly in plotres QQ plots.

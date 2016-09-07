@@ -85,6 +85,13 @@ plotmo_resids <- function(object, type, residtype, nresponse, trace, ...)
 {
     stopifnot.string(type)
     stopifnot.string(residtype)
+    if(inherits(object, "train")) {
+        # Caret train model.  Force use of predict to calculate residuals
+        # instead of residuals(), for consistency with plotmo.
+        if(trace >= 2)
+            printf("inherits(object, \"train\"): plotmo_resids returns NULL\n")
+        return(NULL)
+    }
     resids <- try(call.dots(stats::residuals, DROP="*", KEEP="PREFIX",
                             # following prevents reprint of residuals msg if fail
                             TRACE=if(trace == 0) -1 else trace,

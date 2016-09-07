@@ -50,12 +50,12 @@ plotmo_x <- function(object, trace, stringsAsFactors=TRUE)
     print_summary(x, "plotmo_x returned", trace)
     x
 }
-plotmo.x <- function(object, trace)
+plotmo.x <- function(object, trace, ...)
 {
     # returns x or list(field=x, do.subset=do.subset)
     UseMethod("plotmo.x")
 }
-plotmo.x.default <- function(object, trace)
+plotmo.x.default <- function(object, trace, ...)
 {
     # returns list(field=x, do.subset=do.subset)
     get.x.or.y(object, "x", trace, naked=TRUE)
@@ -77,8 +77,7 @@ plotmo_y <- function(object, nresponse=NULL, trace=0,
     trace2(trace, "--plotmo_y with nresponse=%s for %s object\n",
            if(is.null(nresponse)) "NULL" else format(nresponse),
            class(object)[1])
-
-    y <- plotmo.y(object, trace, naked=is.null(nresponse), expected.len)
+    y <- plotmo.y(object, trace, naked=is.null(nresponse), expected.len, nresponse)
     do.subset <- TRUE
     # plotmo.y.default returns list(field, do.subset), so handle that
     if(is.list(y) && !is.data.frame(y) && !is.null(y$do.subset)) {
@@ -99,14 +98,17 @@ plotmo_y <- function(object, nresponse=NULL, trace=0,
               expected.len, resp.levs, trace, "plotmo_y")
 }
 # Note that the naked argument is irrelevant unless the response was
-# pecified with a wrapper function like log(Volume) instead of plain Volume.
+# specified with a wrapper function like log(Volume) instead of plain Volume.
+#
+# The default for nresponse allows this to work with old versions of earth
+# (old plotmo.y.earth doesn't have a nresponse argument).
 
-plotmo.y <- function(object, trace, naked, expected.len)
+plotmo.y <- function(object, trace, naked, expected.len, nresponse=1, ...)
 {
     # returns y or list(field=y, do.subset=do.subset)
     UseMethod("plotmo.y")
 }
-plotmo.y.default <- function(object, trace, naked, expected.len)
+plotmo.y.default <- function(object, trace, naked, expected.len, ...)
 {
     # returns list(field=y, do.subset=do.subset)
     get.x.or.y(object, "y", trace, try.object.x.or.y=TRUE,
@@ -764,7 +766,7 @@ formula.as.char.with.check <- function(form, form.name, trace)
     list(formula=form, err.msg=NULL)
 }
 # Return a formula with an environment.  Also process naked.
-# TODO this includes Height in Volume~Girth-Height, it shoudln't
+# TODO this includes Height in Volume~Girth-Height, it shouldn't
 
 process.formula <- function(object, form, trace, naked)
 {

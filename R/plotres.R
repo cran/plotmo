@@ -65,18 +65,14 @@ plotres <- function(object = stop("no 'object' argument"),
     delever     <- check.boolean(delever)
     level       <- check.level.arg(level, zero.ok=TRUE)
     smooth.col  <- get.smooth.col(smooth.col, ...)
-    grid.col    <- dot("col.grid", DEF=grid.col, ...)
+    grid.col    <- dota("col.grid", DEF=grid.col, ...)
     if(is.specified(grid.col) && is.logical(grid.col) && grid.col) # grid.col=TRUE
         grid.col <- "lightgray"
     check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
-    # set random seed for reproducibility if jitter or isubset is used
-    rnorm(1) # seems to be necessary to make .Random.seed available
-    old.seed <- .Random.seed
-    set.seed(2015)
-    on.exit(set.seed(old.seed), add=TRUE)
     temp <- get.plotres.data(object, object.name, which, standardize, delever,
                              level, versus, id.n, labels.id,
                              trace, npoints, type, nresponse, ...)
+
     nresponse <- temp$nresponse   # col index in the response (converted from NA if necessary)
     resp.name <- temp$resp.name   # used only in automatic caption, may be NULL
     type      <- temp$type        # always a string (converted from NULL if necessary)
@@ -94,7 +90,7 @@ plotres <- function(object = stop("no 'object' argument"),
     if(nfigs == 0) {
         if(trace >= 0)
             warning0("plotres: nothing to plot")
-        return(invisible())
+        return(invisible(NULL))
     }
     do.par <- check.do.par(do.par, nfigs) # do.par is 0, 1, or 2
     # Prepare caption --- we need it now for do.par() but
@@ -103,14 +99,15 @@ plotres <- function(object = stop("no 'object' argument"),
                            object$call, object.name, my.call)
     if(do.par) {
         oldpar <- par(no.readonly=TRUE)
-        do.par(nfigs = nfigs, caption=caption, main1=dot("main", ...),
-               xlab1 = dot("xlab", DEF=NULL, ...), # used only for margin spacing
-               ylab1 = dot("ylab", DEF=NULL, ...), # ditto
+        do.par(nfigs = nfigs, caption=caption,
+               main1=NA, # nlines.in.main below explicitly specified below
+               xlab1 = dota("xlab", DEF=NULL, ...), # used only for margin spacing
+               ylab1 = dota("ylab", DEF=NULL, ...), # ditto
                trace = trace,
-               def.font.main = 1, # for compat with lm.plot
                nlines.in.main = # nbr of lines in main is needed for margins
-                nlines.in.main(object=object, which=which, versus=versus,
+                nlines.in.plotres.main(object=object, which=which, versus=versus,
                     standardize=standardize, delever=delever, level=level, ...),
+               def.font.main = 1, # for compat with lm.plot
                ...)
         if(do.par == 1)
             on.exit(par(oldpar), add=TRUE)
@@ -119,14 +116,22 @@ plotres <- function(object = stop("no 'object' argument"),
         if(length(oldpar))
             on.exit(do.call(par, oldpar), add=TRUE)
     }
-    # TODO if length(which) == 1 then pass xlim and ylim to the specified plot
-    #      else if(1 %in% which) pass xlim and ylim to the which=1 plot only
-    #      else pass xlim and ylim to the residuals plots
-
-    force.auto.resids.xylim <- (W1 %in% which)
-
+    # force.auto.resids.xlim is for back compat with old versions of earth.
+    # To pass ylim to the w1 plot, use a w1. prefix, just like any other arg.
+    # So plain ylim gets passed to the residuals plot not the w1 plot.
+    # But for backwards compatibility when the w1 plot is
+    # an earth model pass plain ylim to the w1 plot unless w1.ylim is set
+    force.auto.resids.xlim <-
+        length(which) > 1 && (W1 %in% which) && inherits(object, "earth") &&
+        !is.dot("w1.xlim", ...)
+    force.auto.resids.ylim <-
+        length(which) > 1 && (W1 %in% which) && inherits(object, "earth") &&
+        !is.dot("w1.ylim", ...)
+    w1.retval <- list(plotted=FALSE, retval=NULL)
+    w3.retval <- NULL
+    attempted.w1.plot <- FALSE
     if(any(which == W1)) {
-        plotted <- plot_w1(object=object, which=which, info=info,
+        w1.retval <- plot_w1(object=object, which=which, info=info,
             standardize=standardize, delever=delever, level=level, versus=versus,
             id.n=id.n, labels.id=rinfo$labs, smooth.col=smooth.col,
             grid.col=grid.col, do.par=do.par,
@@ -135,12 +140,13 @@ plotres <- function(object = stop("no 'object' argument"),
             npoints=npoints, center=center, type=type, nresponse=nresponse,
             object.name=object.name,
             ...)
+        attempted.w1.plot <- TRUE
         which <- which[which != W1]
-        if(length(which) == 0 && !plotted && trace >= 0)
+        if(length(which) == 0 && !w1.retval$plotted && trace >= 0)
             warning0("plotres: nothing to plot")
     }
-    if(length(which) == 0)
-        return(invisible())
+    if(length(which) == 0) # nothing more to plot?
+        return(invisible(if(attempted.w1.plot) w1.retval$retval else w3.retval))
 
     # we do this after the w1 call so we pass NULL to w1 if labels.id were NULL
     if(is.null(rinfo$labs))
@@ -156,7 +162,7 @@ plotres <- function(object = stop("no 'object' argument"),
     iresids <- get.isubset(rinfo$resids, npoints, id.n,
                            use.all=(vinfo$nversus == V4LEVER), rinfo$scale)
 
-    xlim <- dot("xlim", DEF=NULL, ...)
+    xlim <- dota("xlim", DEF=NULL, ...) # TODO what is this?
 
     for(icolumn in vinfo$icolumns) {
         for(iwhich in seq_along(which)) {
@@ -166,9 +172,11 @@ plotres <- function(object = stop("no 'object' argument"),
             else if(which[iwhich] == W4QQ)
                 plotmo_qq(rinfo=rinfo, info=info, nfigs=nfigs,
                           grid.col=grid.col, smooth.col=smooth.col,
-                          id.n=id.n, iresids=iresids, npoints=npoints, ...)
+                          id.n=id.n, iresids=iresids, npoints=npoints,
+                          force.auto.resids.ylim=force.auto.resids.ylim,
+                          ...)
             else
-                plotresids(object=object, which=which[iwhich],
+                w3.retval <- plotresids(object=object, which=which[iwhich],
                     info=info, standardize=standardize, level=level,
                     # versus1 is what we plot along the x axis, a vector
                     versus1=vinfo$versus.mat[, icolumn],
@@ -179,14 +187,16 @@ plotres <- function(object = stop("no 'object' argument"),
                     fitted=fitted, rinfo=rinfo, rsq=rsq, iresids=iresids,
                     nversus=vinfo$nversus,
                     colname.versus1=colnames(vinfo$versus.mat)[icolumn],
-                    force.auto.resids.xylim=force.auto.resids.xylim,
+                    force.auto.resids.xlim=force.auto.resids.xlim,
+                    force.auto.resids.ylim=force.auto.resids.ylim,
                     ...)
         }
     }
     draw.caption(caption, ...)
     if(trace >= 1)
         printf("\ntraining rsq %.2f\n", rsq)
-    invisible()
+
+    invisible(if(attempted.w1.plot) w1.retval$retval else w3.retval)
 }
 which.err <- function()
 {
@@ -212,18 +222,18 @@ versus.err <- function()
           "  \"\"   predictors\n",
           "  \"b:\" basis functions")
 }
-nlines.in.main <- function(object, which, versus, standardize, delever, level, ...)
+nlines.in.plotres.main <- function(object, which, versus,
+                                   standardize, delever, level, ...)
 {
-    main <- dot("main", ...)
+    w1.does.own.mar4 <- # these models do their own top margin spacing in w1 plot
+       inherits(object, c("gbm", "glmnet", "multnet"))
 
-    if(is.specified(main)) # user specified main?
-        return(nlines(main))
-
-    # auto main
-    has.extra.line <- # conservative guess if main will have two lines
+    auto.main.has.extra.line <- # conservative guess if main will have two lines
         standardize || delever || level ||
         any(which %in% W6SQRT:W9LOGLOG) ||
         (versus %in% V4LEVER) || is.character(versus)
 
-    max(1 + has.extra.line, nlines.in.w1.main(object))
+    max(1 + auto.main.has.extra.line,
+        nlines(dota("main", ...)),
+        1 + if(w1.does.own.mar4) 0 else nlines(dota("w1.main", ...)))
 }

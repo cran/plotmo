@@ -377,6 +377,68 @@ expect.err(try(plotmo(a)), "cannot get the original model predictors")
 a <- lm(O3~ozone1$doy + temp, data=ozone1)
 expect.err(try(plotmo(a)), "cannot get the original model predictors")
 
+#--- test interaction of w1. and non w1 args -------------------------------------
+
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(4,3), mar=c(3, 3, 4, 1), mgp=c(2, 0.6, 0))
+
+mod78 <- earth(Volume ~ ., data = trees)
+par(mfrow=c(3,4), mar=c(3, 3, 3, 1), mgp=c(2, 0.6, 0))
+
+# multiple which, earth model
+plotres(mod78, cex.main=1,
+        ylim=c(-.5, .8),    xlim=c(-2, 7),    col=2:3, do.par=FALSE,
+        w1.main=c("ylim=c(-.5, .8)\nxlim=c(-2, 7) col=2:3"))
+
+# multiple which, earth model
+plotres(mod78, cex.main=.7,
+        w1.ylim=c(-.5, .8), w1.xlim=c(-2, 7), col=2:3, do.par=FALSE,
+        ylim=c(-10,10), xlim=c(-30, 100),
+        w1.main=c("w1.ylim=c(-.5, .8) w1.xlim=c(-2, 7)\nylim=c(-10,10), xlim=c(-30, 100)"))
+
+par(old.par)
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3,4), mar=c(3, 3, 3, 1), mgp=c(2, 0.6, 0))
+
+# which=1, earth model
+
+plotres(mod78, which=1, cex.main=.8,
+        col=2:3,
+        main="which=1, no other ylim args",
+        w1.main="which=1, no other ylim args")
+
+plotres(mod78, which=1, cex.main=.8,
+        col=2:3, w1.ylim=c(.3,.98), w1.xlim=c(-2, 7),
+        main="w1.ylim=c(.3,.98)\nw1.xlim=c(-2, 7)")
+
+plotres(mod78, which=1, cex.main=.8,
+        col=2:3, ylim=c(.3,.98),    xlim=c(-2, 7),
+        main="ylim=c(.3,.98)\nxlim=c(-2, 7)")  # ylim gets passed to modsel
+
+plotres(mod78, which=1, cex.main=.75,
+        col=2:3, w1.ylim=c(.3,.98), ylim=c(-.5,.5),
+        w1.xlim=c(-2, 7), xlim=c(-90, 90),
+        main="w1.ylim=c(.3,.98), ylim=c(-.5,.5)\nw1.xlim=c(-2, 7), xlim=c(-90, 90)") # ignore ylim
+
+# which=3, earth model
+plotres(mod78, which=3, cex.main=1,
+        col=2:3,
+        main="which=3, no other ylim args")
+
+plotres(mod78, which=3, cex.main=1,
+        col=2:3, w1.ylim=c(.3,.98), w1.xlim=c(-2, 7),
+        main="w1.ylim=c(.3,.98)\nw1.xlim=c(-2, 7)") # not usual, ignore w1.ylim
+
+plotres(mod78, which=3, cex.main=1,
+        col=2:3, ylim=c(-10,10), xlim=c(-90,90),
+         main="which=3, ylim=c(-10,10)\nxlim=c(-90,90)")
+
+plotres(mod78, which=3, cex.main=1,
+        col=2:3, w1.ylim=c(.3,.98), ylim=c(-10,10), w1.xlim=c(-2, 7), xlim=c(-90,90),
+        main="w1.ylim=c(.3,.98) ylim=c(-10,10)\nw1.xlim=c(-2, 7), xlim=c(-90,90)")
+
+par(old.par)
+
 if(!interactive()) {
     dev.off()         # finish postscript plot
     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs

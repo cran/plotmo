@@ -8,6 +8,7 @@ Loading required package: TeachingDemos
 > library(earth)
 > data(ozone1)
 > data(etitanic)
+> set.seed(2016)
 > 
 > get.tit <- function()
 + {
@@ -71,8 +72,8 @@ Loading required package: TeachingDemos
 > get.data()
 > earth.form.df.dot <- earth(Y~., data=DF)
 > plotmo(earth.form.df.dot, caption="test basic use of DF")
- grid:    X1 X2
-           5  6
+ plotmo grid:    X1 X2
+                  5  6
 > printf("-- test basic use of DF\n")
 -- test basic use of DF
 > rv <- plotmo(earth.form.df.dot, trace=100)

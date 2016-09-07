@@ -24,7 +24,8 @@ plotresids <- function(
     iresids,
     nversus,
     colname.versus1,
-    force.auto.resids.xylim,
+    force.auto.resids.xlim,
+    force.auto.resids.ylim,
 
     SHOWCALL=NA, # this is here to absorb SHOWCALL from dots
 
@@ -37,23 +38,18 @@ plotresids <- function(
     if(!all(ok))
         stop0("which=", which[!ok][1], " is not allowed")
 
-    id.indices <- NULL
-    if(which %in% c(W3RESID, W4QQ:W8CUBE))
-        id.indices <-
-            get.id.indices(rinfo$scale * rinfo$resids, id.n,
-                           if(nversus == V4LEVER)
-                               hatvalues1(object, sprintf("versus=%g", V4LEVER))
-                           else
-                               NULL)
-
+    # id.n has already been checked in plotres.data
+    id.indices.specified <- FALSE
+    if(which %in% c(W3RESID, W4QQ:W8CUBE) && id.n != 0)
+        id.indices.specified <- TRUE
     level <- check.level.arg(level, zero.ok=TRUE)
     if(which %in% (W5ABS:W9LOGLOG))
         level <- 0 # no pints
 
     pints <- NULL
     cints <- NULL
-    level.shade  <- dot("level.shade  shade.pints", DEF="mistyrose2", ...)
-    level.shade2 <- dot("level.shade2 shade.cints", DEF="mistyrose4", ...)
+    level.shade  <- dota("level.shade  shade.pints", DEF="mistyrose2", ...)
+    level.shade2 <- dota("level.shade2 shade.cints", DEF="mistyrose4", ...)
     if(which == W3RESID && is.specified(level)) {
         p <- plotmo.pint(object, newdata=NULL, type, level, trace=0)
         stopifnot(is.null(p$fit) || (p$fit - fitted == 0))
@@ -95,37 +91,46 @@ plotresids <- function(
         jittered.x            <- jitter(x,            factor=jitter, amount=0)
         jittered.trans.resids <- jitter(trans.resids, factor=jitter, amount=0)
     }
-    derived.xlab <- derive.xlab(dot("xlab", DEF=NULL, ...),
+    derived.xlab <- derive.xlab(dota("xlab", DEF=NULL, ...),
                                 which, colname.versus1, nversus)
-    derived.ylab <- derive.ylab(dot("ylab", DEF=NULL, ...), which, rinfo$name)
-    main <- derive.main(main=dot("main", DEF=NULL, ...),
+    derived.ylab <- derive.ylab(dota("ylab", DEF=NULL, ...), which, rinfo$name)
+    main <- derive.main(main=dota("main", DEF=NULL, ...),
                         derived.xlab, derived.ylab, level)
 
     # allow col.response as an argname for compat with old plotmo
-    pt.col <- dot("col.response col.resp", DEF=1, ...)
-    pt.col <- dot("pt.col col.points col.point col.residuals col.resid col",
-                     EX=c(0,1,1,1,1,1), DEF=pt.col, NEW=1, ...)
+    pt.col <- dota("col.response col.resp", DEF=1, ...)
+    pt.col <- dota("pt.col col.points col.point col.residuals col.resid col",
+                   EX=c(0,1,1,1,1,1), DEF=pt.col, NEW=1, ...)
     # recycle
     pt.col <- repl(pt.col, length(resids))
 
-    pt.cex <- dot("response.cex cex.response", DEF=1, ...)
-    pt.cex <- dot("pt.cex cex.points cex.point cex.residuals cex",
-                     EX=c(0,1,1,1,1), DEF=pt.cex, NEW=1, ...)
+    pt.cex <- dota("response.cex cex.response", DEF=1, ...)
+    pt.cex <- dota("pt.cex cex.points cex.point cex.residuals cex",
+                   EX=c(0,1,1,1,1), DEF=pt.cex, NEW=1, ...)
     pt.cex <- pt.cex * pt.cex(length(x), npoints)
     pt.cex <- repl(pt.cex, length(resids))
 
-    pt.pch <- dot("response.pch pch.response", DEF=20, ...)
-    pt.pch <- dot("pt.pch pch.points pch.point pch.residuals pch",
-                     EX=c(0,1,1,1,1), DEF=pt.pch, NEW=1, ...)
+    pt.pch <- dota("response.pch pch.response", DEF=20, ...)
+    pt.pch <- dota("pt.pch pch.points pch.point pch.residuals pch",
+                   EX=c(0,1,1,1,1), DEF=pt.pch, NEW=1, ...)
     pt.pch <- repl(pt.pch, length(resids))
 
-    ylim <- get.resids.ylim(ylim=dot("ylim", ...), force.auto.resids.xylim,
+    ylim <- get.resids.ylim(ylim=dota("ylim", ...), force.auto.resids.ylim,
                             object, fitted, trans.resids, which,
-                            info, standardize, id.indices, center,
+                            info, standardize, id.indices.specified, center,
                             pints, cints, rinfo$scale, nversus)
 
-    xlim <- get.resids.xlim(xlim=dot("xlim", ...), force.auto.resids.xylim,
-                            which, x, trans.versus, ylim, nversus, id.indices)
+    xlim <- get.resids.xlim(xlim=dota("xlim", ...), force.auto.resids.xlim,
+                            which, x, trans.versus, ylim, nversus,
+                            id.indices.specified)
+    id.indices <- NULL
+    if(id.indices.specified)
+        id.indices <-
+            get.id.indices(rinfo$scale * rinfo$resids, id.n,
+                           if(nversus == V4LEVER)
+                               hatvalues1(object, sprintf("versus=%g", V4LEVER))
+                           else
+                               NULL)
 
     call.plot(graphics::plot.default, PREFIX="pt.",
          force.x    = x,
@@ -185,7 +190,7 @@ plotresids <- function(
     if(which != W9LOGLOG)
         draw.smooth(x, trans.resids, rinfo$scale[iresids], smooth.col, ...)
 
-    col.cv <- dot("col.cv", ...)
+    col.cv <- dota("col.cv", ...)
     oof.meanfit.was.plotted <- FALSE
     if(level && !is.null(object$cv.oof.fit.tab) && is.specified(col.cv))
     {
@@ -194,7 +199,7 @@ plotresids <- function(
         oof.meanfit.was.plotted <- TRUE
     }
     # TODO implement id.indices for nversus=V2INDEX
-    if(!is.null(id.indices) && nversus != V2INDEX) {
+    if(id.indices.specified && nversus != V2INDEX) {
         # TODO as.numeric is needed if versus1 is a factor
         # is.na test needed for which=7 (if some are negative?)
         x1 <- as.numeric(trans.versus(versus1, which)[id.indices])
@@ -204,9 +209,9 @@ plotresids <- function(
                 y=trans.resids(resids, which)[id.indices],
                 labels=rinfo$labs[id.indices],
                 offset=.33, xpd=NA,
-                font=dot("label.font", DEF=1, ...)[1],
-                cex=.8 * dot("label.cex", DEF=1, ...)[1],
-                col=dot("label.col",
+                font=dota("label.font", DEF=1, ...)[1],
+                cex=.8 * dota("label.cex", DEF=1, ...)[1],
+                col=dota("label.col",
                         DEF=if(is.specified(smooth.col)) smooth.col else 2, ...)[1])
     }
     if(info)
@@ -215,6 +220,9 @@ plotresids <- function(
         possible.plotres.legend(which=which,
             level=level, smooth.col=smooth.col,
             oof.meanfit.was.plotted=oof.meanfit.was.plotted, ...)
+
+    list(x=x, y=trans.resids) # does not include jittering
+
 }
 get.plotres.data <- function(object, object.name, which, standardize, delever,
                              level, versus, id.n, labels.id,
@@ -222,7 +230,8 @@ get.plotres.data <- function(object, object.name, which, standardize, delever,
 {
     # the dot argument FORCEPREDICT is to check compat with old plot.earth
     meta <- plotmo_meta(object, type, nresponse, trace,
-                        avoid.predict=!dot("FORCEPREDICT", DEF=FALSE, ...), ...)
+                        avoid.predict=!dota("FORCEPREDICT", DEF=FALSE, ...), ...)
+
       nresponse <- meta$nresponse  # column index
       resp.name <- meta$resp.name  # used only in automatic caption, may be NULL
       type      <- meta$type       # always a string (converted from NULL if necessary)
@@ -390,10 +399,11 @@ get.versus.info <- function(which, versus, object, fitted, nresponse, trace=0)
          icolumns   = icolumns,   # desired column indices in versus.mat
          nversus    = nversus)    # versus as a number, 0 if versus is character
 }
-get.resids.xlim <- function(xlim, force.auto.resids.xylim,
-                            which, x, trans.versus, ylim, nversus, id.indices)
+get.resids.xlim <- function(xlim, force.auto.resids.xlim,
+                            which, x, trans.versus, ylim, nversus,
+                            id.indices.specified)
 {
-    if(force.auto.resids.xylim || !is.specified(xlim)) { # auto xlim?
+    if(force.auto.resids.xlim || !is.specified(xlim)) { # auto xlim?
         if(which == W9LOGLOG) {
             # don't show lower 5% of points
             quant <- quantile(trans.versus, prob=c(.05, 1), na.rm=TRUE)
@@ -408,18 +418,18 @@ get.resids.xlim <- function(xlim, force.auto.resids.xylim,
         else
             xlim <- range1(x, na.rm=TRUE)
         range <- xlim[2] - xlim[1]
-        if(is.specified(id.indices)) # space for point labels
+        if(id.indices.specified) # space for point labels
             xlim <- c(xlim[1] - .04 * range, xlim[2] + .04 * range)
     }
     stopifnot(is.numeric(xlim), length(xlim) == 2)
     fix.lim(xlim)
 }
-get.resids.ylim <- function(ylim, force.auto.resids.xylim,
+get.resids.ylim <- function(ylim, force.auto.resids.ylim,
                             object, fitted, resids, which,
-                            info, standardize, id.indices, center,
+                            info, standardize, id.indices.specified, center,
                             pints, cints, scale, nversus)
 {
-    if(force.auto.resids.xylim || !is.specified(ylim)) { # auto xlim?
+    if(force.auto.resids.ylim || !is.specified(ylim)) { # auto ylim?
         if(!is.null(pints)) {
             min <- min(resids, pints$lwr, na.rm=TRUE)
             max <- max(resids, pints$upr, na.rm=TRUE)
@@ -442,7 +452,7 @@ get.resids.ylim <- function(ylim, force.auto.resids.xylim,
         } else if(which == W9LOGLOG)
             maxa <- .5  # more space on top, looks better
         range <- abs(max - min)
-        if(is.specified(id.indices)) { # space for point labels
+        if(id.indices.specified) { # space for point labels
             # TODO only do this if point labels are near the edges
             mina <- max(mina, .03 * range)
             maxa <- max(maxa, .03 * range)
@@ -452,8 +462,8 @@ get.resids.ylim <- function(ylim, force.auto.resids.xylim,
             mina <- max(mina, mina + .1 * range) # space for "mean" label
         }
         if(info) { # space for extra text (on top) and density plot (in the bottom)
-            maxa <- maxa + max * if(!is.null(id.indices)) .2 else .1
-            mina <- mina + max * if(!is.null(id.indices)) .2 else .1
+            maxa <- maxa + max * if(id.indices.specified) .2 else .1
+            mina <- mina + max * if(id.indices.specified) .2 else .1
         }
         ylim <- c(min-mina, max+maxa)
     }
@@ -482,11 +492,11 @@ draw.pint.resids <- function(pints, x, shade, nversus, ...)
 # this should be used only for models with homoscedastic errors
 draw.cook.levels <- function(object, ...)
 {
-    cook.levels <- dot("cook.levels", DEF=c(0.5, 1.0), ...)
+    cook.levels <- dota("cook.levels", DEF=c(0.5, 1.0), ...)
     stopifnot(is.numeric(cook.levels), all(cook.levels > 0))
-    col <- dot("cook.col", DEF="slategray4", ...)
-    lty <- dot("cook.lty", DEF=1,          ...)
-    lwd <- dot("cook.lwd", DEF=1,          ...)
+    col <- dota("cook.col", DEF="slategray4", ...)
+    lty <- dota("cook.lty", DEF=1,          ...)
+    lwd <- dota("cook.lwd", DEF=1,          ...)
     # based on code in stats::plot.lm.R
     leverage <- hatvalues1(object, "'standardize'")
     p <- length(coef(object))
@@ -543,8 +553,8 @@ draw.smooth <- function(x, resids, scale, smooth.col, ...)
     resids[which(is.na(scale))] <- 0
 
     # we use lowess rather than loess because loess tends to give warnings
-    smooth.f    <- dot("smooth.f loess.f", DEF=2/3, NEW=1, ...)
-    smooth.iter <- dot("smooth.iter",      DEF=3,          ...)
+    smooth.f    <- dota("smooth.f loess.f", DEF=2/3, NEW=1, ...)
+    smooth.iter <- dota("smooth.iter",      DEF=3,          ...)
     check.numeric.scalar(smooth.f)
     stopifnot(smooth.f > .01, smooth.f < 1)
     smooth <- lowess(x, resids, f=smooth.f, iter=smooth.iter, delta=delta)
@@ -552,10 +562,10 @@ draw.smooth <- function(x, resids, scale, smooth.col, ...)
           force.x   = smooth$x,
           force.y   = smooth$y,
           force.col = smooth.col,
-          force.lwd = dot("smooth.lwd lwd.smooth lwd.loess",
-                          EX=c(0,1,1), DEF=1, NEW=1, ...),
-          force.lty = dot("smooth.lty lty.smooth",
-                          EX=c(0,1), DEF=1, NEW=1, ...),
+          force.lwd = dota("smooth.lwd lwd.smooth lwd.loess",
+                           EX=c(0,1,1), DEF=1, NEW=1, ...),
+          force.lty = dota("smooth.lty lty.smooth",
+                           EX=c(0,1), DEF=1, NEW=1, ...),
           ...)
 }
 derive.xlab <- function(xlab, which, colname.versus1, nversus)
@@ -629,8 +639,8 @@ draw.oof.meanfit <- function(cv.oof.fit.tab, fitted, versus1,
 draw.density.along.the.bottom <- function(x, den.col=NULL, scale=NULL, ...)
 {
     if(is.null(den.col))
-        den.col <- dot("density.col", DEF="gray57", EX=0, ...)
-    den <- density(x, adjust=dot("density.adjust", DEF=.5, EX=0, ...), na.rm=TRUE)
+        den.col <- dota("density.col", DEF="gray57", EX=0, ...)
+    den <- density(x, adjust=dota("density.adjust", DEF=.5, EX=0, ...), na.rm=TRUE)
     usr <- par("usr") # xmin, xmax, ymin, ymax
     if(is.null(scale))
         scale <- .08 / (max(den$y) - min(den$y))
@@ -667,8 +677,8 @@ draw.rlm.line <- function(which, versus1, resids, nversus, ...)
     call.dots(abline,
         force.coef = coef(rlm),
         force.col  = "lightblue",
-        force.lwd  = dot("smooth.lwd lwd.smooth lwd.loess",
-                         EX=c(0,1,1), DEF=1, NEW=1, ...) + 1,
+        force.lwd  = dota("smooth.lwd lwd.smooth lwd.loess",
+                          EX=c(0,1,1), DEF=1, NEW=1, ...) + 1,
         ...)
     box() # abline overplots the box
     coef(rlm)
@@ -792,7 +802,7 @@ possible.plotres.legend <- function(which, level, smooth.col,
                                     oof.meanfit.was.plotted, ...)
 {
     # add legend, else red and blue may confuse the user
-    legend.pos <- dot("legend.pos", DEF=NULL, ...)
+    legend.pos <- dota("legend.pos", DEF=NULL, ...)
     if(level && oof.meanfit.was.plotted &&
            (is.null(legend.pos) || !all(is.na(legend.pos)))) {
         if(is.null(legend.pos)) { # auto?
@@ -809,13 +819,13 @@ possible.plotres.legend <- function(which, level, smooth.col,
         if(which != W9LOGLOG && is.specified(smooth.col)) { # smooth plotted?
             legend.txt <- "smooth"
             legend.col <- smooth.col
-            legend.lwd <- dot("smooth.lwd lwd.smooth lwd.loess",
-                              EX=c(0,1,1), DEF=1, NEW=1, ...)
+            legend.lwd <- dota("smooth.lwd lwd.smooth lwd.loess",
+                               EX=c(0,1,1), DEF=1, NEW=1, ...)
             legend.lty <- 1
         }
         if(oof.meanfit.was.plotted) {
             legend.txt <- c(legend.txt, "cross validated oof fit")
-            legend.col <- c(legend.col, dot("col.cv", ...))
+            legend.col <- c(legend.col, dota("col.cv", ...))
             legend.lwd <- c(legend.lwd, 1)
             legend.lty <- c(legend.lty, 1)
         }

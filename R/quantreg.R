@@ -20,7 +20,7 @@ plotmo.predict.rqs <- function(object, newdata, type, ..., TRACE)
 # quantreg::predict.rq returns a column for each value in the tau arg
 # in the call to rq.  Select the column corresponding to tau=.5
 
-plotmo.convert.na.nresponse.rq <- function(object, nresponse, yhat, type)
+plotmo.convert.na.nresponse.rq <- function(object, nresponse, yhat, type, ...)
 {
     if(NCOL(yhat) == 1)
         nresponse <- 1
@@ -36,7 +36,7 @@ plotmo.convert.na.nresponse.rq <- function(object, nresponse, yhat, type)
     }
     nresponse
 }
-plotmo.convert.na.nresponse.rqs <- function(object, nresponse, yhat, type)
+plotmo.convert.na.nresponse.rqs <- function(object, nresponse, yhat, type, ...)
 {
     plotmo.convert.na.nresponse.rq(object, nresponse, yhat, type)
 }

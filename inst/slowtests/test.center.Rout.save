@@ -11,6 +11,7 @@ Loading required package: TeachingDemos
 > options(warn=1) # print warnings as they occur
 > if(!interactive())
 +     postscript(paper="letter")
+> set.seed(2016)
 > et <- etitanic[, c("survived", "pclass", "sex", "age")]
 > et$pclassn <- as.numeric(et$pclass)
 > et <- et[c(30:80,330:380,630:680), ]
@@ -37,8 +38,8 @@ Loading required package: TeachingDemos
 +        smooth.col="lightblue", smooth.lwd=2,
 +        pt.col=ifelse(et$survived, "black", "red"),
 +        pt.pch=".", pt.cex=2.5)
- grid:    pclassn    sex
-                2 female
+ plotmo grid:    pclassn    sex
+                       2 female
 > 
 > set.seed(844)
 > plotmo(a1, degree1=1, all2=T, degree2=0, do.par=F, xflip=T, center=TRUE, clip=F,
@@ -47,8 +48,8 @@ Loading required package: TeachingDemos
 +        smooth.col="lightblue", smooth.lwd=2,
 +        pt.col=ifelse(et$survived, "black", "red"),
 +        pt.pch=".", pt.cex=2.5)
- grid:    pclassn  sex
-                2 male
+ plotmo grid:    pclassn  sex
+                       2 male
 > 
 > #--- row 2
 > 
@@ -64,8 +65,8 @@ Loading required package: TeachingDemos
 +        smooth.col="lightblue",  smooth.lwd=2,
 +        pt.col=ifelse(et$survived, "black", "red"),
 +        pt.pch=".", pt.cex=2.5)
- grid:    pclassn    sex
-                2 female
+ plotmo grid:    pclassn    sex
+                       2 female
 > 
 > set.seed(844)
 > plotmo(a2, degree1=1, all2=T, degree2=0, do.par=F, xflip=T, center=TRUE, clip=F,
@@ -74,8 +75,8 @@ Loading required package: TeachingDemos
 +        smooth.col="lightblue",  smooth.lwd=2,
 +        pt.col=ifelse(et$survived, "black", "red"),
 +        pt.pch=".", pt.cex=2.5)
- grid:    pclassn  sex
-                2 male
+ plotmo grid:    pclassn  sex
+                       2 male
 > 
 > #--- row 3
 > 
@@ -134,8 +135,8 @@ Loading required package: TeachingDemos
 +        smooth.col="lightblue",  smooth.lwd=2,
 +        pt.col=ifelse(et$survived, "black", "red"),
 +        pt.pch=".", pt.cex=2.5)
- grid:    pclassn age
-                2  10
+ plotmo grid:    pclassn age
+                       2  10
 > 
 > set.seed(844)
 > plotmo(a4, do.par=F, xflip=F, all1=T, center=TRUE, clip=F,
@@ -145,8 +146,8 @@ Loading required package: TeachingDemos
 +        smooth.col="lightblue",  smooth.lwd=2,
 +        pt.col=ifelse(et$survived, "black", "red"),
 +        pt.pch=".", pt.cex=2.5)
- grid:    pclassn age
-                2  40
+ plotmo grid:    pclassn age
+                       2  40
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot

@@ -7,7 +7,7 @@ Plot a model's response when varying one or two predictors while
 holding the other predictors constant.  A poor man's partial
 dependence plot.
 
-See the \href{../doc/plotmo-notes.pdf}{\code{plotmo}} vignette.
+Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
 }
 \usage{
 plotmo(object=stop("no 'object' argument"),
@@ -54,7 +54,7 @@ This can be a vector, like all such arguments, for example
 \cr
 You can modify the plotted points with
 \code{pt.pch}, \code{pt.cex}, etc.
-(these get passed via \code{plotmo}'s \dots argument).
+(these get passed via \code{plotmo}'s ``\code{...}'' argument).
 To label the points, set \code{pt.pch} to a character vector.
 }
 \item{jitter}{
@@ -150,7 +150,7 @@ Variable are matched with \code{\link[base]{grep}}.  Thus \code{"wind"} will mat
 all variables with \code{"wind"} anywhere in their name. Use \code{"^wind$"}
 to match only the variable named \code{"wind"}.
 \cr
-Note that \code{degree1} indexes plots on the page,
+Note that an integer \code{degree1} indexes plots on the page,
 not columns of \code{x}.
 Probably the easiest way to use this argument (and \code{degree2}) is to
 first use the default (and possibly \code{all1=TRUE})
@@ -221,7 +221,7 @@ to use across all graphs.
 \cr
 \code{ylim=NA}. Each graph has its own \code{ylim}.
 \cr
-\code{ylim=c(ymin,ymax)}. Use the specified limits.
+\code{ylim=c(ymin,ymax)}. Use the specified limits across all graphs.
 \cr
 }
 \item{caption}{
@@ -238,7 +238,7 @@ Default is \code{0}.
 \code{trace=2} for detailed tracing.
 \cr
 \code{trace=-1} inhibits the messages usually issued by \code{plotmo},
-like the \code{grid:} and \dQuote{\code{nothing to plot}}
+like the \dQuote{\code{plotmo grid:}} and \dQuote{\code{nothing to plot}}
 messages. Error and warning messages will be printed as usual.
 \cr
 \cr
@@ -398,24 +398,22 @@ accepted and treated like the new argument \code{pt.col}.
 }
 }
 \note{
-In general this function won't work on models that don't save the call and data
-with the model in a standard way.
-For further discussion
-see \dQuote{\emph{Accessing the model data}} in the
-\href{../doc/plotmo-notes.pdf}{\code{plotmo}} vignette.
+In general this function won't work on models that don't save the call
+and data with the model in a standard way.
+For further discussion please see \dQuote{\emph{Accessing the model
+data}} in the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
+Package authors may want to look at
+\href{../doc/modguide.pdf}{Guidelines for S3 Regression Models}.
 
 By default, \code{plotmo} tries to use sensible model-dependent
 defaults when calling \code{predict}.
 Use \code{trace=1} to see the arguments passed to \code{predict}.
 You can change the defaults by using \code{plotmo}'s \code{type} argument,
 and by using dot arguments prefixed with
-\code{predict.} (see the description of \dots above).
+\code{predict.} (see the description of ``\code{...}'' above).
 }
 \seealso{
-Please see the \href{../doc/plotmo-notes.pdf}{\code{plotmo}} vignette.
-
-There is a brief section on \code{plotmo} in the \code{rpart.plot} vignette
-\href{http://www.milbo.org/rpart-plot/prp.pdf}{Plotting \code{rpart} trees with \code{prp}}.
+Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
 }
 \examples{
 if (require(rpart)) {

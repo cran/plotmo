@@ -5,7 +5,7 @@
 \description{
 Plot the residuals of a regression model.
 
-See the \href{../doc/plotres-notes.pdf}{\code{plotres}} vignette.
+Please see the \href{../doc/plotres-notes.pdf}{plotres vignette}.
 }
 \usage{
 plotres(object = stop("no 'object' argument"),
@@ -29,7 +29,7 @@ Which plots do draw.  Default is \code{1:4}.
 For example, for \code{earth} models this is a model selection plot.
 Nothing will be displayed for some models.
 For details, please see the
-\href{../doc/plotres-notes.pdf}{\code{plotres}} vignette.
+\href{../doc/plotres-notes.pdf}{plotres vignette}.
 
 \code{2}  Cumulative distribution of abs residuals
 
@@ -157,7 +157,7 @@ Example:\preformatted{    mod <- lm(log(Volume)~log(Girth), data=trees)
 You can modify the color of the bands with \code{level.shade} and \code{level.shade2}.
 \cr
 See also \dQuote{\emph{Prediction intervals}} in the
-\href{../doc/plotmo-notes.pdf}{\code{plotmo}} vignette
+\href{../doc/plotmo-notes.pdf}{plotmo vignette}
 (but note that \code{plotmo} needs prediction intervals on \emph{new}
 data, whereas \code{plotres} requires only that the model supports
 prediction intervals on the training data).
@@ -342,33 +342,33 @@ For backwards compatibility, some dot
 arguments are supported but not explicitly documented.
 }
 }
+\value{
+If the \code{which=1} plot was plotted, the return value of that
+plot (model dependent).
+
+Else if the \code{which=3} plot was plotted, return \code{list(x,y)}
+where \code{x} and \code{y} are the coordinates of the points in that plot
+(but without jittering even if the \code{jitter} argument was used).
+
+Else return \code{NULL}.
+}
 \note{
 This function is designed primarily for displaying standard
 \code{response - fitted} residuals for models
 with a single continuous response,
 although it will work for a few other models.
 
-In general this function won't work on models that don't save the call and data
-with the model in a standard way.
-It uses the same underlying mechanism to access the model
-data as \code{\link{plotmo}},
-and for further discussion
-please see \dQuote{\emph{Accessing the model data}} in the
-\href{../doc/plotmo-notes.pdf}{\code{plotmo}} vignette.
-
-\bold{Acknowledgments}
-
-The \code{which=1} plot for \code{glmnet} models is based on code in
-the \code{\link[glmnet]{glmnet}} package by Jerome Friedman, Trevor
-Hastie, Noah Simon, and Rob Tibshirani.
-
-The \code{which=1} plot for \code{gbm} models is based on code in the
-\code{\link[gbm]{gbm}} package by Greg Ridgeway
-with contributions from others.
+In general this function won't work on models that don't save the call
+and data with the model in a standard way.
+It uses the same underlying mechanism to access the model data as
+\code{\link{plotmo}}.
+For further discussion please see \dQuote{\emph{Accessing the model
+data}} in the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
+Package authors may want to look at
+\href{../doc/modguide.pdf}{Guidelines for S3 Regression Models}.
 }
 \seealso{
-Please see the
-\href{../doc/plotres-notes.pdf}{\code{plotres}} vignette.
+Please see the \href{../doc/plotres-notes.pdf}{plotres vignette}.
 
 \code{\link[stats]{plot.lm}}
 

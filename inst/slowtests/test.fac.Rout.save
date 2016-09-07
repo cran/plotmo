@@ -11,6 +11,7 @@ Loading required package: TeachingDemos
 > options(warn=1) # print warnings as they occur
 > if(!interactive())
 +     postscript(paper="letter")
+> set.seed(2016)
 > 
 > cat("==test plotmo with factors==\n")
 ==test plotmo with factors==
@@ -112,35 +113,35 @@ Loading required package: TeachingDemos
 + }
 > test.fac.with.rpart()
 names(et): survived pclass.fac parch.num parch.fac pclass.num 
- grid:    pclass.num parch.num
-                   2         0
- grid:    pclass.fac parch.num
-                 1st         0
+ plotmo grid:    pclass.num parch.num
+                          2         0
+ plotmo grid:    pclass.fac parch.num
+                        1st         0
 stats::predict(rpart.object, data.frame[3,2], type="vector")
 stats::fitted(object=rpart.object)
 fitted() was unsuccessful, will use predict()
 got model response from model.frame(survived~pclass.n..., data=call$data, na.action="na.pass")
 
- grid:    pclass.num parch.fac
-                   2      levz
+ plotmo grid:    pclass.num parch.fac
+                          2      levz
 
- grid:    pclass.fac parch.fac
-                 1st      levz
- grid:    pclass.num parch.num
-                   2         0
+ plotmo grid:    pclass.fac parch.fac
+                        1st      levz
+ plotmo grid:    pclass.num parch.num
+                          2         0
 Warning: forcing clip=FALSE because center=TRUE (a limitation of the current implementation)
- grid:    pclass.num parch.num
-                   2         0
- grid:    pclass.num parch.num
-                   2         0
+ plotmo grid:    pclass.num parch.num
+                          2         0
+ plotmo grid:    pclass.num parch.num
+                          2         0
 Warning: forcing clip=FALSE because center=TRUE (a limitation of the current implementation)
- grid:    pclass.num parch.num
-                   2         0
- grid:    pclass.num parch.num
-                   2         0
+ plotmo grid:    pclass.num parch.num
+                          2         0
+ plotmo grid:    pclass.num parch.num
+                          2         0
 Warning: forcing clip=FALSE because center=TRUE (a limitation of the current implementation)
- grid:    pclass.num parch.num
-                   2         0
+ plotmo grid:    pclass.num parch.num
+                          2         0
 > cat("==test plotmo swapxy with factors==\n")
 ==test plotmo swapxy with factors==
 > test.swapxy.with.rpart <- function(ngrid2=20)
@@ -236,8 +237,8 @@ Warning: forcing clip=FALSE because center=TRUE (a limitation of the current imp
 [149] lev.zero        lev.zero        lev.zero        lev.zero       
 Levels: lev.zero lev.one lev.two.or.more
 names(et): survived pclass.fac parch.num parch.fac pclass.num 
- grid:    pclass.fac parch.fac
-                 1st  lev.zero
+ plotmo grid:    pclass.fac parch.fac
+                        1st  lev.zero
 > 
 > aflip <- earth(O3~vh + wind + humidity + temp, data=ozone1, degree=2)
 > col.response<- ifelse(ozone1$O3 == 38, "red", "pink")
@@ -246,11 +247,11 @@ names(et): survived pclass.fac parch.num parch.fac pclass.num
 > par(mfrow=c(2,2))
 > set.seed(102)
 > plotmo(aflip, degree1=1:2, degree2=0, do.par=F, col.response=col.response, nrug=-1, ylab="O3", smooth.col="gray")
- grid:    vh wind humidity temp
-        5760    5       64   62
+ plotmo grid:    vh wind humidity temp
+               5760    5       64   62
 > plotmo(aflip, degree1=1:2, degree2=F, do.par=F, col.response=col.response, nrug=-1, ylab="O3", xflip=T, main="xflip=TRUE, degree1 plots", , smooth.col="gray")
- grid:    vh wind humidity temp
-        5760    5       64   62
+ plotmo grid:    vh wind humidity temp
+               5760    5       64   62
 > 
 > col.response<- ifelse(ozone1$O3 == 1, "green", "pink")
 > 
@@ -299,8 +300,8 @@ names(et): survived pclass.fac parch.num parch.fac pclass.num
 > a <- lm(height~., data=Loblolly)
 > termplot(a, partial.resid=T, rug=T, terms=2, main="Seed is an ordered factor") # compare to termplot
 > plotmo(a, do.par=F, col.resp="gray", nrug=T, all2=T)
- grid:    age Seed
-         12.5  329
+ plotmo grid:    age Seed
+                12.5  329
 > 
 > #---------------------------------------------------------------------------
 > # test ndiscrete with integer and non integer predictors, with missing values

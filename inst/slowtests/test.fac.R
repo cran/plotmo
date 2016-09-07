@@ -9,6 +9,7 @@ data(etitanic)
 options(warn=1) # print warnings as they occur
 if(!interactive())
     postscript(paper="letter")
+set.seed(2016)
 
 cat("==test plotmo with factors==\n")
 test.fac.with.rpart <- function(ngrid2=20)

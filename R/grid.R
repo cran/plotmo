@@ -281,7 +281,7 @@ get.all.levs <- function(x, levels)
 
     # TODO Sanity check, quite expensive, make sure no gaps in factor coding
     #      Could remove this if convert levels to factors in a better way below?
-    range <- range(as.numeric(x))
+    range <- range(as.numeric(x), na.rm=TRUE)
     if(range[1] < 1 || range[2] > length(levels))
         stop0("internal error: illegal factor range ", range[1], " ",  range[2],
               " for levels ", quotify(levels))
@@ -297,7 +297,7 @@ print.grid.values <- function(xgrid, trace)
 {
     trace1(trace, "\n")
     row <- xgrid[1, , drop=FALSE]
-    names(row) <- c(paste("grid:   ", names(row)[1]), names(row)[-1])
+    names(row) <- c(paste("plotmo grid:   ", names(row)[1]), names(row)[-1])
     rownames(row) <- ""
     print(row)
     trace1(trace, "\n")

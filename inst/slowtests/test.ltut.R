@@ -7,7 +7,7 @@
 #   3. production version (includes error checks)
 
 options(warn=2) # treat warnings as errors
-
+set.seed(2016)
 if(!interactive())
     postscript(paper="letter")
 

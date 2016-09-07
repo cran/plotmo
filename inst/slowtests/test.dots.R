@@ -1,7 +1,7 @@
 # test.dots.R
 
 library(plotmo)
-
+set.seed(2016)
 options(warn=1) # print warnings as they occur
 
 if(!interactive())
@@ -72,77 +72,77 @@ test.dotindex(2,  c(" a b "), c=3, b=4)
 test.dotindex(NA, c("a", "b"), c=3)
 stopifnot(plotmo:::dotindex(c("x", "a1"), EX=1, a1=10, a2=20) == 1)
 
-test.dot <- function(expected, ARGNAME, ..., DEF=NA, EX=FALSE)
+test.dota <- function(expected, ARGNAME, ..., DEF=NA, EX=FALSE)
 {
     if(is.na(DEF))
-        dot <- plotmo:::dot(ARGNAME, EX=EX, ...)
+        dot <- plotmo:::dota(ARGNAME, EX=EX, ...)
     else
-        dot <- plotmo:::dot(ARGNAME, EX=EX, DEF=DEF, ...)
+        dot <- plotmo:::dota(ARGNAME, EX=EX, DEF=DEF, ...)
     stopifnot(all.equal(dot, expected))
 }
 cat0("=== test dot\n")
-test.dot(NA, "x") # empty dots
-test.dot(NA, "x",  a=10, b=20)
-test.dot(10, "a",  a=10, b=20)
-test.dot(20, "b",  a=10, b=20)
-test.dot(99, DEF=99, "nonesuch", a=10, b=20)
-test.dot(NA, "a", a1=10, a2=20)
-expect.err(try(test.dot(1, "a1", a=10, a=20)), "argument 'a' for test.dot() is duplicated")
-expect.err(try(test.dot(1, 99, a=10, a=20)), "is.character(argname) is not TRUE")
-expect.err(try(test.dot(1, test.dot, a=10, a=20)), "is.character(argname) is not TRUE")
-expect.err(try(test.dot(1, "", a=10, a=20)), "empty string in ARGNAME")
-expect.err(try(test.dot(1, "x^x", a=10, a=20)), "illegal character \"^\" in ARGNAME")
+test.dota(NA, "x") # empty dots
+test.dota(NA, "x",  a=10, b=20)
+test.dota(10, "a",  a=10, b=20)
+test.dota(20, "b",  a=10, b=20)
+test.dota(99, DEF=99, "nonesuch", a=10, b=20)
+test.dota(NA, "a", a1=10, a2=20)
+expect.err(try(test.dota(1, "a1", a=10, a=20)), "argument 'a' for test.dota() is duplicated")
+expect.err(try(test.dota(1, 99, a=10, a=20)), "is.character(argname) is not TRUE")
+expect.err(try(test.dota(1, test.dota, a=10, a=20)), "is.character(argname) is not TRUE")
+expect.err(try(test.dota(1, "", a=10, a=20)), "empty string in ARGNAME")
+expect.err(try(test.dota(1, "x^x", a=10, a=20)), "illegal character \"^\" in ARGNAME")
 
-test.dot(10, "abc", EX=T, abc=10)
-test.dot(NA, "a",   EX=T, a1=10, a2=20)
-expect.err(try(test.dot(1, "a1", a1=10, a1=20)), "argument 'a1' for test.dot() is duplicated")
+test.dota(10, "abc", EX=T, abc=10)
+test.dota(NA, "a",   EX=T, a1=10, a2=20)
+expect.err(try(test.dota(1, "a1", a1=10, a1=20)), "argument 'a1' for test.dota() is duplicated")
 
-stopifnot(is.na(plotmo:::dot("a", EX=1, a1=1, a2=2)))
-stopifnot(plotmo:::dot("a2", EX=1, a1=10, a2=20, a3=30) == 20)
+stopifnot(is.na(plotmo:::dota("a", EX=1, a1=1, a2=2)))
+stopifnot(plotmo:::dota("a2", EX=1, a1=10, a2=20, a3=30) == 20)
 
 foo <- function(func, x) func(x)
 foo(mean, 33)
-foo(function(...) plotmo:::dot("x", ...), 33)
-foo(function(...) plotmo:::dot("x99", ...), 33)
-foo(function(...) { plotmo:::dot("nonesuch", ...) }, 33)
+foo(function(...) plotmo:::dota("x", ...), 33)
+foo(function(...) plotmo:::dota("x99", ...), 33)
+foo(function(...) { plotmo:::dota("nonesuch", ...) }, 33)
 
-test.dot(1,  "a", EX=T, a=1)
-test.dot(2,  "b", EX=T, a=1, b=2, c=3)
-test.dot(NA, "x", EX=T, a=1, b=2, c=3)
-test.dot(2,  "a", EX=T, ab=1, a=2)
-test.dot(2,  "a", EX=T, aa=1, a=2)
-test.dot(NA, "a", EX=T, aa=1, ab=2)
-expect.err(try(test.dot(2, "a", EX=T, aa=1, a=2, a=3)), "argument 'a' for test.dot() is duplicated")
+test.dota(1,  "a", EX=T, a=1)
+test.dota(2,  "b", EX=T, a=1, b=2, c=3)
+test.dota(NA, "x", EX=T, a=1, b=2, c=3)
+test.dota(2,  "a", EX=T, ab=1, a=2)
+test.dota(2,  "a", EX=T, aa=1, a=2)
+test.dota(NA, "a", EX=T, aa=1, ab=2)
+expect.err(try(test.dota(2, "a", EX=T, aa=1, a=2, a=3)), "argument 'a' for test.dota() is duplicated")
 
-expect.err(try(test.dot(2, "a", EX=T, a=none.such)), "cannot evaluate 'a'")
+expect.err(try(test.dota(2, "a", EX=T, a=none.such)), "cannot evaluate 'a'")
 
 # multiple argnames
-test.dot(2,  c("a", "b"), a=2, c=3)
-test.dot(5,  c("a", "b"), a=5, b=6)
-test.dot(5,  c("a", "b"), x=1, a=5, b=6)
-test.dot(3,  c("a", "b"), b=3, c=4)
-test.dot(4,  c("a", "b"), c=3, b=4)
-test.dot(NA, c("a", "b"), c=3)
-expect.err(try(test.dot(1, c("b", "aa1"), a=10, aa=20)), "arguments 'a' and 'aa' both match 'aa1' in test.dot")
-expect.err(try(test.dot(1, c("x", ""), a=10, b=20)), "empty string in ARGNAME")
-stopifnot(plotmo:::dot(c("x", "a2", "y"), EX=1, a1=10, a2=20, a3=30) == 20)
+test.dota(2,  c("a", "b"), a=2, c=3)
+test.dota(5,  c("a", "b"), a=5, b=6)
+test.dota(5,  c("a", "b"), x=1, a=5, b=6)
+test.dota(3,  c("a", "b"), b=3, c=4)
+test.dota(4,  c("a", "b"), c=3, b=4)
+test.dota(NA, c("a", "b"), c=3)
+expect.err(try(test.dota(1, c("b", "aa1"), a=10, aa=20)), "arguments 'a' and 'aa' both match 'aa1' in test.dota")
+expect.err(try(test.dota(1, c("x", ""), a=10, b=20)), "empty string in ARGNAME")
+stopifnot(plotmo:::dota(c("x", "a2", "y"), EX=1, a1=10, a2=20, a3=30) == 20)
 
-test.dot(NA, c("a", "b"), aa=2, cc=3, EX=T)
-test.dot(2,  c("aa", "b"), aa=2, cc=3, EX=T)
-test.dot(3,  c("bb", "b"), bb=3, cc=4, EX=T)
-test.dot(NA, c("a", "b"), c=3, EX=T)
+test.dota(NA, c("a", "b"), aa=2, cc=3, EX=T)
+test.dota(2,  c("aa", "b"), aa=2, cc=3, EX=T)
+test.dota(3,  c("bb", "b"), bb=3, cc=4, EX=T)
+test.dota(NA, c("a", "b"), c=3, EX=T)
 
-foo.x <- function(...) { plotmo:::dot("x", ..., DEF="default", EX=FALSE) }
+foo.x <- function(...) { plotmo:::dota("x", ..., DEF="default", EX=FALSE) }
 stopifnot(foo.x(x=3) == 3)
 stopifnot(foo.x(y=3) == "default")
 
 foo2 <- function(funcarg, ...) funcarg(...)
-stopifnot(is.na(foo2(function(...) plotmo:::dot("x", ...), 3))) # 3 is unnamed
-stopifnot(foo2(function(...) plotmo:::dot("x", EX=0, ...), x=3) == 3)
-stopifnot(foo2(function(...) plotmo:::dot("x99", EX=0, ...), x=3) == 3)
-stopifnot(foo2(function(...) { plotmo:::dot("x", DEF="default", EX=FALSE, ...) }, x=3) == 3)
-stopifnot(foo2(function(...) { plotmo:::dot("y", DEF="default", EX=FALSE, ...) }, x=3) == "default")
-# expect.err(try(foo2(function(...) { plotmo:::dot("y", DEF="default", EX=FALSE, ...) }, 3)), "unnamed arguments in ... are not allowed for funcarg()")
+stopifnot(is.na(foo2(function(...) plotmo:::dota("x", ...), 3))) # 3 is unnamed
+stopifnot(foo2(function(...) plotmo:::dota("x", EX=0, ...), x=3) == 3)
+stopifnot(foo2(function(...) plotmo:::dota("x99", EX=0, ...), x=3) == 3)
+stopifnot(foo2(function(...) { plotmo:::dota("x", DEF="default", EX=FALSE, ...) }, x=3) == 3)
+stopifnot(foo2(function(...) { plotmo:::dota("y", DEF="default", EX=FALSE, ...) }, x=3) == "default")
+# expect.err(try(foo2(function(...) { plotmo:::dota("y", DEF="default", EX=FALSE, ...) }, 3)), "unnamed arguments in ... are not allowed for funcarg()")
 
 stopifnot(foo2(foo.x, x=3) == 3)
 stopifnot(foo2(foo.x, y=3) == "default")

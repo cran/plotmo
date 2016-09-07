@@ -7,7 +7,7 @@
 > #   3. production version (includes error checks)
 > 
 > options(warn=2) # treat warnings as errors
-> 
+> set.seed(2016)
 > if(!interactive())
 +     postscript(paper="letter")
 > 
@@ -133,11 +133,11 @@ Got error as expected from try(plotmo(fit2))
 +     }
 + }
 > plotmo(fit1, pt.col=2, caption="fit1 with original tutorial code and plotmo.predict.linmod")
- grid:    Girth Height
-           12.9     76
+ plotmo grid:    Girth Height
+                  12.9     76
 > plotmo(fit2, pt.col=2, caption="fit2 with original tutorial code and plotmo.predict.linmod")
- grid:    1 Girth Height
-          1  12.9     76
+ plotmo grid:    1 Girth Height
+                 1  12.9     76
 > remove(plotmo.predict.linmod)
 > 
 > ### Version2: minimal changes version for vignette "Guidelines for S3 Regression Models"
@@ -231,11 +231,11 @@ Height        0.33925   0.13015  2.6066   0.01449 *
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 > 
 > plotmo(fit1.form)
- grid:    Girth Height
-           12.9     76
+ plotmo grid:    Girth Height
+                  12.9     76
 > plotmo(fit1.mat)
- grid:    Girth Height
-           12.9     76
+ plotmo grid:    Girth Height
+                  12.9     76
 > 
 > plotres(fit1.form)
 > plotres(fit1.mat)
@@ -829,11 +829,11 @@ Height        0.33925   0.13015  2.6066   0.01449 *
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 > 
 > plotmo(fit1.form)
- grid:    Girth Height
-           12.9     76
+ plotmo grid:    Girth Height
+                  12.9     76
 > plotmo(fit1.mat)
- grid:    Girth Height
-           12.9     76
+ plotmo grid:    Girth Height
+                  12.9     76
 > 
 > plotres(fit1.form)
 > plotres(fit1.mat)
@@ -842,8 +842,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 > fit1.mat.keep <- linmod(trees[,1:2], trees[,3], keep=TRUE)
 > fit1.mat.keep$call <- NULL # trick to force use of x and y in plotmo
 > plotmo(fit1.mat.keep, pt.col=3)
- grid:    Girth Height
-           12.9     76
+ plotmo grid:    Girth Height
+                  12.9     76
 > plotres(fit1.mat.keep)
 > 
 > cat("==test model building with different numeric args\n")

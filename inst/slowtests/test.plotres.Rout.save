@@ -291,16 +291,6 @@ stats::predict(glm.object, data.frame[88,3], type="pearson")
 > fit <- rpart(Kyphosis ~ Age + Number + Start, data = kyphosis)
 > plotres(fit, nresponse=1, SHOWCALL=TRUE, jitter=5)
 > plotres(fit, nresponse=2, SHOWCALL=TRUE, jitter=TRUE)
-
-plotmo_y[81,1]:
-    Kyphosis
-1     absent
-2     absent
-3    present
-...   absent
-81    absent
-  Kyphosis is a factor with levels: absent present
-
 > 
 > printf("======== versus=\"b:\"\n")
 ======== versus="b:"
@@ -322,8 +312,8 @@ Loaded gam 1.12
 > oz <- ozone1[, c("O3", "humidity", "temp", "ibt")]
 > gam.mod <- gam(O3^(1/3) ~ lo(humidity)+lo(ibt,temp), data=oz)
 > plotmo(gam.mod, SHOWCALL=TRUE)
- grid:    humidity   ibt temp
-                64 167.5   62
+ plotmo grid:    humidity   ibt temp
+                       64 167.5   62
 > plotres(gam.mod, SHOWCALL=TRUE)
 > plotres(gam.mod, versus="b:", SHOWCALL=TRUE)
 > plotres(gam.mod, versus="b:ib", info=TRUE, SHOWCALL=TRUE)

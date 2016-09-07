@@ -15,6 +15,8 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call test.non.earth.bat
                         @if %errorlevel% NEQ 0 goto error
+@call test.caret.bat
+                        @if %errorlevel% NEQ 0 goto error
 @call test.fac.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.center.bat
@@ -25,6 +27,8 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call test.glmnet.bat
                         @if %errorlevel% NEQ 0 goto error
+@call test.gbm.bat
+                        @if %errorlevel% NEQ 0 goto error
 @call test.ltut.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.dots.bat
@@ -33,7 +37,7 @@ time /T
 @cd \a\r\earth\inst\slowtests
                         @if %errorlevel% NEQ 0 goto error
 @call make.bat
-                        @if %errorlevel% NEQ 0 goto error
+                        @if %nerrorlevel% NEQ 0 goto error
 @cd \a\r\plotmo\inst\slowtests
 @goto done
 :error
