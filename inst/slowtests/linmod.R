@@ -1,16 +1,20 @@
-# linmod.R: linmod with checks suitable for production code
+# linmod.R: example S3 linear model
 #
-# The original minimal version of linmod is in
-# Friedrich Leisch "Creating R Packages: A Tutorial".
+# Please see www.milbo.org/doc/modguide.pdf.
 #
-# Please see also www.milbo.org/doc/modguide.pdf.
+# This code can be used as a template for new models as follows:
+# (i)  replace all occurrences of "linmod" with the new model name,
+# (ii) rewrite linmod.fit and the method functions (predict.linmod and friends).
 #
-# Comprehensive tests for this code are in test.ltut.R in the plotmo package.
+# The subset, weights and na.action arguments aren't supported.
+# Multiple responses aren't supported (y must be a vector or have one column).
+#
+# Comprehensive tests for this code are in test.linmod.R in the plotmo package.
 
 linmod <- function(...) UseMethod("linmod")
 
 # internal function, not for the casual user
-# first column of x is the intercept (all 1s)
+# for model with an intercept, first column of x must be the intercept (all 1s)
 
 linmod.fit <- function(x = stop("no 'x' argument"),
                        y = stop("no 'y' argument"),
@@ -53,15 +57,11 @@ check.linmod.x <- function(x)
     if(NROW(x) == 0 || NCOL(x) == 0)
         stop("'x' is empty")
     if(anyNA(x))
-        stop("NA in 'x'") # TODO ideally we should say where in x the NA is
+        stop("NA in 'x'")
     # checking just the first column of x suffices because x is a matrix
     # is.logical allowed because qr etc. know how to deal with logical vars
     if(!is.numeric(x[,1]) && !is.logical(x[,1]))
         stop("non-numeric column in 'x'")
-    # the model must have an intercept (TODO until the test suite is extended)
-    if(any(x[,1] != 1))
-        stop("the first column of 'x' is not an intercept column (all 1s)")
-
     # ensure all columns in x are named (needed for names in vcov etc.)
     # use the same naming convention as lm (prefix for unnamed cols is "V")
     missing.colnames <-
@@ -98,19 +98,25 @@ linmod.default <- function(x = stop("no 'x' argument"),
 {
     stop.if.dot.arg.used(...)
     x.original <- x
-    x <- as.matrix(x)
+    xmat <- as.matrix(x)
     # use name "(Intercept)" here so coef names match linmod.formula
-    x <- cbind("(Intercept)"=1, x)
+    x <- cbind("(Intercept)"=1, xmat)
     fit <- linmod.fit(x, y)
     fit$call <- match.call()
     if(keep) {
-        fit$x <- x.original
-        fit$y <- y
+        fit$x <- xmat
+        # save y as a matrix so can use colname to remember response name
+        # (we already checked that it's safe to do this in check.linmod.y)
+        colname <- deparse(substitute(y))[1]
+        colname <- gsub(" ", "", substr(colname, 1, 100)) # strip spaces, truncate
+        fit$y <- as.matrix(y, ncol=1)
+        colnames(fit$y) <- colname
     }
     fit
 }
 linmod.formula <- function(formula = stop("no 'formula' argument"),
                            data = parent.frame(),
+                           keep = FALSE,
                            ...)
 {
     stop.if.dot.arg.used(...)
@@ -122,53 +128,79 @@ linmod.formula <- function(formula = stop("no 'formula' argument"),
     y <- model.response(mf)
     fit <- linmod.fit(x, y)
     fit$terms <- terms
+    fit$xlevels <- .getXlevels(terms, mf) # will be used by predict.linmod
     fit$call <- match.call()
+    if(keep) {
+        # TODO reconsider how factors in x should be handled here
+        varnames <- names(attr(terms, "dataClasses"))
+        int.col <- attr(terms, "intercept") # intercept column nbr in x
+        if(int.col != 0)                    # drop intercept column
+            x <- x[, -int.col, drop=FALSE]  # for compat with linmod.default
+        fit$x <- x # any factors will have been expanded by model.frame
+        # save y as a matrix so can use colname to remember response name
+        fit$y <- as.matrix(y, ncol=1)
+        colnames(fit$y) <- varnames[attr(terms, "response")]
+    }
     fit
+}
+process.newdata <- function(object, newdata) # for models built with linmod.formula
+{
+    terms <- object$terms
+    dataClasses <- attr(terms, "dataClasses")
+    newdata <- as.data.frame(newdata) # allows newdata to be a matrix
+
+    # The code below preempts code in model.frame that issues
+    #   Warning: 'newdata' had M rows but variables found have N rows
+    # This code gives a clearer error message.
+    # This check is necessary else model.frame can return bad data.
+    varnames <- names(dataClasses)
+    varnames <- varnames[-attr(terms, "response")]
+    missing <- which(!(varnames %in% colnames(newdata)))
+    if(length(missing))
+        stop("variable '", varnames[missing[1]],
+             "' used when building the model is not in colnames(newdata)")
+
+    terms <- delete.response(terms)
+    # na.action=na.pass because we will catch NAs after (for clearer error msg)
+    newdata <- model.frame(terms, newdata, na.action=na.pass, xlev=object$xlevels)
+    if(anyNA(newdata))
+        stop("NA in 'newdata'")
+    if(NROW(newdata) != NROW(newdata))    # paranoia, shouldn't be needed
+        stop("newdata has ", NROW(newdata),
+             " rows but model.frame returned ", NROW(newdata), " rows")
+    .checkMFClasses(dataClasses, newdata) # check types in newdata match original data
+    model.matrix(terms, newdata)
 }
 predict.linmod <- function(object = stop("no 'object' argument"),
                            newdata = NULL,
+                           type = "response",
                            ...)
 {
-    # following commented because by default plotmo passes a type arg to predict
-    # (uncomment this if a type arg is added to predict.linmod)
-    # stop.if.dot.arg.used(...)
-
+    stopifnot(inherits(object, "linmod"))
+    stop.if.dot.arg.used(...)
+    if(!identical(type, "response"))
+        stop("the 'type' argument is not yet supported")
     if(is.null(newdata))
         y <- fitted(object)
-    else{
+    else {
         if(NROW(newdata) == 0)
-            stop("'newdata' is empty")
-        if(is.null(object$terms)) {            # x,y interface
-            x <- as.matrix(newdata) # columns must be in the same order as orig x
-            x <- cbind(1, x)
-        } else {                                # formula interface
-            terms <- delete.response(object$terms)
-            # TODO The following code can issue quite obscure
-            #      error messages for bad newdata.  For example
-            #          predict(obj, newdata=1:3)
-            #      causes
-            #          eval(expr, envir, enclos) : object 'varname' not found
-            #
-            # na.action=na.pass because we will catch NAs a little later
-
-            x <- as.data.frame(newdata)
-            x <- model.frame(terms, x, na.action=na.pass)
-            x <- model.matrix(terms, x)
-        }
-        # TODO The following tests suffice to catch all incorrect input (I believe),
-        # but aren't ideal in that they don't always direct you to the root cause
-        # of the problem.  For example, strings in newdata that get converted to
-        # factors by model.matrix can cause the wrong number of columns in x.
-        #
-        # TODO if x has colnames, warn if not the same as original colnames
-
+            stop("'newdata' is empty")      # prevents obscure message later
+        if(is.null(object$terms)) {         # model built with linmod.default?
+            # columns in newdata must be in the same order as orig x
+            x <- as.matrix(newdata)         # allows newdata to be a data.frame
+            x <- cbind(1, x)                # intercept column
+        } else                              # model built with linmod.formula
+            x <- process.newdata(object, newdata)
+        # TODO The following tests suffice to catch all incorrect input,
+        # but aren't ideal in that they don't always direct you to the
+        # root cause of the problem.
         if(ncol(x) != length(object$coefficients))
             stop("ncol(newdata) is ", ncol(x)-1, " but should be ",
                  length(object$coefficients)-1) # -1 for intercept
         if(anyNA(x))
             stop("NA in 'newdata'")
         if(!is.numeric(x[,1]) && !is.logical(x[1,]))
-            stop("non-numeric column in 'newdata'")
+            stop("non-numeric column in 'newdata' (after processing)")
         y <- as.vector(x %*% coef(object))
     }
     y
@@ -184,11 +216,11 @@ summary.linmod <- function(object = stop("no 'object' argument"), ...)
                           t.value  = t.value,
                           p.value  = 2 * pt(-abs(t.value), df=object$df))
 
-    res <- list(call         = object$call,
-                coefficients = coefficients)
+    retval <- list(call         = object$call,
+                   coefficients = coefficients)
 
-    class(res) <- "summary.linmod"
-    res
+    class(retval) <- "summary.linmod"
+    retval
 }
 print.linmod <- function(x = stop("no 'x' argument"), ...)
 {
@@ -198,7 +230,7 @@ print.linmod <- function(x = stop("no 'x' argument"), ...)
                        sep=" ", collapse=" "), exdent=6), sep="\n")
     cat("\n")
     print(x$coefficients)
-    x
+    invisible(x)
 }
 print.summary.linmod <- function(x = stop("no 'x' argument"), ...)
 {
@@ -207,8 +239,9 @@ print.summary.linmod <- function(x = stop("no 'x' argument"), ...)
     cat(strwrap(paste0(deparse(x$call, control=NULL, nlines=5),
                        sep=" ", collapse=" "), exdent=6), sep="\n")
     cat("\n")
-    printCoefmat(x$coefficients, P.value=TRUE, has.Pvalue=TRUE)
-    x
+    printCoefmat(x$coefficients, signif.stars=FALSE,
+                 P.value=TRUE, has.Pvalue=TRUE)
+    invisible(x)
 }
 # stop.if.dot.arg.used will cause an error message if any args are passed to it.
 # We use it to test if any dots arg of the calling function was used, for

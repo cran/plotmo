@@ -19,6 +19,7 @@ linmod.fit <- function(x, y) # internal function, not for the casual user
     vcov <- sigma2 * chol2inv(qx$qr)    # covar mat is sigma^2 * (x'x)^(-1)
     colnames(vcov) <- rownames(vcov) <- colnames(x)
     fitted.values <- qr.fitted(qx, y)
+    names(fitted.values) <- rownames(x)
 
     fit <- list(coefficients  = coef,
                 residuals     = y - fitted.values,

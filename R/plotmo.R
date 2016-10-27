@@ -597,13 +597,6 @@ get.ux.list <- function(x, trace)
 
     ux.list
 }
-# Remove duplicates in x, then sort (smallest first).
-# I had sort(unique(x)), but following is faster because it requires only one sort.
-
-sort.unique <- function(x)
-{
-    rle(sort(x))[["values"]]  # rle() is in base
-}
 points.or.text <- function(..., x, y, pt.col, iresponse)
 {
     stopifnot(!is.na(pt.col))

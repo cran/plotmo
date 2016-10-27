@@ -5,8 +5,8 @@
 plotmo.prolog.gbm <- function(object, ...) # invoked when plotmo starts
 {
     if(is.null(object$data)) # TODO could do more if object had a call component
-        stop0("object$data is NULL, ",
-              "(use keep.data=TRUE in the call to gbm)")
+        stop0("use keep.data=TRUE in the call to gbm ",
+              "(object$data is NULL)")
 
     # "importance" is a vector of variable indices (column numbers in x), most
     # important vars first, no variables with relative.influence < 1%.  We attach
@@ -44,35 +44,52 @@ plotmo.pairs.gbm <- function(object, ...)
     stopifnot(!is.null(importance)) # uninitialized?
     form.pairs(importance[1: min(4, length(importance))])
 }
-plotmo.x.gbm <- function(object, ...)
+# following is used by plotmo.x.gbm and plotmo.x.GBMFit
+plotmo.x.gbm.aux <- function(x, x.order, var.levels)
 {
+    stopifnot(!is.null(x))
+    stopifnot(!is.null(x.order) && !is.null(dim(x.order)))
+    stopifnot(!is.null(var.levels) && is.list(var.levels))
+
     # Return the first ntrain rows of the x matrix.  The x matrix is stored
     # with the gbm object as a vector, so we must convert it back to
     # a data.frame here, one column for each variable.
-    # The use of as.integer here is copied from gbm.R.
 
-    ntrain <- nrow(object$data$x.order)
-    x <- matrix(object$data$x, ncol=ncol(object$data$x.order))
+    ntrain <- nrow(x.order)
+    if(is.null(dim(x))) # for efficiency (new versions of gbm don't require this)
+        x <- matrix(x, ncol=ncol(x.order))
+    stopifnot(ncol(x) == ncol(x.order))
     x <- data.frame(x[seq_len(ntrain), ])
-    colnames(x) <- colnames(object$data$x.order)
+    colnames(x) <- colnames(x.order)
 
     # convert numeric columns that are actually factors
     # TODO this only works correctly if default ordering of factors was used
 
     for(i in seq_len(ncol(x)))
-        if(typeof(object$var.levels[[i]]) == "character")
-            x[[i]] <- factor(x[[i]], labels=object$var.levels[[i]])
+        if(typeof(var.levels[[i]]) == "character")
+            x[[i]] <- factor(x[[i]], labels=var.levels[[i]])
     x
+}
+# following is used by plotmo.y.gbm and plotmo.y.GBMFit
+plotmo.y.gbm.aux <- function(y, x.order)
+{
+    stopifnot(!is.null(y))
+    stopifnot(!is.null(x.order) && !is.null(dim(x.order)))
+    ntrain <- nrow(x.order)
+    y[seq_len(ntrain)]
+}
+plotmo.x.gbm <- function(object, ...)
+{
+    plotmo.x.gbm.aux(object$data$x, object$data$x.order, object$var.levels)
 }
 plotmo.y.gbm <- function(object, ...)
 {
-    ntrain <- nrow(object$data$x.order)
-    object$data$y[seq_len(ntrain)]
+    plotmo.y.gbm.aux(object$data$y, object$data$x.order)
 }
 plotmo.predict.gbm <- function(object, newdata, type, ..., TRACE)
 {
     # TODO I've only tested the distributions listed below although more may work
-    dist <- substring(object$distribution$name, 1, 2)
+    dist <- gbm.short.distribution.name(object)
     if(!(dist %in%  c("ga", "la", "td", "be", "hu", "ad")))
         stop0("gbm distribution=\"", object$distribution$name,
               "\" is not yet supported\n",
@@ -83,5 +100,5 @@ plotmo.predict.gbm <- function(object, newdata, type, ..., TRACE)
     # predict.gbm doesn't do partial matching on type so we do it here with pmatch.
     plotmo.predict.default(object, newdata,
         type = match.choices(type, c("link", "response"), "type"),
-        def.n.trees = object$n.trees, ..., TRACE=TRACE)
+        def.n.trees = gbm.n.trees(object), ..., TRACE=TRACE)
 }

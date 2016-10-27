@@ -226,7 +226,7 @@ nlines.in.plotres.main <- function(object, which, versus,
                                    standardize, delever, level, ...)
 {
     w1.does.own.mar4 <- # these models do their own top margin spacing in w1 plot
-       inherits(object, c("gbm", "glmnet", "multnet"))
+       inherits(object, c("gbm", "GBMFit", "glmnet", "multnet"))
 
     auto.main.has.extra.line <- # conservative guess if main will have two lines
         standardize || delever || level ||

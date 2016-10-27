@@ -40,25 +40,31 @@ train.frac <- .8
 set.seed(2016)
 gbm.gaussian <- gbm(age~., data=ptit, train.frac=train.frac,
                    distribution="gaussian",
+                   n.trees=50, shrinkage=.1, keep.data=FALSE)
+expect.err(try(plotres(gbm.gaussian)),
+           "use keep.data=TRUE in the call to gbm (object$data is NULL)")
+#           "use keep_gbm_data=TRUE in the call to gbmt")
+set.seed(2016)
+gbm.gaussian <- gbm(age~., data=ptit, train.frac=train.frac,
+                   distribution="gaussian",
                    n.trees=50, shrinkage=.1)
 old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2), mar=c(3,3,4,1))
 w1 <- plotres(gbm.gaussian, which=1, do.par=FALSE, w1.smooth=TRUE,
         w1.main="gbm.gaussian")
-
 cat("w1 plot for gbm.gaussian returned (w1.smooth=TRUE):\n")
 print(w1)
-
 plot(0, 0) # dummy plot
-
 w3 <- plotres(gbm.gaussian, which=3, do.par=FALSE, info=TRUE,
         smooth.col=0, col=ptit$sex, # ylim=c(-40,40),
         wmain="nresponse=1")
-
 # compare to manual residuals
 iused <- 1:(train.frac * nrow(ptit))
 y <- ptit$age[iused]
-yhat <- predict(gbm.gaussian, type="response", n.trees=gbm.gaussian$n.trees)
+n.trees <- plotmo:::gbm.n.trees(gbm.gaussian)
+# TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# yhat <- predict(gbm.gaussian, type="response", n.trees=n.trees)
+yhat <- predict(gbm.gaussian, newdata=ptit, type="response", n.trees=n.trees)
 yhat <- yhat[iused]
 plot(yhat, y - yhat,
      col=ptit$sex[iused], main="manual gaussian residuals",
@@ -159,7 +165,7 @@ set.seed(2016)
 ptit <- ptit[!is.na(ptit$age), ]
 train.frac <- .8
 set.seed(2016)
-gbm.gaussian.fit <- gbm.fit(ptit[,-4], ptit[,4], nTrain=train.frac * nrow(ptit),
+gbm.gaussian.fit <- gbm.fit(ptit[,-4], ptit[,4], nTrain=floor(train.frac * nrow(ptit)),
                    distribution="gaussian", verbose=FALSE,
                    n.trees=50, shrinkage=.1)
 old.par <- par(no.readonly=TRUE)
@@ -179,13 +185,16 @@ w3 <- plotres(gbm.gaussian.fit, which=3, do.par=FALSE, info=TRUE, trace=0,
 # compare to manual residuals
 iused <- 1:(train.frac * nrow(ptit))
 y.fit <- ptit$age[iused]
-yhat.fit <- predict(gbm.gaussian.fit, type="response", n.trees=gbm.gaussian.fit$n.trees)
+n.trees <- plotmo:::gbm.n.trees(gbm.gaussian.fit)
+# TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# yhat.fit <- predict(gbm.gaussian.fit, type="response", n.trees=n.trees)
+yhat.fit <- predict(gbm.gaussian.fit, newdata=ptit[,-4], type="response", n.trees=n.trees)
 yhat.fit <- yhat.fit[iused]
 # plot(yhat.fit, y.fit - yhat.fit,
 #      col=ptit$sex[iused], main="manual gaussian residuals\n(TODO gbm.fit don't match)",
 #      pch=20, ylim=c(-40,40))
 # abline(h=0, col="gray")
-# --- TODO know issue, these fail ---
+# --- TODO known issue, these fail ---
 # compare to formual interface
 # stopifnot(all(yhat.fit == yhat))
 stopifnot(all(y.fit == y))
@@ -219,7 +228,10 @@ w3 <- plotres(gbm.laplace, which=3, do.par=FALSE, info=TRUE)
 # compare to manual residuals
 iused <- 1:(train.frac * nrow(ptit))
 y <- ptit$age[iused]
-yhat <- predict(gbm.laplace, type="response", n.trees=gbm.laplace$n.trees)
+n.trees <- plotmo:::gbm.n.trees(gbm.laplace)
+# TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# yhat <- predict(gbm.laplace, type="response", n.trees=n.trees)
+yhat <- predict(gbm.laplace, newdata=ptit, type="response", n.trees=n.trees)
 yhat <- yhat[iused]
 plot(yhat, y - yhat,
      main="manual laplace residuals",
@@ -254,7 +266,10 @@ w3 <- plotres(gbm.tdist, which=3, do.par=FALSE, info=TRUE)
 # compare to manual residuals
 iused <- 1:(train.frac * nrow(ptit))
 y <- ptit$age[iused]
-yhat <- predict(gbm.tdist, type="response", n.trees=gbm.tdist$n.trees)
+n.trees <- plotmo:::gbm.n.trees(gbm.tdist)
+# TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# yhat <- predict(gbm.tdist, type="response", n.trees=n.trees)
+yhat <- predict(gbm.tdist, newdata=ptit, type="response", n.trees=n.trees)
 yhat <- yhat[iused]
 plot(yhat, y - yhat,
      main="manual tdist residuals",
@@ -295,7 +310,9 @@ w3 <- plotres(gbm.bernoulli, which=3, predict.n.trees=40,
 # compare to manual residuals
 iused <- 1:(train.frac * nrow(ptit))
 y <- ptit$survived[iused]
-yhat <- predict(gbm.bernoulli, type="response", n.trees=40)
+# TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# yhat <- predict(gbm.bernoulli, type="response", n.trees=40)
+yhat <- predict(gbm.bernoulli, newdata=ptit, type="response", n.trees=40)
 yhat <- yhat[iused]
 plot(yhat, y - yhat, col=ptit$sex,
      main="manual bernoulli residuals", pch=20, cex=1,
@@ -338,7 +355,9 @@ w3 <- plotres(gbm.huberized, which=3, predict.n.trees=40,
 # compare to manual residuals
 iused <- 1:(train.frac * nrow(ptit))
 y <- ptit$survived[iused]
-yhat <- predict(gbm.huberized, type="response", n.trees=40)
+# TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# yhat <- predict(gbm.huberized, type="response", n.trees=40)
+yhat <- predict(gbm.huberized, newdata=ptit, type="response", n.trees=40)
 yhat <- yhat[iused]
 plot(yhat, y - yhat, col=ptit$sex, ylim=c(-2.5, 2.5),
      main="manual huberized residuals", pch=20)
@@ -379,7 +398,9 @@ w3 <- plotres(gbm.adaboost, which=3, predict.n.trees=40,
 # compare to manual residuals
 iused <- 1:(train.frac * nrow(ptit))
 y <- ptit$survived[iused]
-yhat <- predict(gbm.adaboost, type="response", n.trees=40)
+# TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# yhat <- predict(gbm.adaboost, type="response", n.trees=40)
+yhat <- predict(gbm.adaboost, newdata=ptit, type="response", n.trees=40)
 yhat <- yhat[iused]
 plot(yhat, y - yhat, col=ptit$sex,
      main="manual adaboost residuals", pch=20)
@@ -393,25 +414,146 @@ plotmo(gbm.adaboost, do.par=2)
 print(summary(gbm.adaboost)) # will also plot
 par(old.par)
 
-cat("--- distribution=\"multinomial\" ----------------------------------\n")
+# TODO following fails in the new version of gbm (version 2.2)
+#   (distribution "multinomial" is no longer supported)
+#
+# cat("--- distribution=\"multinomial\" ----------------------------------\n")
+#
+# set.seed(2016)
+# ptit <- ptitanic[sample(1:nrow(ptitanic), size=500), ]
+# set.seed(2016)
+# gbm.multinomial <- gbm(pclass~.,
+#                        data=ptit, train.frac=.7,
+#                        distribution="multinomial",
+#                        n.trees=100, shrinkage=.1)
+#
+# w1 <- plot_gbm(gbm.multinomial, main="gbm.multinomial", smooth=T)
+# cat("plot_gbm for gbm.multinomial returned (smooth=TRUE):\n")
+# print(w1)
+#
+# expect.err(try(plotres(gbm.multinomial)),
+#            "gbm distribution=\"multinomial\" is not yet supported")
+#
+# expect.err(try(plotmo(gbm.multinomial)),
+#            "gbm distribution=\"multinomial\" is not yet supported")
 
-set.seed(2016)
-ptit <- ptitanic[sample(1:nrow(ptitanic), size=500), ]
-set.seed(2016)
-gbm.multinomial <- gbm(pclass~.,
-                       data=ptit, train.frac=.7,
-                       distribution="multinomial",
-                       n.trees=100, shrinkage=.1)
-
-w1 <- plot_gbm(gbm.multinomial, main="gbm.multinomial", smooth=T)
-cat("plot_gbm for gbm.multinomial returned (smooth=TRUE):\n")
-print(w1)
-
-expect.err(try(plotres(gbm.multinomial)),
-           "gbm distribution=\"multinomial\" is not yet supported")
-
-expect.err(try(plotmo(gbm.multinomial)),
-           "gbm distribution=\"multinomial\" is not yet supported")
+# cat("--- gbmt distribution=\"Gaussian\", formula interface ----------------------------------\n")
+# 
+# set.seed(2016)
+# ptit <- ptitanic[sample(1:nrow(ptitanic), size=70), ] # small data for fast test
+# set.seed(2016)
+# # # TODO bug in gbm: following causes error: survived is not of type numeric, ordered, or factor
+# # ptit$survived <- ptit$survived == "survived"
+# ptit <- ptit[!is.na(ptit$age), ]
+# # TODO change this to build same model as gbm.gaussian
+# train_params <-
+#      training_params(num_trees = 50,
+#                      shrinkage = 0.1,
+#                      bag_fraction = 0.5,
+#                      num_train = round(.8 * nrow(ptit)))
+# old.par <- par(no.readonly=TRUE)
+# par(mfrow=c(2,2), mar=c(3,3,4,1))
+# set.seed(2016)
+# gbmt.gaussian <- gbmt(age~., data=ptit,
+#             distribution=gbm_dist("Gaussian"),
+#             train_params = train_params,
+#             is_verbose = FALSE)
+# expect.err(try(plotres(gbmt.gaussian)),
+#            "use keep.data=TRUE in the call to gbm (object$data is NULL)")
+# #           "use keep_gbm_data=TRUE in the call to gbmt")
+# set.seed(2016)
+# gbmt.gaussian <- gbmt(age~., data=ptit,
+#             distribution=gbm_dist("Gaussian"),
+#             train_params = train_params,
+#             is_verbose = FALSE,  keep_gbm_data=TRUE)
+# w1 <- plotres(gbmt.gaussian, which=1, do.par=FALSE, w1.smooth=TRUE,
+#               w1.main="gbmt.gaussian")
+# cat("w1 plot for gbmt.gaussian returned (w1.smooth=TRUE):\n")
+# print(w1)
+# plot(0, 0) # dummy plot
+# set.seed(2016)
+# w3 <- plotres(gbmt.gaussian, which=3, do.par=FALSE, info=TRUE,
+#         smooth.col=0, col=ptit$sex, # ylim=c(-40,40),
+#         wmain="nresponse=1")
+# 
+# # compare to manual residuals
+# iused <- 1:(train.frac * nrow(ptit))
+# y <- ptit$age[iused]
+# n.trees <- plotmo:::gbm.n.trees(gbmt.gaussian)
+# # TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# # yhat <- predict(gbmt.gaussian, type="response", n.trees=n.trees)
+# yhat <- predict(gbmt.gaussian, newdata=ptit, type="response", n.trees=n.trees)
+# yhat <- yhat[iused]
+# plot(yhat, y - yhat,
+#      col=ptit$sex[iused], main="manual gaussian residuals",
+#      pch=20, ylim=c(-40,40))
+# abline(h=0, col="gray")
+# stopifnot(all(yhat == w3$x))
+# stopifnot(all(y - yhat == w3$y))
+# par(old.par)
+# 
+# w1 <- plotres(gbmt.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
+#               w1.smooth=TRUE,
+#               w1.main="predict.n.trees=13 w1.grid.col=1")
+# cat("second w1 plot for gbmt.gaussian returned (w1.smooth=TRUE):\n")
+# print(w1)
+# plotmo(gbmt.gaussian, trace=-1, SHOWCALL=TRUE)
+# 
+# par(old.par)
+# 
+# cat("--- distribution=\"bernoulli\" ----------------------------------\n")
+# 
+# set.seed(2016)
+# ptit <- ptitanic[sample(1:nrow(ptitanic), size=80), ]
+# ptit$survived <- ptit$survived == "survived"
+# temp <- ptit$pclass # put pclass at the end so can check ordering of importances
+# ptit$pclass <- NULL
+# ptit$pclass <- factor(as.numeric(temp), labels=c("first", "second", "third"))
+# # TODO change this to build same model as gbm.bernoulli
+# train_params <-
+#      training_params(num_trees = 100,
+#                      shrinkage = 0.1,
+#                      bag_fraction = 0.5,
+#                      num_train = round(.8 * nrow(ptit)))
+# set.seed(2016)
+# gbmt.bernoulli <- gbmt(survived~., data=ptit,
+#             distribution=gbm_dist("Bernoulli"),
+#             train_params = train_params,
+#             cv_folds = 3,
+#             is_verbose = FALSE,  keep_gbm_data=TRUE)
+# old.par <- par(no.readonly=TRUE)
+# par(mfrow=c(2,2))
+# par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
+# par(mgp=c(1.5, .4, 0))      # squash axis annotations
+# w1 <- plotres(gbmt.bernoulli, which=c(1,4),
+#         col=ptit$survived+2, trace=0, do.par=FALSE,
+#         w1.main="gbmt.bernoulli")
+# cat("w1 plot for gbmt.bernoulli with cv.folds=3 returned:\n")
+# print(w1)
+# 
+# w3 <- plotres(gbmt.bernoulli, which=3, predict.n.trees=40,
+#         ylim=c(-.6, 1), xlim=c(.1, .6),
+#         col=ptit$sex, trace=0, do.par=FALSE, smooth.col=0)
+# 
+# # compare to manual residuals
+# iused <- 1:(train.frac * nrow(ptit))
+# y <- ptit$survived[iused]
+# # TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# # yhat <- predict(gbmt.bernoulli, type="response", n.trees=40)
+# yhat <- predict(gbmt.bernoulli, newdata=ptit, type="response", n.trees=40)
+# yhat <- yhat[iused]
+# plot(yhat, y - yhat, col=ptit$sex,
+#      main="manual bernoulli residuals", pch=20, cex=1,
+#      ylim=c(-.6, 1), xlim=c(.1, .6))
+# abline(h=0, col="gray")
+# stopifnot(all(yhat == w3$x))
+# stopifnot(all(y - yhat == w3$y))
+# par(old.par)
+# 
+# old.par <- par(no.readonly=TRUE)
+# plotmo(gbmt.bernoulli, do.par=2)
+# print(summary(gbmt.bernoulli)) # will also plot
+# par(old.par)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

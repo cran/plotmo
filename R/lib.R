@@ -71,21 +71,21 @@ check.boolean <- function(b) # b==0 or b==1 is also ok
             " but it should be FALSE, TRUE, 0, or 1")
     b != 0 # convert to logical
 }
-check.classname <- function(object, substituted.object, expected.classname)
+check.classname <- function(object, substituted.object, allowed.classnames)
 {
-    err.msg <- quotify(expected.classname)
-    if(length(expected.classname) > 1)
+    err.msg <- quotify(allowed.classnames)
+    if(length(allowed.classnames) > 1)
         err.msg <- sprintf("one of\n%s", err.msg)
     if(is.null(object))
         stopf("object is NULL but expected an object of class of %s",
               err.msg)
-    if(!inherits(object, expected.classname)) {
+    if(!inherits(object, allowed.classnames)) {
         stopf("the class of '%s' is \"%s\" but expected the class to be %s",
               paste.trunc(substituted.object, maxlen=30),
               class(object)[1], err.msg)
     }
 }
-check.integer.scalar <- function(object, min=NULL, max=NULL, null.ok=FALSE,
+check.integer.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
                                  na.ok=FALSE, logical.ok=TRUE,
                                  char.ok=FALSE,
                                  object.name=short.deparse(substitute(object)))
@@ -103,24 +103,10 @@ check.integer.scalar <- function(object, min=NULL, max=NULL, null.ok=FALSE,
         if(!char.ok || length(object) != 1)
             stop.msg()
     } else {
-        check.numeric.scalar(object, null.ok, na.ok, logical.ok,
+        check.numeric.scalar(object, min, max, null.ok, na.ok, logical.ok,
                              char.ok.msg=char.ok, object.name=object.name)
-        if(!is.null(object) && !is.na(object)) {
-            if(object != floor(object))
+        if(!is.null(object) && !is.na(object) && object != floor(object))
                 stop.msg()
-            if(!is.null(min) && !is.null(max) && (object < min || object > max)) {
-                stop0(object.name, "=", object,
-                      " but it should be between ", min, " and ", max)
-            }
-            if(!is.null(min) && object < min) {
-                stop0(object.name, "=", object,
-                      " but it should be at least ", min)
-            }
-            if(!is.null(max) && object > max) {
-                stop0(object.name, "=", object,
-                      " but it should not be greater than ", max)
-            }
-        }
     }
     object
 }
@@ -167,7 +153,7 @@ check.df.numeric.or.logical <- function(x, xname=trunc.deparse(substitute(x)))
             stopf("%s[%g] is Inf", colname(x, icol, xname), which(is.infinite)[1])
     }
 }
-check.numeric.scalar <- function(object, null.ok=FALSE,
+check.numeric.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
                                  na.ok=FALSE, logical.ok=FALSE,
                                  char.ok.msg=FALSE, # only affects error msg
                                  object.name=short.deparse(substitute(object)))
@@ -187,10 +173,22 @@ check.numeric.scalar <- function(object, null.ok=FALSE,
         s.char <- if(char.ok.msg) ", or a string" else ""
         stopf("'%s' must be numeric%s%s%s%s (whereas its current class is \"%s\")",
               object.name, s.null, s.na, s.char, s.logical, class(object)[1])
-    }
-    else if(length(object) != 1) {
+    } else if(length(object) != 1)
         stopf("the length of '%s' must be 1 (whereas its current length is %d)",
               object.name, length(object))
+    if(!is.null(object) && !is.na(object)) {
+        if(!is.na(min) && !is.na(max) && (object < min || object > max)) {
+            stop0(object.name, "=", object,
+                  " but it should be between ", min, " and ", max)
+        }
+        if(!is.na(min) && object < min) {
+            stop0(object.name, "=", object,
+                  " but it should be at least ", min)
+        }
+        if(!is.na(max) && object > max) {
+            stop0(object.name, "=", object,
+                  " but it should not be greater than ", max)
+        }
     }
     object
 }
@@ -292,7 +290,7 @@ eval.trace <- function(
 
     eval(expr, envir, enclos)
 }
-# This function is used for xlim and ylim.
+# This function is used for checking both xlim and ylim.
 # This checks that lim is is a 2 element numeric vector.
 # Also, if xlim[1] == xlim[2], then plot() issues a confusing message.
 # We don't want that, so use this function to make sure xlim[2]
@@ -446,6 +444,15 @@ grepany <- function(pattern, x, ignore.case=FALSE, ...)
 {
     any(grepl(pattern, x, ignore.case=ignore.case, ...))
 }
+# scalar form of ifelse, with short name :-)
+# only evaluates no argument if necessary
+ife <- function(ife.test, ife.yes, ife.no)
+{
+    ife.test <- check.boolean(ife.test)
+    stopifnot(!missing(ife.yes))
+    stopifnot(!missing(ife.no))
+    if(ife.test) ife.yes else ife.no
+}
 # returns an index, choices is a vector of strings
 imatch.choices <- function(arg, choices,
             argname=short.deparse(substitute(arg), "function"),
@@ -489,9 +496,15 @@ is.integral <- function(object)
 
 is.specified <- function(object)
 {
-    !is.null(object) && !anyNA(object) && !identical(object, 0) &&
-    # following needed for e.g. col=c("red", 0) because 0 is converted to string
-    !identical(object, "0") && !identical(object, "NA")
+    try <-
+      try(!is.null(object) && !anyNA(object) && !identical(object, 0) &&
+          # following needed for e.g. col=c("red", 0) because 0 is converted to string
+          !identical(object, "0") && !identical(object, "NA"), silent=TRUE)
+    if(is.try.err(try)) {
+        # this occurs if object is say a closure and anyNA fails
+        stop0(deparse(substitute(object)), ": illegal value")
+    }
+    try
 }
 is.try.err <- function(object)
 {
@@ -573,7 +586,7 @@ my.data.frame <- function(x, trace, stringsAsFactors=TRUE)
         # come here for sparse matrices from the Matrix package
         df <- try(as.matrix(x))
         if(is.try.err(df))
-            stopf("Could not convert '%s' object to a data.frame or matrix",
+            stopf("Cannot convert '%s' object to a data.frame or matrix",
                   class(x)[1])
         df <- as.data.frame(df, stringsAsFactors=stringsAsFactors)
         trace2(trace, "converted %s object to data.frame\n", class(x)[1])
@@ -787,6 +800,12 @@ short.deparse <- function(object, alternative="object")
     else
         s
 }
+# Remove duplicates in x, then sort (smallest first).
+# Following is faster than sort(unique(x)) because it requires only one sort.
+sort.unique <- function(x)
+{
+    rle(sort(x, na.last=NA))[["values"]]  # rle() is in base, na.last=NA drops NAs
+}
 stop0 <- function(...)
 {
     stop(..., call.=FALSE)
@@ -816,12 +835,16 @@ stopifnot.string <- function(s, name=short.deparse(substitute(s)),
 }
 strip.deparse <- function(object) # deparse, collapse, remove most white space
 {
-    s <- strip.space(paste0(deparse(object), collapse=""))
+    s <- strip.space.collapse(deparse(object))
     gsub(",", ", ", s) # put back space after commas
 }
 strip.space <- function(s)
 {
     gsub("[ \t\n]", "", s)
+}
+strip.space.collapse <- function(s) # returns a single string
+{
+    gsub("[ \t\n]", "", paste(s, collapse="")) # paste converts vec to single
 }
 # like text, but with a white background
 # TODO sign of adj is backwards?

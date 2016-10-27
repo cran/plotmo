@@ -1,6 +1,14 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.2.1  Oct 27, 2016
+
+Added support for gbm package version 2.2.  See gbm.backcompat.R.
+
+Extended linmod.R: support for no-intercept models, support for 
+'keep' argument, better handling of newdata in predict.linmod.
+Also extended the tests for linmod.R in inst/slowtests.
+
 --- 3.2.0  Sep 7, 2016
 
 The functions plot_gbm and plot_glmnet are now exported and available

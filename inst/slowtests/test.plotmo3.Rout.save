@@ -468,10 +468,12 @@ Loading required package: lattice
 Loading required package: splines
 Loading required package: parallel
 Loaded gbm 2.1.1
+> set.seed(2016)
 > gbm.model.vignette <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=100)
 > # commented out following because they always take the whole page
 > # plot(gbm.model.vignette, i.var=2) # compare to partial-dependence plots
 > # plot(gbm.model.vignette, i.var=c(2,3))
+> set.seed(2016)
 > plotmo1(gbm.model.vignette, caption="gbm.model.vignette")
 plotmo1(object=gbm.model.vignette,caption="gbm.model.vignette")
  plotmo grid:    humidity temp   ibt
@@ -553,13 +555,16 @@ The following object is masked from 'package:plotrix':
 
     rescale
 
+> set.seed(2016)
 > cosso <- cosso(xmat,tit[,4],family="Gaussian")
 > # TODO tell maintainer of cosso that you have to do this
 > class(cosso) <- "cosso"
+> set.seed(2016)
 > plotmo1(cosso)
 plotmo1(object=cosso)
  plotmo grid:    survived sibsp  logage
                         0     0 3.06991
+> set.seed(2016)
 > plotres(cosso)
 > 
 > # examples from James, Witten, et al. ISLR book

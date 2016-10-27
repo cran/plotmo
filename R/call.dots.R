@@ -46,7 +46,7 @@ call.dots <- function(
 
     do.call.trace(FUNC, args, FNAME, trace=TRACE)
 }
-# A version of call.dots specialized for calling plot functions.
+# A version of call.dots specialized for calling plotting functions.
 # This drops all args in dots except those matching PREFIX and PLOT.ARGS.
 
 call.plot <- function(

@@ -92,9 +92,9 @@ plot_w1 <- function(object,
         retval <- call.w1(graphics::plot, ...,
                           def.main=dota("main",
                                         DEF="Error vs Number of Trees", ...))
-    else if(inherits(object, "gbm")) {
+    else if(inherits(object, c("gbm", "GBMFit"))) {
         # don't allow w1.n.trees argument, except w1.n.trees=NA
-        predict.n.trees <- dota("predict.n.trees", DEF=object$n.trees,  ...)
+        predict.n.trees <- dota("predict.n.trees", DEF=gbm.n.trees(object),  ...)
         w1.n.trees      <- dota("w1.n.trees",      DEF=predict.n.trees, ...)
         if(!is.na(w1.n.trees) && w1.n.trees != predict.n.trees) {
             if(is.na(dota("predict.n.trees", EX=0, ...)))
@@ -102,7 +102,7 @@ plot_w1 <- function(object,
             else
                 stop0("w1.n.trees is not allowed")
         }
-        check.integer.scalar(w1.n.trees, min=1, max=object$n.trees,
+        check.integer.scalar(w1.n.trees, min=1, max=gbm.n.trees(object),
                              na.ok=TRUE, logical.ok=FALSE,
                              object.name="n.trees")
         retval <- call.w1(plot_gbm, w1.n.trees=w1.n.trees, ...)

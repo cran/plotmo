@@ -19,7 +19,8 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     col.n.trees ="darkgray",
     ...)
 {
-    check.classname(object, "object", "gbm")
+    # GBMFit was added in Oct 2016 for Paul Metcalfe's changes to glm (version 2.2)
+    check.classname(object, "object", c("gbm", "GBMFit"))
     obj <- object
     if((!is.numeric(smooth) && !is.logical(smooth)) ||
        any(smooth != 0 && smooth != 1))
@@ -28,12 +29,16 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     smooth <- rep_len(smooth, 4) # recycle smooth if necessary
     col <- rep_len(col, 4)       # recycle col if necessary
     col[is.na(col)] <- 0         # make using col below a bit easier
-    check.integer.scalar(n.trees, min=1, max=obj$n.trees,
+    n.trees <- gbm.n.trees(obj)
+    check.integer.scalar(n.trees, min=1, max=n.trees,
                          na.ok=TRUE, logical.ok=FALSE)
     # final.max is max of values on the right of the curves (excluding OOB)
-    final.max <- max(obj$train.error[length(obj$train.error)],
-                     obj$valid.error[length(obj$valid.error)],
-                     obj$cv.error   [length(obj$cv.error)],
+    train.error <- gbm.train.error(obj)
+    valid.error <- gbm.valid.error(obj)
+    cv.error    <- gbm.cv.error(obj)
+    final.max <- max(train.error[length(train.error)],
+                     valid.error[length(valid.error)],
+                     cv.error   [length(cv.error)],
                      na.rm=TRUE)
 
     if(any1(col)) { # must anything be plotted?
@@ -50,23 +55,24 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     voffset <- 0 # slight offset to prevent overplotting of dotted vertical lines
 
     # train curve
-    y <- maybe.smooth(obj$train.error, "train", smooth[1], obj$n.trees)
+    y <- maybe.smooth(train.error, "train", smooth[1], n.trees)
     imin <- which.min1(y)      # index of minimum train error
     imins <- c(imin, 0, 0, 0)  # index of train, test, CV, OOB minima
     names(imins) <- c("train", "test", "CV", "OOB")
+    train.fraction <- gbm.train.fraction(obj)
     if(is.specified(col[1])) {
         lines(y, col=col[1])
         leg.text <- c(leg.text,
-            if(obj$train.fraction == 1) "train"
-            else sprintf("train (frac %g)", obj$train.fraction))
+            if(train.fraction == 1) "train"
+            else sprintf("train (frac %g)", train.fraction))
         leg.col  <- c(leg.col, col[1])
         leg.lty  <- c(leg.lty, 1)
         leg.vert <- c(leg.vert, FALSE)
         leg.imin <- imin
     }
     # test curve (aka valid.error curve)
-    if(obj$train.fraction != 1) {
-        y <- maybe.smooth(obj$valid.error, "test", smooth[2], obj$n.trees)
+    if(train.fraction != 1) {
+        y <- maybe.smooth(valid.error, "test", smooth[2], n.trees)
         imin <- imins[2] <- which.min1(y)
         if(is.specified(col[2])) {
             if(imin)
@@ -75,7 +81,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
             lines(y, col=col[2])
             leg.text <- c(leg.text,
                 if(!imin) "test not plotted"
-                else      sprintf("test (frac %g)", 1-obj$train.fraction))
+                else      sprintf("test (frac %g)", 1-train.fraction))
             leg.col  <- c(leg.col, col[2])
             leg.lty  <- c(leg.lty, 1)
             leg.vert <- c(leg.vert, FALSE)
@@ -83,8 +89,8 @@ plot_gbm <- function(object=stop("no 'object' argument"),
         }
     }
     # CV curve
-    if(!is.null(obj$cv.error)) {
-        y <- maybe.smooth(obj$cv.error, "CV", smooth[3], obj$n.trees)
+    if(!is.null(cv.error)) {
+        y <- maybe.smooth(cv.error, "CV", smooth[3], n.trees)
         imin <- imins[3] <- which.min1(y)
         if(is.specified(col[3])) {
             if(imin)
@@ -93,7 +99,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
             lines(y, col=col[3])
             leg.text <- c(leg.text,
                 if(!imin) "CV not plotted"
-                else      sprintf("CV (%g fold)", obj$cv.folds))
+                else      sprintf("CV (%g fold)", gbm.cv.folds(obj)))
             leg.col  <- c(leg.col, col[3])
             leg.lty  <- c(leg.lty, 1)
             leg.vert <- c(leg.vert, FALSE)
@@ -101,12 +107,14 @@ plot_gbm <- function(object=stop("no 'object' argument"),
         }
     }
     # OOB curve
-    if(obj$bag.fraction != 1) {
-        y <- maybe.smooth(-cumsum(obj$oobag.improve), "OOB", smooth[4], obj$n.trees)
+    bag.fraction <- gbm.bag.fraction(obj)
+    if(bag.fraction != 1) {
+        oobag.improve <- gbm.oobag.improve(obj)
+        y <- maybe.smooth(-cumsum(oobag.improve), "OOB", smooth[4], n.trees)
         imin <- imins[4] <- which.min1(y)
         if(is.specified(col[4])) {
             if(imin)
-                draw.oob.curve(y, imin, voffset, col[4], smooth, obj$train.error)
+                draw.oob.curve(y, imin, voffset, col[4], smooth, train.error)
             voffset <- voffset + 1
             leg.text <- c(leg.text,
                 if(!imin) "OOB not plotted"
@@ -136,11 +144,12 @@ plot_gbm <- function(object=stop("no 'object' argument"),
 init.gbm.plot <- function(obj, ylim, final.max, mar, ...)
 {
     xlim <- dota("xlim", ...)   # get xlim from dots, NA if not in dots
+    n.trees <- gbm.n.trees(obj)
     if(!is.specified(xlim))
-        xlim <- c(0, obj$n.trees)
+        xlim <- c(0, n.trees)
     xlim <- fix.lim(xlim)
     ylim <- get.gbm.ylim(obj, xlim, ylim, final.max)
-    ylab <- get.glm.ylab(obj$distribution$name, obj$distribution$metric)
+    ylab <- get.glm.ylab(obj)
     # set mar[3] space for top labels and possibly (user-specified) main
     main <- dota("main", ...)   # get main from dots, NA if not in dots
     nlines.needed.for.main <- if(is.specified(main)) nlines(main) + .5 else 0
@@ -153,7 +162,8 @@ init.gbm.plot <- function(obj, ylim, final.max, mar, ...)
     # Any argname below prefixed with def. can be overridden by a user arg in dots.
     # force.main="" because we add (user-specified) main manually because top labels.
 
-    call.plot(graphics::plot, force.x=1:obj$n.trees, force.y=obj$train.error,
+    train.error <- gbm.train.error(obj)
+    call.plot(graphics::plot, force.x=1:n.trees, force.y=train.error,
         force.type="n", force.main="",  force.xlim=xlim, def.ylim=ylim,
         def.xlab="Number of Trees", def.ylab=ylab, ...)
 
@@ -162,36 +172,39 @@ init.gbm.plot <- function(obj, ylim, final.max, mar, ...)
 }
 get.gbm.ylim <- function(obj, xlim, ylim, final.max)
 {
+    train.error <- gbm.train.error(obj)
+    valid.error <- gbm.valid.error(obj)
+    cv.error    <- gbm.cv.error(obj)
     if(is.character(ylim) && substr(ylim[1], 1, 1) == "a") { # auto ylim?
         imin <- max(1, min(1, xlim[1]))
-        imax <- min(length(obj$train.error), max(length(obj$train.error),
-                    xlim[2]))
-        ylim <- range(obj$train.error[imin:imax],
-                      obj$valid.error[imin:imax],
-                      obj$cv.error   [imin:imax], na.rm=TRUE)
+        imax <- min(length(train.error), max(length(train.error), xlim[2]))
+        cv.error <- gbm.cv.error(obj)
+        ylim <- range(train.error[imin:imax],
+                      valid.error[imin:imax],
+                      cv.error   [imin:imax], na.rm=TRUE)
         # decrease ylim[2] to put more resolution in the "interesting"
         # part of the curve by putting final.max half way up plot
         ylim[2] <- ylim[1] + 2 * (final.max - ylim[1])
         # ensure 75% of training curve is visible
         # (typically needed when no test or CV curve)
         i <- floor(xlim[1] + .25 * (xlim[2] - xlim[1]))
-        if(i >= 1 && i <= length(obj$train.error[imin:imax]))
-            ylim[2] <- max(ylim[2], obj$train.error[i])
+        if(i >= 1 && i <= length(train.error[imin:imax]))
+            ylim[2] <- max(ylim[2], train.error[i])
     } else if(!is.specified(ylim)) # ylim=NULL or ylim=NA
-         ylim <- range(obj$train.error, obj$valid.error, obj$cv.error,
-                       na.rm=TRUE)
+         ylim <- range(train.error, valid.error, cv.error, na.rm=TRUE)
     fix.lim(ylim)
 }
-get.glm.ylab <- function(distribution.name, metric)
+get.glm.ylab <- function(obj)
 {
-    dist <- substring(distribution.name, 1, 2)
+    dist <- gbm.short.distribution.name(obj)
     if(dist =="pa") # pairwise
-        switch(metric,
+        switch(obj$distribution$metric,
                conc="Fraction of Concordant Pairs",
                ndcg="Normalized Discounted Cumulative Gain",
                map ="Mean Average Precision",
                mrr ="Mean Reciprocal Rank",
-               stop0("unrecognized pairwise metric: ", metric))
+               stop0("unrecognized pairwise metric: ",
+                     obj$distribution$metric))
     else # not pairwise
         switch(dist,
                ga="Squared Error Loss",      # gaussian
@@ -206,7 +219,7 @@ get.glm.ylab <- function(distribution.name, metric)
                co="Cox Partial Deviance",
                qu="Quantile Loss",
                stop0("unrecognized distribution name: ",
-                     distribution.name))
+                     obj$distribution.name))
 }
 vertical.line <- function(x, col=1, lty=1, voffset=0) # draw a vertical line at x
 {

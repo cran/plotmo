@@ -228,10 +228,12 @@ expect.err(try(plotmo1(rpart.model.vignette, level=.9)), "not supported for rpar
 
 printf("library(gbm)\n")
 library(gbm)                                            # gbm
+set.seed(2016)
 gbm.model.vignette <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=100)
 # commented out following because they always take the whole page
 # plot(gbm.model.vignette, i.var=2) # compare to partial-dependence plots
 # plot(gbm.model.vignette, i.var=c(2,3))
+set.seed(2016)
 plotmo1(gbm.model.vignette, caption="gbm.model.vignette")
 
 # commented out because is slow and already tested elsewhere
@@ -276,10 +278,13 @@ plotres(mod.lars.xmat, trace=0, nresponse=4)
 
 printf("library(cosso)\n")
 library(cosso)
+set.seed(2016)
 cosso <- cosso(xmat,tit[,4],family="Gaussian")
 # TODO tell maintainer of cosso that you have to do this
 class(cosso) <- "cosso"
+set.seed(2016)
 plotmo1(cosso)
+set.seed(2016)
 plotres(cosso)
 
 # examples from James, Witten, et al. ISLR book

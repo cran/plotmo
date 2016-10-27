@@ -11,7 +11,7 @@
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (2016). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 2.0.1.
+  Enhanced Version of 'plot.rpart'. R package version 2.1.0.
   https://CRAN.R-project.org/package=rpart.plot
 
 A BibTeX entry for LaTeX users is
@@ -20,7 +20,7 @@ A BibTeX entry for LaTeX users is
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
     year = {2016},
-    note = {R package version 2.0.1},
+    note = {R package version 2.1.0},
     url = {https://CRAN.R-project.org/package=rpart.plot},
   }
 

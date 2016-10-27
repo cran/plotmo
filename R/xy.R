@@ -164,7 +164,7 @@ get.x.or.y <- function(
     }
     # try object$call$x
 
-    call.x <- get.object.call.x.or.y(object, field, trace)
+    call.x <- get.data.from.object.call.field(object, field, trace)
     # call.x is object$call$x or an error message
     if(is.good.data(call.x))
         return(ret.good.field(call.x, TRUE, sprintf("object$call$%s", field)))
@@ -342,10 +342,11 @@ get.object.x.or.y <- function( # get object$x or object$y
     }
     x   # return x or NULL or an error message
 }
-# Get object$call$x or object$call$y from the model.
-# Return x (or y) or NULL or an error message.
+# Get object$call$x (or similar) from the model's call field.
+# Return x (or similar) or NULL or an error message.
 
-get.object.call.x.or.y <- function(object, field, trace)
+get.data.from.object.call.field <- function(object, field, trace,
+                                            check.is.good.data=TRUE)
 {
     x <- NULL
     xname <- sprintf("object$call$%s", field)
@@ -358,7 +359,7 @@ get.object.call.x.or.y <- function(object, field, trace)
         x <- try.eval(call[[field]], model.env(object), trace=trace, expr.name=xname)
         if(is.errmsg(x))
             trace2(trace, "%s\n", x)
-        else # invoke is.good.data purely for issuing trace messages
+        else if(check.is.good.data) # invoke is.good.data purely for issuing trace messages
             is.good.data(x, xname, trace)
     }
     x
@@ -411,7 +412,7 @@ get.argn.aux <- function(argn, object, field, trace, nrows.argn)
     trace2(trace, "names(call) is %s\n", quotify(names.call))
 
     # If argn is field (i.e. "x" or "y"), don't process it here because
-    # we process call$x and call$y elsewhere (in get.object.call.x.or.y).
+    # we process call$x and call$y elsewhere (in get.data.from.object.call.field).
     # This is a common case, so we clear argn for uncluttered message
     # later in errmsg.for.get.x.or.y.
     # If the arg name is "" in object$call this won't work, not serious.
@@ -535,10 +536,10 @@ get.model.frame <- function(object, field, trace, naked,
         # use object$model if possible (e.g. lm)
         # TODO the following code really belongs in get.data.for.model.frame?
         x <- object[["model"]]
-        # Drop column named "(weights)" created by lm() if called with weights
-        # (must drop else x will be rejected because non-naked colname).
-        x <- x[, which(colnames(x) != "(weights)"), drop=FALSE]
         if(is.good.data(x, "object$model", trace)) {
+            # Drop column named "(weights)" created by lm() if called with weights
+            # (must drop else x will be rejected because non-naked colname).
+            x <- x[, which(colnames(x) != "(weights)"), drop=FALSE]
             if(trace >= 3)
                 print_summary(x, "model.frame", trace)
             # Note that we call check.naked even when the naked=FALSE.  Not
@@ -883,7 +884,7 @@ is.naked <- function(colnames) # returns a logical vector
     }
     naked
 }
-# Return an err msg if naked=TRUE and colnames(x) is not naked.
+# Return an err msg if colnames(x) is not "naked".
 # Return NULL if everything is ok.
 #
 # Example:
