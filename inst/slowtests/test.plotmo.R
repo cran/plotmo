@@ -78,9 +78,11 @@ dopar(3,2,caption)
 plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, caption=caption,
         main="test main", xlab="test xlab", ylab="test ylab")
 plotmo(a, do.par=FALSE, degree1=F, degree2=4, grid.func=mean, persp.col="white", ngrid2=10, persp.phi=40)
-plotmo(a, do.par=FALSE, degree1=1, degree1.lty=2, degree1.lwd=4, degree1.col=2, nrug=300, degree2=F, main="nrug=300")
-plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, main="nrug=-1")
-plotmo(a, do.par=FALSE, degree1=1, nrug=500, ngrid1=50, degree2=F, main="ngrid1=50 nrug=500")
+set.seed(2016)
+plotmo(a, do.par=FALSE, degree1=1, degree1.lty=2, degree1.lwd=4, degree1.col=2, nrug=TRUE, degree2=F, main="nrug=300")
+plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, main="nrug=TRUE")
+set.seed(2016)
+plotmo(a, do.par=FALSE, degree1=1, nrug=10, ngrid1=50, degree2=F, main="ngrid1=50 nrug=10")
 plotmo(a, do.par=FALSE, degree1=NA, degree2=1, persp.phi=60) # graph args
 
 caption <- "test plotmo xlim and ylim"
@@ -425,7 +427,8 @@ a20 <- earth(O3 ~ humidity + temp + doy, data=ozone1, degree=2, glm=list(family=
 dopar(2, 2)
 plotmo(a20, nrug=-1)
 
-plotmo(a20, nrug=200, caption="Test plotmo with a vector main (and npoints=200)",
+set.seed(2016)
+plotmo(a20, nrug=10, caption="Test plotmo with a vector main (and npoints=200)",
        main=c("Humidity", "Temperature", "Day of year", "Humidity: Temperature", "Temperature: Day of Year"),
        col.response="darkgray", pt.pch=".", cex.response=3, npoints=200) # cex.response tests back compat
 
@@ -660,6 +663,21 @@ plotmo(earth.intercept.only, do.par=FALSE, col.response=1, pt.pch=20)
 library(rpart)
 rpart.intercept.only <- rpart(y~x)
 plotmo(rpart.intercept.only, do.par=FALSE)
+
+# nrug argument
+
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3,3), mar=c(3,3,3,1), mgp=c(1.5, 0.5, 0))
+mod.nrug <- earth(survived~age, data=etitanic)
+set.seed(2016)
+plotmo(mod.nrug, do.par=0, nrug=-1,   main="nrug=-1")
+plotmo(mod.nrug, do.par=0, nrug=TRUE, main="nrug=TRUE")
+plotmo(mod.nrug, do.par=0, nrug=10, rug.col=2,            main="nrug=10, rug.col=2")
+plotmo(mod.nrug, do.par=0, nrug=5,  rug.col=2, rug.lwd=2, main="nrug=5, rug.col=2, rug.lwd=2")
+plotmo(mod.nrug, do.par=0, nrug="density", main="nrug=\"density\"")
+plotmo(mod.nrug, do.par=0, nrug="density", density.col=2, density.lwd=2, main="nrug=\"density\"\ndensity.col=2, density.lwd=2")
+plotmo(mod.nrug, do.par=0, nrug="density", density.adj=.2, density.col=1, main="nrug=\"density\"\ndensity.adj=.2, density.col=1")
+par(old.par)
 
 # a <- earth(ozone1[,3]~ozone1[,1]+ozone1[,2]+ozone1[,4]+ozone1[,5]+ozone1[,6], data=ozone1)
 # # TODO fails: actual.nrows=330 expected.nrows=50 fitted.nrows=330

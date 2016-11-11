@@ -56,8 +56,7 @@ plotmo_cum <- function(rinfo, info, nfigs=1, add=FALSE,
             for(h in c(0,.25,.5,.75,.90,.95,1)) # horizontal lines
                 abline(h=h, lty=1, col=linecol)
             probs <- c(0, .25, .50, .75, .9, .95, 1)
-            q <- quantile(trans.resids,
-                          probs=probs, na.rm=TRUE)
+            q <- quantile(trans.resids, probs=probs, names=FALSE)
             for(v in q)    # vertical lines at 0,25,50,75,90,95,100% quantiles
                 abline(v=v, lty=1, col=linecol)
             box() # abline overwrite the box, so restore it

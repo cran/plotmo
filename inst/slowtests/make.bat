@@ -35,6 +35,8 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call test.dots.bat
                         @if %errorlevel% NEQ 0 goto error
+@call test.partdep.bat
+                        @if %errorlevel% NEQ 0 goto error
 @rem for a thorough test, we also run \a\r\earth\inst\slowtests\make.bat
 @cd \a\r\earth\inst\slowtests
                         @if %errorlevel% NEQ 0 goto error

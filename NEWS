@@ -1,11 +1,30 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.3.0  Nov 11, 2016
+
+Added support for partial dependence plots (the pmethod argument).
+
+Extended the vignette with new chapters on partial dependence plots
+and classification models.
+
+Plotmo's nrug argument now supports quantiles.
+
+The title on persp plots is now better aligned to the degree plot
+titles.  The margins for persp plots are now more optimal (they now
+give bigger plots when do.par=FALSE and there are also degree1 plots).
+
+Added support for e1071::predict.svm decision.values and probability
+arguments.
+
+Fixed error message when plot_gbm was used on multinomial models.
+Fixed warnings in plot_gbm when gbm.ntrees is very small (less than 10).
+
 --- 3.2.1  Oct 27, 2016
 
 Added support for gbm package version 2.2.  See gbm.backcompat.R.
 
-Extended linmod.R: support for no-intercept models, support for 
+Extended linmod.R: support for no-intercept models, support for
 'keep' argument, better handling of newdata in predict.linmod.
 Also extended the tests for linmod.R in inst/slowtests.
 

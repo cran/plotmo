@@ -19,7 +19,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     col.n.trees ="darkgray",
     ...)
 {
-    # GBMFit was added in Oct 2016 for Paul Metcalfe's changes to glm (version 2.2)
+    # GBMFit was added in Oct 2016 for Paul Metcalfe's changes to gbm (version 2.2)
     check.classname(object, "object", c("gbm", "GBMFit"))
     obj <- object
     if((!is.numeric(smooth) && !is.logical(smooth)) ||
@@ -149,7 +149,7 @@ init.gbm.plot <- function(obj, ylim, final.max, mar, ...)
         xlim <- c(0, n.trees)
     xlim <- fix.lim(xlim)
     ylim <- get.gbm.ylim(obj, xlim, ylim, final.max)
-    ylab <- get.glm.ylab(obj)
+    ylab <- get.gbm.ylab(obj)
     # set mar[3] space for top labels and possibly (user-specified) main
     main <- dota("main", ...)   # get main from dots, NA if not in dots
     nlines.needed.for.main <- if(is.specified(main)) nlines(main) + .5 else 0
@@ -194,7 +194,7 @@ get.gbm.ylim <- function(obj, xlim, ylim, final.max)
          ylim <- range(train.error, valid.error, cv.error, na.rm=TRUE)
     fix.lim(ylim)
 }
-get.glm.ylab <- function(obj)
+get.gbm.ylab <- function(obj)
 {
     dist <- gbm.short.distribution.name(obj)
     if(dist =="pa") # pairwise
@@ -249,11 +249,14 @@ maybe.smooth <- function(y, yname, must.smooth, n.trees)
     }
     if(must.smooth) {
         x <- 1:n.trees
-        y <- loess(y~x,
-                   na.action=na.omit,  # paranoia, prevent warnings from loess
-                   # enp.target is the same as gbm.perf for compatibility
-                   # (this does only minimal smoothing)
-                   enp.target=min(max(4, n.trees/10), 50))$fitted
+        if(n.trees < 10) # loess tends to fail for small n.trees, use lowess instead
+            y <- lowess(x, y)$y
+        else             # use loess for compatibility with gbm
+            y <- loess(y~x,
+                       na.action=na.omit,  # paranoia, prevent warnings from loess
+                       # enp.target is the same as gbm.perf for compatibility
+                       # (this does only minimal smoothing)
+                       enp.target=min(max(4, n.trees/10), 50))$fitted
     }
     y
 }

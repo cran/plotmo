@@ -191,6 +191,29 @@ plotmo.predict.bagging <- function(object, newdata,  # adabag package
     plotmo.predict.boosting(object, newdata=newdata,
                             type=type, newmfinal=newmfinal, ...)
 }
+plotmo.predict.svm <- function(object, newdata, type, ..., TRACE) # package e1071
+{
+
+    # treat warnings as errors (to catch if user didn't specify
+    # probability when building the model)
+    old.warn <- getOption("warn")
+    on.exit(options(warn=old.warn))
+    options(warn=2)
+
+    predict <- plotmo.predict.default(object, newdata=newdata,
+                                      ..., TRACE=TRACE) # no type arg
+
+    probabilities   <- attr(predict, "probabilities")
+    decision.values <- attr(predict, "decision.values")
+    if(!is.null(decision.values) && !is.null(probabilities))
+        stop0("predict.svm: specify either 'decision.values' or 'probability' (not both)")
+    if(!is.null(decision.values))      # user specified decision.values
+        decision.values
+    else if(!is.null(probabilities)) # user specified probability
+        probabilities
+    else
+        predict
+}
 # TODO Following commented out because polyreg is not supported by plotmo
 # So with this commented out we support plotmo(fda.object)
 # but not plotmo(fda.object$fit).

@@ -312,7 +312,7 @@ j <- gl(3,3)
 a <- glm(y ~ i + j, family=poisson())
 set.seed(1)
 dopar(2,2,caption)
-plotmo(a, do.par=F, level=.95, nrug=-1, caption=caption)
+plotmo(a, do.par=F, level=.95, nrug=1, caption=caption)
 termplot(a, se=1, rug=T)
 
 if(length(grep("package:gam", search())))
@@ -524,7 +524,7 @@ plotmo(a, caption="randomForest ozone1")
 plotres(a)
 set.seed(4)
 a <- randomForest(Kyphosis ~ ., data=kyphosis, ntree=5, mtry=2)
-plotmo(a, type="prob", nresponse="pre", caption="randomForest kyphosis", ndiscrete=10)
+plotmo(a, type="prob", nresponse="pre", caption="randomForest kyphosis", ndiscrete=10) # auto ylim=c(0,1)
 # TODO residuals are in range 0 to 1
 plotres(a, type="prob", nresponse="pre", caption="plotres randomForest kyphosis")
 
@@ -620,6 +620,27 @@ plotmo(mod.boosting, nresponse=1, ylim=c(0,1), do.par=FALSE) # default type="pro
 plotmo(mod.boosting, type="class", do.par=FALSE)
 plotmo(mod.bagging, nresponse=1, ylim=c(0,1), do.par=FALSE)
 plotmo(mod.bagging, nresponse=1, type="votes", do.par=FALSE)
+
+library(e1071)
+data(iris)
+x.iris <- subset(iris, select=-Species)
+y.iris <- iris$Species
+set.seed(2016)
+svm.xy <- svm(x.iris, y.iris, probability=FALSE)
+par(mfrow = c(3, 3), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
+expect.err(try(plotmo(svm.xy, prob=TRUE, nresponse="vers", do.par=TRUE, all2=TRUE))) # probability=FALSE in call to svm
+plotmo(svm.xy, decision=TRUE,
+       nresponse="vers", do.par=FALSE, all2=TRUE, degree1=2:3, degree2=6)
+svm.xy <- svm(x.iris, y.iris, probability=TRUE)
+plotmo(svm.xy, prob=TRUE,
+       nresponse="vers", do.par=FALSE, all2=TRUE, degree1=2:3, degree2=6)
+set.seed(2016)
+svm.form <- svm(Species ~ ., data=iris, probability=T)
+plotmo(svm.form, predict.p=TRUE,
+       nresponse="vers", do.par=FALSE, all2=TRUE, degree1=2:3, degree2=6)
+expect.err(try(plotmo(svm.form, decision.values=TRUE, probab=TRUE))) # not both
+plotres(svm.form, predict.prob=TRUE, nresponse="vers", info=TRUE)
+plotres(svm.form, jitter=5, info=TRUE)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

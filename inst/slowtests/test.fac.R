@@ -71,7 +71,7 @@ test.fac.with.rpart <- function(ngrid2=20)
     # factor x factor
     a5 <- rpart(survived ~ pclass.fac+parch.fac, data=et)
     set.seed(145)
-    plotmo(a5, do.par=F, type2="im", nrug=100,
+    plotmo(a5, do.par=F, type2="im", nrug=TRUE,
            col.response=col.response, pt.cex=.3)
     set.seed(145)
     plotmo(a5, do.par=F, type2="con", degree1=NA,

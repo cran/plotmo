@@ -780,7 +780,7 @@ This is mgcv 1.8-15. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > dopar(2,2,caption)
                               test wind=factor, glm(y ~ i + j, family=poisson()) 
-> plotmo(a, do.par=F, level=.95, nrug=-1, caption=caption)
+> plotmo(a, do.par=F, level=.95, nrug=1, caption=caption)
  plotmo grid:    i j
                  1 1
 Warning: the level argument may not work correctly on glm objects built with weights
@@ -1071,9 +1071,7 @@ training rsq 0.30
 > plotres(a)
 > set.seed(4)
 > a <- randomForest(Kyphosis ~ ., data=kyphosis, ntree=5, mtry=2)
-> plotmo(a, type="prob", nresponse="pre", caption="randomForest kyphosis", ndiscrete=10)
- plotmo grid:    Age Number Start
-                  87      4    13
+> plotmo(a, type="prob", nresponse="pre", caption="randomForest kyphosis", ndiscrete=10) # auto ylim=c(0,1)
 > # TODO residuals are in range 0 to 1
 > plotres(a, type="prob", nresponse="pre", caption="plotres randomForest kyphosis")
 > 
@@ -1270,6 +1268,41 @@ The following object is masked from 'package:randomForest':
 > plotmo(mod.bagging, nresponse=1, type="votes", do.par=FALSE)
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
                           5.8           3         4.35         1.3
+> 
+> library(e1071)
+> data(iris)
+> x.iris <- subset(iris, select=-Species)
+> y.iris <- iris$Species
+> set.seed(2016)
+> svm.xy <- svm(x.iris, y.iris, probability=FALSE)
+> par(mfrow = c(3, 3), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
+> expect.err(try(plotmo(svm.xy, prob=TRUE, nresponse="vers", do.par=TRUE, all2=TRUE))) # probability=FALSE in call to svm
+
+stats::predict(svm.object, data.frame[3,4], prob=TRUE)
+
+Error in predict.svm(structure(list(call = svm.default(x = x.iris, y = y.iris,  : 
+  (converted from warning) SVM has not been trained using `probability = TRUE`, probabilities not available for predictions.
+Got error as expected
+> plotmo(svm.xy, decision=TRUE,
++        nresponse="vers", do.par=FALSE, all2=TRUE, degree1=2:3, degree2=6)
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                          5.8           3         4.35         1.3
+> svm.xy <- svm(x.iris, y.iris, probability=TRUE)
+> plotmo(svm.xy, prob=TRUE,
++        nresponse="vers", do.par=FALSE, all2=TRUE, degree1=2:3, degree2=6)
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                          5.8           3         4.35         1.3
+> set.seed(2016)
+> svm.form <- svm(Species ~ ., data=iris, probability=T)
+> plotmo(svm.form, predict.p=TRUE,
++        nresponse="vers", do.par=FALSE, all2=TRUE, degree1=2:3, degree2=6)
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                          5.8           3         4.35         1.3
+> expect.err(try(plotmo(svm.form, decision.values=TRUE, probab=TRUE))) # not both
+Error : predict.svm: specify either 'decision.values' or 'probability' (not both)
+Got error as expected
+> plotres(svm.form, predict.prob=TRUE, nresponse="vers", info=TRUE)
+> plotres(svm.form, jitter=5, info=TRUE)
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot

@@ -5,6 +5,7 @@
 plotmo <- function(object = stop("no 'object' argument"),
     type         = NULL,
     nresponse    = NA,
+    pmethod      = "plotmo",
 
     pt.col       = 0,
     jitter       = .5,
@@ -44,7 +45,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     ...)
 {
     init.global.data()
-    on.exit(init.global.data()) # release memory on exit
+    on.exit({init.global.data(); gc()}) # release memory on exit
     object.name <- quote.deparse(substitute(object))
     object # make sure object exists
     trace <- as.numeric(check.integer.scalar(trace, logical.ok=TRUE))
@@ -66,22 +67,20 @@ plotmo <- function(object = stop("no 'object' argument"),
         special.trace <- TRUE
         trace <- trace - 100
     }
-    clip   <- check.boolean(clip)
-    all1   <- check.boolean(all1)
-    all2   <- check.boolean(all2)
-    center <- check.boolean(center)
-    swapxy <- check.boolean(swapxy)
-    xflip  <- check.boolean(xflip)
-    yflip  <- check.boolean(yflip)
-    type2  <- match.choices(type2, c("persp", "contour", "image"), "type2")
-    level  <- get.level(level, ...)
-    pt.col <- get.pt.col(pt.col, ...)
-    jitter <- get.jitter(jitter, ...)
-    ngrid1 <- get.ngrid1(ngrid1, ...)
-    ngrid2 <- get.ngrid2(ngrid2, ...)
+    pmethod <- match.choices(pmethod, c("plotmo", "partdep", "apartdep"), "pmethod")
+    clip    <- check.boolean(clip)
+    all1    <- check.boolean(all1)
+    all2    <- check.boolean(all2)
+    center  <- check.boolean(center)
+    swapxy  <- check.boolean(swapxy)
+    xflip   <- check.boolean(xflip)
+    yflip   <- check.boolean(yflip)
+    type2   <- match.choices(type2, c("persp", "contour", "image"), "type2")
+    level   <- get.level(level, ...)
+    pt.col  <- get.pt.col(pt.col, ...)
+    jitter  <- get.jitter(jitter, ...)
     smooth.col <- get.smooth.col(smooth.col, ...)
     check.integer.scalar(ndiscrete, min=0)
-    nrug <- get.nrug(nrug, ...)
     extend <- check.numeric.scalar(extend)
     stopifnot(extend > -.3, extend <= 10) # .3 prevents shrinking to nothing, 10 is arb
     if(!is.specified(degree1))   degree1   <- 0
@@ -108,6 +107,10 @@ plotmo <- function(object = stop("no 'object' argument"),
       resp.name <- meta$resp.name        # used only in automatic caption, may be NULL
       resp.levs <- meta$resp.levs        # to convert predicted strings to factors, may be NULL
       type      <- meta$type             # always a string (converted from NULL if necessary)
+
+    ngrid1 <- get.ngrid1(ngrid1, y, ...)
+    ngrid2 <- get.ngrid2(ngrid2, y, ...)
+    n.apartdep <- ngrid1
 
     # following prevents aliasing on nrow(data) to ensure we catch the following:
     # "warning: predict(): newdata' had 31 rows but variable(s) found have 30 rows"
@@ -206,8 +209,8 @@ plotmo <- function(object = stop("no 'object' argument"),
     jittered.y <- apply.jitter(as.numeric(y), jitter)
     # get.ylim will do dummy plots if necessary
     temp <- get.ylim(object=object,
-        type=type, nresponse=nresponse, pt.col=pt.col,
-        jitter=jitter, smooth.col=smooth.col, level=level,
+        type=type, nresponse=nresponse, pmethod=pmethod,
+        pt.col=pt.col, jitter=jitter, smooth.col=smooth.col, level=level,
         func=func, inverse.func=inverse.func, nrug=nrug, grid.col=grid.col,
         type2=type2, degree1=degree1, all1=all1, degree2=degree2, all2=all2,
         do.par=do.par, clip=clip, ylim=ylim, caption=caption, trace=trace,
@@ -220,13 +223,15 @@ plotmo <- function(object = stop("no 'object' argument"),
         pred.names=pred.names, abbr.pred.names=abbr.pred.names,
         nsingles=nsingles, npairs=npairs, nfigs=nfigs, uy=uy,
         is.na.ylim=is.na.ylim, is.int.only=is.int.only, trace2=trace2,
-        pairs=pairs, iresponse=iresponse, jittered.y=jittered.y, ...)
+        pairs=pairs, iresponse=iresponse, jittered.y=jittered.y,
+        n.apartdep=n.apartdep, ...)
     ylim   <- temp$ylim
     trace2 <- temp$trace2
     if(nsingles)
         plot.degree1(object=object, degree1=degree1, all1=all1, center=center,
             ylim=if(is.na.ylim) NULL else ylim, # each graph has its own ylim?
-            nresponse=nresponse, type=type, trace=trace, trace2=trace2,
+            type=type, nresponse=nresponse, pmethod=pmethod,
+            trace=trace, trace2=trace2,
             pt.col=pt.col, jitter=jitter, iresponse=iresponse,
             smooth.col=smooth.col, grid.col=grid.col, inverse.func=inverse.func,
             grid.func=grid.func, grid.levels=grid.levels, extend=extend,
@@ -235,11 +240,13 @@ plotmo <- function(object = stop("no 'object' argument"),
             draw.plot=TRUE, x=x, y=y, singles=singles, resp.levs=resp.levs,
             ux.list=ux.list, ndiscrete=ndiscrete,
             pred.names=pred.names, abbr.pred.names=abbr.pred.names,
-            nfigs=nfigs, uy=uy, xflip=xflip, jittered.y=jittered.y, ...)
+            nfigs=nfigs, uy=uy, xflip=xflip, jittered.y=jittered.y,
+            n.apartdep=n.apartdep, ...)
     if(npairs)
         plot.degree2(object=object, degree2=degree2, all2=all2, center,
             ylim=if(is.na.ylim) NULL else ylim, # each graph has its own ylim?
-            nresponse=nresponse, type=type, clip=clip, trace=trace, trace2=trace2,
+            type=type, nresponse=nresponse, pmethod=pmethod,
+            clip=clip, trace=trace, trace2=trace2,
             pt.col=pt.col, jitter=jitter, iresponse=iresponse,
             inverse.func=inverse.func,
             grid.func=grid.func, grid.levels=grid.levels, extend=extend,
@@ -248,7 +255,7 @@ plotmo <- function(object = stop("no 'object' argument"),
             ndiscrete=ndiscrete,
             pred.names=pred.names, abbr.pred.names=abbr.pred.names,
             nfigs=nfigs, nsingles=nsingles, npairs=npairs, xflip=xflip, yflip=yflip,
-            swapxy=swapxy, def.cex.main=def.cex.main, ...)
+            swapxy=swapxy, def.cex.main=def.cex.main, n.apartdep=n.apartdep, ...)
     draw.caption(caption, ...)
     invisible(x)
 }
@@ -288,7 +295,8 @@ get.pred.names <- function(colnames.x, nfigs)
 }
 # always returns a vector of 2 elems, could be c(-Inf, Inf)
 get.ylim <- function(object,
-    type, nresponse, pt.col, jitter, smooth.col, level, func,
+    type, nresponse,  pmethod,
+    pt.col, jitter, smooth.col, level, func,
     inverse.func, nrug, grid.col, type2, degree1, all1, degree2, all2,
     do.par, clip, ylim, caption, trace,
     grid.func, grid.levels, extend=extend, ngrid1, ngrid2,
@@ -296,7 +304,7 @@ get.ylim <- function(object,
     x, y, singles, resp.levs, ux.list, pred.names, abbr.pred.names,
     nsingles, npairs, nfigs, uy,
     is.na.ylim, is.int.only, trace2, pairs,
-    iresponse, jittered.y, ...)
+    iresponse, jittered.y, n.apartdep, ...)
 {
     get.ylim.by.dummy.plots <- function(..., trace)
     {
@@ -308,7 +316,8 @@ get.ylim <- function(object,
             # with dots, because the user can pass in any name with dots
             all.yhat <- c(all.yhat,
               plot.degree1(object=object, degree1=degree1, all1=all1,
-                center=center, ylim=ylim, nresponse=nresponse, type=type,
+                center=center,
+                ylim=ylim, type=type,  nresponse=nresponse, pmethod=pmethod,
                 trace=trace, trace2=trace2, pt.col=pt.col,
                 jitter=jitter, iresponse=iresponse,
                 smooth.col=smooth.col, grid.col=grid.col,
@@ -319,12 +328,14 @@ get.ylim <- function(object,
                 singles=singles, resp.levs=resp.levs,
                 ux.list=ux.list, ndiscrete=ndiscrete,
                 pred.names=pred.names, abbr.pred.names=abbr.pred.names,
-                nfigs=nfigs, uy=uy, xflip=xflip, jittered.y=jittered.y, ...))
+                nfigs=nfigs, uy=uy, xflip=xflip, jittered.y=jittered.y,
+                n.apartdep=n.apartdep, ...))
         }
         if(npairs) {
             all.yhat <- c(all.yhat,
                 plot.degree2(object=object, degree2=degree2, all2=all2,
-                    center=center, ylim=ylim, nresponse=nresponse, type=type,
+                    center=center, ylim=ylim,
+                    type=type, nresponse=nresponse, pmethod=pmethod,
                     clip=clip, trace=trace, trace2=trace2, pt.col=pt.col,
                     jitter=jitter, iresponse=iresponse,
                     inverse.func=inverse.func, grid.func=grid.func,
@@ -336,9 +347,9 @@ get.ylim <- function(object,
                     pred.names=pred.names, abbr.pred.names=abbr.pred.names,
                     nfigs=nfigs,
                     nsingles=nsingles, npairs=npairs, xflip=xflip, yflip=yflip,
-                    swapxy=swapxy, def.cex.main=def.cex.main, ...))
+                    swapxy=swapxy, def.cex.main=def.cex.main, n.apartdep=n.apartdep, ...))
         }                            #  1    2   3    4  5
-        q <- quantile(all.yhat, probs=c(0, .25, .5, .75, 1))
+        q <- quantile(all.yhat, probs=c(0, .25, .5, .75, 1), names=FALSE)
         ylim <- c(q[1], q[5]) # all the data
         # iqr test to prevent clipping in some pathological cases
         iqr  <- q[4] - q[2]   # middle 50% of the data (inter-quartile range)
@@ -373,8 +384,14 @@ get.ylim <- function(object,
     if(is.na.ylim)
         ylim <- c(NA, NA)  # won't be used
     else if(is.null(ylim)) # auto ylim
-        ylim <- if(is.int.only) range(y, na.rm=TRUE)
-                else            get.ylim.by.dummy.plots(trace=trace, ...)
+        ylim <- if(inherits(object, "randomForest") &&
+                     object$type[1] == "classification" &&
+                     substr(type[1], 1, 1) == "p") # predicting probabilities?
+                    c(0, 1)
+                else if(is.int.only)
+                    range(y, na.rm=TRUE)
+                else
+                    get.ylim.by.dummy.plots(trace=trace, ...)
     if(!anyNA(ylim))
         ylim <- fix.lim(ylim)
     if(trace >= 2)
@@ -382,15 +399,31 @@ get.ylim <- function(object,
                 ylim[1], ylim[2], if(clip) "TRUE" else "FALSE")
     list(ylim=ylim, trace2=trace2)
 }
-do.degree2.par <- function(type2, nfigs, detailed.ticktype)
+do.persp.auto.par <- function(simple.ticktype) # smaller margins for bigger persp plots
 {
-    nrows <- ceiling(sqrt(nfigs))
-    if(type2 == "persp") {              # perspective plot
-        # note: persp ignores both the global mgp and any mgp passed directly to persp
-        mar <- c(if(detailed.ticktype) 1 else .2, .3, 1.7, 0.1)
-        par(mar=mar)
-        return(NULL)
-    } else {                            # contour or image plot
+    # persp ignores both the global mgp and any mgp passed as asrguments
+    # directly to persp so we must adjust margins using par()
+    old.mar <- par("mar")
+    axis.space <- max(par("mgp"))
+    mar <- old.mar
+    if(simple.ticktype) {
+        # Reduce bottom and left margins so we get a bigger persp plot.
+        # This puts the bottom corner of the perp plot at same height at the
+        # bottom of the axis labels on the degree1 plots.
+        mar[1] <- max(mar[1] - axis.space - .5,  .5) # bottom margin
+        mar[2] <- max(mar[2] - axis.space - .5, .5)  # left margin
+    } else { # detailed
+        mar[1] <- min(mar[1], 1)                     # enough space for axes
+        mar[2] <- min(mar[2], 1)
+    }
+    par(mar=mar)
+}
+do.degree2.auto.par <- function(type2, nfigs, simple.ticktype)
+{
+    if(type2 == "persp")                # perspective plot
+        do.persp.auto.par(simple.ticktype)
+    else {                              # contour or image plot
+        nrows <- ceiling(sqrt(nfigs))
         if(nrows >= 5)
             mar <- c(2, 2, 1.2, .5)     # space for bottom and left axis labels
         else
@@ -498,7 +531,7 @@ get.smooth.col <- function(smooth.col, ...)
         smooth.col <- 0
     smooth.col
 }
-get.ngrid1 <- function(ngrid1, ...)
+get.ngrid1 <- function(ngrid1, y, ...)
 {
     check.integer.scalar(ngrid1)
     if(ngrid1 < 2)
@@ -509,7 +542,7 @@ get.ngrid1 <- function(ngrid1, ...)
     }
     ngrid1
 }
-get.ngrid2 <- function(ngrid2, ...)
+get.ngrid2 <- function(ngrid2, y, ...)
 {
     check.integer.scalar(ngrid2)
     if(ngrid2 < 2)
@@ -635,18 +668,14 @@ points.or.text <- function(..., x, y, pt.col, iresponse)
             # def.xpd    = NA, # allow writing beyond plot area
             ...)
 }
-# The following global variables are for efficiency when we make two
-# passes through the plot.  We store the data from the first pass so we
-# don't have to regenerate it.
-
-degree1.xgrid.global <- NULL
-degree2.xgrid.global <- NULL
-
-# TODO Following is ugly.  I would prefer to have two namespace level
-# variables, degree1.data.global and degree2.data.global, similar to the
-# above two variables.  But CRAN check won't allow
-# unlockBinding(degree1.data.global, asNamespace("plotmo")) so we can update
-# those variables.  Also, we can't directly use assignInMyNamespace for these
+# TODO Following handling of global variables is unpleasant.
+# I would prefer to have two namespace level variables,
+# degree1.data.global and degree2.data.global (similar to
+# degree1.xgrid.global etc.)
+# But CRAN check won't allow
+# unlockBinding(degree1.data.global, asNamespace("plotmo"))
+# so we can update those variables.
+# Also, we can't directly use assignInMyNamespace for these
 # variables because we need to update individual list elements.
 
 make.static.list <- function() {
@@ -663,22 +692,36 @@ make.static.list <- function() {
     }
     func
 }
+# The following global variables are for efficiency when we make two
+# passes through the plot.  We store the data from the first pass so we
+# don't have to regenerate it.  (We make two passes if we need to
+# precalculate ylim before doing the actual plotting.)
+# NULL is used here to indicate uninitialized.
+
+degree1.xgrid.global  <- NULL
+degree2.xgrid.global  <- NULL
+partdep.x.global      <- NULL # dataframe of background vars we integrate over
+
 degree1.data <- make.static.list()
 degree2.data <- make.static.list()
+
+# the following global variables are for communicating across functions
+
 trace.call.global <- 0 # nonzero to trace call to predict, residuals, etc
 
 init.global.data <- function()
 {
-    assignInMyNamespace("trace.call.global", 0)
+    assignInMyNamespace("trace.call.global",    0)
     assignInMyNamespace("degree1.xgrid.global", NULL)
     assignInMyNamespace("degree2.xgrid.global", NULL)
+    assignInMyNamespace("partdep.x.global",     NULL)
     degree1.data(NULL) # clear the degree1 data by passing NULL
     degree2.data(NULL)
 }
 plot.degree1 <- function( # plot all degree1 graphs
     # copy of args from plotmo, some have been tweaked slightly
     object, degree1, all1, center,
-    ylim, nresponse, type,
+    ylim, type, nresponse, pmethod,
     trace, trace2,
     pt.col, jitter, iresponse,
     smooth.col, grid.col,
@@ -690,37 +733,47 @@ plot.degree1 <- function( # plot all degree1 graphs
     draw.plot, # draw.plot=FALSE means get predictions but don't actually plot
     x, y, singles, resp.levs, ux.list, ndiscrete,
     pred.names, abbr.pred.names, nfigs, uy,
-    xflip, jittered.y,
+    xflip, jittered.y, n.apartdep,
     ...)
 {
     get.degree1.data <- function(isingle)
     {
+        # check if plot.degree1 was already called by get.ylim.by.dummy.plots
         data <- degree1.data(isingle)
-        if(!is.null(data))              # data is already initialized?
-            return(data)                # yes, use it
+        if(!is.null(data)) # data is already initialized?
+            return(data)   # yes, use it
 
-        # create data.frame of x values to be plotted, by updating xgrid for this predictor
+        intervals <- NULL  # prediction intervals, NULL if level argument not used
+
+        # create data.frame of predictor values to be plotted,
+        # by updating xgrid for this predictor (one column gets updated)
         xframe <- get.degree1.xframe(xgrid, x, ipred, ngrid1,
                                      ndiscrete, ux.list, extend)
 
-        trace2(trace, "degree1 plot %d %s\n",
-               isingle, pred.names[ipred])
-
-        yhat <- plotmo_predict(object, xframe, nresponse,
-                    type, resp.levs, trace2, inverse.func, ...)$yhat
-
-        # prediction intervals, NULL if level argument not used
-        intervals <- NULL
-        if(level > 0)
-            intervals <- plotmo_pint(object, xframe, type, level, trace2,
-                                     ipred, inverse.func)
-
+        if(pmethod == "partdep" || pmethod == "apartdep") {
+            stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
+            yhat <- degree1.partdep.yhat(object,
+                        type, nresponse, pmethod, inverse.func, trace2,
+                        partdep.x, xframe, ipred, pred.names, resp.levs, ...)
+            if(level > 0) { # get prediction intervals?
+                warning0(
+"ignoring the 'level' argument because plotmo pmethod=\"", pmethod, "\"")
+                level <- 0
+            }
+        } else { # classic plotmo plot
+            trace2(trace, "degree1 plot %d %s\n",
+                   isingle, pred.names[ipred])
+            yhat <- plotmo_predict(object, xframe, nresponse,
+                        type, resp.levs, trace2, inverse.func, ...)$yhat
+            if(level > 0) # get prediction intervals?
+                intervals <- plotmo_pint(object, xframe, type, level, trace2,
+                                         ipred, inverse.func)
+        }
         temp <- blockify.degree1.frame(xframe, yhat, intervals,
                                        ipred, ux.list, ndiscrete)
         xframe    <- temp$xframe
         yhat      <- temp$yhat
         intervals <- temp$intervals
-
         if(center) {
             yhat               <- my.center(yhat, trace2)
             intervals$fit      <- my.center(intervals$fit, trace2)
@@ -787,6 +840,7 @@ plot.degree1 <- function( # plot all degree1 graphs
                 force.lwd = dota("degree1.lwd lwd.degree1 lwd",
                                 EX=c(0,1,1), DEF=1, NEW=1, ...),
                 ...)
+            draw.degree1.numeric.rug(nrug, numeric.x, jittered.x, ...)
         }
         #--- draw.degree1 starts here
         x1 <- x[,ipred]
@@ -844,26 +898,29 @@ plot.degree1 <- function( # plot all degree1 graphs
             draw.degree1.fac(...)
         else
             draw.degree1.numeric(...)
-        if(is.character(nrug) || is.dot("density.col", EX=0, ...))
-            draw.density.along.the.bottom(numeric.x, ...)
-        else if(nrug)
-            call.plot(graphics::rug, force.x=jittered.x, def.quiet=TRUE, ...)
     }
     #--- plot.degree1 starts here
     trace2(trace, "--plot.degree1(draw.plot=%s)\n", if(draw.plot) "TRUE" else "FALSE")
     # get the x matrix we will plot, will be updated later for each predictor one by one
-    if(!is.null(degree1.xgrid.global)) # already have the data?
-        xgrid <- degree1.xgrid.global  # yes, use it
+    if(!is.null(degree1.xgrid.global))  # already have the data?
+        xgrid <- degree1.xgrid.global   # yes, use it
     else {
         xgrid <- get.degree1.xgrid(x, grid.func, grid.levels, pred.names, ngrid1)
         if(!draw.plot) # save the data, if there is going to be a next time
             assignInMyNamespace("degree1.xgrid.global", xgrid)
     }
+    if(!is.null(partdep.x.global))      # already have partdep.x?
+        partdep.x <- partdep.x.global   # yes use it
+    else {
+        partdep.x <- get.partdep.x(pmethod, x, y, n.apartdep)
+        if(!draw.plot) # save the data, if there is going to be a next time
+            assignInMyNamespace("partdep.x.global", partdep.x)
+    }
     # is.int.only test because we don't call get.ylim.by.dummy.plots for int only models
-    if((!draw.plot || is.int.only) && trace >= 0 && ncol(xgrid) > 1)
+    if(pmethod == "plotmo" &&
+            (!draw.plot || is.int.only) && trace >= 0 && ncol(xgrid) > 1)
         print.grid.values(xgrid, trace)
     cex.lab <- dota("cex.lab", DEF=.8 * par("cex.main"), ...)
-    irug <- get.degree1.irug(nrug, x, draw.plot, ...) # get indices of rug points, if any
     all.yhat <- NULL
     for(isingle in seq_along(singles)) {
         if(isingle == 2 && trace2 == 2) {
@@ -978,33 +1035,25 @@ draw.smooth1 <- function(smooth.col, x, ipred, y, ux.list, ndiscrete, center, ..
             ...)
     }
 }
-get.nrug <- function(nrug, ...)
+draw.degree1.numeric.rug <- function(nrug, numeric.x, jittered.x, ...)
 {
-    if(!is.specified(nrug))
-        nrug <- 0
-    else if(!is.character(nrug)) {
-        check.integer.scalar(nrug, logical.ok=TRUE)
-        if(nrug == TRUE)
-            nrug <- -1
-        else if(!is.specified(nrug) && is.dot("rug.col", ...))
-            nrug <- -1
-    }
-    nrug
-}
-get.degree1.irug <- function(nrug, x, draw.plot, ...) # indices of xrows for rug
-{
-    if(!draw.plot || nrug == 0)
-        return(NULL)
     if(is.character(nrug))
-        nrug <- -1
-    else
+        draw.density.along.the.bottom(numeric.x, ...)
+    else { # must be numeric nrug
         check.integer.scalar(nrug, logical.ok=TRUE)
-    if(nrug < 0 || nrug > nrow(x))
-        nrug <- nrow(x)
-    if(nrug == nrow(x))
-        seq_len(nrow(x))
-    else
-        sample(seq_len(nrow(x)), size=nrug, replace=FALSE)
+        rug.x <- # nrug < 0 is for backwards compat
+            if(nrug == 1 || nrug < 0 || nrug > length(numeric.x))
+                jittered.x
+            else if(nrug > 0)
+                quantile(numeric.x, probs=seq(from=0, to=1, length.out=nrug+1),
+                         na.rm=TRUE, names=FALSE)
+            else
+                NA
+        if(length(rug.x) > 1) {
+            stopifnot(length(jittered.x) == length(numeric.x))
+            call.plot(graphics::rug, force.x=rug.x, def.quiet=TRUE, ...)
+        }
+    }
 }
 draw.grid <- function(grid.col, nx=NULL, ...)
 {
@@ -1111,7 +1160,8 @@ draw.func <- function(func, object, xframe, ipred, center, trace, ...)
 }
 plot.degree2 <- function(  # plot all degree2 graphs
     # copy of args from plotmo, some have been tweaked slightly
-    object, degree2, all2, center, ylim, nresponse, type,
+    object, degree2, all2, center, ylim,
+    type, nresponse, pmethod,
     clip, trace, trace2, pt.col,
     jitter, iresponse,
     inverse.func, grid.func, grid.levels, extend,
@@ -1121,7 +1171,7 @@ plot.degree2 <- function(  # plot all degree2 graphs
     do.par,
     x, y, pairs, resp.levs, ux.list, ndiscrete,
     pred.names, abbr.pred.names, nfigs, nsingles, npairs,
-    xflip, yflip, swapxy, def.cex.main,
+    xflip, yflip, swapxy, def.cex.main, n.apartdep,
     ...)
 {
     get.degree2.data <- function(ipair)
@@ -1130,31 +1180,42 @@ plot.degree2 <- function(  # plot all degree2 graphs
         if(!is.null(data))          # data is already initialized?
             return(data)            # yes, use it
 
-        # create data.frame of x values to be plotted, by updating xgrid for this pair
+        # create data.frame of x values to be plotted,
+        # by updating xgrid for this predictor (two columns get updated)
+        # (but for partdep plots, xframe isn't used, we use just x1grid and x2grid)
         temp <- get.degree2.xframe(xgrid, x, ipred1, ipred2,
                                    ngrid2, xranges, ux.list, ndiscrete)
-            xframe <- temp$xframe
-            grid1  <- temp$grid1
-            grid2  <- temp$grid2
+            xframe <- temp$xframe  # data frame of medians
+            x1grid  <- temp$x1grid # vec of values for the first predictor
+            x2grid  <- temp$x2grid # vec of values for the second predictor
 
-        trace2(trace, "degree2 plot %d %s:%s\n",
-               ipair, pred.names[ipred1], pred.names[ipred2])
+        if(pmethod == "partdep" || pmethod == "apartdep") {
+            stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
+            yhat <- degree2.partdep.yhat(object,
+                        type, nresponse, pmethod, inverse.func, trace,
+                        partdep.x, x1grid, ipred1, x2grid, ipred2,
+                        pred.names, resp.levs, ...)
+        } else { # classic plotmo plot
+            trace2(trace, "degree2 plot %d %s:%s\n",
+                   ipair, pred.names[ipred1], pred.names[ipred2])
 
-        yhat <- plotmo_predict(object, xframe, nresponse,
-                    type, resp.levs, trace2, inverse.func, ...)$yhat
-
+            yhat <- plotmo_predict(object, xframe, nresponse,
+                        type, resp.levs, trace2, inverse.func, ...)$yhat
+        }
+        x1grid <- as.numeric(x1grid)
+        x2grid <- as.numeric(x2grid)
         # image plots for factors look better if not blockified
         if(type2 != "image") {
-            temp <- blockify.degree2.frame(x, yhat, grid1, grid2,
+            temp <- blockify.degree2.frame(x, yhat, x1grid, x2grid,
                                            ipred1, ipred2, ux.list, ndiscrete)
             yhat  <- temp$yhat
-            grid1 <- temp$grid1
-            grid2 <- temp$grid2
+            x1grid <- temp$x1grid
+            x2grid <- temp$x2grid
         }
         if(center)
             yhat <- my.center(yhat, trace2)
-        yhat <- matrix(yhat, nrow=length(grid1), ncol=length(grid2))
-        data <- list(xframe=xframe, grid1=grid1, grid2=grid2, yhat=yhat)
+        yhat <- matrix(yhat, nrow=length(x1grid), ncol=length(x2grid))
+        data <- list(xframe=xframe, x1grid=x1grid, x2grid=x2grid, yhat=yhat)
         if(!draw.plot) # save the data, if there is going to be a next time
             degree2.data(ipair, data)
         data
@@ -1185,20 +1246,20 @@ plot.degree2 <- function(  # plot all degree2 graphs
         }
         switch(type2,
             persp=plot.persp(
-                x=x, grid1=grid1, grid2=grid2, yhat=yhat, name1=name1, name2=name2,
+                x=x, x1grid=x1grid, x2grid=x2grid, yhat=yhat, name1=name1, name2=name2,
                 ipred1=ipred1, ipred2=ipred2, ipair=ipair, nsingles=nsingles,
                 trace=trace, ylim=ylim, xflip=xflip, yflip=yflip, swapxy=swapxy,
                 ngrid2=ngrid2, main2=main, ticktype2=ticktype, def.cex.main=def.cex.main,
                 ...),
             contour=plot.contour(
-                x=x, grid1=grid1, grid2=grid2, yhat=yhat, name1=name1, name2=name2,
+                x=x, x1grid=x1grid, x2grid=x2grid, yhat=yhat, name1=name1, name2=name2,
                 ipred1=ipred1, ipred2=ipred2, xflip=xflip, yflip=yflip, swapxy=swapxy,
                 main2=main, pt.col=pt.col,
                 jitter=jitter,
                 ux.list=ux.list, ndiscrete=ndiscrete, iresponse=iresponse,
                 ...),
             image=plot.image(
-                x=x, grid1=grid1, grid2=grid2, yhat=yhat, name1=name1, name2=name2,
+                x=x, x1grid=x1grid, x2grid=x2grid, yhat=yhat, name1=name1, name2=name2,
                 ipred1=ipred1, ipred2=ipred2, xflip=xflip, yflip=yflip, swapxy=swapxy,
                 main2=main, pt.col=pt.col,
                 jitter=jitter,
@@ -1211,10 +1272,20 @@ plot.degree2 <- function(  # plot all degree2 graphs
     # need ticktype to determine degree2 margins
     ticktype <- dota("persp.ticktype", DEF="simple", EX=0, ...)
     ticktype <- match.choices(ticktype, c("simple", "detailed"), "ticktype")
-    if(draw.plot && do.par) {
-        opar=par("mar", "mgp")
-        on.exit(par(mar=opar$mar, mgp=opar$mgp))
-        do.degree2.par(type2, nfigs, substr(ticktype, 1, 1) == "d")
+    simple.ticktype <- substr(ticktype, 1, 1) == "s"
+    if(draw.plot) {
+        if(do.par) {
+            opar=par("mar", "mgp")
+            on.exit(par(mar=opar$mar, mgp=opar$mgp))
+            do.degree2.auto.par(type2, nfigs, simple.ticktype)
+        } else if (nsingles && type2 == "persp") {
+            # persp needs smaller margins than degree1 plots
+            # the nsingles check above prevents us from modifying margins
+            # if the user is simply plotting one or more degree2 plots
+            opar=par("mar", "mgp")
+            on.exit(par(mar=opar$mar, mgp=opar$mgp))
+            do.persp.auto.par(simple.ticktype)
+        }
     }
     # get the x matrix we will plot, will be updated later for each pair of predictors
     xranges <- get.degree2.xranges(x, extend, ux.list, ndiscrete)
@@ -1224,6 +1295,13 @@ plot.degree2 <- function(  # plot all degree2 graphs
         xgrid <- get.degree2.xgrid(x, grid.func, grid.levels, pred.names, ngrid2)
         if(!draw.plot) # save the data, if there is going to be a next time
             assignInMyNamespace("degree2.xgrid.global", xgrid)
+    }
+    if(!is.null(partdep.x.global))      # already have partdep.x?
+        partdep.x <- partdep.x.global   # yes use it
+    else {
+        partdep.x <- get.partdep.x(pmethod, x, y, n.apartdep)
+        if(!draw.plot) # save the data, if there is going to be a next time
+            assignInMyNamespace("partdep.x.global", partdep.x)
     }
     all.yhat <- NULL
     for(ipair in seq_len(npairs)) {
@@ -1235,8 +1313,8 @@ plot.degree2 <- function(  # plot all degree2 graphs
         }
         temp <- get.degree2.data(ipair)
             xframe   <- temp$xframe
-            grid1    <- temp$grid1
-            grid2    <- temp$grid2
+            x1grid    <- temp$x1grid
+            x2grid    <- temp$x2grid
             yhat     <- temp$yhat
             all.yhat <- c(all.yhat, yhat)
 
@@ -1280,7 +1358,7 @@ draw.response.sites <- function(x, ipred1, ipred2, pt.col, jitter,
         y=apply.jitter(as.numeric(x2), jitter, adjust=1.5),
         pt.col=pt.col, iresponse=iresponse, ...)
 }
-plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
+plot.persp <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
                        ipair, nsingles, trace, ylim, xflip, yflip, swapxy, ngrid2,
                        main2, ticktype2, def.cex.main, ...)
 {
@@ -1317,7 +1395,7 @@ plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
     cex1 <- par("cex") # persp needs an explicit cex arg, doesn't use par("cex")
     trace2(trace, "persp(%s:%s) theta %.3g\n", name1, name2, theta)
     if(swapxy) {
-        temp <- grid1;  grid1  <- grid2;  grid2  <- temp # swap grid1 and grid2
+        temp <- x1grid; x1grid <- x2grid; x2grid <- temp # swap x1grid and x2grid
         temp <- ipred1; ipred1 <- ipred2; ipred2 <- temp # swap ipred1 and ipred2
         temp <- name1;  name1  <- name2;  name2  <- temp # swap name1 and name2
         yhat <- t(yhat)
@@ -1354,11 +1432,11 @@ plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
         KEEP    = "PREFIX,PLOT.ARGS",
         FORMALS = persp.def.formals,
         TRACE   = if(ipair == 1 && trace >= 2) trace-1 else 0,
-        force.x       = grid1,
-        force.y       = grid2,
+        force.x       = x1grid,
+        force.y       = x2grid,
         force.z       = yhat,
-        force.xlim    = range(grid1), # prevent use of user specified xlim and ylim
-        force.ylim    = range(grid2),
+        force.xlim    = range(x1grid), # prevent use of user specified xlim and ylim
+        force.ylim    = range(x2grid),
                         # persp won't accept zlim=NULL
         force.zlim    = if(is.null(ylim)) ylim <- range(yhat) else ylim,
         force.xlab    = xlab,
@@ -1393,14 +1471,14 @@ plot.persp <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
     suppressWarnings(
         do.call.trace(graphics::persp, args, fname="graphics::persp", trace=0))
 }
-plot.contour <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
+plot.contour <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
                          xflip, yflip, swapxy, main2, pt.col,
                          jitter, ux.list, ndiscrete, iresponse, ...)
 {
-    get.lim <- function(xflip, grid1, ipred)
+    get.lim <- function(xflip, x1grid, ipred)
     {
         # contour() automatically extends ylim, so we don't need to do it here
-        xrange <- range(grid1)
+        xrange <- range(x1grid)
         if(xflip)
             c(xrange[2], xrange[1])
         else
@@ -1420,8 +1498,8 @@ plot.contour <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
         temp <- is.fac2;   is.fac2 <- is.fac1;     is.fac1 <- temp
         temp <- ylab;      ylab <- xlab;           xlab <- temp
     }
-    xlim <- get.lim(xflip, grid1, ipred1)
-    ylim <- get.lim(yflip, grid2, ipred2)
+    xlim <- get.lim(xflip, x1grid, ipred1)
+    ylim <- get.lim(yflip, x2grid, ipred2)
     if(swapxy) {
         temp <- xlim; xlim <- ylim; ylim <- temp
     }
@@ -1436,8 +1514,8 @@ plot.contour <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
 
     suppressWarnings(
         call.plot(graphics::contour.default,
-            force.x    = if(swapxy) grid2   else grid1,
-            force.y    = if(swapxy) grid1   else grid2,
+            force.x    = if(swapxy) x2grid else x1grid,
+            force.y    = if(swapxy) x1grid else x2grid,
             force.z    = if(swapxy) t(yhat) else yhat,
             force.xlim = xlim,
             force.ylim = ylim,
@@ -1477,26 +1555,26 @@ get.contour.levs <- function(yhat)
         levs <- unique.yhat
     levs
 }
-plot.image <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
+plot.image <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
                        xflip, yflip, swapxy, main2, pt.col,
                        jitter, ux.list, ndiscrete, iresponse, ...)
 {
     # like image but fill the plot area with lightblue first so NAs are obvious
-    image.with.lightblue.na <- function(grid1, grid2, yhat, ...)
+    image.with.lightblue.na <- function(x1grid, x2grid, yhat, ...)
     {
         if(anyNA(yhat)) {
-            image(grid1, grid2, matrix(0, nrow(yhat), ncol(yhat)),
+            image(x1grid, x2grid, matrix(0, nrow(yhat), ncol(yhat)),
                   col="lightblue",
                   xlab="", ylab="", xaxt="n", yaxt="n", bty="n", main="")
             par(new=TRUE) # so next plot is on top of this plot
         }
         call.plot(graphics::image.default,
-                  force.x=grid1, force.y=grid2, force.z=yhat, ...)
+                  force.x=x1grid, force.y=x2grid, force.z=yhat, ...)
         box() # image() tends to overwrite the borders of the box
     }
-    get.lim <- function(xflip, grid1, is.discrete)
+    get.lim <- function(xflip, x1grid, is.discrete)
     {
-        xrange <- range(grid1)
+        xrange <- range(x1grid)
         if(is.discrete) {
             xrange[1] <- xrange[1] - .5
             xrange[2] <- xrange[2] + .5
@@ -1526,14 +1604,14 @@ plot.image <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
         temp <- use.fac.names2; use.fac.names2 <- use.fac.names1; use.fac.names1 <- temp
         temp <- ylab;           ylab <- xlab;                     xlab <- temp
     }
-    xlim <- get.lim(xflip, grid1,
+    xlim <- get.lim(xflip, x1grid,
                     use.fac.names1 || length(ux.list[[ipred1]]) <= ndiscrete)
-    ylim <- get.lim(yflip, grid2,
+    ylim <- get.lim(yflip, x2grid,
                     use.fac.names2 || length(ux.list[[ipred2]]) <= ndiscrete)
 
     # default col: white high values (snowy mountain tops), dark low values (dark depths)
     if(swapxy)
-        image.with.lightblue.na(grid1=grid2, grid2=grid1, yhat=t(yhat),
+        image.with.lightblue.na(x1grid=x2grid, x2grid=x1grid, yhat=t(yhat),
             force.col     = dota("image.col col.image", EX=c(0,1),
                                  DEF=gray((0:10)/10), NEW=1, ...),
             force.main    = main2,
@@ -1545,7 +1623,7 @@ plot.image <- function(x, grid1, grid2, yhat, name1, name2, ipred1, ipred2,
             force.ylab    = ylab,
             ...)
     else
-        image.with.lightblue.na(grid1=grid1, grid2=grid2, yhat=yhat,
+        image.with.lightblue.na(x1grid=x1grid, x2grid=x2grid, yhat=yhat,
             force.col     = dota("image.col col.image", EX=c(0,1),
                                  DEF=gray((0:10)/10), NEW=1, ...),
             force.main    = main2,

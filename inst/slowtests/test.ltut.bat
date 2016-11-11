@@ -1,7 +1,7 @@
 @rem test.ltut.bat: test modified version of linmod example in
 @rem                Friedrich Leisch "Creating R Packages: A Tutorial"
 
-@"C:\PROGRA~1\R\R-3.3.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.ltut.R
+@"C:\PROGRA~1\R\R-3.3.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.ltut.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.ltut.Rout:
 @echo.

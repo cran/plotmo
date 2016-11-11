@@ -113,8 +113,7 @@ plots).
 \bold{Acknowledgments}
 
 This function is derived from code in the \code{\link[gbm]{gbm}}
-package authored by Greg Ridgeway and others, and maintained by Harry
-Southworth.
+package authored by Greg Ridgeway and others.
 }
 \seealso{
 Chapter 7 in \href{../doc/plotres-notes.pdf}{plotres vignette} discusses

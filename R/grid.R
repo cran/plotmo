@@ -1,7 +1,7 @@
 # grid.R: functions for creating the grid of values to be plotted in plotmo graphs
 
 # Get the x matrix (actually a data.frame) with median values (or
-# first level for factors), ngrid1 rows, all rows identical.
+# first level for factors), ngrid1 rows, all rows identical, nrow(xgrid) is ngrid1.
 
 get.degree1.xgrid <- function(x, grid.func, grid.levels, pred.names, ngrid1)
 {
@@ -20,9 +20,10 @@ get.degree1.xgrid <- function(x, grid.func, grid.levels, pred.names, ngrid1)
 # For factors or discrete variables, we shorten the frame to match the nbr of levels.
 
 get.degree1.xframe <- function(xgrid, x, ipred, ngrid1,
-                               ndiscrete, ux.list, extend)
+                               ndiscrete, ux.list, extend, mean)
 {
     x1 <- x[[ipred]]
+    # uxlist is a list, each elem is the unique levels for corresponding column of x
     u1 <- ux.list[[ipred]]
     if(is.factor(x1) && length(u1) > ngrid1)
         stop0("ngrid1=", ngrid1, " is less than the number ",
@@ -115,6 +116,11 @@ get.degree2.xgrid <- function(x, grid.func, grid.levels, pred.names, ngrid2)
 # Update xgrid for the predictor pair currently being plotted (ipred1
 # and ipred2 are column numbers in x).  That is, replace two columns
 # with a range of values.
+#
+# This will also shorten xgrid if possible (i.e. if predictor is discrete
+# with number of discrete values less than ngrid2, typically because
+# predictor is a factor.)  This shortening is for efficiency later,
+# because it means we avoid duplicate cases in xgrid.
 
 get.degree2.xframe <- function(xgrid, x, ipred1, ipred2,
                                ngrid2, xranges, ux.list, ndiscrete)
@@ -125,39 +131,41 @@ get.degree2.xframe <- function(xgrid, x, ipred1, ipred2,
             stop0("ngrid2=", ngrid2, " is less than the number",
                   " of levels in ", colnames(x)[ipred])
     }
-    n1 <- ngrid2 # will change only if ipred1 is treated as discrete
+    # get x1grid
+    n1 <- ngrid2 # will change if ipred1 is discrete
     u1 <- ux.list[[ipred1]]
     nlevs1 <- length(u1)
     check.faclen(ipred1, nlevs1)
-    # TODO I'm not convinced the following code is correct (Apr 2015)
-    if(is.factor(x[[ipred1]]) || nlevs1 <= ndiscrete) { # discrete?
-        grid1 <- get.all.levs(x[[ipred1]], u1)
-        n1 <- nlevs1
-        xgrid <- xgrid[1:(n1 * ngrid2), , drop=FALSE]   # shorten xgrid
-    } else
-        grid1 <- seq(from=xranges[1,ipred1], to=xranges[2,ipred1], length=ngrid2)
-    xgrid[[ipred1]] <- grid1 # will recycle
-
-    n2 <- ngrid2 # will change only if ipred2 is treated as discrete
+    x1grid <-
+        if(is.factor(x[[ipred1]]) || nlevs1 <= ndiscrete) { # discrete?
+            n1 <- nlevs1
+            x1grid <- get.all.levs(x[[ipred1]], u1)
+        } else
+            seq(from=xranges[1,ipred1], to=xranges[2,ipred1], length=ngrid2)
+    # get x2grid
+    n2 <- ngrid2 # will change if ipred2 is discrete
     u2 <- ux.list[[ipred2]]
     nlevs2 <- length(u2)
     check.faclen(ipred2, nlevs2)
-    if(is.factor(x[[ipred2]]) || nlevs2 <= ndiscrete) { # discrete?
-        grid2 <- get.all.levs(x[[ipred2]], u2)
-        n2 <- nlevs2
-        xgrid <- xgrid[rep(seq_len(n1), times=n2), , drop=FALSE]
-    } else
-        grid2 <- seq(from=xranges[1,ipred2], to=xranges[2,ipred2], length=ngrid2)
-    xgrid[[ipred2]] <- rep(grid2, each=n1)
-
-    list(xframe=xgrid, grid1=as.numeric(grid1), grid2=as.numeric(grid2))
+    x2grid <-
+        if(is.factor(x[[ipred2]]) || nlevs2 <= ndiscrete) { # discrete?
+            n2 <- nlevs2
+            get.all.levs(x[[ipred2]], u2)
+        } else
+            seq(from=xranges[1,ipred2], to=xranges[2,ipred2], length=ngrid2)
+    # pack x1grid and x2grid into xgrid
+    if(n1 != ngrid2 || n2 != ngrid2)
+        xgrid <- xgrid[1:(n1 * n2), , drop=FALSE] # shorten xgrid
+    xgrid[[ipred1]] <- x1grid # will recycle
+    xgrid[[ipred2]] <- rep(x2grid, each=n1)
+    list(xframe=xgrid, x1grid=x1grid, x2grid=x2grid)
 }
 # we want to draw discrete variables in persp and contour plots using "blocks"
 
-blockify.degree2.frame <- function(x, yhat, grid1, grid2,
+blockify.degree2.frame <- function(x, yhat, x1grid, x2grid,
                                    ipred1, ipred2, ux.list, ndiscrete)
 {
-    is.discrete2 <- function(ipred, grid1)
+    is.discrete2 <- function(ipred, x1grid)
     {
         if(is.factor(x[[ipred]]))
             return(TRUE)
@@ -165,31 +173,31 @@ blockify.degree2.frame <- function(x, yhat, grid1, grid2,
         # the integral check is necessary with the current
         # implementation which adds/subtracts a hardcoded .499
         # TODO make this like blockify.degree1.frame (which can handle non integers)
-        length(u1) <= ndiscrete && is.integral(grid1)
+        length(u1) <= ndiscrete && is.integral(x1grid)
     }
-    if(is.discrete2(ipred1, grid1)) {
-        yhat <- rep(yhat, each=2)                   # duplicate each elem in yhat
-        grid1 <- rep(grid1, each=2)                 # duplicate each elem in grid1
-        is.even <- (1:length(grid1)) %% 2 == 0
-        grid1[!is.even] <- grid1[!is.even] - .499   # sub .5 from odd elems
-        grid1[is.even]  <- grid1[is.even]  + .499   # add .5 to even elems
+    if(is.discrete2(ipred1, x1grid)) {
+        yhat <- rep(yhat, each=2)                     # duplicate each elem in yhat
+        x1grid <- rep(x1grid, each=2)                 # duplicate each elem in x1grid
+        is.even <- (1:length(x1grid)) %% 2 == 0
+        x1grid[!is.even] <- x1grid[!is.even] - .499   # sub .5 from odd elems
+        x1grid[is.even]  <- x1grid[is.even]  + .499   # add .5 to even elems
     }
-    if(is.discrete2(ipred2, grid2)) {
+    if(is.discrete2(ipred2, x2grid)) {
         # duplicate each block in yhat (each block has n1 elements)
         y.old <- yhat
         yhat <- double(2 * length(yhat))
-        n1 <- length(grid1)
-        for(i in 1:length(grid2)) {
+        n1 <- length(x1grid)
+        for(i in 1:length(x2grid)) {
             start <- n1 * (i-1)
             end   <- n1 * i
             yhat[(2 * start + 1): (2 * end)] <- y.old[(start + 1): end]
         }
-        grid2 <- rep(grid2, each=2)         # duplicate each elem in grid2
-        is.even <- (1:length(grid2)) %% 2 == 0
-        grid2[!is.even] <- grid2[!is.even] - .499   # sub .5 from odd elems
-        grid2[is.even]  <- grid2[is.even]  + .499   # add .5 to even elems
+        x2grid <- rep(x2grid, each=2)                 # duplicate each elem in x2grid
+        is.even <- (1:length(x2grid)) %% 2 == 0
+        x2grid[!is.even] <- x2grid[!is.even] - .499   # sub .5 from odd elems
+        x2grid[is.even]  <- x2grid[is.even]  + .499   # add .5 to even elems
     }
-    list(yhat=yhat, grid1=grid1, grid2=grid2)
+    list(yhat=yhat, x1grid=x1grid, x2grid=x2grid)
 }
 # Check grid.levels arg passed in by the user.  This checks that the names
 # of the list elements are indeed predictor names.  The actual levels will
@@ -292,7 +300,6 @@ get.all.levs <- function(x, levels)
         factor(1:length(levels), labels=levels)
 }
 # Print the grid values, must do some finagling for a nice display
-
 print.grid.values <- function(xgrid, trace)
 {
     trace1(trace, "\n")

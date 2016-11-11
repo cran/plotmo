@@ -29,10 +29,10 @@ order.gbm.vars.on.importance <- function(object)
 }
 plotmo.singles.gbm <- function(object, x, nresponse, trace, all1, ...)
 {
+    if(all1)
+        return(1:length(object$var.names))
     importance <- attr(object, "plotmo.importance")
     stopifnot(!is.null(importance)) # uninitialized?
-    if(all1)
-        return(importance)
     # indices of vars with importance >= 1%, max of 10 variables
     # (10 becauses plotmo.pairs returns 6, total is 16, therefore 4x4 grid)
     importance[1: min(10, length(importance))]
@@ -96,9 +96,10 @@ plotmo.predict.gbm <- function(object, newdata, type, ..., TRACE)
              "       (A direct call to plot_gbm may work)")
 
     # The following invokes predict.gbm.
-    # n.trees is defaulted so first time users can call plotmo(gbm.model) easily.
     # predict.gbm doesn't do partial matching on type so we do it here with pmatch.
+    # n.trees is defaulted so first time users can call plotmo(gbm.model) easily.
+    type = match.choices(type, c("link", "response"), "type")
+    n.trees <- gbm.n.trees(object)
     plotmo.predict.default(object, newdata,
-        type = match.choices(type, c("link", "response"), "type"),
-        def.n.trees = gbm.n.trees(object), ..., TRACE=TRACE)
+        type=type, def.n.trees=n.trees, ..., TRACE=TRACE)
 }

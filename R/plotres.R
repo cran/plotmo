@@ -47,7 +47,7 @@ plotres <- function(object = stop("no 'object' argument"),
     ...)                # passed to predict
 {
     init.global.data()
-    on.exit(init.global.data()) # release memory on exit
+    on.exit({init.global.data(); gc()}) # release memory on exit
     object # make sure object exists
     trace <- as.numeric(check.integer.scalar(trace, logical.ok=TRUE))
     # Associate the model environment with the object.

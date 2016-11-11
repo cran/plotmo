@@ -255,12 +255,14 @@ gbm.tdist <- gbm(age~., data=ptit, train.frac=train.frac,
                    n.trees=100, shrinkage=.1)
 old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2), mar=c(3,3,4,1))
+set.seed(2016)
 w1 <- plotres(gbm.tdist, which=1:2, do.par=FALSE,
         w1.main="gbm.tdist")
 
 cat("w1 plot for gbm.tdist returned (w1.smooth=default):\n")
 print(w1)
 
+set.seed(2016)
 w3 <- plotres(gbm.tdist, which=3, do.par=FALSE, info=TRUE)
 
 # compare to manual residuals
@@ -414,6 +416,17 @@ plotmo(gbm.adaboost, do.par=2)
 print(summary(gbm.adaboost)) # will also plot
 par(old.par)
 
+# test gbm multinomial model, also test very small number of trees in plot_gbm
+
+data(iris)
+set.seed(2016)
+gbm.iris <- gbm(Species~., data=iris, distribution="multinomial", n.tree=5)
+expect.err(try(plotres(gbm.iris)),
+           "gbm distribution=\"multinomial\" is not yet supported")
+expect.err(try(plotmo(gbm.iris)),
+           "gbm distribution=\"multinomial\" is not yet supported")
+plot_gbm(gbm.iris)
+
 # TODO following fails in the new version of gbm (version 2.2)
 #   (distribution "multinomial" is no longer supported)
 #
@@ -438,7 +451,7 @@ par(old.par)
 #            "gbm distribution=\"multinomial\" is not yet supported")
 
 # cat("--- gbmt distribution=\"Gaussian\", formula interface ----------------------------------\n")
-# 
+#
 # set.seed(2016)
 # ptit <- ptitanic[sample(1:nrow(ptitanic), size=70), ] # small data for fast test
 # set.seed(2016)
@@ -475,7 +488,7 @@ par(old.par)
 # w3 <- plotres(gbmt.gaussian, which=3, do.par=FALSE, info=TRUE,
 #         smooth.col=0, col=ptit$sex, # ylim=c(-40,40),
 #         wmain="nresponse=1")
-# 
+#
 # # compare to manual residuals
 # iused <- 1:(train.frac * nrow(ptit))
 # y <- ptit$age[iused]
@@ -491,18 +504,18 @@ par(old.par)
 # stopifnot(all(yhat == w3$x))
 # stopifnot(all(y - yhat == w3$y))
 # par(old.par)
-# 
+#
 # w1 <- plotres(gbmt.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
 #               w1.smooth=TRUE,
 #               w1.main="predict.n.trees=13 w1.grid.col=1")
 # cat("second w1 plot for gbmt.gaussian returned (w1.smooth=TRUE):\n")
 # print(w1)
 # plotmo(gbmt.gaussian, trace=-1, SHOWCALL=TRUE)
-# 
+#
 # par(old.par)
-# 
+#
 # cat("--- distribution=\"bernoulli\" ----------------------------------\n")
-# 
+#
 # set.seed(2016)
 # ptit <- ptitanic[sample(1:nrow(ptitanic), size=80), ]
 # ptit$survived <- ptit$survived == "survived"
@@ -530,11 +543,11 @@ par(old.par)
 #         w1.main="gbmt.bernoulli")
 # cat("w1 plot for gbmt.bernoulli with cv.folds=3 returned:\n")
 # print(w1)
-# 
+#
 # w3 <- plotres(gbmt.bernoulli, which=3, predict.n.trees=40,
 #         ylim=c(-.6, 1), xlim=c(.1, .6),
 #         col=ptit$sex, trace=0, do.par=FALSE, smooth.col=0)
-# 
+#
 # # compare to manual residuals
 # iused <- 1:(train.frac * nrow(ptit))
 # y <- ptit$survived[iused]
@@ -549,7 +562,7 @@ par(old.par)
 # stopifnot(all(yhat == w3$x))
 # stopifnot(all(y - yhat == w3$y))
 # par(old.par)
-# 
+#
 # old.par <- par(no.readonly=TRUE)
 # plotmo(gbmt.bernoulli, do.par=2)
 # print(summary(gbmt.bernoulli)) # will also plot

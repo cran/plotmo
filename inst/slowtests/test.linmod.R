@@ -33,10 +33,11 @@ check.lm <- function(fit, ref, newdata=trees[3:5,],
     check.names <- function(fit.names, ref.names)
     {
         if(check.casenames &&
-           # lm always adds rownames even if "1", "2", "3"
-           # this seems wasteful of resources, so linmod doesn't do this
-           !is.null(fit.names) &&
-           !identical(fit.names, ref.names)) {
+        # lm always adds rownames even if "1", "2", "3": this seems
+        # wasteful and not particulary helpful, so linmod doesn't do
+        # this, hence the first !isTRUE(all.equal) below
+           !isTRUE(all.equal(ref.names, paste(1:length(ref.names)))) &&
+           !isTRUE(all.equal(fit.names, ref.names))) {
             print(fit.names)
             print(ref.names)
             stop(deparse(substitute(fit.names)), " != ",
@@ -139,8 +140,8 @@ print(summary(fit1a.mat))
 check.lm(fit1a.mat, lma.tr, newdata=trees[3:5,2,drop=FALSE])
 check.lm(fit1a.mat, lma.tr, newdata=trees[3:5,2,drop=TRUE],
          check.newdata=FALSE) # needed because predict.lm gives numeric 'envir' arg not of length one
-stopifnot(identical(predict(fit1a.mat, newdata=trees[3:5,2,drop=FALSE]),
-                    predict(fit1a.mat, newdata=trees[3:5,2,drop=TRUE])))
+stopifnot(almost.equal(predict(fit1a.mat, newdata=trees[3:5,2,drop=FALSE]),
+                       predict(fit1a.mat, newdata=trees[3:5,2,drop=TRUE])))
 stopifnot(almost.equal(predict(fit1a.mat, newdata=data.frame(Height=80)),
                        36.34437, max=1e-5))
 stopifnot(almost.equal(predict(fit1a.mat, newdata=tr[1:3,2]),
@@ -644,6 +645,81 @@ expect.err(try(print(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused 
 fit1.form <- linmod(Volume~., data=tr)
 expect.err(try(predict(fit1.form, nonesuch=99)), "unused argument (nonesuch = 99)")
 expect.err(try(predict(fit1.form, type="nonesuch")), "the 'type' argument is not yet supported")
+
+# method functions
+
+case.names.linmod <- function(object, ...)
+{
+    stop.if.dot.arg.used(...)
+    names(residuals(object))
+}
+variable.names.linmod <- function(object, ...)
+{
+    stop.if.dot.arg.used(...)
+    names(coef(object))
+}
+deviance.linmod <- function(object, ...)
+{
+    stop.if.dot.arg.used(...)
+    sum(residuals(object)^2)
+}
+plot.linmod <- function(x, main=NULL, ...) # dots are passed to plot()
+{
+    call.as.char <- paste0(deparse(x$call, control=NULL, nlines=5),
+                           sep=" ", collapse=" ")
+    plot(fitted(x), residuals(x),
+         main=if(is.null(main)) substr(call.as.char, 1, 50) else main,
+         xlab="Fitted values", ylab="Residuals", ...)
+    smooth <- lowess(fitted(x), residuals(x), f=.5)
+    lines(smooth$x, smooth$y, col=2)
+}
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(2,2))
+
+fit1.form <- linmod(Volume~., data=tr)
+fit1.lm <- lm(Volume~., data=tr)
+stopifnot(almost.equal(coef(fit1.form), coef(fit1.lm)))
+stopifnot(identical(names(coef(fit1.form)), names(coef(fit1.lm))))
+stopifnot(almost.equal(fitted(fit1.form), fitted(fit1.lm)))
+stopifnot(identical(names(fitted(fit1.form)), names(fitted(fit1.lm))))
+stopifnot(identical(na.action(fit1.form), na.action(fit1.lm)))
+stopifnot(almost.equal(residuals(fit1.form), residuals(fit1.lm)))
+stopifnot(identical(names(residuals(fit1.form)), names(residuals(fit1.lm))))
+stopifnot(identical(names(case.names(fit1.form)), names(case.names(fit1.lm))))
+stopifnot(identical(names(variable.names(fit1.form)), names(variable.names(fit1.lm))))
+stopifnot(identical(weights(fit1.form), weights(fit1.lm)))
+stopifnot(almost.equal(df.residual(fit1.form), df.residual(fit1.lm)))
+stopifnot(identical(names(df.residual(fit1.form)), names(df.residual(fit1.lm))))
+# print(model.matrix(fit1.form)) # TODO doesn't work
+stopifnot(almost.equal(deviance(fit1.form), deviance(fit1.lm)))
+stopifnot(identical(names(deviance(fit1.form)), names(deviance(fit1.lm))))
+stopifnot(identical(weights(fit1.form), weights(fit1.lm)))
+
+plot(fit1.form)
+plot(fit1.form, xlim=c(0,80), ylim=c(-10,10), pch=20, main="fit1.form: test plot args")
+
+fit1.mat <- linmod(tr[,1:2], tr[,3]) # note no need for intercept term
+stopifnot(almost.equal(coef(fit1.mat), coef(fit1.lm)))
+stopifnot(identical(names(coef(fit1.mat)), names(coef(fit1.lm))))
+stopifnot(almost.equal(fitted(fit1.mat), fitted(fit1.lm)))
+stopifnot(identical(names(fitted(fit1.mat)), names(fitted(fit1.lm))))
+stopifnot(identical(na.action(fit1.mat), na.action(fit1.lm)))
+stopifnot(almost.equal(residuals(fit1.mat), residuals(fit1.lm)))
+stopifnot(identical(names(residuals(fit1.mat)), names(residuals(fit1.lm))))
+stopifnot(identical(names(case.names(fit1.mat)), names(case.names(fit1.lm))))
+stopifnot(identical(names(variable.names(fit1.mat)), names(variable.names(fit1.lm))))
+stopifnot(identical(weights(fit1.mat), weights(fit1.lm)))
+stopifnot(almost.equal(df.residual(fit1.mat), df.residual(fit1.lm)))
+stopifnot(identical(names(df.residual(fit1.mat)), names(df.residual(fit1.lm))))
+# print(model.matrix(fit1.mat)) # TODO doesn't work
+stopifnot(almost.equal(deviance(fit1.mat), deviance(fit1.lm)))
+stopifnot(identical(names(deviance(fit1.mat)), names(deviance(fit1.lm))))
+stopifnot(identical(weights(fit1.mat), weights(fit1.lm)))
+
+plot(fit1.mat)
+plot(fit1.mat, xlim=c(0,80), ylim=c(-10,10), pch=20, main="fit1.mat: test plot args")
+
+par(old.par)
 
 if(!interactive()) {
     dev.off()        # finish postscript plot

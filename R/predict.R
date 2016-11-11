@@ -16,11 +16,11 @@ plotmo_predict <- function(object, newdata, nresponse,
         newdata <- NULL
     }
     if(is.null(newdata)) {
-        # It generally faster to use newdata=NULL. But not all models process
-        # the type argument with null newdata. So here we check for some models
-        # that are known good that way.  The inherits function is not used here
-        # because for example a glm model inherits("lm") but with NULL newdata
-        # doesn't process type as we might hope.
+        # It generally faster to use newdata=NULL. But not all models correctly
+        # process the type argument with null newdata. So here we check for some
+        # models that are known good that way.  The inherits function is not
+        # used here because for example a glm model inherits("lm") but with
+        # NULL newdata doesn't process type as we might hope.
         if(class(object)[1] %in% c("lm", "earth"))
             trace2(trace, "calling predict.%s with NULL newdata\n", class(object)[1])
         else { # assume object cannot handle newdata=NULL

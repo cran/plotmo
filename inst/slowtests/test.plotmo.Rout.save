@@ -5,29 +5,33 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 3.3.1 (2016-06-21)"
+[1] "R version 3.3.2 (2016-10-31)"
 > print(citation("rpart.plot"))
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (2016). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 2.1.0.
-  https://CRAN.R-project.org/package=rpart.plot
+  Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
+  Version of 'plot.rpart'. R package version 2.1.1.
+  http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    year = {2016},
-    note = {R package version 2.1.0},
-    url = {https://CRAN.R-project.org/package=rpart.plot},
+    note = {R package version 2.1.1},
+    url = {http://www.milbo.org/rpart-plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")'.
 
+Warning messages:
+1: In citation("rpart.plot") :
+  no date field in DESCRIPTION file of package 'rpart.plot'
+2: In citation("rpart.plot") :
+  could not determine year for 'rpart.plot' from package DESCRIPTION file
 > 
 > library(earth)
 Loading required package: plotmo
@@ -736,9 +740,9 @@ graphics::plot.default(x=c(25,26.39,27.7...), y=c(5.312,5.527,5...), type="n",
 persp(wind:vis) theta 145
 TRACE plot.persp called deprefix(persp, FNAME="persp", KEEP="PREFIX,PLOT.ARGS",
                          FORMALS=persp.def.formals,
-                         TRACE=if(ipair==1&&trace>=...), force.x=grid1,
-                         force.y=grid2, force.z=yhat, force.xlim=range(grid1),
-                         force.ylim=range(grid2),
+                         TRACE=if(ipair==1&&trace>=...), force.x=x1grid,
+                         force.y=x2grid, force.z=yhat,
+                         force.xlim=range(x1grid), force.ylim=range(x2grid),
                          force.zlim=if(is.null(ylim))yli...), force.xlab=xlab,
                          force.ylab=ylab, force.theta=theta, force.phi=30,
                          force.d=1, force.main=main2, def.cex.lab=cex.lab,
@@ -784,13 +788,15 @@ persp(temp:dpg) theta 235
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a, do.par=FALSE, degree1=F, degree2=4, grid.func=mean, persp.col="white", ngrid2=10, persp.phi=40)
-> plotmo(a, do.par=FALSE, degree1=1, degree1.lty=2, degree1.lwd=4, degree1.col=2, nrug=300, degree2=F, main="nrug=300")
+> set.seed(2016)
+> plotmo(a, do.par=FALSE, degree1=1, degree1.lty=2, degree1.lwd=4, degree1.col=2, nrug=TRUE, degree2=F, main="nrug=300")
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
-> plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, main="nrug=-1")
+> plotmo(a, do.par=FALSE, degree1=1, nrug=-1, degree2=F, main="nrug=TRUE")
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
-> plotmo(a, do.par=FALSE, degree1=1, nrug=500, ngrid1=50, degree2=F, main="ngrid1=50 nrug=500")
+> set.seed(2016)
+> plotmo(a, do.par=FALSE, degree1=1, nrug=10, ngrid1=50, degree2=F, main="ngrid1=50 nrug=10")
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
 > plotmo(a, do.par=FALSE, degree1=NA, degree2=1, persp.phi=60) # graph args
@@ -1993,7 +1999,8 @@ GLM null.deviance 1414.62 (1045 dof)   deviance 1212.212 (1039 dof)   iters 5
  plotmo grid:    humidity temp   doy
                        64   62 205.5
 > 
-> plotmo(a20, nrug=200, caption="Test plotmo with a vector main (and npoints=200)",
+> set.seed(2016)
+> plotmo(a20, nrug=10, caption="Test plotmo with a vector main (and npoints=200)",
 +        main=c("Humidity", "Temperature", "Day of year", "Humidity: Temperature", "Temperature: Day of Year"),
 +        col.response="darkgray", pt.pch=".", cex.response=3, npoints=200) # cex.response tests back compat
  plotmo grid:    humidity temp   doy
@@ -2397,6 +2404,21 @@ Warning: extend=0.5: will not plot degree2 plots (extend is not yet implemented 
 > library(rpart)
 > rpart.intercept.only <- rpart(y~x)
 > plotmo(rpart.intercept.only, do.par=FALSE)
+> 
+> # nrug argument
+> 
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(3,3), mar=c(3,3,3,1), mgp=c(1.5, 0.5, 0))
+> mod.nrug <- earth(survived~age, data=etitanic)
+> set.seed(2016)
+> plotmo(mod.nrug, do.par=0, nrug=-1,   main="nrug=-1")
+> plotmo(mod.nrug, do.par=0, nrug=TRUE, main="nrug=TRUE")
+> plotmo(mod.nrug, do.par=0, nrug=10, rug.col=2,            main="nrug=10, rug.col=2")
+> plotmo(mod.nrug, do.par=0, nrug=5,  rug.col=2, rug.lwd=2, main="nrug=5, rug.col=2, rug.lwd=2")
+> plotmo(mod.nrug, do.par=0, nrug="density", main="nrug=\"density\"")
+> plotmo(mod.nrug, do.par=0, nrug="density", density.col=2, density.lwd=2, main="nrug=\"density\"\ndensity.col=2, density.lwd=2")
+> plotmo(mod.nrug, do.par=0, nrug="density", density.adj=.2, density.col=1, main="nrug=\"density\"\ndensity.adj=.2, density.col=1")
+> par(old.par)
 > 
 > # a <- earth(ozone1[,3]~ozone1[,1]+ozone1[,2]+ozone1[,4]+ozone1[,5]+ozone1[,6], data=ozone1)
 > # # TODO fails: actual.nrows=330 expected.nrows=50 fitted.nrows=330

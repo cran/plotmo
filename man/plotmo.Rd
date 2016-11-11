@@ -3,15 +3,18 @@
 \concept{partial dependence plot}
 \title{Plot a model's response over a range of predictor values}
 \description{
-Plot a model's response when varying one or two predictors while
-holding the other predictors constant.  A poor man's partial
-dependence plot.
+Plot model surfaces for a wide variety of models.
+
+This function plots the model's response when varying one or two
+predictors while holding the other predictors constant (a poor man's
+partial-dependence plot).
+It can also generate partial-dependence plots.
 
 Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
 }
 \usage{
 plotmo(object=stop("no 'object' argument"),
-    type=NULL, nresponse=NA,
+    type=NULL, nresponse=NA, pmethod="plotmo",
     pt.col=0, jitter=.5, smooth.col=0, level=0,
     func=NULL, inverse.func=NULL, nrug=0, grid.col=0,
     type2="persp",
@@ -37,8 +40,37 @@ Use \code{trace=1} to see the \code{type} argument passed to \code{predict}.
 }
 \item{nresponse}{
 Which column to use when \code{predict} returns multiple columns.
-This can be a column index or column name
-(which may be abbreviated, partial matching is used).
+This can be a column index, or a column name if the \code{predict}
+method for the model returns column names.
+The column name may be abbreviated, partial matching is used.
+}
+\item{pmethod}{
+Plotting method.
+One of:
+
+\code{"plotmo"} (default)
+Classic plotmo plots i.e. the background variables
+are fixed at their medians (or first level for factors).
+
+\code{"partdep"} Partial dependence plots, i.e. at each point the effect
+of the background variables is averaged.
+% See Hastie, Tibshirani and Friedman ``Elements of Statistical
+% Learning'' 2nd Edition Section 10.13.2.
+% Plotting these is slow and may require large amounts of memory.
+
+\code{"apartdep"} Approximate partial dependence plots.
+Faster than \code{"partdep"} especially for big datasets.
+Like \code{"partdep"} but the background variables are averaged over a
+subset of \code{ngrid1} cases (default 50), rather than all cases in
+the training data.
+The subset is created by selecting
+rows at equally spaced intervals from the training data
+after sorting the data on the response values.
+Ties in the response value are randomly broken.
+% If \code{ngrid1} is greater then the number of cases than all cases
+% are used, and \code{"apartdep"} is identical to \code{"partdep"}.
+The same background subset of \code{ngrid1} cases is used for both
+degree1 and degree2 plots.
 }
 \item{pt.col}{
 The color of response points (or response sites in degree2 plots).
@@ -92,7 +124,7 @@ Example:\preformatted{    mod <- lm(Volume~Girth, data=trees)
     estimated.volume <- function(x) .17 * x$Girth^2
     plotmo(mod, pt.col=2, func=estimated.volume)}
 The \code{func} is called for each plot with a single argument which
-is a data frame with columns in the same order as the predictors
+is a dataframe with columns in the same order as the predictors
 in the \code{formula} or \code{x} used to build the model.
 Use \code{trace=2} to see the column names and first few rows of this dataframe.
 }
@@ -105,16 +137,20 @@ Example:\preformatted{    mod <- lm(log(Volume)~., data=trees)
 }
 }
 \item{nrug}{
-Number of points in the \code{\link[graphics]{rug}} rug along the bottom of the plot
-(a sample of \code{nrug} points is plotted).
+Number of ticks in the \code{\link[graphics]{rug}} along the bottom of the plot
+\cr
 Default is \code{0}, no rug.
-Use \code{nrug=TRUE} or \code{-1} for all points.
-The rug is jittered to match the jittered points
-(see the \code{jitter} argument).
+\cr
+Use \code{nrug=TRUE} for all the points.
+\cr
+Else specify the number of quantiles
+e.g. use \code{nrug=10} for ticks at the 0, 10, 20, ..., 100 percentiles.
+\cr
+Modify the rug ticks with \code{rug.col}, \code{rug.lwd}, etc.
 \cr
 The special value \code{nrug="density"} means plot the
 density of the points along the bottom.
-You can modify the \code{\link[stats]{density}} plot with \code{density.adjust} (default is \code{.5}),
+Modify the \code{\link[stats]{density}} plot with \code{density.adjust} (default is \code{.5}),
 \code{density.col}, \code{density.lty}, etc.
 }
 \item{grid.col}{
@@ -141,7 +177,8 @@ An index vector specifying which subset of degree1 (main effect) plots to includ
 \dQuote{\emph{Which variables are plotted?}} in the \code{plotmo} vignette).
 \cr
 Default is \code{TRUE}, meaning all (the \code{TRUE} gets recycled).
-Use \code{degree=FALSE} or \code{0} for no degree1 plots.
+To plot only the third plot use \code{degree1=3}.
+For no degree1 plots use \code{degree1=0}.
 \cr
 Can also be a character vector
 specifying which variables to plot
@@ -238,8 +275,10 @@ Default is \code{0}.
 \code{trace=2} for detailed tracing.
 \cr
 \code{trace=-1} inhibits the messages usually issued by \code{plotmo},
-like the \dQuote{\code{plotmo grid:}} and \dQuote{\code{nothing to plot}}
-messages. Error and warning messages will be printed as usual.
+like the \code{plotmo grid:},
+\code{calculating partdep},
+and  \code{nothing to plot} messages.
+Error and warning messages will be printed as usual.
 \cr
 \cr
 }
@@ -280,6 +319,7 @@ are not extended.
 \item{ngrid1}{
 Number of equally spaced x values in each degree1 plot.
 Default is \code{50}.
+Also used as the number of background cases for \code{pmethod="apartdep"}.
 }
 \item{ngrid2}{
 Grid size for degree2 plots (\code{ngrid2 x ngrid2} points are plotted).
@@ -305,7 +345,8 @@ are plotted as quantized in plots (a staircase rather than a curve).
 Factors are always considered discrete.
 }
 \item{int.only.ok}{
-Plot the model even if it is an intercept-only model.
+Plot the model even if it is an intercept-only model (no predictors are
+used in the model).
 Do this by plotting a single degree1 plot for the first predictor.
 \cr
 The default is \code{TRUE}.
@@ -375,7 +416,7 @@ The prefixes recognized by \code{plotmo} are:\tabular{ll}{
 \code{rug.} \tab see the \code{nrug} argument
 (\code{rug.jitter}, and arguments passed to \code{\link[graphics]{rug}})
 \cr
-\code{density.} \tab see the \code{nrug} (sic) argument
+\code{density.} \tab see the \code{nrug} argument
 (\code{density.adjust}, and arguments passed to \code{\link[graphics]{lines}})
 \cr
 \code{grid.} \tab see the \code{grid.col} argument

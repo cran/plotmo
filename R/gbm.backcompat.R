@@ -3,7 +3,7 @@
 # TODO change name of this module? this is actually for new functions (not back compat funcs)
 #
 # The following functions were added in Oct 2016 for
-# Paul Metcalfe's changes to glm (version 2.2 and higher).
+# Paul Metcalfe's changes to gbm (version 2.2 and higher).
 #
 # The idea is that we work with both the old and the new gbm models, and
 # give error messages appropriate to the object (not to an object
@@ -63,9 +63,12 @@ gbm.short.distribution.name <- function(obj)
 }
 gbm.n.trees <- function(obj)
 {
-    if(!is.null(obj$n.trees)) # paranoia
-        stopifnot(obj$n.trees == length(obj$trees))
-    length(obj$trees)
+    ncol.fit <- NCOL(obj[["fit"]])
+    stopifnot(ncol.fit >= 1) # paranoia
+    n.trees <- length(obj$trees) / ncol.fit
+    if(!is.null(obj$n.trees))
+        stopifnot(obj$n.trees == n.trees) # paranoia
+    n.trees
 }
 gbm.train.fraction <- function(obj)
 {
