@@ -93,6 +93,9 @@ plot_w1 <- function(object,
                           def.main=dota("main",
                                         DEF="Error vs Number of Trees", ...))
     else if(inherits(object, c("gbm", "GBMFit"))) {
+        # # don't allow n.trees argument to prevent a common mistake
+        # if(!is.na(dota("n.trees", EX=0, ...)))
+        #     stop0("n.trees is not allowed (please use predict.n.trees)")
         # don't allow w1.n.trees argument, except w1.n.trees=NA
         predict.n.trees <- dota("predict.n.trees", DEF=gbm.n.trees(object),  ...)
         w1.n.trees      <- dota("w1.n.trees",      DEF=predict.n.trees, ...)

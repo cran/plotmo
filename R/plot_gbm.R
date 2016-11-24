@@ -29,9 +29,9 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     smooth <- rep_len(smooth, 4) # recycle smooth if necessary
     col <- rep_len(col, 4)       # recycle col if necessary
     col[is.na(col)] <- 0         # make using col below a bit easier
-    n.trees <- gbm.n.trees(obj)
     check.integer.scalar(n.trees, min=1, max=n.trees,
                          na.ok=TRUE, logical.ok=FALSE)
+    n.alltrees = gbm.n.trees(obj)
     # final.max is max of values on the right of the curves (excluding OOB)
     train.error <- gbm.train.error(obj)
     valid.error <- gbm.valid.error(obj)
@@ -55,7 +55,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     voffset <- 0 # slight offset to prevent overplotting of dotted vertical lines
 
     # train curve
-    y <- maybe.smooth(train.error, "train", smooth[1], n.trees)
+    y <- maybe.smooth(train.error, "train", smooth[1], n.alltrees)
     imin <- which.min1(y)      # index of minimum train error
     imins <- c(imin, 0, 0, 0)  # index of train, test, CV, OOB minima
     names(imins) <- c("train", "test", "CV", "OOB")
@@ -72,7 +72,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     }
     # test curve (aka valid.error curve)
     if(train.fraction != 1) {
-        y <- maybe.smooth(valid.error, "test", smooth[2], n.trees)
+        y <- maybe.smooth(valid.error, "test", smooth[2], n.alltrees)
         imin <- imins[2] <- which.min1(y)
         if(is.specified(col[2])) {
             if(imin)
@@ -90,7 +90,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     }
     # CV curve
     if(!is.null(cv.error)) {
-        y <- maybe.smooth(cv.error, "CV", smooth[3], n.trees)
+        y <- maybe.smooth(cv.error, "CV", smooth[3], n.alltrees)
         imin <- imins[3] <- which.min1(y)
         if(is.specified(col[3])) {
             if(imin)
@@ -110,7 +110,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     bag.fraction <- gbm.bag.fraction(obj)
     if(bag.fraction != 1) {
         oobag.improve <- gbm.oobag.improve(obj)
-        y <- maybe.smooth(-cumsum(oobag.improve), "OOB", smooth[4], n.trees)
+        y <- maybe.smooth(-cumsum(oobag.improve), "OOB", smooth[4], n.alltrees)
         imin <- imins[4] <- which.min1(y)
         if(is.specified(col[4])) {
             if(imin)
@@ -144,9 +144,9 @@ plot_gbm <- function(object=stop("no 'object' argument"),
 init.gbm.plot <- function(obj, ylim, final.max, mar, ...)
 {
     xlim <- dota("xlim", ...)   # get xlim from dots, NA if not in dots
-    n.trees <- gbm.n.trees(obj)
+    n.alltrees <- gbm.n.trees(obj)
     if(!is.specified(xlim))
-        xlim <- c(0, n.trees)
+        xlim <- c(0, n.alltrees)
     xlim <- fix.lim(xlim)
     ylim <- get.gbm.ylim(obj, xlim, ylim, final.max)
     ylab <- get.gbm.ylab(obj)
@@ -163,7 +163,7 @@ init.gbm.plot <- function(obj, ylim, final.max, mar, ...)
     # force.main="" because we add (user-specified) main manually because top labels.
 
     train.error <- gbm.train.error(obj)
-    call.plot(graphics::plot, force.x=1:n.trees, force.y=train.error,
+    call.plot(graphics::plot, force.x=1:n.alltrees, force.y=train.error,
         force.type="n", force.main="",  force.xlim=xlim, def.ylim=ylim,
         def.xlab="Number of Trees", def.ylab=ylab, ...)
 
@@ -239,7 +239,7 @@ vertical.line <- function(x, col=1, lty=1, voffset=0) # draw a vertical line at 
     }
 }
 # this returns a single NA if y has non finite values
-maybe.smooth <- function(y, yname, must.smooth, n.trees)
+maybe.smooth <- function(y, yname, must.smooth, n.alltrees)
 {
     if(any(!is.finite(y))) {
         # infinities in OOB curve occur with distribution="huberized"
@@ -248,15 +248,15 @@ maybe.smooth <- function(y, yname, must.smooth, n.trees)
         return(NA)
     }
     if(must.smooth) {
-        x <- 1:n.trees
-        if(n.trees < 10) # loess tends to fail for small n.trees, use lowess instead
+        x <- 1:n.alltrees
+        if(n.alltrees < 10) # loess tends to fail for small n.alltrees, use lowess instead
             y <- lowess(x, y)$y
         else             # use loess for compatibility with gbm
             y <- loess(y~x,
                        na.action=na.omit,  # paranoia, prevent warnings from loess
                        # enp.target is the same as gbm.perf for compatibility
                        # (this does only minimal smoothing)
-                       enp.target=min(max(4, n.trees/10), 50))$fitted
+                       enp.target=min(max(4, n.alltrees/10), 50))$fitted
     }
     y
 }

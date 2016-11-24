@@ -513,20 +513,41 @@ plotmo(flip.test2, degree1=NA, degree2=2, do.par=F, main="xflip and yflip", type
        xflip=T, yflip=T)
 
 library(randomForest)
-data(ozone1)
-set.seed(2015)
-rf <- randomForest(age~., data=etitanic, ntree=100)
-plotmo(rf, trace=1)
-plotres(rf, trace=1)
-set.seed(3)
-a <- randomForest(O3~., data=ozone1, ntree=20)
-plotmo(a, caption="randomForest ozone1")
-plotres(a)
-set.seed(4)
-a <- randomForest(Kyphosis ~ ., data=kyphosis, ntree=5, mtry=2)
-plotmo(a, type="prob", nresponse="pre", caption="randomForest kyphosis", ndiscrete=10) # auto ylim=c(0,1)
+data(etitanic)
+etit <- etitanic[1:300,]
+
+cat("=== rf.regression ===\n")
+set.seed(2016)
+# Expect Warning: The response has five or fewer unique values.  Are you sure you want to do regression?
+rf.regression <- randomForest(survived~., data=etit, ntree=100, importance = FALSE)
+plotmo(rf.regression, trace=1)
+
+cat("=== rf.regression.importance ===\n")
+set.seed(2016)
+# Expect Warning: The response has five or fewer unique values.  Are you sure you want to do regression?
+rf.regression.importance <- randomForest(survived~., data=etit, ntree=100, importance = TRUE)
+plotmo(rf.regression.importance, trace=1)
+
+etit <- etitanic[1:300,]
+etit$survived <- factor(ifelse(etit$survived == 1, "survived", "died"),
+                       levels = c("survived", "died"))
+cat("=== rf.classification ===\n")
+set.seed(2016)
+rf.classification <- randomForest(survived~., data=etit, ntree=100, importance = FALSE)
+plotmo(rf.classification, trace=1, type="prob", nresponse="surv", do.par=2)
+plotmo(rf.classification, trace=1, type="prob", nresponse="died", degree2=0, do.par=0)
+
+cat("=== rf.classification.importance ===\n")
+set.seed(2016)
+rf.classification.importance <- randomForest(survived~., data=etit, ntree=100, importance = TRUE)
+plotmo(rf.classification.importance, trace=1, type="prob", nresponse="surv", do.par=2)
+
+cat("=== plotres randomForest ===\n")
+plotres(rf.regression)
+plotres(rf.regression.importance)
 # TODO residuals are in range 0 to 1
-plotres(a, type="prob", nresponse="pre", caption="plotres randomForest kyphosis")
+plotres(rf.classification, type="prob", nresponse="surv")
+plotres(rf.classification.importance, type="prob", nresponse="surv")
 
 #--- fda ------------------------------------------------------------------------------
 

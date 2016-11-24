@@ -100,6 +100,7 @@ plotmo.predict.gbm <- function(object, newdata, type, ..., TRACE)
     # n.trees is defaulted so first time users can call plotmo(gbm.model) easily.
     type = match.choices(type, c("link", "response"), "type")
     n.trees <- gbm.n.trees(object)
+
     plotmo.predict.default(object, newdata,
         type=type, def.n.trees=n.trees, ..., TRACE=TRACE)
 }

@@ -259,6 +259,41 @@ plotmo <- function(object = stop("no 'object' argument"),
     draw.caption(caption, ...)
     invisible(x)
 }
+# plotmo.retval <- function(x, singles, pairs, pred.names) # plotmo's return value
+# {
+#     degree1 <- vector("list", length(singles))
+#     names <- vector("character", length(singles))
+#     for(isingle in seq_along(singles)) {
+#         ipred <- singles[isingle] # ipred is the predictor index i.e. col in model mat
+#         temp <- degree1.data(isingle)
+#         stopifnot(!is.null(temp))
+#         stopifnot(nrow(temp$xframe) == length(temp$yhat))
+#         data <- data.frame(temp$xframe[[ipred]], temp$yhat)
+#         names[isingle] <- pred.names[ipred]
+#         colnames(data) <- c(pred.names[ipred], "PLOTMO")
+#         degree1[[isingle]] <- data
+#     }
+#     names(degree1) <- names
+#
+#     npairs <- NROW(pairs)
+#     degree2 <- vector("list", npairs)
+#     names <- vector("character", npairs)
+#     for(ipair in seq_len(npairs)) {
+#         ipred1 <- pairs[ipair,1]  # index of first predictor
+#         ipred2 <- pairs[ipair,2]  # index of second predictor
+#         temp <- degree2.data(ipair)
+#         stopifnot(!is.null(temp))
+#         # TODO this fails if blockify.degree2.frame kicks in
+#         stopifnot(nrow(temp$xframe) == length(temp$yhat))
+#         data <- data.frame(temp$xframe[ipred1], temp$xframe[ipred2], as.vector(temp$yhat))
+#         names[ipair] <- paste0(pred.names[ipred1], ":", pred.names[ipred1])
+#         colnames(data) <- c(pred.names[ipred1], pred.names[ipred2], "PLOTMO")
+#         degree2[[ipair]] <- data
+#     }
+#     names(degree2) <- names
+#
+#     list(x=x, degree1=degree1, degree2=degree2)
+# }
 plotmo_prolog <- function(object, object.name, trace, ...)
 {
     object <- plotmo.prolog(object, object.name, trace, ...)

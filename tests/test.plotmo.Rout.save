@@ -13,7 +13,8 @@ Loading required package: TeachingDemos
 stats::predict(rpart.object, data.frame[3,3], type="vec")
 stats::fitted(object=rpart.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(Kyphosis~Age+Numb..., data=call$data, na.action="na.pass")
+got model response from model.frame(Kyphosis~Age+Numb..., 
+                                    data=call$data, na.action="na.pass")
 
  plotmo grid:    Age Number Start
                  87      4    13

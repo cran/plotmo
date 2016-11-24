@@ -83,7 +83,8 @@ Loading required package: TeachingDemos
 > plotmo(a, caption=caption, trace=1)
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
@@ -200,7 +201,8 @@ call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vi
 na.action(object) is "na.fail"
 stats::model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
 model.frame[,1] is usable and has column name O3
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 plotmo_y returned[330,1]:
     O3
 1    3
@@ -485,7 +487,8 @@ model.frame returned[330,10]:
 ...  6 5720    4       69   35 1568  15 121  60  36
 330  1 5550    4       85   39 5000   8  44 100 390
 model.frame[,1] is usable and has column name O3
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 plotmo_y returned[330,1]:
     O3
 1    3
@@ -1101,7 +1104,8 @@ call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
 stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
 model.frame[,1] is usable and has column name O3
-got model response from model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
+got model response from model.frame(O3~temp+humidity,
+                                    data=call$data, na.action="na.fail")
 plotmo_y returned[51,1]:
     O3
 150  2

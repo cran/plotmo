@@ -36,7 +36,8 @@ Loading required package: ggplot2
 > plotmo(caret.earth.mod, trace=1, SHOWCALL=TRUE)
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
@@ -54,7 +55,8 @@ got model response from object$y
 residuals() was unsuccessful
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 
 training rsq 0.81
 > # plotres(caret.earth.mod$finalModel, trace=1, SHOWCALL=TRUE)
@@ -88,7 +90,8 @@ GCV 13.71664    RSS 3592.762    GRSq 0.7669974    RSq 0.8139355
 stats::predict(bagEarth.object, data.frame[3,9], type="response")
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(O3~., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~.,
+                                    data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
@@ -99,7 +102,8 @@ residuals() was unsuccessful
 stats::predict(bagEarth.object, data.frame[3,9], type="response")
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(O3~., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~.,
+                                    data=call$data, na.action="na.fail")
 
 training rsq 0.82
 > 
@@ -130,7 +134,8 @@ training rsq 0.98
 stats::predict(bagEarth.object, data.frame[3,7], type="response")
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(survived~., data=call$data, na.action="na.fail")
+got model response from model.frame(survived~.,
+                                    data=call$data, na.action="na.fail")
 
  plotmo grid:    pclass1st pclass2nd pclass3rd sexmale age sibsp parch
                          0         0         0       1  28     0     0
@@ -141,7 +146,8 @@ residuals() was unsuccessful
 stats::predict(bagEarth.object, data.frame[3,7], type="response", clip=FALSE)
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(survived~., data=call$data, na.action="na.fail")
+got model response from model.frame(survived~.,
+                                    data=call$data, na.action="na.fail")
 
 training rsq 0.45
 > 
@@ -160,7 +166,8 @@ training rsq 0.45
 > plotmo(caret.earth.mod2, trace=1, SHOWCALL=TRUE)
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(survived~pclass+s..., data=call$data, na.action="na.fail")
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.fail")
 
  plotmo grid:    pclass    sex age sibsp parch
                     1st female  28     0     0
@@ -169,7 +176,8 @@ got model response from model.frame(survived~pclass+s..., data=call$data, na.act
 residuals() was unsuccessful
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(survived~pclass+s..., data=call$data, na.action="na.fail")
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.fail")
 
 training rsq 0.21
 > 
@@ -179,7 +187,8 @@ training rsq 0.21
 > plotmo(a, trace=1, SHOWCALL=TRUE)
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
@@ -188,7 +197,8 @@ got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.act
 residuals() was unsuccessful
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 
 training rsq 0.83
 > 

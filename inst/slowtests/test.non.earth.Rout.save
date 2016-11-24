@@ -924,7 +924,8 @@ stats::predict(rpart.object, data.frame[3,3], type="prob")
 stats::fitted(object=rpart.object)
 fitted() was unsuccessful, will use predict()
 set nresponse=2
-got model response from model.frame(Kyphosis~Age+Numb..., data=call$data, na.action="na.pass")
+got model response from model.frame(Kyphosis~Age+Numb...,
+                                    data=call$data, na.action="na.pass")
 > plotmo(fit1, type="prob", nresp=2, degree1=NA, do.par=F, main="", type2="image",
 +        col.response=ifelse(kyphosis$Kyphosis=="present", "red", "lightblue"),
 +        pt.pch=20, image.col=gray(10:4/10), ngrid2=5)
@@ -1041,39 +1042,88 @@ Warning: ignoring yflip=TRUE for persp plot
 > library(randomForest)
 randomForest 4.6-12
 Type rfNews() to see new features/changes/bug fixes.
-> data(ozone1)
-> set.seed(2015)
-> rf <- randomForest(age~., data=etitanic, ntree=100)
-> plotmo(rf, trace=1)
+> data(etitanic)
+> etit <- etitanic[1:300,]
+> 
+> cat("=== rf.regression ===\n")
+=== rf.regression ===
+> set.seed(2016)
+> # Expect Warning: The response has five or fewer unique values.  Are you sure you want to do regression?
+> rf.regression <- randomForest(survived~., data=etit, ntree=100, importance = FALSE)
+Warning in randomForest.default(m, y, ...) :
+  The response has five or fewer unique values.  Are you sure you want to do regression?
+> plotmo(rf.regression, trace=1)
 stats::predict(randomForest.formula.object, data.frame[3,5], type="response")
 stats::fitted(object=randomForest.formula.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(age~pclass+surviv..., data=call$data, na.action="na.fail")
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.fail")
+randomForest built with importance=FALSE, ranking variables on IncNodePurity
 
- plotmo grid:    pclass survived    sex sibsp parch
-                    1st        0 female     0     0
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  38     0     0
 
-> plotres(rf, trace=1)
-stats::residuals(object=randomForest.formula.object, type="response")
-residuals() was unsuccessful
+> 
+> cat("=== rf.regression.importance ===\n")
+=== rf.regression.importance ===
+> set.seed(2016)
+> # Expect Warning: The response has five or fewer unique values.  Are you sure you want to do regression?
+> rf.regression.importance <- randomForest(survived~., data=etit, ntree=100, importance = TRUE)
+Warning in randomForest.default(m, y, ...) :
+  The response has five or fewer unique values.  Are you sure you want to do regression?
+> plotmo(rf.regression.importance, trace=1)
 stats::predict(randomForest.formula.object, data.frame[3,5], type="response")
 stats::fitted(object=randomForest.formula.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(age~pclass+surviv..., data=call$data, na.action="na.fail")
-graphics::plot(randomForest.formula.object, main="Error vs Number of Trees")
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.fail")
+randomForest built with importance=TRUE, ranking variables on %IncMSE
 
-training rsq 0.30
-> set.seed(3)
-> a <- randomForest(O3~., data=ozone1, ntree=20)
-> plotmo(a, caption="randomForest ozone1")
- plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
-               5760    5       64   62 2112.5  24 167.5 120 205.5
-> plotres(a)
-> set.seed(4)
-> a <- randomForest(Kyphosis ~ ., data=kyphosis, ntree=5, mtry=2)
-> plotmo(a, type="prob", nresponse="pre", caption="randomForest kyphosis", ndiscrete=10) # auto ylim=c(0,1)
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  38     0     0
+
+> 
+> etit <- etitanic[1:300,]
+> etit$survived <- factor(ifelse(etit$survived == 1, "survived", "died"),
++                        levels = c("survived", "died"))
+> cat("=== rf.classification ===\n")
+=== rf.classification ===
+> set.seed(2016)
+> rf.classification <- randomForest(survived~., data=etit, ntree=100, importance = FALSE)
+> plotmo(rf.classification, trace=1, type="prob", nresponse="surv", do.par=2)
+stats::predict(randomForest.formula.object, data.frame[3,5], type="prob")
+stats::fitted(object=randomForest.formula.object)
+fitted() was unsuccessful, will use predict()
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.fail")
+randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
+> plotmo(rf.classification, trace=1, type="prob", nresponse="died", degree2=0, do.par=0)
+stats::predict(randomForest.formula.object, data.frame[3,5], type="prob")
+stats::fitted(object=randomForest.formula.object)
+fitted() was unsuccessful, will use predict()
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.fail")
+randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
+> 
+> cat("=== rf.classification.importance ===\n")
+=== rf.classification.importance ===
+> set.seed(2016)
+> rf.classification.importance <- randomForest(survived~., data=etit, ntree=100, importance = TRUE)
+> plotmo(rf.classification.importance, trace=1, type="prob", nresponse="surv", do.par=2)
+stats::predict(randomForest.formula.object, data.frame[3,5], type="prob")
+stats::fitted(object=randomForest.formula.object)
+fitted() was unsuccessful, will use predict()
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.fail")
+randomForest built with importance=TRUE, ranking variables on MeanDecreaseAccuracy
+> 
+> cat("=== plotres randomForest ===\n")
+=== plotres randomForest ===
+> plotres(rf.regression)
+> plotres(rf.regression.importance)
 > # TODO residuals are in range 0 to 1
-> plotres(a, type="prob", nresponse="pre", caption="plotres randomForest kyphosis")
+> plotres(rf.classification, type="prob", nresponse="surv")
+> plotres(rf.classification.importance, type="prob", nresponse="surv")
 > 
 > #--- fda ------------------------------------------------------------------------------
 > 
@@ -1154,7 +1204,8 @@ stats::predict(nn.object, data.frame[3,2], trace=TRUE)
 predict.nn: rep = "mean" will take the mean of 3 reps
 stats::fitted(object=nn.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(y~x1+x2, data=object$data, na.action="na.fail")
+got model response from model.frame(y~x1+x2,
+                                    data=object$data, na.action="na.fail")
 
  plotmo grid:    x1            x2
       0.09128478914 -0.2904530708
@@ -1164,7 +1215,8 @@ stats::predict(nn.object, data.frame[3,2], trace=TRUE, rep="best")
 predict.nn: rep = "best" is rep = 2 
 stats::fitted(object=nn.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(y~x1+x2, data=object$data, na.action="na.fail")
+got model response from model.frame(y~x1+x2,
+                                    data=object$data, na.action="na.fail")
 
  plotmo grid:    x1            x2
       0.09128478914 -0.2904530708
@@ -1176,7 +1228,8 @@ stats::predict(nn.object, data.frame[3,2], trace=TRUE)
 predict.nn: rep = "mean" will take the mean of 3 reps
 stats::fitted(object=nn.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(y~x1+x2, data=object$data, na.action="na.fail")
+got model response from model.frame(y~x1+x2,
+                                    data=object$data, na.action="na.fail")
 
 training rsq 0.99
 > plotres(nn, trace=1, info=TRUE, predict.rep="best", SHOWCALL=TRUE)
@@ -1186,7 +1239,8 @@ stats::predict(nn.object, data.frame[3,2], trace=TRUE, rep="best")
 predict.nn: rep = "best" is rep = 2 
 stats::fitted(object=nn.object)
 fitted() was unsuccessful, will use predict()
-got model response from model.frame(y~x1+x2, data=object$data, na.action="na.fail")
+got model response from model.frame(y~x1+x2,
+                                    data=object$data, na.action="na.fail")
 
 training rsq 0.99
 > 

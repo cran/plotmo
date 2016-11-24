@@ -110,21 +110,42 @@ plotmo.y.varmod <- function(object, trace, naked, expected.len, nresponse, ...)
         get.model.env(object$residmod, "object$residmod", trace)
     plotmo.y(object$residmod, trace, naked, expected.len, nresponse)
 }
-order.randomForest.vars.on.importance <- function(object, x)
+order.randomForest.vars.on.importance <- function(object, x, trace)
 {
     importance <- object$importance
+    colnames <- colnames(importance)
     if(!is.matrix(importance) ||    # sanity checks
        nrow(importance) == 0  ||
-       !identical(row.names(importance), colnames(x))) {
-        warning0("randomForest object has an invalid 'importance' field")
+       !identical(row.names(importance), colnames(x)) ||
+       is.null(colnames)) {
+        warning0("object$importance is invalid")
         return(NULL)
     }
+    colname <-
+        if("%IncMSE" %in% colnames)                   # regression model:
+            "%IncMSE"                                 #     importance=TRUE
+        else if("IncNodePurity" %in% colnames)
+            "IncNodePurity"                           #     importance=FALSE
+        else if("MeanDecreaseAccuracy" %in% colnames) # classification model:
+            "MeanDecreaseAccuracy"                    #     importance=TRUE
+        else if("MeanDecreaseGini" %in% colnames)
+            "MeanDecreaseGini"                        #     importance=FALSE
+        else {
+            warning0("column names of object$importance are unrecognized")
+            return(NULL)
+        }
+    if(trace > 0)
+        printf("randomForest built with importance=%s, ranking variables on %s\n",
+               if(colname == "%IncMSE" || colname == "MeanDecreaseAccuracy")
+                   "TRUE" else "FALSE",
+               colname)
+
     # vector of var indices, most important vars first
-    order(importance[,1], decreasing=TRUE)
+    order(importance[,colname], decreasing=TRUE)
 }
 plotmo.singles.randomForest <- function(object, x, nresponse, trace, all1, ...)
 {
-    importance <- order.randomForest.vars.on.importance(object, x)
+    importance <- order.randomForest.vars.on.importance(object, x, trace)
     if(all1)
         return(importance)
     if(is.null(importance))
@@ -138,7 +159,7 @@ plotmo.pairs.randomForest <- function(object, x, ...)
     if(is.null(object$forest))
         stop0("object has no 'forest' component ",
               "(use keep.forest=TRUE in the call to randomForest)")
-    importance <- order.randomForest.vars.on.importance(object, x)
+    importance <- order.randomForest.vars.on.importance(object, x, trace=FALSE)
     if(is.null(importance))
         return(NULL)
     # pairs of four most important variables (i.e. 6 plots)

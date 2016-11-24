@@ -1,6 +1,21 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.3.1  Nov 24, 2016
+
+When choosing which variables to plot for randomForest models,
+variable importance is now calculated using a more correct measure,
+viz. one of IncMSE or IncNodePurity (regression models), or
+MeanDecreaseAccuracy or MeanDecreaseGini (classifications models).
+The second option is used if importance=TRUE was used when building
+the model.  Use trace=1 when calling plotmo to which measure of
+importance is used.
+
+The plot_gbm function now displays the gray vertical line at the
+correct position when n.trees is specified.
+
+Documentation touchups.
+
 --- 3.3.0  Nov 11, 2016
 
 Added support for partial dependence plots (the pmethod argument).

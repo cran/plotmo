@@ -250,7 +250,8 @@ stats::predict(earth.object, NULL, type="deviance")
 +      which=3, do.par=FALSE, main="pclass response, nresponse=\"first\"")
 stats::residuals(object=earth.object, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(pclass~survived+s..., data=call$data, na.action="na.fail")
+got model response from model.frame(pclass~survived+s...,
+                                    data=call$data, na.action="na.fail")
 
 training rsq 0.23
 > mtext("earth model with a factor response", outer=TRUE, font=2, line=1, cex=1)
@@ -259,7 +260,8 @@ training rsq 0.23
 +      main="pclass response, nresponse=\"first\"\nFORCEPREDICT=TRUE")
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(pclass~survived+s..., data=call$data, na.action="na.fail")
+got model response from model.frame(pclass~survived+s...,
+                                    data=call$data, na.action="na.fail")
 
 training rsq 0.23
 > 

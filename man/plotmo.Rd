@@ -11,6 +11,7 @@ partial-dependence plot).
 It can also generate partial-dependence plots.
 
 Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
+(also available \href{http://www.milbo.org/doc/plotmo-notes.pdf}{here}).
 }
 \usage{
 plotmo(object=stop("no 'object' argument"),
@@ -444,7 +445,8 @@ and data with the model in a standard way.
 For further discussion please see \dQuote{\emph{Accessing the model
 data}} in the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
 Package authors may want to look at
-\href{../doc/modguide.pdf}{Guidelines for S3 Regression Models}.
+\href{../doc/modguide.pdf}{Guidelines for S3 Regression Models}
+(also available \href{http://www.milbo.org/doc/modguide.pdf}{here}).
 
 By default, \code{plotmo} tries to use sensible model-dependent
 defaults when calling \code{predict}.
@@ -454,7 +456,8 @@ and by using dot arguments prefixed with
 \code{predict.} (see the description of ``\code{...}'' above).
 }
 \seealso{
-Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
+Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}
+(also available \href{http://www.milbo.org/doc/plotmo-notes.pdf}{here}).
 }
 \examples{
 if (require(rpart)) {

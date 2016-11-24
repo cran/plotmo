@@ -76,7 +76,8 @@ Got error as expected from try(plotmo(a, lw = 2))
 > plotmo(a, trace=1, do.par=FALSE, degree1=1, degree2=1, caption="top: standard\nbottom: lwd=2 thresh=.9") # no errors or warnings
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
@@ -84,7 +85,8 @@ got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.act
 > plotmo(a, lwd=2, trace=1, thresh=.9, do.par=FALSE, degree1=1, degree2=1) # no errors or warnings
 stats::predict(earth.object, NULL, type="response", thresh=0.9)
 stats::fitted(object=earth.object)
-got model response from model.frame(O3~vh+wind+humidi..., data=call$data, na.action="na.fail")
+got model response from model.frame(O3~vh+wind+humidi...,
+                                    data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5

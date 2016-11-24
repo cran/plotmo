@@ -5,7 +5,8 @@
 \description{
 Plot the residuals of a regression model.
 
-Please see the \href{../doc/plotres-notes.pdf}{plotres vignette}.
+Please see the \href{../doc/plotres-notes.pdf}{plotres vignette}
+(also available \href{http://www.milbo.org/doc/plotres-notes.pdf}{here}).
 }
 \usage{
 plotres(object = stop("no 'object' argument"),
@@ -363,12 +364,15 @@ and data with the model in a standard way.
 It uses the same underlying mechanism to access the model data as
 \code{\link{plotmo}}.
 For further discussion please see \dQuote{\emph{Accessing the model
-data}} in the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
+data}} in the \href{../doc/plotmo-notes.pdf}{plotmo vignette}
+(also available \href{http://www.milbo.org/doc/plotmo-notes.pdf}{here}).
 Package authors may want to look at
-\href{../doc/modguide.pdf}{Guidelines for S3 Regression Models}.
+\href{../doc/modguide.pdf}{Guidelines for S3 Regression Models}
+(also available \href{http://www.milbo.org/doc/modguide.pdf}{here}).
 }
 \seealso{
-Please see the \href{../doc/plotres-notes.pdf}{plotres vignette}.
+Please see the \href{../doc/plotres-notes.pdf}{plotres vignette}
+(also available \href{http://www.milbo.org/doc/plotres-notes.pdf}{here}).
 
 \code{\link[stats]{plot.lm}}
 

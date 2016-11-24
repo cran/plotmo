@@ -130,6 +130,12 @@ get.x.or.y <- function(
     {
         if(trace.call.global >= 1 && field == "y") {
             field <- if(field == "x") "predictors" else "response"
+            if(grepl("model.frame(", source, fixed=TRUE))
+                source <- sub(",", # insert newline after first comma
+                    if(field == "response")
+                        ",\n                                   "
+                    else
+                        ",\n                                 ", source)
             printf("got model %s from %s\n", field, source)
         }
         list(field=x, do.subset=do.subset)
