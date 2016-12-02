@@ -91,6 +91,7 @@ train  test    CV   OOB
 > w1 <- plotres(gbm.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
 +               w1.smooth=TRUE,
 +               w1.main="predict.n.trees=13 w1.grid.col=1")
+importance: pclass sibsp parch sex survived
 stats::residuals(object=gbm.object, type="response")
 residuals() was unsuccessful
 stats::predict(gbm.object, data.frame[3,5], type="response", n.trees=13)

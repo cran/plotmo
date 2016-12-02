@@ -27,7 +27,9 @@ get.degree1.xframe <- function(xgrid, x, ipred, ngrid1,
     u1 <- ux.list[[ipred]]
     if(is.factor(x1) && length(u1) > ngrid1)
         stop0("ngrid1=", ngrid1, " is less than the number ",
-              "of levels in", colnames(x)[ipred])
+              "of levels ",  length(u1), " in '",
+              colnames(x)[ipred],
+              "'\n       Workaround: call plotmo with ngrid1=", length(u1))
     if(is.factor(x1) || length(u1) <= ndiscrete) {
         levels <- get.all.levs(x1, u1)
         xframe <- xgrid[1:length(levels), , drop=FALSE] # shorten xframe
@@ -129,7 +131,9 @@ get.degree2.xframe <- function(xgrid, x, ipred1, ipred2,
     {
         if(is.factor(x[[ipred]]) && nlevs > ngrid2)
             stop0("ngrid2=", ngrid2, " is less than the number",
-                  " of levels in ", colnames(x)[ipred])
+                  " of levels ", nlevs, " in '",
+                  colnames(x)[ipred],
+              "'\n       Workaround: call plotmo with ngrid2=", length(u1))
     }
     # get x1grid
     n1 <- ngrid2 # will change if ipred1 is discrete

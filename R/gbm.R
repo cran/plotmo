@@ -2,7 +2,7 @@
 #
 # TODO Add support for plotmo's level argument (quantile regression).
 
-plotmo.prolog.gbm <- function(object, ...) # invoked when plotmo starts
+plotmo.prolog.gbm <- function(object, object.name, trace, ...) # invoked when plotmo starts
 {
     if(is.null(object$data)) # TODO could do more if object had a call component
         stop0("use keep.data=TRUE in the call to gbm ",
@@ -12,7 +12,11 @@ plotmo.prolog.gbm <- function(object, ...) # invoked when plotmo starts
     # important vars first, no variables with relative.influence < 1%.  We attach
     # it to the object to avoid calling summary.gbm twice (it's expensive).
 
-    attr(object, "plotmo.importance") <- order.gbm.vars.on.importance(object)
+    importance <- order.gbm.vars.on.importance(object)
+    attr(object, "plotmo.importance") <- importance
+    if(trace > 0)
+        cat0("importance: ",
+             paste.trunc(object$var.names[importance], maxlen=120), "\n")
 
     object
 }
@@ -21,8 +25,10 @@ order.gbm.vars.on.importance <- function(object)
     # order=FALSE so importances correspond to orig variable indices
     importance <- summary(object, plotit=FALSE,     # calls summary.gbm
                           order=FALSE, normalize=TRUE)$rel.inf
+
     # NA assignment below so order() drops vars with importance < .01
     importance[importance < .01] <- NA
+    stopifnot(length(importance) > 0)
     importance <- order(importance, decreasing=TRUE, na.last=NA)
     # return a vector of variable indices, most important vars first
     importance[!is.na(importance)]

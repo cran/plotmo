@@ -167,7 +167,9 @@ px <- exp(fx)
 px <- px/(1+px)
 ly <- rbinom(n=length(px),prob=px,size=1)
 mod.glmnet.sx <- glmnet(sx,y)
-plotmo1(mod.glmnet.sx, all2=TRUE)
+plotmo1(mod.glmnet.sx, all2=TRUE) # will give warning: too many predictors to plot all pairs
+plotmo1(mod.glmnet.sx, all2=2, caption="all2=2") # test all2=2
+plotmo1(mod.glmnet.sx, all2=2, degree2=1:3, caption="all2=2 degree2=1:3")
 plotres(mod.glmnet.sx)
 
 old.par <- par(no.readonly=TRUE)
@@ -517,6 +519,18 @@ plot(glmnet.cox)
 title("glmnet.cox", line=2)
 plot_glmnet(glmnet.cox, xvar="norm")
 plotres(glmnet.cox, which=3, do.par=FALSE)
+par(old.par)
+
+# test col argument
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(2,3), mar=c(3,3,5,1), cex=1)
+mod <- glmnet(as.matrix(mtcars[-1]), mtcars[,1])
+plot_glmnet(mod, main="plot_glmnet  default")
+plot_glmnet(mod, col=c(1,2,3,0,0,NA,0,0,0,0), main="col=c(1,2,3,0,0,NA,0,0,0,0)")
+g <- "gray"
+plot_glmnet(mod, col=c("black","red","green",g,g,g,g,g,"steelblue","darkorange"), main="col=c('black','red','green',g,g,g,g,g,'steelblue','darkorange')")
+plot_glmnet(mod, col=c("black","red","green",0,0,0,0,0,"steelblue","darkorange"), main="col=c('black','red','green',0,0,0,0,0,'steelblue','darkorange')")
+plot_glmnet(mod, col=c("black","red", 0), main="col=c('black','red', 0)") # test recycling, including 0
 par(old.par)
 
 if(!interactive()) {

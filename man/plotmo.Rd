@@ -10,7 +10,7 @@ predictors while holding the other predictors constant (a poor man's
 partial-dependence plot).
 It can also generate partial-dependence plots.
 
-Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}.
+Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}
 (also available \href{http://www.milbo.org/doc/plotmo-notes.pdf}{here}).
 }
 \usage{
@@ -66,8 +66,8 @@ subset of \code{ngrid1} cases (default 50), rather than all cases in
 the training data.
 The subset is created by selecting
 rows at equally spaced intervals from the training data
-after sorting the data on the response values.
-Ties in the response value are randomly broken.
+after sorting the data on the response values
+(ties are randomly broken).
 % If \code{ngrid1} is greater then the number of cases than all cases
 % are used, and \code{"apartdep"} is identical to \code{"partdep"}.
 The same background subset of \code{ngrid1} cases is used for both

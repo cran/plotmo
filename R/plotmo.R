@@ -70,7 +70,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     pmethod <- match.choices(pmethod, c("plotmo", "partdep", "apartdep"), "pmethod")
     clip    <- check.boolean(clip)
     all1    <- check.boolean(all1)
-    all2    <- check.boolean(all2)
+    all2    <- check.integer.scalar(all2, min=0, max=2)
     center  <- check.boolean(center)
     swapxy  <- check.boolean(swapxy)
     xflip   <- check.boolean(xflip)
@@ -158,13 +158,37 @@ plotmo <- function(object = stop("no 'object' argument"),
         singles <- 1 # plot the first predictor
         nsingles  <- 1
     }
-    if(nsingles > 100) { # 100 is arb, 10 * 10
-        singles <- singles[1:100]
-        warning0("Will plot only the first 100 degree1 plots")
+    if(nsingles > 64 && trace >= 0) {
+        cat0("More than 64 degree1 plots.\n",
+             "Consider using plotmo's degree1 argument to limit the number of plots.\n",
+             "For example,  degree1=1:10  or  degree1=c(\"",
+             pred.names[singles[1]],
+             "\", \"",
+             pred.names[singles[2]],
+             "\")\n",
+             "Call plotmo with trace=-1 to make this message go away.\n\n")
     }
-    if(npairs > 100) {
-        pairs <- pairs[1:100,]
-        warning0("Will plot only the first 100 degree2 plots")
+    else if(nsingles > 200) { # 220 is arb, 15 * 15
+        warning0("Will plot only the first 200 degree1 plots (of ",
+                 nsingles, " degree1 plots)")
+        singles <- singles[1:200]
+        nsingles <- length(singles)
+    }
+    if(npairs > 64 && trace >= 0) {
+        cat0("More than 64 degree2 plots.\n",
+             "Consider using plotmo's degree2 argument to limit the number of plots.\n",
+             "For example,  degree2=1:10  or  degree2=c(\"",
+             pred.names[pairs[1,1]],
+             "\", \"",
+             pred.names[pairs[1,2]],
+             "\")\n",
+             "Call plotmo with trace=-1 to make this message go away.\n\n")
+    }
+    else if(npairs > 200) {
+        warning0("Will plot only the first 200 degree2 plots (of ",
+                  npairs, " degree2 plots)")
+        pairs <- pairs[1:200,]
+        npairs <- NROW(pairs)
     }
     if(extend != 0 && npairs) {
         warning0("extend=", extend, ": will not plot degree2 plots ",
@@ -421,6 +445,9 @@ get.ylim <- function(object,
     else if(is.null(ylim)) # auto ylim
         ylim <- if(inherits(object, "randomForest") &&
                      object$type[1] == "classification" &&
+                     substr(type[1], 1, 1) == "p") # predicting probabilities?
+                    c(0, 1)
+                else if(inherits(object, "C5.0") &&
                      substr(type[1], 1, 1) == "p") # predicting probabilities?
                     c(0, 1)
                 else if(is.int.only)

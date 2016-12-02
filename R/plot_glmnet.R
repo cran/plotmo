@@ -91,6 +91,11 @@ plot_glmnet <- function(x=stop("no 'x' argument"),
         ylab <- paste0(ylab, ": Response ", rownames(obj$dfmat)[nresponse])
     coef.col <- get.coef.col(..., beta=beta)  # color of coef lines
 
+    # discard lines with color NA or 0
+    keep <- which((coef.col != "NA") & (coef.col != "0"))
+    iname <- iname[iname %in% keep]
+    beta[-keep,] <- NA
+
     # Call graphics::matplot but drop args in dots that aren't graphics args
     # or formal args of graphics::matplot.
     # If argname below is prefixed with force. then ignore any such arg in dots.

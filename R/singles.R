@@ -36,7 +36,7 @@ plotmo.singles.default <- function(object, x, nresponse, trace, all1, ...)
 plotmo.pairs <- function(object, x, nresponse=1, trace=0, all2=FALSE, ...)
 {
     if(all2) # TODO include all1 in this?
-        return(get.all.pairs(object, x, trace))
+        return(get.all.pairs(object, x, trace, all2))
     UseMethod("plotmo.pairs")
 }
 # Predictors x1 and x2 are considered paired if they appear in
@@ -89,18 +89,29 @@ plotmo.pairs.default <- function(object, x, nresponse, trace, all2, ...)
         return(NULL)
     plotmo.pairs.from.term.labels(c(formula.vars, term.labels), colnames(x), trace)
 }
-get.all.pairs <- function(object, x, trace)
+get.all.pairs <- function(object, x, trace, all2)
 {
     singles <- plotmo.singles(object, x, nresponse=1, trace, all1=TRUE)
     if(length(singles) == 0)
-        return(NULL) # no pairs (must be an intercept only model)
+        return(NULL)    # no pairs (must be an intercept only model)
     singles <- unique(singles)
-    max <- 7 # note that 7 * 6 / 2 is 21 plots
-    if(length(singles) > max) {
-        warning0("too many predictors to plot all pairs,\n         ",
-                 "so plotting degree2 plots for just the first ",
-                 max, " predictors")
-        singles <- singles[1:max]
+    if(all2 >= 2) {
+        max <- 20      # note that 20 * 19 / 2 is 120 plots
+        if(length(singles) > max) {
+            warning0("too many predictors to plot all pairs,\n         ",
+                     "so plotting degree2 plots for just the first ",
+                     max, " predictors.")
+            singles <- singles[1:max]
+        }
+    } else {
+        max <- 7        # note that  7 * 6 / 2 is 21 plots
+        if(all2 && length(singles) > max) {
+            warning0("too many predictors to plot all pairs,\n         ",
+                     "so plotting degree2 plots for just the first ",
+                     max, " predictors.\n         ",
+"Call plotmo with all2=2 to plot degree2 plots for up to 20 predictors.")
+            singles <- singles[1:max]
+        }
     }
     form.pairs(singles)
 }

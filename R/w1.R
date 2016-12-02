@@ -88,6 +88,9 @@ plot_w1 <- function(object,
         def.cex <- if(n < 8) 1 else if(n < 20) .9 else .8
         retval <- call.w1(graphics::text,
                           def.pretty=3, def.digits=3, def.cex=def.cex, ...)
+    # # TODO commented out because plot.C5.0 ignores par settings
+    # } else if(inherits(object, "C5.0")) {
+    #     retval <- call.w1(graphics::plot, ...)
     } else if(inherits(object, "randomForest"))
         retval <- call.w1(graphics::plot, ...,
                           def.main=dota("main",

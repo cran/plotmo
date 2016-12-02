@@ -1,6 +1,18 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.3.2  Dec 2, 2016
+
+Support for the C50 package.
+
+Better handling of NA and 0 colors in plot_glmnet.
+
+Better messages to the user for models with too many variables to fit on a page.
+
+With all2=2, plotmo will now plot up to a maximum of all pairs of 20
+variables (and as always, with all2=TRUE plotmo will plot a maximum
+of all pairs of 7 variables).
+
 --- 3.3.1  Nov 24, 2016
 
 When choosing which variables to plot for randomForest models,
