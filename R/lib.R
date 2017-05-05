@@ -381,8 +381,11 @@ get.model.env <- function(object, object.name="object", trace=0)
     terms <- try(terms(object), silent=trace < 3)
     if(!is.try.err(terms) && !is.null(terms)) {
         model.env <- attr(terms, ".Environment")
-        if(is.null(model.env))
+        if(is.null(model.env)) {
+            if(inherits(object, "glmnet.formula")) # glmnetUtils package
+                stop0("glmnet.formula must be called with use.model.frame=TRUE")
             stop0("attr(terms, \".Environment\") is NULL")
+        }
         if(!is.environment(model.env))
             stop0("attr(terms, \".Environment\") is not an environment")
         else {
@@ -499,9 +502,11 @@ is.specified <- function(object)
     try <-
       try(!is.null(object) && !anyNA(object) && !identical(object, 0) &&
           # following needed for e.g. col=c("red", 0) because 0 is converted to string
-          !identical(object, "0") && !identical(object, "NA"), silent=TRUE)
+          !identical(object, "0") && !identical(object, "NA"), silent=FALSE)
     if(is.try.err(try)) {
         # this occurs if object is say a closure and anyNA fails
+        # anyNA was introduced in R 3.1.0
+        printf("\n") # separate from any message printed by try() above
         stop0(deparse(substitute(object)), ": illegal value")
     }
     try

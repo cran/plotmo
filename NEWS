@@ -1,6 +1,13 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.3.3  May 4, 2016
+
+Error "glmnet.formula must be called with use.model.frame=TRUE"
+is now issued when necessary.
+
+Tweaked test scripts because cosso models fail with R version 3.4.0.
+
 --- 3.3.2  Dec 2, 2016
 
 Support for the C50 package.
@@ -20,7 +27,7 @@ variable importance is now calculated using a more correct measure,
 viz. one of IncMSE or IncNodePurity (regression models), or
 MeanDecreaseAccuracy or MeanDecreaseGini (classifications models).
 The second option is used if importance=TRUE was used when building
-the model.  Use trace=1 when calling plotmo to which measure of
+the model.  Use trace=1 when calling plotmo to see which measure of
 importance is used.
 
 The plot_gbm function now displays the gray vertical line at the

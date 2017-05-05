@@ -1,4 +1,4 @@
-# glmnet.R: plotmo functions for glmnet objects
+# glmnet.R: plotmo functions for glmnet and glmnetUtils objects
 
 plotmo.prolog.glmnet <- function(object, object.name, trace, ...) # invoked when plotmo starts
 {
@@ -21,7 +21,18 @@ plotmo.predict.glmnet <- function(object, newdata, type, ..., TRACE)
     # newx for predict.glmnet must be a matrix not a dataframe,
     # so here we use plotmo.predict.defaultm (not plotmo.predict.default)
     yhat <- plotmo.predict.defaultm(object, newdata, type=type, force.s=s,
-                                    ..., TRACE=TRACE)
+                                     ..., TRACE=TRACE)
+    if(length(dim(yhat) == 2) && NCOL(yhat) == 1) # paranoia, check that is matrix
+        colnames(yhat) <- paste0("s=", signif(s,2))
+    yhat
+}
+plotmo.predict.glmnet.formula <- function(object, newdata, type, ..., TRACE) # glmnetUtils package
+{
+    # same as plotmo.predict.glmnet but doesn't convert newx to a matrix
+    s <- attr(object, "plotmo.s") # get the predict.glmnet s
+    stopifnot(!is.null(s)) # uninitialized?
+    yhat <- plotmo.predict.default(object, newdata, type=type, force.s=s,
+                                   ..., TRACE=TRACE)
     if(length(dim(yhat) == 2) && NCOL(yhat) == 1) # paranoia, check that is matrix
         colnames(yhat) <- paste0("s=", signif(s,2))
     yhat

@@ -276,17 +276,18 @@ plot(mod.lars.xmat)
 plotmo1(mod.lars.xmat, nresponse=4, do.par=F)
 plotres(mod.lars.xmat, trace=0, nresponse=4)
 
-printf("library(cosso)\n")
-library(cosso)
-set.seed(2016)
-cosso <- cosso(xmat,tit[,4],family="Gaussian")
-# TODO tell maintainer of cosso that you have to do this
-class(cosso) <- "cosso"
-set.seed(2016)
-plotmo1(cosso)
-set.seed(2016)
-plotres(cosso)
-
+if(0) { # TODO fails with R-3.4.0: object '.QP_qpgen2' not found
+    printf("library(cosso)\n")
+    library(cosso)
+    set.seed(2016)
+    cosso <- cosso(xmat,tit[,4],family="Gaussian")
+    # TODO tell maintainer of cosso that you have to do this
+    class(cosso) <- "cosso"
+    set.seed(2016)
+    plotmo1(cosso)
+    set.seed(2016)
+    plotres(cosso)
+}
 # examples from James, Witten, et al. ISLR book
 # I tested all models in their scripts manually.
 # All worked except for exceptions below.

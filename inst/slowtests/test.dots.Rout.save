@@ -147,7 +147,8 @@ Error : argument 'a' for test.dota() is duplicated
 Got error as expected from try(test.dota(2, "a", EX = T, aa = 1, a = 2, a = 3))
 > 
 > expect.err(try(test.dota(2, "a", EX=T, a=none.such)), "cannot evaluate 'a'")
-Error in eval(expr, envir, enclos) : object 'none.such' not found
+Error in eval(dots[[idot]], parent.frame(1)) : 
+  object 'none.such' not found
 Error : cannot evaluate 'a'
 Got error as expected from try(test.dota(2, "a", EX = T, a = none.such))
 > 

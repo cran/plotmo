@@ -5,7 +5,7 @@ Loading required package: survival
 Loading required package: lattice
 Loading required package: splines
 Loading required package: parallel
-Loaded gbm 2.1.1
+Loaded gbm 2.1.3
 > library(rpart.plot) # for ptitanic, want data with NAs for testing
 Loading required package: rpart
 > library(plotmo)

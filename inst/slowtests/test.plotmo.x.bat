@@ -1,6 +1,6 @@
 @rem test.plotmo.x.bat: test plotmo_x and related functions
 
-@"C:\PROGRA~1\R\R-3.3.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.x.R
+@"C:\PROGRA~1\R\R-3.4.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.x.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.x.Rout:
 @echo.

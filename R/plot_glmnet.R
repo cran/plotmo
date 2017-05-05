@@ -101,7 +101,6 @@ plot_glmnet <- function(x=stop("no 'x' argument"),
     # If argname below is prefixed with force. then ignore any such arg in dots.
     # Any argname below prefixed with def. can be overridden by a user arg in dots.
     # force.main="" because we later manually add a top axis and possibly main.
-
     call.plot(graphics::matplot, force.x=x, force.y=t(beta),
         force.main="", force.col=coef.col,
         def.xlim=xlim, def.xlab=xlab, def.ylab=ylab,

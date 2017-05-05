@@ -34,7 +34,7 @@ library(glmnet)
 > library(glmnet)
 Loading required package: Matrix
 Loading required package: foreach
-Loaded glmnet 2.0-5
+Loaded glmnet 2.0-9
 
 > 
 > data(ozone1)
@@ -828,59 +828,40 @@ training rsq 0.84
 > 
 > # TODO the following issues a stream of warnings: restarting interrupted promise evaluation
 > expect.err(try(plotres(glmnet, w1.col=nonesuch)), "cannot evaluate 'col'")
-Warning in eval(expr, envir, enclos) :
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
+Warning in eval(dots[[i]], envir = env, enclos = env) :
   restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
+Warning in eval(dots[[i]], envir = env, enclos = env) :
   restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
+Warning in eval(dots[[i]], envir = env, enclos = env) :
   restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
+Warning in eval(dots[[i]], envir = env, enclos = env) :
   restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Warning in eval(expr, envir, enclos) :
-  restarting interrupted promise evaluation
-Error in eval(expr, envir, enclos) : 
+Error in eval(dots[[idot]], parent.frame(1)) : 
   ..6 used in an incorrect context, no ... to look in
 
 plot_glmnet(elnet.object, xvar="rlambda", grid.col=0, col=..6, s=0,
     nresponse=1)
 
-Error in eval(expr, envir, enclos) : 
+Error in eval(dots[[idot]], parent.frame(1)) : 
   ..6 used in an incorrect context, no ... to look in
 Error : cannot evaluate 'col'
 Got error as expected from try(plotres(glmnet, w1.col = nonesuch))

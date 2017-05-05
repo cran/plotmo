@@ -115,7 +115,7 @@ plotmo.y.default <- function(object, trace, naked, expected.len, ...)
                argn=2, nrows.argn=expected.len, naked)
 }
 # Get x or y from the given model object
-# Returns list(field=x, do.subset=do.subset) where x is x or y.
+# Returns list(field=x, do.subset=do.subset) where x is "x" or "y".
 
 get.x.or.y <- function(
     object,                 # the model
@@ -174,6 +174,24 @@ get.x.or.y <- function(
     # call.x is object$call$x or an error message
     if(is.good.data(call.x))
         return(ret.good.field(call.x, TRUE, sprintf("object$call$%s", field)))
+
+    # else { # TODO may not want to do this if x is ok except for no colnames
+    #     # try object$call$X (note upper case "X")
+    #     upfield <- toupper(field)
+    #     call.x <- get.data.from.object.call.field(object, upfield, trace)
+    #     # call.x is object$call$X or an error message
+    #     if(is.good.data(call.x)) {
+    #         # paranoia, check that argument number is correct
+    #         ifield <- if(field == "x") 2 else 3
+    #         ok <- names(object$call)[ifield] == upfield
+    #         if(!is.na(ok) && length(ok == 1) && ok)
+    #             return(ret.good.field(call.x, TRUE,
+    #                sprintf("object$call$%s", upfield)))
+    #         else if(trace >= 2)
+    #             printf("ignoring object$call$%s because it isn't arg number %d\n",
+    #                upfield, ifield)
+    #     }
+    # }
 
     # consider argument number argn of the model call (ignoring its name)
 
