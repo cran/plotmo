@@ -1,7 +1,7 @@
 @rem test.caret.bat: test plotmo on caret models
 @rem Stephen Milborrow, Shrewsbury Aug 2016
 
-@"C:\PROGRA~1\R\R-3.4.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.caret.R
+@"C:\PROGRA~1\R\R-3.4.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.caret.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.caret.Rout:
 @echo.

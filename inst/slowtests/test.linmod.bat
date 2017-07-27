@@ -1,6 +1,6 @@
 @rem test.linmod.bat: test example S3 model in linmod.R
 
-@"C:\PROGRA~1\R\R-3.4.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.linmod.R
+@"C:\PROGRA~1\R\R-3.4.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.linmod.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.linmod.Rout:
 @echo.

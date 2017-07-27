@@ -1,7 +1,11 @@
 Changes to the plotmo package
 -----------------------------
 
---- 3.3.3  May 4, 2016
+--- 3.3.4  July 26, 2017
+
+Added support for glmnetUtils objects.
+
+--- 3.3.3  May 4, 2017
 
 Error "glmnet.formula must be called with use.model.frame=TRUE"
 is now issued when necessary.

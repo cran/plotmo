@@ -1,6 +1,6 @@
 @rem test.partdep.bat: partdep tests for plotmo and plotres
 
-@"C:\PROGRA~1\R\R-3.4.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.partdep.R
+@"C:\PROGRA~1\R\R-3.4.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.partdep.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.partdep.Rout:
 @echo.

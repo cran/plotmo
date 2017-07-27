@@ -312,7 +312,7 @@ n <- 50
 p <- 4
 x <- matrix(rnorm(n*p), n, p)
 colnames(x) <- paste("x", 1:ncol(x), sep="")
-y <- ifelse(x[,1] + x[,2] + .1 * rnorm(p) > .5, TRUE, FALSE)
+y <- ifelse(x[,1] + x[,2] + .1 * rnorm(n) > .5, TRUE, FALSE)
 print(cov(x, y))
 y <- factor(y)
 binomial.mod <- glmnet(x, y, family="binomial")

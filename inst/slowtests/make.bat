@@ -27,6 +27,8 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call test.glmnet.bat
                         @if %errorlevel% NEQ 0 goto error
+@call test.glmnetUtils.bat
+                        @if %errorlevel% NEQ 0 goto error
 @call test.gbm.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.ltut.bat

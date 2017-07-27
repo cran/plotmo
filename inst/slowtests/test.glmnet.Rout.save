@@ -34,7 +34,7 @@ library(glmnet)
 > library(glmnet)
 Loading required package: Matrix
 Loading required package: foreach
-Loaded glmnet 2.0-9
+Loaded glmnet 2.0-10
 
 > 
 > data(ozone1)
@@ -988,15 +988,13 @@ All 0.28501012 51.987271 0.6027773 0.6340728
 > p <- 4
 > x <- matrix(rnorm(n*p), n, p)
 > colnames(x) <- paste("x", 1:ncol(x), sep="")
-> y <- ifelse(x[,1] + x[,2] + .1 * rnorm(p) > .5, TRUE, FALSE)
-Warning in x[, 1] + x[, 2] + 0.1 * rnorm(p) :
-  longer object length is not a multiple of shorter object length
+> y <- ifelse(x[,1] + x[,2] + .1 * rnorm(n) > .5, TRUE, FALSE)
 > print(cov(x, y))
           [,1]
-x1  0.27061931
-x2  0.22414218
-x3 -0.01039018
-x4 -0.08333667
+x1  0.25639394
+x2  0.18124710
+x3 -0.03187243
+x4 -0.02754692
 > y <- factor(y)
 > binomial.mod <- glmnet(x, y, family="binomial")
 > old.par <- par(no.readonly=TRUE)

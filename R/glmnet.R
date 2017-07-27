@@ -67,9 +67,13 @@ plotmo.prolog.cv.glmnet <- function(object, object.name, trace, ...) # invoked w
 }
 plotmo.predict.cv.glmnet <- function(object, newdata, type, ..., TRACE)
 {
-    # newx for predict.glmnet must be a matrix not a dataframe,
-    # so here we use plotmo.predict.defaultm (not plotmo.predict.default)
-    plotmo.predict.defaultm(object, newdata, type=type, ..., TRACE=TRACE)
+    if(inherits(object, "cv.glmnet.formula")) { # glmnetUtils package
+        plotmo.predict.default(object, newdata, type=type, ..., TRACE=TRACE)
+    } else {                                    # glmnet package
+        # newx for predict.glmnet must be a matrix not a dataframe,
+        # so here we use plotmo.predict.defaultm (not plotmo.predict.default)
+        plotmo.predict.defaultm(object, newdata, type=type, ..., TRACE=TRACE)
+    }
 }
 # glmnet family="binomial", y is a vector of 1s and 2s.
 # convert 1s and 2s to 0s and 1s to match predicted values
@@ -77,6 +81,10 @@ plotmo.y.lognet <- function(object, trace, naked, expected.len, nresponse, ...)
 {
     # plotmo.y.default returns list(field=y, do.subset=do.subset)
     list <- plotmo.y.default(object, trace, naked, expected.len)
+    # following is needed for glmnetUtils:glmnet.formula models (but not for glmnet xy models)
+    if(is.data.frame(list$field))
+        list$field <- list$field[[1]]
+    stopifnot(!is.null(list$field)) # paranoia
     list$do.subset <- FALSE      # glmnet doesn't support subset so don't even try
     # TODO following only works correctly if default ordering of factor was used?
     list$field <-as.numeric(list$field) # as.numeric needed if y is a factor
