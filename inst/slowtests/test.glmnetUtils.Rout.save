@@ -157,23 +157,23 @@ got model response from model.frame(age~survived+sibs...,
 > set.seed(2016)
 > n <- 50
 > p <- 4
-> x <- matrix(rnorm(n*p), n, p)
-> colnames(x) <- paste("x", 1:ncol(x), sep="")
-> y <- ifelse(x[,1] + x[,2] + rnorm(n) > .5, TRUE, FALSE)
-> print(cov(x, y))
+> xx <- matrix(rnorm(n*p), n, p)
+> colnames(xx) <- paste("x", 1:ncol(xx), sep="")
+> yy <- ifelse(xx[,1] + xx[,2] + rnorm(n) > .5, TRUE, FALSE)
+> print(cov(xx, yy))
          [,1]
 x1 0.19664644
 x2 0.19303946
 x3 0.11937700
 x4 0.03037754
-> y <- factor(y)
-> dataxy <- data.frame(y, x)
-> binomial.mod <- glmnet(x, y, family="binomial")
+> yy <- factor(yy)
+> dataxy <- data.frame(yy, xx)
+> binomial.mod <- glmnet(xx, yy, family="binomial")
 > plotmores(binomial.mod, ncol=3)
 plotmores(object=binomial.mod, ncol=3)
  plotmo grid:    x1          x2        x3         x4
          -0.2965405 -0.03311923 0.2416254 0.01017809
-> binomial.mod.form <- glmnet(y~., data=dataxy, family="binomial", use.model.frame=TRUE)
+> binomial.mod.form <- glmnet(yy~., data=dataxy, family="binomial", use.model.frame=TRUE)
 > plotmores(binomial.mod.form, ncol=3)
 plotmores(object=binomial.mod.form, ncol=3)
  plotmo grid:    x1          x2        x3         x4
@@ -184,24 +184,24 @@ plotmores(object=binomial.mod.form, ncol=3)
 > set.seed(2015)
 > p <- 10
 > n <- 30
-> x <- cbind((1:n)/n, matrix(rnorm(n*(p-1)),n,p-1))
-> colnames(x) <- paste0("x", 1:p)
-> # ymultresp <- cbind(rowSums(x[,1:5]^3), rowSums(x[,5:p]^3), 1:n)
+> xx <- cbind((1:n)/n, matrix(rnorm(n*(p-1)),n,p-1))
+> colnames(xx) <- paste0("x", 1:p)
+> # ymultresp <- cbind(rowSums(xx[,1:5]^3), rowSums(xx[,5:p]^3), 1:n)
 > set.seed(1)
-> ymultresp <- cbind(x[,1]+.001*rnorm(n), rowSums(x[,2:5]^3), rnorm(n))
-> glmnet.mgaussian <- glmnet(x, ymultresp, family="mgaussian")
+> ymultresp <- cbind(xx[,1]+.001*rnorm(n), rowSums(xx[,2:5]^3), rnorm(n))
+> glmnet.mgaussian <- glmnet(xx, ymultresp, family="mgaussian")
 > plotres(glmnet.mgaussian, nresponse=1, SHOWCALL=TRUE, which=c(1:3), do.par=2, info=1)
 > # manually calculate the residuals
-> plot(x=predict(glmnet.mgaussian, newx=x, s=0)[,1,1],
-+      y=ymultresp[,1] - predict(glmnet.mgaussian, newx=x, s=0)[,1,1],
+> plot(x=predict(glmnet.mgaussian, newx=xx, s=0)[,1,1],
++      y=ymultresp[,1] - predict(glmnet.mgaussian, newx=xx, s=0)[,1,1],
 +      pch=20, xlab="Fitted", ylab="Residuals",
 +      main="Manually calculated residuals, nresponse=1, s=0")
 > abline(h=0, col="gray")
 > 
 > # # TODO is glmnet mgaussian supported with a formula interface?
-> # dataxy <- data.frame(ymultresp, x)
+> # dataxy <- data.frame(ymultresp, xx)
 > # colnames(dataxy) <- c("y1", "y2", "y3", "x1", "x2", "x3", "x4", "x5", "x5", "x6", "x7", "x8", "x9", "x10")
-> # glmnet.mgaussian.form <- glmnet(x, ymultresp, family="mgaussian")
+> # glmnet.mgaussian.form <- glmnet(xx, ymultresp, family="mgaussian")
 > # plotres(glmnet.mgaussian.form, nresponse=1, SHOWCALL=TRUE, which=c(1:3), do.par=2, info=1)
 > 
 > old.par <- par(no.readonly=TRUE)
@@ -231,12 +231,12 @@ plotmores(object=mod.with.long.name.form, ncol=3)
 > par(mfrow=c(3,3), mar=c(3,3,3,1))
 > n <- 100
 > p <- 4
-> x <- matrix(rnorm(n*p), n, p)
+> xx <- matrix(rnorm(n*p), n, p)
 > g2 <- sample(1:2, n, replace=TRUE)
-> data.xg2 <- data.frame(g2, x)
+> data.xg2 <- data.frame(g2, xx)
 > for(family in c("gaussian","binomial","poisson")) {
 +     title.extra <- paste(family, ": ")
-+     mod <- glmnet(x,g2,family=family)
++     mod <- glmnet(xx,g2,family=family)
 +     plotmores(mod, xvar="lambda", ncol=3, title.extra=title.extra)
 +     title.extra <- paste("formula", family, ": ")
 +     mod.form <- glmnet(g2~., data.xg2, family=family, use.model.frame=TRUE)
@@ -273,8 +273,8 @@ formula poisson : plotmores(object=mod.form, xvar="lambda", title.extra=title.ex
 > hx <- exp(fx)
 > ty <- rexp(n, hx)
 > tcens <- rbinom(n=n, prob=.3, size=1)# censoring indicator
-> y <- cbind(time=ty, status=1-tcens) # y=Surv(ty,1-tcens) with library(survival)
-> glmnet.cox <- glmnet(x=x7, y=y, family="cox")
+> yy <- cbind(time=ty, status=1-tcens) # yy=Surv(ty,1-tcens) with library(survival)
+> glmnet.cox <- glmnet(x=x7, y=yy, family="cox")
 > plotmores(glmnet.cox, ncol=3, degree1=1:4)
 plotmores(object=glmnet.cox, degree1=1:4, ncol=3)
  plotmo grid:    x1        x2        x3        x4        x5          x6

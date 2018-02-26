@@ -300,7 +300,7 @@ stats::predict(glm.object, data.frame[88,3], type="pearson")
 > library(gam)
 Loading required package: splines
 Loading required package: foreach
-Loaded gam 1.14-4
+Loaded gam 1.15
 
 > gam.package.loaded  <- "package:gam"  %in% search()
 > mgcv.package.loaded <- "package:mgcv" %in% search()
@@ -325,7 +325,7 @@ Loaded gam 1.14-4
 > 
 > library(mda)
 Loading required package: class
-Loaded mda 0.4-9
+Loaded mda 0.4-10
 
 > mars <- mars(ozone1[,2:3], ozone1[,1], degree=2)
 > mars.to.earth <- mars.to.earth(mars)

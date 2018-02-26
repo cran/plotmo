@@ -412,7 +412,7 @@ plotmo1(object=lm.model.vignette,level=0.9)
 library(mda)
 > library(mda)
 Loading required package: class
-Loaded mda 0.4-9
+Loaded mda 0.4-10
 
 > mars.model.vignette1 <- mars(oz[,-1], oz[,1], degree=2)
 > plotmo1(mars.model.vignette1)
@@ -536,7 +536,7 @@ plotmo1(object=mod.lars.xmat,nresponse=4,do.par=F)
                         0     0 3.06991
 > plotres(mod.lars.xmat, trace=0, nresponse=4)
 > 
-> if(0) { # TODO fails with R-3.4.1: object '.QP_qpgen2' not found
+> if(0) { # TODO fails with R-3.4.2: object '.QP_qpgen2' not found
 +     printf("library(cosso)\n")
 +     library(cosso)
 +     set.seed(2016)

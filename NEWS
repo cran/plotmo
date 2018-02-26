@@ -1,6 +1,12 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.3.5  Feb 26, 2018
+
+Added support for package gam version 1.15 and higher (the S3 class of
+gam objects changed from "gam" to "Gam" to prevent clashes with the mgcv
+package).  Plotmo now works with both the old and new versions of gam.
+
 --- 3.3.4  July 26, 2017
 
 Added support for glmnetUtils objects.
@@ -12,7 +18,7 @@ is now issued when necessary.
 
 Tweaked test scripts because cosso models fail with R version 3.4.0.
 
---- 3.3.2  Dec 2, 2016
+--- 3.4.1  Dec 2, 2016
 
 Support for the C50 package.
 

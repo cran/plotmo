@@ -276,7 +276,7 @@ plot(mod.lars.xmat)
 plotmo1(mod.lars.xmat, nresponse=4, do.par=F)
 plotres(mod.lars.xmat, trace=0, nresponse=4)
 
-if(0) { # TODO fails with R-3.4.1: object '.QP_qpgen2' not found
+if(0) { # TODO fails with R-3.4.2: object '.QP_qpgen2' not found
     printf("library(cosso)\n")
     library(cosso)
     set.seed(2016)

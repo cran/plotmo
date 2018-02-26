@@ -48,7 +48,8 @@ plotmo(a.bag1, trace=1, SHOWCALL=TRUE, all2=TRUE, caption="bagEarth, trees")
 plotres(a.bag1, trace=1, SHOWCALL=TRUE)
 
 # TODO following doesn't work properly, factors are plotted as continuous?
-a.bag3 <- bagEarth(survived~., data=etitanic, degree=2, B=3)
+# trace=1 to display "Fixed rank deficient bx by removing 1 term" messages
+a.bag3 <- bagEarth(survived~., data=etitanic, degree=2, B=3, trace=1)
 plotmo(a.bag3, clip=F, caption="bagEarth, etitanic", trace=1, SHOWCALL=TRUE)
 plotres(a.bag3, clip=F, trace=1, SHOWCALL=TRUE)
 

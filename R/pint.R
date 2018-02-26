@@ -69,9 +69,23 @@ plotmo.pint.glm <- function(object, newdata, type, level, ...)
 
     predict <- predict(object, newdata, type=type, se.fit=TRUE)
 
+    data.frame(cint.lwr = predict$fit - quant * predict$se.fit,
+               cint.upr = predict$fit + quant * predict$se.fit)
+}
+# package mgcv, or package gam version less than 1.15
+plotmo.pint.gam <- function(object, newdata, type, level, ...)
+{
+    if(!is.null(object$weights) && !all(object$weights == object$weights[1]))
+        warnf(
+"the level argument may not work correctly on gam objects built with weights")
+
+    quant <- 1 - (1 - level) / 2 # .95 becomes .975
+
+    predict <- predict(object, newdata, type=type, se.fit=TRUE)
+
     # special handling for where user used gam::gam instead of mgcv::gam
-    if(class(predict)[1] == "numeric" &&
-            "package:gam" %in% search()) {
+    # (applies only package gam version less than 1.15)
+    if(class(predict)[1] == "numeric" && "package:gam" %in% search()) {
         cat("\n")
         stop0("gam objects in the 'gam' package do not support ",
               "confidence intervals on new data")
@@ -79,9 +93,23 @@ plotmo.pint.glm <- function(object, newdata, type, level, ...)
     data.frame(cint.lwr = predict$fit - quant * predict$se.fit,
                cint.upr = predict$fit + quant * predict$se.fit)
 }
-plotmo.pint.gam <- function(object, newdata, type, level, ...)
+# package gam version 1.15 or higher
+plotmo.pint.Gam <- function(object, newdata, type, level, ...)
 {
-    plotmo.pint.glm(object, newdata, type, level)
+    if(!is.null(object$weights) && !all(object$weights == object$weights[1]))
+        warnf(
+"the level argument may not work correctly on Gam objects built with weights")
+
+    quant <- 1 - (1 - level) / 2 # .95 becomes .975
+
+    predict <- predict(object, newdata, type=type, se.fit=TRUE)
+
+    if(class(predict)[1] == "numeric") {
+        cat("\n")
+        stop0("Gam objects do not support confidence intervals on new data")
+    }
+    data.frame(cint.lwr = predict$fit - quant * predict$se.fit,
+               cint.upr = predict$fit + quant * predict$se.fit)
 }
 plotmo.pint.quantregForest <- function(object, newdata, type, level, ...)
 {

@@ -1,7 +1,7 @@
 @rem test.plotmo.bat: this does a regression test of plotmo
 @rem Stephen Milborrow Apr 2007 Petaluma
 
-@"C:\PROGRA~1\R\R-3.4.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.R
+@"C:\PROGRA~1\R\R-3.4.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.Rout:
 @echo.

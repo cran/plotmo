@@ -20,8 +20,10 @@ plotmo_bx <- function(object, trace, msg, versus)
                 colnames(bx) <- paste0("bx", seq_len(NCOL(bx)))
             icolumns <- check.index(versus, "versus", seq_len(NCOL(bx)), colnames=colnames(bx))
         }
-    } else if(inherits(object, "gam") && !is.null(object[["additive.predictors"]])) {
-        # the additive.predictors check above to ensure mda:gam (as opposed to mgcv:gam)
+    } else if(inherits(object, "Gam") || # package gam version 1.15 or higher
+              # the additive.predictors check below is to ensure mda:gam (not mgcv:gam)
+              # (applies only to package gam version less than 1.15)
+              (inherits(object, "gam") && !is.null(object[["additive.predictors"]]))) {
         bx <- model.matrix(object)
         if(is.null(bx) || NCOL(bx) == 0)
             stopf("versus=\"b:\": model.matrix(object) for this %s object returned NULL", class(object)[1])
