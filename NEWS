@@ -1,6 +1,10 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.3.6  Mar 20, 2018
+
+Minor documentation updates.
+
 --- 3.3.5  Feb 26, 2018
 
 Added support for package gam version 1.15 and higher (the S3 class of

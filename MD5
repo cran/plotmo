@@ -1,6 +1,6 @@
-89f4292143c80d113bacfce020ff2416 *DESCRIPTION
+36e913357e679e774bcd0eee580d67a1 *DESCRIPTION
 ef301695bfa0c55d75b6d62f446e52a5 *NAMESPACE
-cfcd98a76d14e4b50792240492cf9cdb *NEWS
+0424f46738c08cc644ec91624f6c8b01 *NEWS
 d8c74f0400a25d5a9878bd0f76804206 *R/as.char.R
 8dc3262f5fd5deeb14f6c7c1adccd968 *R/bx.R
 5c3b7bc92bf0585cf0313aad5229aa92 *R/c50.R
@@ -43,9 +43,9 @@ f3213bd681d6f7fbc038d4929676a184 *R/w1.R
 379071c8c078552a02642393ae1bfd4a *R/xgboost.R
 eb9b61a9a2cb76ba8f956f1270719284 *R/xy.R
 8ab9f7e2da731b548e17ec146cba9ba0 *inst/doc/index.html
-bf1aaa134c7c1c5547b01ecbfea338d3 *inst/doc/modguide.pdf
-4ca3d3fcded38c3e2f5f88d71dce7856 *inst/doc/plotmo-notes.pdf
-6901e666381a3ebc402a5b510dda2941 *inst/doc/plotres-notes.pdf
+012e252af90feeb2f8c99546e4b63a30 *inst/doc/modguide.pdf
+d5f45b6fab53ec6889b09b4ae7a25b13 *inst/doc/plotmo-notes.pdf
+bf29308fcb960f0f6387e43d46878645 *inst/doc/plotres-notes.pdf
 568ca6b47cbc2e71e73b6c3f40f63b5b *inst/slowtests/README.txt
 d15675ba554a28e864cb2432ca86ec11 *inst/slowtests/linmod.R
 0c66d92de427b068161397b62f3a851a *inst/slowtests/linmod.leisch.tutorial.R

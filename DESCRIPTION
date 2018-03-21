@@ -1,5 +1,5 @@
 Package: plotmo
-Version: 3.3.5
+Version: 3.3.6
 Title: Plot a Model's Response and Residuals
 Author: Stephen Milborrow
 Maintainer: Stephen Milborrow <milbo@sonic.net>
@@ -13,6 +13,6 @@ Suggests: C50 (>= 0.1.0-24), earth (>= 4.5.2), gbm (>= 2.1.1), glmnet
 License: GPL-3
 URL: http://www.milbo.users.sonic.net
 NeedsCompilation: no
-Packaged: 2018-02-26 20:01:42 UTC; milbo
+Packaged: 2018-03-20 21:33:06 UTC; milbo
 Repository: CRAN
-Date/Publication: 2018-02-26 22:04:20 UTC
+Date/Publication: 2018-03-21 13:42:02 UTC
