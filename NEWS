@@ -1,6 +1,31 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.3.7  May 15, 2018
+
+Added a README file.
+
+If degree2 is exactly two strings, plotmo now prints just that degree2 plot
+e.g. degree2=c("wind", "humidity"). We also implicitly set
+all2=TRUE if degree2 is two strings.
+
+If degree1 is of type character, then we implicitly set all1=TRUE.
+
+For the qq plot in plotres, changed the diagonal qq line to dotted
+black.  This gives more compatibility with plot.lm, and also means
+that the legend for the density subplot along the bottom of the qq
+plot (with info=TRUE) isn't mistakenly assumed to apply to the main
+plot.  For the old behaviour use qqline.col="gray", qqline.lty=1.
+
+Added basic support for the "pre" package (using the importance
+function in that package).
+
+Fixed minor bug: the plotmo grid wasn't printed if ylim was specified by the user.
+
+The vignettes are now compressed with gs and qpdf as in tools::compactPDF,
+(but that happens outside the standard CRAN build system).  It does mean
+that the tar.gz file for plotmo is a little smaller (now 1155 kByte).
+
 --- 3.3.6  Mar 20, 2018
 
 Minor documentation updates.

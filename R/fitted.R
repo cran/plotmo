@@ -22,7 +22,7 @@ plotmo_fitted <- function(object, trace, nresponse, type, ...)
         fitted <- temp$y
     } else { # fitted(object) failed
         if(trace >= 1)
-            printf("fitted() was unsuccessful, will use predict()\n")
+            printf("fitted() was unsuccessful, will use predict() instead\n")
         type <- plotmo_type(object, trace, "plotmo", type, ...)
         # we have already printed call to predict so clear trace flag
         # (this is dependent on the sequence of calls in plotmo_meta)

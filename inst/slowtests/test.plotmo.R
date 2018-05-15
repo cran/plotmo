@@ -475,19 +475,6 @@ expect.err(try(plotmo(aflip, degree1=c(4,1)))) # out of range value in degree2 (
 # expect.err(try(plotmo(aflip, breaks=3, type2="persp"))) # the breaks argument is illegal for type2="persp"
 # expect.err(try(plotmo(aflip, breaks=99, type2="cont"))) #  the breaks argument is illegal for type2="contour"
 
-# test character degree1 and degree2 (added in plotmo version 1.3-0)
-
-a80 <- earth(O3~., data=ozone1, degree=2)
-plotmo(a80, degree1="i", degree2="t",
-       caption='degree1="i", degree2="t"')
-plotmo(a80, degree1="^temp$", degree2="^dpg$",
-       caption='degree1="^temp$", degree2="^dpg$"')
-# Expect Warning: "nonesuch1" in degree1 does not match any variables, ditto for degree2
-plotmo(a80, degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis"),
-       caption='degree1=c("temp", "nonesuch1"), degree2=c("nonesuch2", "vis")')
-# Expect above warnings and also Warning: nothing to plot
-plotmo(a80, degree1="nonesuch1", degree2="nonesuch2")
-
 # Test error handling when accessing the original data
 
 lm.bad <- lm.fit(as.matrix(ozone1[,-1]), as.matrix(ozone1[,1]))
@@ -586,6 +573,7 @@ foo9a <- function()
     old.par <- par(no.readonly=TRUE)
     on.exit(par(old.par))
     par(mfrow = c(2, 2), oma=c(0,0,4,0))
+    set.seed(2018)
     plotmo(a.foo9a, col.resp=2, do.par=FALSE,
            caption="top two plots should be identical to bottom two plots")
     x2 <- rep(99, length(x2))
@@ -601,6 +589,7 @@ foo20.func <- function()
     on.exit(par(old.par))
     par(mfrow = c(2, 2), oma=c(0,0,4,0))
     foo20 <- lm(y~x1+x2)
+    set.seed(2018)
     plotmo(foo20, degree1=1:2, col.resp=2, do.par=FALSE,
            caption="top two plots should be identical to bottom two plots\nbecause we use saved lm$model")
     x1 <- 99

@@ -50,8 +50,9 @@ test.fac.with.rpart <- function(ngrid2=20)
     plotmo(a3, do.par=F, type2="im",
            col.response=col.response, pt.cex=.3)
     set.seed(145)
-    plotmo(a3, do.par=F, type2="con", degree1=NA, ylim=c(0,1),
+    plotmo(a3, do.par=F, type2="con", degree1=NA,
            col.response=col.response, pt.cex=.3)
+
     set.seed(145)
     plotmo(a3, do.par=F, type2="persp", degree1=NA,
            ngrid2=40, persp.theta=NA, persp.ticktype="d", persp.border=NA, cex.lab=.8, persp.ntick=2)

@@ -65,6 +65,8 @@ calculating apartdep for age:logage 01234567890
 > 
 > c50.tree.form <- C5.0(pclass~., data=tit) # predict pclass
 > plotmo(c50.tree.form, type="prob", nresponse="first")
+ plotmo grid:    survived    sex age sibsp  logage
+                        0 female  30     0 3.06991
 > plotmo(c50.tree.form, type="class")
  plotmo grid:    survived    sex age sibsp  logage
                         0 female  30     0 3.06991
@@ -76,6 +78,8 @@ calculating apartdep for age:logage 01234567890
 +                        levels = c("yes", "no"))
 > c50.tree.survived <- C5.0(survived~., data=tit, trials=5) # predict survived
 > plotmo(c50.tree.survived, type="prob", nresponse="yes")
+ plotmo grid:    pclass    sex age sibsp  logage
+                 class2 female  30     0 3.06991
 > plotmo(c50.tree.survived, type="class")
  plotmo grid:    pclass    sex age sibsp  logage
                  class2 female  30     0 3.06991

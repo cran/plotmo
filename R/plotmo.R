@@ -177,11 +177,8 @@ plotmo <- function(object = stop("no 'object' argument"),
     if(npairs > 64 && trace >= 0) {
         cat0("More than 64 degree2 plots.\n",
              "Consider using plotmo's degree2 argument to limit the number of plots.\n",
-             "For example,  degree2=1:10  or  degree2=c(\"",
-             pred.names[pairs[1,1]],
-             "\", \"",
-             pred.names[pairs[1,2]],
-             "\")\n",
+             "For example,  degree2=1:10  or  degree2=\"",
+             pred.names[singles[1]], "\"\n",
              "Call plotmo with trace=-1 to make this message go away.\n\n")
     }
     else if(npairs > 200) {
@@ -443,14 +440,12 @@ get.ylim <- function(object,
     if(is.na.ylim)
         ylim <- c(NA, NA)  # won't be used
     else if(is.null(ylim)) # auto ylim
-        ylim <- if(inherits(object, "randomForest") &&
-                     object$type[1] == "classification" &&
-                     substr(type[1], 1, 1) == "p") # predicting probabilities?
-                    c(0, 1)
-                else if(inherits(object, "C5.0") &&
-                     substr(type[1], 1, 1) == "p") # predicting probabilities?
-                    c(0, 1)
-                else if(is.int.only)
+        ylim <- if(is.predicting.probability(object, type)) {
+                    if(is.specified(pt.col))
+                        c(-0.1, 1.1) # leave space for possibly jittered points
+                    else
+                        c(0, 1)
+                } else if(is.int.only)
                     range(y, na.rm=TRUE)
                 else
                     get.ylim.by.dummy.plots(trace=trace, ...)
@@ -502,8 +497,12 @@ do.degree2.auto.par <- function(type2, nfigs, simple.ticktype)
 plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
 {
     trace2(trace, "\n----plotmo_singles for %s object\n", class(object)[1])
-    singles <- plotmo.singles(object=object,
-                              x=x, nresponse=nresponse, trace=trace, all1=all1)
+    singles <-
+        if(is.character(degree1))
+            seq_len(NCOL(x)) # get all singles, not just those used in the model
+        else
+            plotmo.singles(object=object,
+                           x=x, nresponse=nresponse, trace=trace, all1=all1)
     some.singles <- FALSE
     if(length(singles)) {
         singles <- sort.unique(singles)
@@ -528,7 +527,13 @@ plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
 plotmo_pairs <- function(object, x, nresponse, trace, all2, degree2)
 {
     trace2(trace, "\n----plotmo_pairs for %s object\n", class(object)[1])
-    pairs <- plotmo.pairs(object, x, nresponse, trace, all2)
+    pairs <-
+        if(is.character(degree2) && length(degree2) == 2) # degree2 is a two elem char vec?
+            form.pairs(seq_len(NCOL(x))) # return pairs for all vars, not just those used in the model
+        else if(all2)
+            get.all.pairs.from.singles(object, x, trace, all2)
+        else
+            plotmo.pairs(object, x, nresponse, trace, all2)
     if(!NROW(pairs) || !NCOL(pairs))
         pairs <- NULL
     npairs <- NROW(pairs)
@@ -540,8 +545,24 @@ plotmo_pairs <- function(object, x, nresponse, trace, all2, degree2)
         # order the pairs on the predictor order
         order <- order(pairs[,1], pairs[,2])
         pairs <- pairs[order, , drop=FALSE]
-        degree2 <- check.index(degree2, "degree2", pairs, colnames=colnames(x),
-                               allow.empty=TRUE, is.degree.spec=TRUE)
+        # TODO There is an (intentional) inconsistency here. A two element
+        #      character vector is treated as a special case.
+        if(is.character(degree2) && length(degree2) == 2) {
+            # degree2 is a two element character vector
+            first <- check.index(degree2[1], "degree2", pairs, colnames=colnames(x),
+                                 allow.empty=TRUE, is.degree.spec=TRUE)
+            second <- check.index(degree2[2], "degree2", pairs, colnames=colnames(x),
+                                  allow.empty=TRUE, is.degree.spec=TRUE)
+            both <- first[first %in% second]
+            if(!any(both))
+                warning0("No degree2 plots match degree2=c(\"",
+                         degree2[1], "\", \"", degree2[2], "\")")
+            degree2 <- both
+            }
+        else
+            degree2 <- check.index(degree2, "degree2", pairs, colnames=colnames(x),
+                                   allow.empty=TRUE, is.degree.spec=TRUE)
+
         pairs <- pairs[degree2, , drop=FALSE]
     }
     if(trace >= 2) {
@@ -978,9 +999,7 @@ plot.degree1 <- function( # plot all degree1 graphs
         if(!draw.plot) # save the data, if there is going to be a next time
             assignInMyNamespace("partdep.x.global", partdep.x)
     }
-    # is.int.only test because we don't call get.ylim.by.dummy.plots for int only models
-    if(pmethod == "plotmo" &&
-            (!draw.plot || is.int.only) && trace >= 0 && ncol(xgrid) > 1)
+    if(pmethod == "plotmo" && draw.plot && trace >= 0 && ncol(xgrid) > 1)
         print.grid.values(xgrid, trace)
     cex.lab <- dota("cex.lab", DEF=.8 * par("cex.main"), ...)
     all.yhat <- NULL

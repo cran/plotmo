@@ -2,7 +2,7 @@
 > # Stephen Milborrow, Shrewsbury Nov 2014
 > 
 > print(R.version.string)
-[1] "R version 3.4.3 (2017-11-30)"
+[1] "R version 3.5.0 (2018-04-23)"
 > print(citation("emma"))
 
 To cite package 'emma' in publications use:

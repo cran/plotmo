@@ -28,20 +28,19 @@ expect.err <- function(object, expected.msg="")
 data(etitanic)
 mod <- earth(survived~., data=etitanic, degree=2)
 
-plotmo(mod, caption="plotmo classical", ylim=c(0,1))
+plotmo(mod, caption="plotmo classical")
 
-plotmo(mod, pmethod="partdep", caption="plotmo partdep age", ylim=c(0,1))
+plotmo(mod, pmethod="partdep", caption="plotmo partdep age")
 
 set.seed(2016)
-plotmo(mod, pmethod="apartdep", caption="plotmo apartdep age", ylim=c(0,1),
-       do.par=2)
+plotmo(mod, pmethod="apartdep", caption="plotmo apartdep age", do.par=2)
 
 set.seed(2016)
 plotmo(mod, pmethod="apartdep", ylim=c(0,1), do.par=0,
        type2="image", pt.col=ifelse(etitanic$survived, "green", "red"),
        degree1=0, degree2=1:3)
 
-# compare to gbm with a artifical function of variables with a very strong interaction
+# compare to gbm with an artifical function of variables with a very strong interaction
 library(gbm)
 n <- 250
 set.seed(2016)
@@ -116,9 +115,9 @@ plotmo(mod, pmethod="plotmo",  do.par=0, degree2=0, ngrid1=ngrid1,
 plotmo(mod, pmethod="partdep",  do.par=0, degree2=0, ngrid1=ngrid1,
        type="response")
 partialPlot(mod, pred.data=data, x.var="x1", n.pt=ngrid1,
-            which.class="True", ylim=c(0,1))
+            which.class="True")
 partialPlot(mod, pred.data=data, x.var="x2", n.pt=ngrid1,
-            which.class="True", ylim=c(0,1))
+            which.class="True")
 par(old.par)
 
 # gbm, simple regression function

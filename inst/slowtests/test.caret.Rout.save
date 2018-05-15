@@ -52,7 +52,7 @@ got model response from object$y
                5760    5       64   62 2112.5  24 167.5 120 205.5
 
 > plotres(caret.earth.mod, trace=1, SHOWCALL=TRUE)
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
 got model response from model.frame(O3~vh+wind+humidi...,
@@ -89,7 +89,7 @@ GCV 13.71664    RSS 3592.762    GRSq 0.7669974    RSq 0.8139355
 > plotmo(bag, type="response", trace=1, SHOWCALL=TRUE)
 stats::predict(bagEarth.object, data.frame[3,9], type="response")
 stats::fitted(object=bagEarth.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from model.frame(O3~.,
                                     data=call$data, na.action="na.fail")
 
@@ -98,10 +98,10 @@ got model response from model.frame(O3~.,
 
 > plotres(bag, type="response", trace=1, SHOWCALL=TRUE)
 stats::residuals(object=bagEarth.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(bagEarth.object, data.frame[3,9], type="response")
 stats::fitted(object=bagEarth.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from model.frame(O3~.,
                                     data=call$data, na.action="na.fail")
 
@@ -112,7 +112,7 @@ training rsq 0.82
 > plotmo(a.bag1, trace=1, SHOWCALL=TRUE, all2=TRUE, caption="bagEarth, trees")
 stats::predict(bagEarth.object, data.frame[3,2], type="response")
 stats::fitted(object=bagEarth.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from object$call$y
 
  plotmo grid:    Girth Height
@@ -120,10 +120,10 @@ got model response from object$call$y
 
 > plotres(a.bag1, trace=1, SHOWCALL=TRUE)
 stats::residuals(object=bagEarth.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(bagEarth.object, data.frame[3,2], type="response")
 stats::fitted(object=bagEarth.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from object$call$y
 
 training rsq 0.98
@@ -161,7 +161,7 @@ After pruning pass GRSq 0.462 RSq 0.487
 > plotmo(a.bag3, clip=F, caption="bagEarth, etitanic", trace=1, SHOWCALL=TRUE)
 stats::predict(bagEarth.object, data.frame[3,7], type="response")
 stats::fitted(object=bagEarth.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from model.frame(survived~.,
                                     data=call$data, na.action="na.fail")
 
@@ -170,10 +170,10 @@ got model response from model.frame(survived~.,
 
 > plotres(a.bag3, clip=F, trace=1, SHOWCALL=TRUE)
 stats::residuals(object=bagEarth.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(bagEarth.object, data.frame[3,7], type="response", clip=FALSE)
 stats::fitted(object=bagEarth.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from model.frame(survived~.,
                                     data=call$data, na.action="na.fail")
 
@@ -201,7 +201,7 @@ got model response from model.frame(survived~pclass+s...,
                     1st female  28     0     0
 
 > plotres(caret.earth.mod2, trace=1, SHOWCALL=TRUE)
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
 got model response from model.frame(survived~pclass+s...,
@@ -222,7 +222,7 @@ got model response from model.frame(O3~vh+wind+humidi...,
                5760    5       64   62 2112.5  24 167.5 120 205.5
 
 > plotres(a, trace=1, SHOWCALL=TRUE)
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
 got model response from model.frame(O3~vh+wind+humidi...,

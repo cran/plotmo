@@ -15,7 +15,7 @@ plot_w1 <- function(object,
     {
         # Decided not to do the following, too complicated.
         #
-        # # if which) == 1 then pass all w1. and plot args directly
+        # # if which == 1 then pass all w1. and plot args directly
         # # to the w1 plot (else only those args with a  w1. prefix)
         # # if both say w1.xlim and xlim are specified then xlim takes precedence
         #                                # DROP="*" so drop everything...
@@ -127,6 +127,13 @@ plot_w1 <- function(object,
             par(cex.axis=min(old.cex.axis, .9))
         }
         retval <- call.w1(graphics::plot, ...)
+    } else if(inherits(object, "pre")) {
+        importance <- try(pre::importance(object, plot=FALSE), silent=TRUE)
+        if(is.try.err(importance)) {
+            plotted <- FALSE
+            warning0("pre::importance(pre.object) failed")
+        } else if(NROW(importance$varimps) > 0) # based on code in importance function in pre.R
+            retval <- call.w1(pre::importance, force.plot=TRUE, ...)
     }
     # # TODO commented out because plot.nn uses grid graphics
     # #      which doesn't coexist with base graphics

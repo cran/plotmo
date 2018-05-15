@@ -93,10 +93,10 @@ train  test    CV   OOB
 +               w1.main="predict.n.trees=13 w1.grid.col=1")
 importance: pclass sibsp parch sex survived
 stats::residuals(object=gbm.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(gbm.object, data.frame[3,5], type="response", n.trees=13)
 stats::fitted(object=gbm.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 plot_gbm(gbm.object, main="predict.n.trees=13 w1.grid.col=1", n.trees=13,
          grid.col=1, smooth=TRUE)
 

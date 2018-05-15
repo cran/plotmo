@@ -639,9 +639,9 @@ expect.err(try(linmod(rep(1, length.out=nrow(trees)), trees$Volume)), "'x' is si
 expect.err(try(linmod(trees[,1:2])), "no 'y' argument")
 
 expect.err(try(linmod(Volume~., data=trees, nonesuch=99)), "unused argument (nonesuch = 99)")
-expect.err(try(linmod(trees[,1:2], trees[,3], nonesuch=linmod)), "unused argument (nonesuch = function (...)")
-expect.err(try(summary(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused argument (nonesuch = function (...)")
-expect.err(try(print(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused argument (nonesuch = function (...)")
+expect.err(try(linmod(trees[,1:2], trees[,3], nonesuch=linmod)), "unused argument (nonesuch = linmod)")
+expect.err(try(summary(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused argument (nonesuch = linmod)")
+expect.err(try(print(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused argument (nonesuch = linmod)")
 fit1.form <- linmod(Volume~., data=tr)
 expect.err(try(predict(fit1.form, nonesuch=99)), "unused argument (nonesuch = 99)")
 expect.err(try(predict(fit1.form, type="nonesuch")), "the 'type' argument is not yet supported")

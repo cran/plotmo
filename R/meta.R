@@ -54,7 +54,7 @@ plotmo_meta <- function(object, type, nresponse, trace,
                                        nresponse=NULL, trace, ...)$resids
         if(is.null(plotmo_resids)) {
             if(trace >= 1)
-                printf("residuals() was unsuccessful\n")
+                printf("residuals() was unsuccessful, will use predict() instead\n")
             avoid.predict <- FALSE # fall back to using predict
         } else {
             # trace2(trace,

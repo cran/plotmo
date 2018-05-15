@@ -448,8 +448,6 @@ plotmo1(object=rpart.model.vignette,all2=TRUE)
                        64   62 167.5
 > expect.err(try(plotmo1(rpart.model.vignette, level=.9)), "not supported for rpart objects")
 plotmo1(object=rpart.model.vignette,level=0.9)
- plotmo grid:    humidity temp   ibt
-                       64   62 167.5
 Error : the level argument is not supported for rpart objects
 Got error as expected from try(plotmo1(rpart.model.vignette, level = 0.9))
 > 

@@ -1,6 +1,6 @@
 @rem test.c50.bat: c50 tests for plotmo and plotres
 
-@"C:\PROGRA~1\R\R-3.4.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.c50.R
+@"C:\PROGRA~1\R\R-3.5.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.c50.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.c50.Rout:
 @echo.

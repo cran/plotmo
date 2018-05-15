@@ -84,9 +84,9 @@ plotmo_qq <- function(rinfo, info, nfigs,
     drop.line.col(...)
     if(is.specified(grid.col))
         grid(col=grid.col, lty=1)
-    qqline.col <- dota("qqline.col", DEF="gray", ...)
-    qqline.lwd <- dota("qqline.lwd", DEF=1,      ...)
-    qqline.lty <- dota("qqline.lty", DEF=1,      ...)
+    qqline.col <- dota("qqline.col", DEF=1, ...)
+    qqline.lwd <- dota("qqline.lwd", DEF=1, ...)
+    qqline.lty <- dota("qqline.lty", DEF=3, ...)
     if(is.specified(qqline.col) &&
        is.specified(qqline.lwd) &&
        is.specified(qqline.lty))

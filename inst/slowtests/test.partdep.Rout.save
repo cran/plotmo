@@ -30,9 +30,11 @@ Loading required package: TeachingDemos
 > data(etitanic)
 > mod <- earth(survived~., data=etitanic, degree=2)
 > 
-> plotmo(mod, caption="plotmo classical", ylim=c(0,1))
+> plotmo(mod, caption="plotmo classical")
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
 > 
-> plotmo(mod, pmethod="partdep", caption="plotmo partdep age", ylim=c(0,1))
+> plotmo(mod, pmethod="partdep", caption="plotmo partdep age")
 calculating partdep for pclass 
 calculating partdep for sex 
 calculating partdep for age 
@@ -41,8 +43,7 @@ calculating partdep for pclass:sibsp 01234567890
 calculating partdep for sex:age 0123456790
 > 
 > set.seed(2016)
-> plotmo(mod, pmethod="apartdep", caption="plotmo apartdep age", ylim=c(0,1),
-+        do.par=2)
+> plotmo(mod, pmethod="apartdep", caption="plotmo apartdep age", do.par=2)
 calculating apartdep for pclass 
 calculating apartdep for sex 
 calculating apartdep for age 
@@ -58,7 +59,7 @@ calculating apartdep for pclass:sex 01234567890
 calculating apartdep for pclass:sibsp 01234567890
 calculating apartdep for sex:age 0123456790
 > 
-> # compare to gbm with a artifical function of variables with a very strong interaction
+> # compare to gbm with an artifical function of variables with a very strong interaction
 > library(gbm)
 Loading required package: survival
 Loading required package: lattice
@@ -122,7 +123,7 @@ calculating apartdep for x1:x3 01234567890
 > 
 > # randomForest, simple regression function
 > library(randomForest)
-randomForest 4.6-12
+randomForest 4.6-14
 Type rfNews() to see new features/changes/bug fixes.
 > data$y <- x1 > -.1 # y depends only on x1 (-.1 hand-tuned to create interesting model surface)
 > set.seed(2016)
@@ -153,9 +154,9 @@ Warning in randomForest.default(m, y, ...) :
 calculating partdep for x1 
 calculating partdep for x2 
 > partialPlot(mod, pred.data=data, x.var="x1", n.pt=ngrid1,
-+             which.class="True", ylim=c(0,1))
++             which.class="True")
 > partialPlot(mod, pred.data=data, x.var="x2", n.pt=ngrid1,
-+             which.class="True", ylim=c(0,1))
++             which.class="True")
 > par(old.par)
 > 
 > # gbm, simple regression function

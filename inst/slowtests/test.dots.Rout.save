@@ -41,8 +41,8 @@ Loading required package: TeachingDemos
 > print(plotmo:::callers.name()) # "eval"
 [1] "NULL"
 > 
-> stopifnot(test.callers.name() == "0 test.callers.name 1 stopifnot 99 unknown")
-0 test.callers.name 1 stopifnot 99 unknown
+> stopifnot(test.callers.name() == "0 test.callers.name 1 doTryCatch 99 unknown")
+0 test.callers.name 1 doTryCatch 99 unknown
 > 
 > myfunc <- function(func) func()
 > stopifnot(myfunc(function(x) test.callers.name(99)) == "0 test.callers.name 1 func 99 unknown")
@@ -63,7 +63,7 @@ Loading required package: TeachingDemos
 > test.dotindex(1,  "a1", a=10, b=20)
 > test.dotindex(NA, "a",  a1=10, a2=20)
 > expect.err(try(test.dotindex(1, nonesuch, a=10, a=20)), "object 'nonesuch' not found")
-Error in stopifnot(is.character(argname)) : object 'nonesuch' not found
+Error in is.character(argname) : object 'nonesuch' not found
 Got error as expected from try(test.dotindex(1, nonesuch, a = 10, a = 20))
 > expect.err(try(test.dotindex(1, "a1", a=10, a=20)), "argument 'a' for test.dotindex() is duplicated")
 Error : argument 'a' for test.dotindex() is duplicated
@@ -105,10 +105,10 @@ Got error as expected from try(test.dotindex(1, "aa1", a = 10, aa = 20))
 Error : argument 'a' for test.dota() is duplicated
 Got error as expected from try(test.dota(1, "a1", a = 10, a = 20))
 > expect.err(try(test.dota(1, 99, a=10, a=20)), "is.character(argname) is not TRUE")
-Error : is.character(argname) is not TRUE
+Error in process.argname(ARGNAME) : is.character(argname) is not TRUE
 Got error as expected from try(test.dota(1, 99, a = 10, a = 20))
 > expect.err(try(test.dota(1, test.dota, a=10, a=20)), "is.character(argname) is not TRUE")
-Error : is.character(argname) is not TRUE
+Error in process.argname(ARGNAME) : is.character(argname) is not TRUE
 Got error as expected from try(test.dota(1, test.dota, a = 10, a = 20))
 > expect.err(try(test.dota(1, "", a=10, a=20)), "empty string in ARGNAME")
 Error : empty string in ARGNAME

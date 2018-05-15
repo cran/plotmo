@@ -108,6 +108,8 @@ Loading required package: TeachingDemos
 +        smooth.col="lightblue",  smooth.lwd=2,
 +        pt.col=ifelse(et$survived, "black", "red"),
 +        pt.pch=".", pt.cex=2.5)
+ plotmo grid:    pclassn age
+                       1  29
 > 
 > set.seed(844)
 > plotmo(a4, do.par=F, xflip=F, all1=T, center=TRUE, clip=F, ylim=c(-.6,.7),
@@ -117,6 +119,8 @@ Loading required package: TeachingDemos
 +        smooth.col="lightblue",  smooth.lwd=2,
 +        pt.col=ifelse(et$survived, "black", "red"),
 +        pt.pch=".", pt.cex=2.5)
+ plotmo grid:    pclassn age
+                       3  29
 > 
 > #--- row 2
 > 

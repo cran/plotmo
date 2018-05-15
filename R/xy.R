@@ -512,8 +512,13 @@ get.x.or.y.from.model.frame <- function(object, field, trace, naked,
         iresponse <- attr(object$terms, "response")
         if(is.null(iresponse) || !is.numeric(iresponse) || length(iresponse) != 1)
             return(ret("invalid attr(object$terms, \"response\")"))
+        if(iresponse == 0) {
+            # this hack was added for gre objects in the pre package
+            trace1(trace, "response index is 0, forcing to iresponse=1\n", iresponse)
+            iresponse <- 1
+            }
     }
-    if(iresponse != 1) # we have never actually seen this
+    if(iresponse != 1) # have only ever seen this in the pre package
         trace2(trace, "response index is %g\n", iresponse)
     if(field == "x") {
         # drop the response column
@@ -1069,7 +1074,8 @@ convert.glm.response.factor <- function(object, y, trace)
         trace2(trace,
             "the response is a factor but could not get the family of the \"%s\" model\n",
             class(object)[1])
-    } else if(family[["family"]][1] == "binomial") {
+    } else if(family[["family"]][1] == "binomial" ||
+              family[["family"]][1] == "quasibinomial") {
         # e.g. glm(formula=sex~., family=binomial, data=etitanic)
         if(!is.null(dim(y)))  {  # data.frame or matrix
             levels <- levels(y[,1])

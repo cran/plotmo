@@ -107,7 +107,7 @@ Loading required package: TeachingDemos
 +             grid.col="pink", info=TRUE, cum.col=2, cum.cex=1.4)
 +     plotres(afoo, which=4)
 +     plotres(afoo, which=4, trace=0, xlim=c(-7,7), ylim=c(-20, 20),
-+             qq.col=2, qq.cex=.5, label.col=1, qqline.col="orange")
++             qq.col=2, qq.cex=.5, label.col=1, qqline.col="orange", qqline.lty=1)
 +     # check xlim and ylim apply only to resids plots if multiple plots
 +     plotres(afoo, which=c(2:5), trace=0, xlim=c(-1,5), ylim=c(-8, 8),
 +             qq.col=2, qq.cex=.5, label.col=1, qqline.col="orange", smooth.col=3, smooth.lwd=2)

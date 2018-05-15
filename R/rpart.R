@@ -12,8 +12,10 @@ plotmo.residtype.rpart <- function(object, ...)
 {
     "usual"
 }
-plotmo.singles.rpart <- function(object, x, ...)
+plotmo.singles.rpart <- function(object, x, nresponse, trace, all1, ...)
 {
+    if(all1 == 2) # return all variables, not just those used in the model
+        return(seq_len(NCOL(x)))
     # get all variables used in the tree
     varnames <- as.character(object$frame$var) # factor to character
     varnames <- unique(varnames[varnames != "<leaf>"])

@@ -101,17 +101,17 @@ plotmores(object=mod.glmnet.agedata, predict.s=2.5)
 > plotmores(mod.cv.glmnet.xmat, predict.s="lambda.min", trace=1, ncol=3)
 plotmores(object=mod.cv.glmnet.xmat, predict.s="lambda.min", trace=1, ncol=3)
 stats::residuals(object=cv.glmnet.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.min")
 stats::fitted(object=cv.glmnet.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from object$call$y
 graphics::plot(cv.glmnet.object)
 
 training rsq 0.33
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.min")
 stats::fitted(object=cv.glmnet.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from object$call$y
 
  plotmo grid:    survived sibsp  logage
@@ -130,11 +130,11 @@ Got error as expected from try(plotres(mod.cv.glmnet.agedata))
 > plotmores(mod.cv.glmnet.agedata, predict.s="lambda.min", trace=1, ncol=3)
 plotmores(object=mod.cv.glmnet.agedata, predict.s="lambda.min", trace=1, ncol=3)
 stats::residuals(object=cv.glmnet.formula.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(cv.glmnet.formula.object, data.frame[3,3], type="response",
                s="lambda.min")
 stats::fitted(object=cv.glmnet.formula.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from model.frame(age~survived+sibs...,
                                     data=call$data, na.action="na.omit")
 graphics::plot(cv.glmnet.formula.object)
@@ -143,7 +143,7 @@ training rsq 0.33
 stats::predict(cv.glmnet.formula.object, data.frame[3,3], type="response",
                s="lambda.min")
 stats::fitted(object=cv.glmnet.formula.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from model.frame(age~survived+sibs...,
                                     data=call$data, na.action="na.omit")
 

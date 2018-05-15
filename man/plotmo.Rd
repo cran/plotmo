@@ -181,20 +181,26 @@ Default is \code{TRUE}, meaning all (the \code{TRUE} gets recycled).
 To plot only the third plot use \code{degree1=3}.
 For no degree1 plots use \code{degree1=0}.
 \cr
-Can also be a character vector
-specifying which variables to plot
-e.g. \code{degree1=c("wind", "vis")}.
-Variable are matched with \code{\link[base]{grep}}.  Thus \code{"wind"} will match
-all variables with \code{"wind"} anywhere in their name. Use \code{"^wind$"}
-to match only the variable named \code{"wind"}.
 \cr
-Note that an integer \code{degree1} indexes plots on the page,
+Note that \code{degree1} indexes plots on the page,
 not columns of \code{x}.
 Probably the easiest way to use this argument (and \code{degree2}) is to
 first use the default (and possibly \code{all1=TRUE})
 to plot all figures.  This shows how the figures are numbered.
 Then replot using \code{degree1} to select the figures you want,
 for example \code{degree1=c(1,3,4)}.
+\cr
+\cr
+Can also be a character vector
+specifying which variables to plot. Examples:\cr
+\code{degree1="wind"}\cr
+\code{degree1=c("wind", "vis")}.
+\cr
+\cr
+Variables names are matched with \code{\link[base]{grep}}.
+Thus \code{"wind"} will match all variables with \code{"wind"}
+anywhere in their name. Use \code{"^wind$"} to match only the variable
+named \code{"wind"}.
 }
 \item{all1}{
 Default is \code{FALSE}.
@@ -211,10 +217,15 @@ Default is \code{TRUE} meaning all
 (after selecting the relevant interaction terms as described in
 \dQuote{\emph{Which variables are plotted?}} in the \code{plotmo} vignette).
 \cr
+\cr
 Can also be a character vector specifying which variables to plot
 (\code{\link[base]{grep}} is used for matching).
-For example, \code{degree2="vis"} selects degree2 plots
-for the \code{vis} variable.
+Examples:
+\cr
+\code{degree2="wind"} plots all degree2 plots
+for the \code{wind} variable.
+\cr
+\code{degree2=c("wind", "vis")} plots just the \code{wind:vis} plot.
 }
 \item{all2}{
 Default is \code{FALSE}.

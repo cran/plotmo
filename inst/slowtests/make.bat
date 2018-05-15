@@ -3,6 +3,8 @@
 time /T
 @call test.plotmo.bat
                         @if %errorlevel% NEQ 0 goto error
+@call test.degree.bat
+                        @if %errorlevel% NEQ 0 goto error
 @call test.plotmo.x.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.printcall.bat
@@ -30,6 +32,8 @@ time /T
 @call test.glmnetUtils.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.gbm.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call test.pre.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.ltut.bat
                         @if %errorlevel% NEQ 0 goto error

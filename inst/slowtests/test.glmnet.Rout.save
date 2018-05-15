@@ -34,7 +34,7 @@ library(glmnet)
 > library(glmnet)
 Loading required package: Matrix
 Loading required package: foreach
-Loaded glmnet 2.0-13
+Loaded glmnet 2.0-16
 
 > 
 > data(ozone1)
@@ -111,7 +111,7 @@ plotres1(object=mod.glmnet.xmat)
 plotmo1(object=mod.cv.glmnet.xmat,predict.s="lambda.min",trace=1)
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.min")
 stats::fitted(object=cv.glmnet.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from object$call$y
 
  plotmo grid:    survived sibsp  logage
@@ -171,7 +171,7 @@ predict after processing with nresponse=NULL is [3,1]:
 
 ----Metadata: plotmo_fitted with nresponse=NULL
 stats::fitted(object=cv.glmnet.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 plotmo_predict with NULL newdata, using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
 object$x is NULL (and it has no colnames)
@@ -285,10 +285,6 @@ graphics::par(mfrow=c(2,2), mgp=c(1.5,0.4,0), tcl=-0.3, font.main=2,
 ----Figuring out ylim
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
-
- plotmo grid:    survived sibsp  logage
-                        0     0 3.06991
-
 degree1 plot 1 survived
 newdata[2,3]:
   survived sibsp  logage
@@ -311,6 +307,10 @@ degree1 plot 3 logage
 ylim c(1.955, 48.25)    clip TRUE
 
 --plot.degree1(draw.plot=TRUE)
+
+ plotmo grid:    survived sibsp  logage
+                        0     0 3.06991
+
 graphics::plot.default(x=c(0,0.5,0.5,1), y=c(33.07,33.07,3...), type="n",
                        main="1 survived", xlab="", ylab="", xaxt="s", yaxt="s",
                        xlim=c(-0.1,1.1), ylim=c(1.96,48.25))
@@ -319,10 +319,10 @@ graphics::plot.default(x=c(0,0.5,0.5,1), y=c(33.07,33.07,3...), type="n",
 > plotres1(mod.cv.glmnet.xmat, predict.s="lambda.1se", trace=1)
 plotres1(object=mod.cv.glmnet.xmat,predict.s="lambda.1se",trace=1)
 stats::residuals(object=cv.glmnet.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.1se")
 stats::fitted(object=cv.glmnet.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from object$call$y
 graphics::plot(cv.glmnet.object)
 
@@ -353,7 +353,7 @@ after DROP and KEEP  force.object force.type
 return dotnames      object type
 
 stats::residuals(object=cv.glmnet.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 
 ----Metadata: plotmo_predict with nresponse=NULL and newdata=NULL
 plotmo_predict with NULL newdata (nrows=3), using plotmo_x to get the data
@@ -386,7 +386,7 @@ predict after processing with nresponse=NULL is [3,1]:
 
 ----Metadata: plotmo_fitted with nresponse=NULL
 stats::fitted(object=cv.glmnet.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 plotmo_predict with NULL newdata, using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
 object$x is NULL (and it has no colnames)
@@ -573,7 +573,7 @@ after DROP and KEEP  force.object force.type
 return dotnames      object type
 
 stats::residuals(object=cv.glmnet.object, type="response")
-calling predict because residuals was unsuccessful
+calling predict() because residuals() was unsuccessful
 plotmo_predict with NULL newdata, using plotmo_x to get the data
 --plotmo_x for cv.glmnet object
 object$x is NULL (and it has no colnames)
@@ -741,7 +741,7 @@ Warning: too many predictors to plot all pairs,
 plotmo1(object=mod.glmnet.sx,all2=2,caption="all2=2")
 More than 64 degree2 plots.
 Consider using plotmo's degree2 argument to limit the number of plots.
-For example,  degree2=1:10  or  degree2=c("x1", "x2")
+For example,  degree2=1:10  or  degree2="x1"
 Call plotmo with trace=-1 to make this message go away.
 
  plotmo grid:    x1 x2 x3 x4 x5 x6 x7 x8 x9 x10 x11 x12 x13 x14 x15 x16 x17 x18
@@ -770,20 +770,20 @@ plotmo1(object=mod.glmnet.sx,all2=2,degree2=1:3,caption="all2=2degree2=1:3")
 +         caption="glmnet with various options", SHOWCALL=TRUE)
 > plotres(glmnet, trace=1, do.par=FALSE, which=c(1,3), SHOWCALL=TRUE)
 stats::residuals(object=elnet.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(elnet.object, matrix[3,2], type="response", s=0)
 stats::fitted(object=elnet.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from object$call$y
 plot_glmnet(elnet.object, xvar="rlambda", grid.col=0, s=0, nresponse=1)
 
 training rsq 0.95
 > plotres(glmnet, trace=1, do.par=FALSE, which=c(1,3), predict.s=5, SHOWCALL=TRUE)
 stats::residuals(object=elnet.object, type="response")
-residuals() was unsuccessful
+residuals() was unsuccessful, will use predict() instead
 stats::predict(elnet.object, matrix[3,2], type="response", s=5)
 stats::fitted(object=elnet.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from object$call$y
 plot_glmnet(elnet.object, xvar="rlambda", grid.col=0, s=5, nresponse=1)
 
@@ -836,23 +836,6 @@ Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
 Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
 Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
 Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]], envir = env, enclos = env) :
-  restarting interrupted promise evaluation
-Warning in eval(dots[[i]], envir = env, enclos = env) :
-  restarting interrupted promise evaluation
-Warning in eval(dots[[i]], envir = env, enclos = env) :
-  restarting interrupted promise evaluation
 Warning in eval(dots[[i]], envir = env, enclos = env) :
   restarting interrupted promise evaluation
 Error in eval(dots[[idot]], parent.frame(1)) : 

@@ -53,8 +53,9 @@ Loading required package: TeachingDemos
 +     plotmo(a3, do.par=F, type2="im",
 +            col.response=col.response, pt.cex=.3)
 +     set.seed(145)
-+     plotmo(a3, do.par=F, type2="con", degree1=NA, ylim=c(0,1),
++     plotmo(a3, do.par=F, type2="con", degree1=NA,
 +            col.response=col.response, pt.cex=.3)
++ 
 +     set.seed(145)
 +     plotmo(a3, do.par=F, type2="persp", degree1=NA,
 +            ngrid2=40, persp.theta=NA, persp.ticktype="d", persp.border=NA, cex.lab=.8, persp.ntick=2)
@@ -119,7 +120,7 @@ names(et): survived pclass.fac parch.num parch.fac pclass.num
                         1st         0
 stats::predict(rpart.object, data.frame[3,2], type="vector")
 stats::fitted(object=rpart.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from model.frame(survived~pclass.n...,
                                     data=call$data, na.action="na.pass")
 
@@ -329,6 +330,8 @@ table(et$var):> print(table(et$var))
 > 
 > plotmo(a, ndiscrete=0,
 +        do.par=F, smooth.col="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
+ plotmo grid:    var age
+                   0  28
 > 
 > #------------
 > plotmo(a, ndiscrete=10,  main="integral var\nndiscrete=10", cex.lab=.8,
@@ -336,6 +339,8 @@ table(et$var):> print(table(et$var))
 > 
 > plotmo(a, trace=0, ndiscrete=10,
 +        do.par=F, smooth.col="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
+ plotmo grid:    var age
+                   0  28
 > 
 > #------------
 > et$var <- et$var / 2
@@ -354,6 +359,8 @@ table(et$var):> print(table(et$var))
 > 
 > plotmo(a, ndiscrete=0,
 +        do.par=F, smooth.col="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
+ plotmo grid:    var age
+                   0  28
 > 
 > #------------
 > plotmo(a, ndiscrete=10, main="non integral var\nndiscrete=10", cex.lab=.8,
@@ -361,6 +368,8 @@ table(et$var):> print(table(et$var))
 > 
 > plotmo(a, ndiscrete=10,
 +        do.par=F, smooth.col="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
+ plotmo grid:    var age
+                   0  28
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot

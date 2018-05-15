@@ -1,0 +1,118 @@
+> # test.pre.R: test the "pre" package with plotmo and plotres
+> 
+> library(pre)
+> library(plotmo)
+Loading required package: plotrix
+Loading required package: TeachingDemos
+> library(earth) # for ozone1
+> set.seed(2018)
+> options(warn=1) # print warnings as they occur
+> 
+> if(!interactive())
++     postscript(paper="letter")
+> 
+> data(airquality)
+> airq <- airquality[complete.cases(airquality), (c("Ozone", "Wind", "Temp"))]
+> # prevent confusion caused by integer rownames which don't match row numbers
+> rownames(airq) <- NULL
+> airq <- airq[1:50, ] # small set of data for quicker test
+> 
+> set.seed(2018)
+> pre.mod <- pre(Ozone~., data=airq)
+> plotres(pre.mod) # variable importance and residual plots
+> plotres(pre.mod, which=3, main="pre.mod residuals") # which=3 for just the residual vs fitted plot
+> plotmo(pre.mod) # plot model surface with background variables held at their medians
+ plotmo grid:    Wind Temp
+                 10.3   75
+> 
+> # sanity check: compare model surface to to randomForest
+> # (commented out to save test time)
+> #
+> # library(randomForest)
+> # set.seed(2018)
+> # rf.mod <- randomForest(Ozone~., data=airq)
+> # plotmo(rf.mod)
+> 
+> # compare singleplot and plotmo
+> 
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(2,2)) # 4 plots per page
+> 
+> singleplot(pre.mod, varname="Temp", main="Temp\n(singleplot)")
+> 
+> plotmo(pre.mod,
++        pmethod="partdep",         # plot partial dependence plot,
++        degree1="Temp", degree2=0, # plot only Temp, no degree2 plots
++        do.par=FALSE,              # don't automatically set par(), use above par(mfrow)
++        main="Temp\n(plotmo partdep)")
+calculating partdep for Temp 
+> 
+> # test penalty.par.val="lambda.min"
+> singleplot(pre.mod, varname="Temp",
++            main="penalty.par.val=lambda.min\n(singleplot)",
++            penalty.par.val="lambda.min")
+> 
+> plotmo(pre.mod,
++        pmethod="partdep",
++        degree1="Temp", degree2=0,
++        do.par=FALSE,
++        main="penalty.par.val=lambda.min\n(plotmo partdep)",
++        predict.penalty.par.val="lambda.min") # use "predict." to pass it on to predict.pre
+calculating partdep for Temp 
+> 
+> par(old.par)
+> 
+> # compare pairplot and plotmo
+> 
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(2,3)) # 6 plots per page
+> 
+> pairplot(pre.mod, c("Temp", "Wind"), main="pairplot")
+Loading required namespace: akima
+NOTE: function pairplot uses package 'akima', which has an ACM license. See also https://www.acm.org/publications/policies/software-copyright-notice.
+> plotmo(pre.mod, main="plotmo partdep",
++        pmethod="partdep",
++        degree1=0, degree2="Temp",
++        do.par=FALSE)
+calculating partdep for Wind:Temp 01234567890
+> 
+> # Compare to pmethod="apartdep".  An approximate partdep plot is
+> # faster than a full partdep plot (plotmo vignette Section 9.2).
+> 
+> plotmo(pre.mod, main="plotmo apartdep",
++        pmethod="apartdep",
++        degree1=0, degree2="Temp",
++        do.par=FALSE)
+calculating apartdep for Wind:Temp 01234567890
+> 
+> # plot contour and image plots with plotmo
+> 
+> plotmo(pre.mod, type2="contour",
++        degree1=0, degree2="Temp", do.par=FALSE)
+> 
+> plotmo(pre.mod, type2="image",
++        degree1=0, degree2="Temp", do.par=FALSE)
+> 
+> par(old.par)
+> 
+> # test gpe models
+> 
+> set.seed(2018)
+> gpe.mod <- gpe(Ozone~., data=airq,
++                base_learners=list(gpe_linear(), gpe_trees(), gpe_earth()))
+> plotmo(gpe.mod) # by default no degree2 plots because importance(gpe) not available
+ plotmo grid:    Wind Temp
+                 10.3   75
+> plotmo(gpe.mod, all2=TRUE, # force degree2 plot(s) by specifying all2=TRUE
++        persp.ticktype="detailed", persp.nticks=2) # optional (these get passed on to persp)
+ plotmo grid:    Wind Temp
+                 10.3   75
+> plotmo(gpe.mod, degree1=0, degree2=c("Wind", "Temp")) # explictly specify degree2 plot
+> # which=3 below for only the residuals-vs-fitted plot
+> # optional info=TRUE to plot some extra information (RSq etc.)
+> plotres(gpe.mod, which=3, info=TRUE, main="gpe.mod residuals")
+> 
+> if(!interactive()) {
++     dev.off()         # finish postscript plot
++     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
++ }

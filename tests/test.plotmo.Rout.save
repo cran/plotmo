@@ -12,7 +12,7 @@ Loading required package: TeachingDemos
 > plotmo(rpart.model, type="vec", trace=1)
 stats::predict(rpart.object, data.frame[3,3], type="vec")
 stats::fitted(object=rpart.object)
-fitted() was unsuccessful, will use predict()
+fitted() was unsuccessful, will use predict() instead
 got model response from model.frame(Kyphosis~Age+Numb..., 
                                     data=call$data, na.action="na.pass")
 

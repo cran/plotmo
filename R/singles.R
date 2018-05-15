@@ -35,8 +35,6 @@ plotmo.singles.default <- function(object, x, nresponse, trace, all1, ...)
 
 plotmo.pairs <- function(object, x, nresponse=1, trace=0, all2=FALSE, ...)
 {
-    if(all2) # TODO include all1 in this?
-        return(get.all.pairs(object, x, trace, all2))
     UseMethod("plotmo.pairs")
 }
 # Predictors x1 and x2 are considered paired if they appear in
@@ -89,7 +87,7 @@ plotmo.pairs.default <- function(object, x, nresponse, trace, all2, ...)
         return(NULL)
     plotmo.pairs.from.term.labels(c(formula.vars, term.labels), colnames(x), trace)
 }
-get.all.pairs <- function(object, x, trace, all2)
+get.all.pairs.from.singles <- function(object, x, trace, all2)
 {
     singles <- plotmo.singles(object, x, nresponse=1, trace, all1=TRUE)
     if(length(singles) == 0)

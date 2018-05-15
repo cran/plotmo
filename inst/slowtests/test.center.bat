@@ -1,7 +1,7 @@
 @rem test.center.bat: test plotmo's center and ndiscrete args
 @rem Stephen Milborrow, Berea Apr 2011
 
-@"C:\PROGRA~1\R\R-3.4.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.center.R
+@"C:\PROGRA~1\R\R-3.5.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.center.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.center.Rout:
 @echo.

@@ -1,0 +1,119 @@
+> # test.pre.R: test the "pre" package with plotmo and plotres
+> 
+> options(warn=1) # print warnings as they occur
+> if(!interactive())
++     postscript(paper="letter")
+> 
+> printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
+> 
+> strip.space <- function(s) gsub("[ \t\n]", "", s)
+> 
+> # test that we got an error as expected from a try() call
+> expect.err <- function(object, expected.msg="")
++ {
++     if(class(object)[1] == "try-error") {
++         msg <- attr(object, "condition")$message[1]
++         if(length(grep(expected.msg, msg, fixed=TRUE)))
++             cat("Got error as expected from ",
++                 deparse(substitute(object)), "\n", sep="")
++         else
++             stop(sprintf("Expected: %s\n  Got:      %s",
++                          expected.msg, substr(msg, 1, 1000)))
++     } else
++         stop("did not get expected error ", expected.msg)
++ }
+> library(earth)
+Loading required package: plotmo
+Loading required package: plotrix
+Loading required package: TeachingDemos
+> library(plotmo)
+> set.seed(2018)
+> 
+> # test character degree1 and degree2 (added in plotmo version 1.3-0)
+> 
+> data(ozone1)
+> a80 <- earth(O3~., data=ozone1, degree=2)
+> plotmo(a80, degree1="i", degree2="t",
++        caption='degree1="i", degree2="t"')
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
+> plotmo(a80, degree1="^temp$", degree2="^dpg$",
++        caption='degree1="^temp$", degree2="^dpg$"')
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
+> # Expect Warning: "nonesuch1" in degree1 does not match any variables, ditto for degree2
+> plotmo(a80, degree1=c("temp", "nonesuch1"), degree2="vis",
++        caption='degree1=c("temp", "nonesuch1"), degree2="vis")')
+Warning: "nonesuch1" in degree1 does not match any names
+         Available names are "vh" "wind" "humidity" "temp" "ibh" "dpg" "ibt" "vis" "doy"
+ plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
+               5760    5       64   62 2112.5  24 167.5 120 205.5
+> # Expect above warnings and also Warning: nothing to plot
+> plotmo(a80, degree1="nonesuch1", degree2="nonesuch2")
+Warning: "nonesuch1" in degree1 does not match any names
+         Available names are "vh" "wind" "humidity" "temp" "ibh" "dpg" "ibt" "vis" "doy"
+Warning: "nonesuch2" in degree2 does not match any names
+         Available names are "vh" "wind" "humidity" "temp" "ibh" "dpg" "ibt" "vis" "doy"
+Warning: plotmo: nothing to plot
+> 
+> # tests for plotmo version 3.3.7 (degree1 and degree2 handling changed)
+> 
+> data(etitanic)
+> a81 <- earth(survived~., data=etitanic, degree=2)
+> options(warn=2) # treat warnings as errors
+> plotmo(a81)
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+> old.par <- par(no.readonly=TRUE)
+> 
+> # degree1 tests
+> par(mfrow=c(3,3), mar=c(3,2.5,2,1), oma=c(0,0,4,0))
+> plotmo(a81, do.par=FALSE, degree1="pclass", degree2=0, main='degree1="pclass"',
++        caption="test degree1 with strings")
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+> expect.err(try(plotmo(a81, do.par=FALSE, degree1="survived", degree2=0)), '"survived" in degree1 does not match any names')
+Error : (converted from warning) "survived" in degree1 does not match any names
+         Available names are "pclass" "sex" "age" "sibsp" "parch"
+Got error as expected from try(plotmo(a81, do.par = FALSE, degree1 = "survived", degree2 = 0))
+> plotmo(a81, do.par=FALSE, degree1="sibsp", degree2=0, main='degree1="sibsp"')
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+> # parch does not appear in the standard degree1 plotmo plots, but we can still specify it explictly
+> plotmo(a81, do.par=FALSE, degree1="parch", degree2=0, trace=0, main='degree1="parch"')
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+> plotmo(a81, do.par=FALSE, degree1=c("sibsp", "pclass"), degree2=0, main='degree1=c("sibsp", "pclass")')
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+> 
+> # degree2 tests
+> par(mfrow=c(3,3), mar=c(3,2.5,2,1), oma=c(0,0,4,0))
+> plotmo(a81, do.par=FALSE, degree1=0, degree2="pclass", main='degree2="pclass"',
++        caption="test degree2 with two strings")
+> plotmo(a81, do.par=FALSE, degree1=0, degree2=c("age", "se"), main='degree2=c("age", "se")')
+> plotmo(a81, do.par=FALSE, degree1=0, degree2="ag", main='degree2="ag"')
+> plotmo(a81, do.par=FALSE, degree1=0, degree2=c("sex", "sibsp"), main='degree2=c("sex", "sibsp"')
+> plotmo(a81, do.par=FALSE, degree1=0, degree2=c("sibsp", "sex"), main='degree2=c("sibsp", "sex")')
+> expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("pclass", "nonesuch"))), "\"nonesuch\" in degree2 does not match any names")
+Error : (converted from warning) "nonesuch" in degree2 does not match any names
+         Available names are "pclass" "sex" "age" "sibsp" "parch"
+Got error as expected from try(plotmo(a81, do.par = FALSE, degree1 = 0, degree2 = c("pclass",     "nonesuch")))
+> expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("nonesuch1", "nonesuch2"))), "\"nonesuch1\" in degree2 does not match any names")
+Error : (converted from warning) "nonesuch1" in degree2 does not match any names
+         Available names are "pclass" "sex" "age" "sibsp" "parch"
+Got error as expected from try(plotmo(a81, do.par = FALSE, degree1 = 0, degree2 = c("nonesuch1",     "nonesuch2")))
+> expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("nonesuch", "pclass"))), "\"nonesuch\" in degree2 does not match any names")
+Error : (converted from warning) "nonesuch" in degree2 does not match any names
+         Available names are "pclass" "sex" "age" "sibsp" "parch"
+Got error as expected from try(plotmo(a81, do.par = FALSE, degree1 = 0, degree2 = c("nonesuch",     "pclass")))
+> par(old.par)
+> 
+> # following works but should possibly give a warning (both elems of degree2 the same)
+> plotmo(a81, degree1=0, degree2=c("sex", "sex"),
++        main='degree2=c("sex", "sex")', SHOWCALL=TRUE)
+> 
+> if(!interactive()) {
++     dev.off()         # finish postscript plot
++     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
++ }

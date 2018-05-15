@@ -28,7 +28,7 @@ plotmo_rinfo <- function(object, type=NULL, residtype=type, nresponse=1,
     } else {
         # trace=2 not 1 because we have already printed this message info in plotmo_meta
         if(trace >= 2)
-                printf("calling predict because residuals was unsuccessful\n")
+                printf("calling predict() because residuals() was unsuccessful\n")
         fitted <- plotmo_predict(object, newdata=NULL, nresponse,
                     type, expected.levs, trace, inverse.func=NULL, ...)$yhat
         labs <- rownames(fitted)
