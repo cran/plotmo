@@ -1,21 +1,45 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.4.0  May 31, 2018
+
+If predict.rpart is predicting a probability, plotmo now recognizes
+that and sets ylim=c(0,1) appropriately.
+
+Plotting of intercept-only models was slightly inconsistent. Fixed that.
+
+We now attempt to better set the default nticks in persp plots.
+
+We now position the labels in persp plots slightly better along
+the axes (they were sometimes too far away from the front corner).
+
+When degree2 is exactly two strings, we now assign the x1 and x2 axes
+in the order specified in degree2 (although persp plots still get
+rotated for optimum visibility of the surface, and this rotation can
+reverse the order of the axes).
+
+Added basic support for the mlr package (see test.mlr.R).
+
+Documentation updates, especially to modguide.pdf and linmod.R.
+
 --- 3.3.7  May 15, 2018
 
 Added a README file.
 
-If degree2 is exactly two strings, plotmo now prints just that degree2 plot
-e.g. degree2=c("wind", "humidity"). We also implicitly set
-all2=TRUE if degree2 is two strings.
+If degree2 is exactly two strings, plotmo now prints just that degree2
+plot e.g. degree2=c("wind", "humidity").  We plot the variable pair
+even that pair isn't used in the model (because we implicitly set
+all2=TRUE if degree2 is two strings).
 
-If degree1 is of type character, then we implicitly set all1=TRUE.
+If degree1 is of type character, we now plot the variable even if it
+isn't used in the model (because we implicitly set all1=TRUE if
+degree1 is is of type character).
 
 For the qq plot in plotres, changed the diagonal qq line to dotted
 black.  This gives more compatibility with plot.lm, and also means
 that the legend for the density subplot along the bottom of the qq
 plot (with info=TRUE) isn't mistakenly assumed to apply to the main
-plot.  For the old behaviour use qqline.col="gray", qqline.lty=1.
+plot.  For the old behavior use qqline.col="gray", qqline.lty=1.
 
 Added basic support for the "pre" package (using the importance
 function in that package).

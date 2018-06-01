@@ -13,9 +13,19 @@ plotmo_rinfo <- function(object, type=NULL, residtype=type, nresponse=1,
         if(is.na(nresponse)) "NA" else if(is.null(nresponse)) "NULL" else paste(nresponse))
 
     # TODO e.g. earth pclass nresp=1, plotmo_y returns pclass1st 0 or 1 but predict is 1, 2, 3
-    if(!is.na(pmatch(type, "class")))
-        stop0("plotres does not support type=\"class\" for \"%s\" objects",
-              class(object)[1])
+    if(!is.na(pmatch(type, "class"))) {
+#         if(inherits(object, "lda") || inherits(object, "qda"))
+#             stopf(
+# "plotres does not support type=\"class\" for \"%s\" objects\n   Note: plotmo extends predict.%s internally:\n%s%s\n",
+#                 class(object)[1],
+#                 class(object)[1],
+#                 "   'type' can be one of c(\"class\", \"posterior\", \"response\")\n",
+#                 "   This is discussed in the plotmo vignette.")
+#         else
+            stopf(
+"plotres does not (yet) support type=\"class\" for \"%s\" objects\n       Try type=\"response\" ?",
+                  class(object)[1])
+    }
 
     # try calling residuals() directly
     tracex <- if(trace == 1) 0 else trace # already printed call to residuals in plotmo_meta

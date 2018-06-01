@@ -1,9 +1,6 @@
-# test.linmod.R: test example S3 model in linmod.R
+# test.linmod.R: test example S3 model at http://www.milbo.org/doc/linmod.R
 
-options(warn=2) # treat warnings as errors
-set.seed(2016)
-if(!interactive())
-    postscript(paper="letter")
+cat0 <- function(...) cat(..., sep="")
 
 # test that we got an error as expected from a try() call
 expect.err <- function(object, expected.msg="")
@@ -11,13 +8,13 @@ expect.err <- function(object, expected.msg="")
     if(class(object)[1] == "try-error") {
         msg <- attr(object, "condition")$message[1]
         if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
+            cat0("Got error as expected from ",
+                 deparse(substitute(object)), "\n")
         else
             stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg, 1, 1000)))
+                         expected.msg, substr(msg[1], 1, 1000)))
     } else
-        stop("did not get expected error ", expected.msg)
+        stop("Did not get expected error: ", expected.msg)
 }
 almost.equal <- function(x, y, max=1e-8)
 {
@@ -44,8 +41,8 @@ check.lm <- function(fit, ref, newdata=trees[3:5,],
                  deparse(substitute(ref.names)))
         }
     }
-    cat("check ", deparse(substitute(fit)), " vs ",
-        deparse(substitute(ref)), "\n", sep="")
+    cat0("check ", deparse(substitute(fit)), " vs ",
+         deparse(substitute(ref)), "\n")
 
     stopifnot(coef(fit) == coef(ref))
     if(check.coef.names)
@@ -90,220 +87,248 @@ check.lm <- function(fit, ref, newdata=trees[3:5,],
                     names(predict(ref, newdata=newdata)))
     }
 }
-source("linmod.R")
+source("linmod.R") # linear model code (http://www.milbo.org/doc/linmod.R)
+source("linmod.methods.R") # additional method functions for linmod
+
+options(warn=2) # treat warnings as errors
+set.seed(2016)
+
+if(!interactive())
+    postscript(paper="letter") # create Rplots.ps for comparing to reference ps file
 
 tr <- trees # trees data but with rownames
 rownames(tr) <- paste("tree", 1:nrow(trees), sep="")
 
-cat("==check that example issues with functions in the tutorial have gone\n")
-fit1.form <- linmod(Volume~., data=tr)
-cat("==print(summary(fit1.form))\n")
-print(summary(fit1.form))
-lm.tr <- lm(Volume~., data=tr)
-check.lm(fit1.form, lm.tr)
-stopifnot(almost.equal(predict(fit1.form, newdata=data.frame(Girth=10, Height=80)),
+linmod.form.Volume.tr <- linmod(Volume~., data=tr)
+cat0("==print(summary(linmod.form.Volume.tr))\n")
+print(summary(linmod.form.Volume.tr))
+lm.Volume.tr <- lm(Volume~., data=tr)
+check.lm(linmod.form.Volume.tr, lm.Volume.tr)
+stopifnot(almost.equal(predict(linmod.form.Volume.tr, newdata=data.frame(Girth=10, Height=80)),
                        16.234045, max=1e-5))
-stopifnot(almost.equal(predict(fit1.form, newdata=as.matrix(tr[1:3,])),
+stopifnot(almost.equal(predict(linmod.form.Volume.tr, newdata=as.matrix(tr[1:3,])),
                        c(4.8376597, 4.5538516, 4.8169813), max=1e-5))
 
-fit1.mat <- linmod(tr[,1:2], tr[,3]) # note no need for intercept term
-cat("==print(summary(fit1.mat))\n")
-print(summary(fit1.mat))
-check.lm(fit1.mat, lm.tr, newdata=trees[3:5,1:2])
-stopifnot(almost.equal(predict(fit1.mat, newdata=data.frame(Girth=10, Height=80)),
+linmod.xy.Volume.tr <- linmod(tr[,1:2], tr[,3,drop=FALSE])                         # x=data.frame y=data.frame
+cat0("==print(summary(linmod.xy.Volume.tr))\n")
+print(summary(linmod.xy.Volume.tr))
+newdata.2col <- trees[3:5,1:2]
+check.lm(linmod.xy.Volume.tr, lm.Volume.tr, newdata=newdata.2col)
+stopifnot(almost.equal(predict(linmod.xy.Volume.tr, newdata=data.frame(Girth=10, Height=80)),
                        16.234045, max=1e-5))
-stopifnot(almost.equal(predict(fit1.mat, newdata=tr[1:3,1:2]),
+stopifnot(almost.equal(predict(linmod.xy.Volume.tr, newdata=tr[1:3,1:2]),
                        c(4.8376597, 4.5538516, 4.8169813), max=1e-5))
-stopifnot(almost.equal(predict(fit1.mat, newdata=as.matrix(data.frame(Girth=10, Height=80))),
+
+linmod50.xy.Volume.tr <- linmod(as.matrix(tr[,1:2]), as.matrix(tr[,3,drop=FALSE])) # x=matrix y=matrix
+check.lm(linmod50.xy.Volume.tr, lm.Volume.tr, newdata=newdata.2col)
+linmod51.xy.Volume.tr <- linmod(tr[,1:2], tr[,3])                                  # x=data.frame y=vector
+check.lm(linmod51.xy.Volume.tr, lm.Volume.tr, newdata=newdata.2col)
+linmod52.xy.Volume.tr <- linmod(as.matrix(tr[,1:2]), tr[,3])                       # x=matrix y=vector
+check.lm(linmod52.xy.Volume.tr, lm.Volume.tr, newdata=newdata.2col)
+
+# newdata can be a vector
+stopifnot(almost.equal(predict(linmod.xy.Volume.tr, newdata=c(8.3, 70)),
+                       4.8376597, max=1e-5))
+stopifnot(almost.equal(predict(linmod.xy.Volume.tr,
+                       newdata=c(8.3, 8.6, 70, 65)), # 4 element vector, byrow=FALSE
+                       c(4.8376597, 4.5538516), max=1e-5))
+options(warn=1) # print warnings as they occur
+# expect Warning: data length [3] is not a sub-multiple or multiple of the number of rows [2]
+stopifnot(almost.equal(predict(linmod.xy.Volume.tr, newdata=c(8.3, 9, 70)), # 3 element vector
+                      c(4.8376597, -12.7984291), max=1e-5))
+options(warn=2) # treat warnings as errors
+
+stopifnot(almost.equal(predict(linmod.xy.Volume.tr, newdata=as.matrix(data.frame(Girth=10, Height=80))),
+                       16.234045, max=1e-5))
+# column names in newdata are ignored for linmod.default models
+stopifnot(almost.equal(predict(linmod.xy.Volume.tr, newdata=data.frame(name1.not.in.orig.data=10, name2.not.in.orig.datax2=80)),
+                       16.234045, max=1e-5))
+# note name reversed below but names still ignored, same predict result as c(Girth=10, Height=80)
+stopifnot(almost.equal(predict(linmod.xy.Volume.tr, newdata=data.frame(Height=10, Girth=80)),
                        16.234045, max=1e-5))
 
-cat("==print.default(fit1.form)\n")
-print.default(fit1.form)
+cat0("==print.default(linmod.form.Volume.tr)\n")
+print.default(linmod.form.Volume.tr)
 
-cat("==check single x variable\n")
-fit1a.form <- linmod(Volume~Height, data=tr)
-cat("==print(summary(fit1a.form))\n")
-print(summary(fit1a.form))
+cat0("==check single x variable\n")
+linmod1a.form <- linmod(Volume~Height, data=tr)
+cat0("==print(summary(linmod1a.form))\n")
+print(summary(linmod1a.form))
 lma.tr <- lm(Volume~Height, data=tr)
-check.lm(fit1a.form, lma.tr)
+check.lm(linmod1a.form, lma.tr)
 
-stopifnot(almost.equal(predict(fit1a.form, newdata=data.frame(Height=80)),
+stopifnot(almost.equal(predict(linmod1a.form, newdata=data.frame(Height=80)),
                        36.34437, max=1e-5))
-stopifnot(almost.equal(predict(fit1a.form, newdata=data.frame(Girth=99, Height=80)),
+stopifnot(almost.equal(predict(linmod1a.form, newdata=data.frame(Girth=99, Height=80)),
                        36.34437, max=1e-5))
-stopifnot(almost.equal(predict(fit1a.form, newdata=as.matrix(tr[1:3,])),
+stopifnot(almost.equal(predict(linmod1a.form, newdata=as.matrix(tr[1:3,])),
                        c(20.91087, 13.19412, 10.10742), max=1e-5))
 
-fit1a.mat <- linmod(tr[,2,drop=FALSE], tr[,3])
-cat("==print(summary(fit1a.mat))\n")
-print(summary(fit1a.mat))
-check.lm(fit1a.mat, lma.tr, newdata=trees[3:5,2,drop=FALSE])
-check.lm(fit1a.mat, lma.tr, newdata=trees[3:5,2,drop=TRUE],
+linmod1a.xy <- linmod(tr[,2,drop=FALSE], tr[,3])
+cat0("==print(summary(linmod1a.xy))\n")
+print(summary(linmod1a.xy))
+check.lm(linmod1a.xy, lma.tr, newdata=trees[3:5,2,drop=FALSE])
+check.lm(linmod1a.xy, lma.tr, newdata=trees[3:5,2,drop=TRUE],
          check.newdata=FALSE) # needed because predict.lm gives numeric 'envir' arg not of length one
-stopifnot(almost.equal(predict(fit1a.mat, newdata=trees[3:5,2,drop=FALSE]),
-                       predict(fit1a.mat, newdata=trees[3:5,2,drop=TRUE])))
-stopifnot(almost.equal(predict(fit1a.mat, newdata=data.frame(Height=80)),
+stopifnot(almost.equal(predict(linmod1a.xy, newdata=trees[3:5,2,drop=FALSE]),
+                       predict(linmod1a.xy, newdata=trees[3:5,2,drop=TRUE])))
+stopifnot(almost.equal(predict(linmod1a.xy, newdata=data.frame(Height=80)),
                        36.34437, max=1e-5))
-stopifnot(almost.equal(predict(fit1a.mat, newdata=tr[1:3,2]),
+stopifnot(almost.equal(predict(linmod1a.xy, newdata=tr[1:3,2]),
                        c(20.91087, 13.19412, 10.10742), max=1e-5))
-stopifnot(almost.equal(predict(fit1a.mat, newdata=as.matrix(data.frame(Height=80))),
+stopifnot(almost.equal(predict(linmod1a.xy, newdata=as.matrix(data.frame(Height=80))),
                        36.34437, max=1e-5))
+
+# check that extra fields in predict newdata are ok with formula models
+stopifnot(almost.equal(predict(linmod.form.Volume.tr, newdata=data.frame(Girth=10, Height=80, extra=99)),
+                       predict(lm.Volume.tr,          newdata=data.frame(Girth=10, Height=80))))
+stopifnot(almost.equal(predict(linmod.form.Volume.tr, newdata=data.frame(Girth=10, Height=80, extra=99)),
+                       predict(lm.Volume.tr,          newdata=data.frame(Girth=10, Height=80, extra=99))))
+# check that extra fields in predict newdata are not ok with x,y models
+expect.err(try(predict(linmod.xy.Volume.tr, newdata=data.frame(Girth=10, Height=80, extra=99))), "ncol(newdata) is 3 but should be 2")
+
+# missing variables in newdata
+expect.err(try(predict(linmod.form.Volume.tr, newdata=data.frame(Girth=10))), "variable 'Height' is missing from newdata")
+expect.err(try(predict(linmod.form.Volume.tr, newdata=c(8.3, 70))),           "variable 'Girth' is missing from newdata")
+expect.err(try(predict(lm.Volume.tr,          newdata=data.frame(Girth=10))), "object 'Height' not found")
+expect.err(try(predict(linmod.xy.Volume.tr,            newdata=data.frame(Girth=10))), "ncol(newdata) is 1 but should be 2")
 
 # check that rownames got propagated
-stopifnot(names(fit1.form$residuals)[1] == "tree1")
-stopifnot(names(fit1.form$fitted.values)[3] == "tree3")
-stopifnot(names(fit1.mat$residuals)[1] == "tree1")
-stopifnot(names(fit1.mat$fitted.values)[3] == "tree3")
-stopifnot(!is.null(names(fit1.mat$residuals)))
-stopifnot(!is.null(names(fit1.mat$fitted.values)))
-cat("==print.default(fit1.mat)\n")
-print.default(fit1.mat)
+stopifnot(names(linmod.form.Volume.tr$residuals)[1] == "tree1")
+stopifnot(names(linmod.form.Volume.tr$fitted.values)[3] == "tree3")
+stopifnot(names(linmod.xy.Volume.tr$residuals)[1] == "tree1")
+stopifnot(names(linmod.xy.Volume.tr$fitted.values)[3] == "tree3")
+stopifnot(!is.null(names(linmod.xy.Volume.tr$residuals)))
+stopifnot(!is.null(names(linmod.xy.Volume.tr$fitted.values)))
+cat0("==print.default(linmod.xy.Volume.tr)\n")
+print.default(linmod.xy.Volume.tr)
 
 # check that we don't artificially add rownames when no original rownames
-fit1a.mat <- linmod(trees[,1:2], trees[,3])
-stopifnot(is.null(names(fit1a.mat$residuals)))
-stopifnot(is.null(names(fit1a.mat$fitted.values)))
+linmod1a.xy <- linmod(trees[,1:2], trees[,3])
+stopifnot(is.null(names(linmod1a.xy$residuals)))
+stopifnot(is.null(names(linmod1a.xy$fitted.values)))
 
-cat("==example plots\n")
+cat0("==example plots\n")
 
 library(plotmo)
 data(trees)
 
-fit1.form <- linmod(Volume~., data=trees)
-print(fit1.form)
-print(summary(fit1.form))
+linmod.form.Volume.trees <- linmod(Volume~., data=trees)
+print(linmod.form.Volume.trees)
+print(summary(linmod.form.Volume.trees))
 
-fit1.mat <- linmod(trees[,1:2], trees[,3])
-print(fit1.mat)
-print(summary(fit1.mat))
+linmod1.xy <- linmod(trees[,1:2], trees[,3])
+print(linmod1.xy)
+print(summary(linmod1.xy))
 
-plotmo(fit1.form)
-plotmo(fit1.mat)
+plotmo(linmod.form.Volume.trees)
+plotmo(linmod1.xy)
 
-plotres(fit1.form)
-plotres(fit1.mat)
+plotres(linmod.form.Volume.trees)
+plotres(linmod1.xy)
 
-cat("==test keep arg\n")
+cat0("==test keep arg\n")
 
-fit.form.keep <- linmod(Volume~., data=trees, keep=TRUE)
-print(summary(fit.form.keep))
-print(head(fit.form.keep$x))
-stopifnot(dim(fit.form.keep$x) == c(nrow(trees), 2))
-stopifnot(class(fit.form.keep$x) == "matrix")
-print(head(fit.form.keep$y))
-stopifnot(dim(fit.form.keep$y) == c(nrow(trees), 1))
-stopifnot(class(fit.form.keep$y) == "matrix")
-fit.form.keep$call <- NULL # trick to force use of x and y in plotmo
-plotmo(fit.form.keep, pt.col=3)
-plotres(fit.form.keep)
+trees1 <- trees
+linmod.form.Volume.trees.keep <- linmod(Volume~., data=trees1, keep=TRUE)
+print(summary(linmod.form.Volume.trees.keep))
+print(head(linmod.form.Volume.trees.keep$data))
+stopifnot(dim(linmod.form.Volume.trees.keep$data) == c(nrow(trees1), ncol(trees1)))
+trees1 <- NULL # destroy orginal data so plotmo has to use keep data
+plotmo(linmod.form.Volume.trees.keep, pt.col=3)
+plotres(linmod.form.Volume.trees.keep)
 
-fit.mat.keep <- linmod(trees[,1:2], trees[,3], keep=TRUE)
-print(summary(fit.mat.keep))
-print(head(fit.mat.keep$x))
-stopifnot(dim(fit.mat.keep$x) == c(nrow(trees), 2))
-stopifnot(class(fit.mat.keep$x) == "matrix")
-print(head(fit.mat.keep$y))
-stopifnot(dim(fit.mat.keep$y) == c(nrow(trees), 1))
-stopifnot(class(fit.mat.keep$y) == "matrix")
-fit.mat.keep$call <- NULL # trick to force use of x and y in plotmo
-plotmo(fit.mat.keep, pt.col=3)
-plotres(fit.mat.keep)
+linmod.xy.keep <- linmod(trees[,1:2], trees[,3], keep=TRUE)
+print(summary(linmod.xy.keep))
+print(head(linmod.xy.keep$x))
+stopifnot(dim(linmod.xy.keep$x) == c(nrow(trees), 2))
+stopifnot(class(linmod.xy.keep$x) == "matrix")
+print(head(linmod.xy.keep$y))
+stopifnot(dim(linmod.xy.keep$y) == c(nrow(trees), 1))
+stopifnot(class(linmod.xy.keep$y) == "matrix")
+linmod.xy.keep$call <- NULL # trick to force use of x and y in plotmo
+plotmo(linmod.xy.keep, pt.col=3)
+plotres(linmod.xy.keep)
 
-check.lm(fit.form.keep, fit.mat.keep, check.casenames=FALSE, check.newdata=FALSE)
+check.lm(linmod.form.Volume.trees.keep, linmod.xy.keep, check.casenames=FALSE, check.newdata=FALSE)
 
-# check consistency in the way x and y are kept
-stopifnot(all(dim(fit.mat.keep$x) == dim(fit.form.keep$x)))
-stopifnot(class(fit.mat.keep$x)   == class(fit.form.keep$x))
-stopifnot(all(dim(fit.mat.keep$x) == dim(fit.form.keep$x)))
-stopifnot(class(fit.mat.keep$y)   == class(fit.form.keep$y))
-
-cat("==test keep arg with vector x\n")
+cat0("==test keep arg with vector x\n")
 
 n <- 20
-fit.vecx.form.keep <- linmod(Volume~Height, data=trees[1:n,], keep=TRUE)
-print(summary(fit.vecx.form.keep))
-print(head(fit.vecx.form.keep$x))
-stopifnot(dim(fit.vecx.form.keep$x) == c(n, 1))
-stopifnot(class(fit.vecx.form.keep$x) == "matrix")
-print(head(fit.vecx.form.keep$y))
-stopifnot(dim(fit.vecx.form.keep$y) == c(n, 1))
-stopifnot(class(fit.vecx.form.keep$y) == "matrix")
-fit.vecx.form.keep$call <- NULL # trick to force use of x and y in plotmo
-plotmo(fit.vecx.form.keep, pt.col=3)
-plotres(fit.vecx.form.keep)
+linmod.vecx.form.keep <- linmod(Volume~Height, data=trees[1:n,], keep=TRUE)
+print(summary(linmod.vecx.form.keep))
+print(head(linmod.vecx.form.keep$data))
+stopifnot(dim(linmod.vecx.form.keep$data) == c(n, ncol(trees)))
+stopifnot(class(linmod.vecx.form.keep$data) == class(trees))
+plotmo(linmod.vecx.form.keep, pt.col=3)
+plotres(linmod.vecx.form.keep)
 
-fit.vecx.mat.keep <- linmod(trees[1:n,2], trees[1:n,3], keep=TRUE)
-print(summary(fit.vecx.mat.keep))
-print(head(fit.vecx.mat.keep$x))
-stopifnot(dim(fit.vecx.mat.keep$x) == c(n, 1))
-stopifnot(class(fit.vecx.mat.keep$x) == "matrix")
-print(head(fit.vecx.mat.keep$y))
-stopifnot(dim(fit.vecx.mat.keep$y) == c(n, 1))
-stopifnot(class(fit.vecx.mat.keep$y) == "matrix")
-fit.vecx.mat.keep$call <- NULL # trick to force use of x and y in plotmo
-plotmo(fit.vecx.mat.keep, pt.col=3)
-plotres(fit.vecx.mat.keep)
+linmod.vecx.xy.keep <- linmod(trees[1:n,2], trees[1:n,3], keep=TRUE)
+print(summary(linmod.vecx.xy.keep))
+print(head(linmod.vecx.xy.keep$x))
+stopifnot(dim(linmod.vecx.xy.keep$x) == c(n, 1))
+stopifnot(class(linmod.vecx.xy.keep$x) == "matrix")
+print(head(linmod.vecx.xy.keep$y))
+stopifnot(dim(linmod.vecx.xy.keep$y) == c(n, 1))
+stopifnot(class(linmod.vecx.xy.keep$y) == "matrix")
+linmod.vecx.xy.keep$call <- NULL # trick to force use of x and y in plotmo
+plotmo(linmod.vecx.xy.keep, pt.col=3)
+plotres(linmod.vecx.xy.keep)
 
-check.lm(fit.vecx.form.keep, fit.vecx.mat.keep, newdata=trees[3:5,2,drop=FALSE],
+check.lm(linmod.vecx.form.keep, linmod.vecx.xy.keep, newdata=trees[3:5,2,drop=FALSE],
          check.coef.names=FALSE, check.casenames=FALSE)
 
-# check consistency in the way x and y are kept
-stopifnot(class(fit.vecx.mat.keep$x)   == class(fit.vecx.form.keep$x))
-stopifnot(all(dim(fit.vecx.mat.keep$x) == dim(fit.vecx.form.keep$x)))
-stopifnot(all(fit.vecx.mat.keep$x == fit.vecx.form.keep$x))
-stopifnot(class(fit.vecx.mat.keep$y)   == class(fit.vecx.form.keep$y))
-stopifnot(all(dim(fit.vecx.mat.keep$x) == dim(fit.vecx.form.keep$x)))
-stopifnot(all(fit.vecx.mat.keep$x == fit.vecx.form.keep$x))
-
-cat("==test no intercept model\n")
-fit.noint <- linmod(Volume~.-1, data=trees)
-print(summary(fit.noint))
-lm.noint <- lm(Volume~.-1, data=trees)
-check.lm(fit.noint, lm.noint)
-
-fit.noint.keep <- linmod(Volume~.-1, data=trees, keep=TRUE)
-print(summary(fit.noint.keep))
-check.lm(fit.noint, lm.noint)
-stopifnot(class(fit.noint.keep$x)   == class(fit.form.keep$x))
-stopifnot(all(dim(fit.noint.keep$x) == dim(fit.form.keep$x)))
-stopifnot(all(fit.noint.keep$x == fit.form.keep$x))
-stopifnot(class(fit.noint.keep$y)   == class(fit.form.keep$y))
-stopifnot(all(dim(fit.noint.keep$x) == dim(fit.form.keep$x)))
-stopifnot(all(fit.noint.keep$x == fit.form.keep$x))
-
-cat("==test model building with different numeric args\n")
+cat0("==test model building with different numeric args\n")
 
 x <- tr[,1:2]
 y <- tr[,3]
-fit2.mat <- linmod(x, y)
-check.lm(fit2.mat, lm.tr, newdata=trees[3:5,1:2])
+cat0("class(x)=", class(x), " class(y)=", class(y), "\n") # class(x)=data.frame class(y)=numeric
+linmod2.xy <- linmod(x, y)
+check.lm(linmod2.xy, lm.Volume.tr, newdata=newdata.2col)
 
 # check consistency with lm
 expect.err(try(linmod(y~x)), "invalid type (list) for variable 'x'")
-expect.err(try(lm(y~x)), "invalid type (list) for variable 'x'")
+expect.err(try(lm(y~x)),     "invalid type (list) for variable 'x'")
 
-fit3.mat <- linmod(as.matrix(x), as.matrix(y))
-check.lm(fit3.mat, lm.tr, newdata=trees[3:5,1:2])
+linmod3.xy <- linmod(as.matrix(x), as.matrix(y))
+check.lm(linmod3.xy, lm.Volume.tr, newdata=newdata.2col)
 
-fit4.form <- linmod(y ~ as.matrix(x))
-lm4 <- linmod(y ~ as.matrix(x))
-check.lm(fit4.form, lm4, check.newdata=FALSE)
-stopifnot(coef(fit4.form)  == coef(lm.tr),
-          gsub("as.matrix(x)", "", names(coef(fit4.form)), fixed=TRUE)  == names(coef(lm.tr)))
+linmod4.form <- linmod(y ~ as.matrix(x))
+lm4 <- lm(y ~ as.matrix(x))
+check.lm(linmod4.form, lm4, check.newdata=FALSE)
+stopifnot(coef(linmod4.form)  == coef(lm.Volume.tr),
+          gsub("as.matrix(x)", "", names(coef(linmod4.form)), fixed=TRUE)  == names(coef(lm.Volume.tr)))
 
 xm <- as.matrix(x)
-fit5.form <- linmod(y ~ xm)
-lm5 <- linmod(y ~ xm)
-check.lm(fit5.form, lm5, check.newdata=FALSE)
-stopifnot(coef(fit5.form)  == coef(lm.tr),
-          gsub("xm", "", names(coef(fit5.form)), fixed=TRUE)  == names(coef(lm.tr)))
+cat0("class(xm)=", class(xm), " class(y)=", class(y), "\n") # class(xm)=matrix class(y)=numeric
+linmod5.form <- linmod(y ~ xm)
+lm5 <- lm(y ~ xm)
+check.lm(linmod5.form, lm5, check.newdata=FALSE)
+stopifnot(coef(linmod5.form)  == coef(lm.Volume.tr),
+          gsub("xm", "", names(coef(linmod5.form)), fixed=TRUE)  == names(coef(lm.Volume.tr)))
 
-cat("==test correct use of global x1 and y1, and of predict error handling\n")
+cat0("==test correct use of global x1 and y1, and of predict error handling\n")
 x1 <- tr[,1]
 y1 <- tr[,3]
-linmod1 <- linmod(y1~x1)
+cat0("class(x1)=", class(x1), " class(y1)=", class(y1), "\n") # class(x1)=numeric class(y1)=numeric
+linmod.y1.x1 <- linmod(y1~x1)
 lm1 <- lm(y1~x1)
-fit6.mat <- linmod(x1, y1)
+linmod6.xy <- linmod(x1, y1)
+
+newdata.x1 <- trees[3:5,1,drop=FALSE]
+colnames(newdata.x1) <- "x1"
+stopifnot(almost.equal(predict(linmod.y1.x1, newdata=newdata.x1),
+          c(7.63607739644657, 16.24803331528098, 17.26120459984973)))
+
+check.lm(linmod6.xy, linmod.y1.x1, newdata=x1[3:5],
+         check.newdata=FALSE, # TODO needed because linmod.y1.x1 ignores newdata(!)
+         check.coef.names=FALSE, check.casenames=FALSE)
+print(predict(linmod6.xy, newdata=x1[3:5]))
+stopifnot(almost.equal(predict(linmod6.xy, newdata=x1[3]), 7.63607739644657))
+
+# production version only:
+stopifnot(coef(linmod6.xy) == coef(linmod.y1.x1)) # names(coef(linmod.y1.x1) are "(Intercept)" "x1"
+stopifnot(names(coef(linmod6.xy)) == c("(Intercept)", "V1"))
 
 # following checks some confusing behaviour of predict.lm
 options(warn=2) # treat warnings as errors
@@ -313,147 +338,199 @@ expect.err(try(predict(lm1,    newdata=trees[3:5,1,drop=TRUE])),
            "numeric 'envir' arg not of length one")
 
 # following checks that predict.linmod gives better error messages than predict.lm
-expect.err(try(predict(linmod1, newdata=trees[3:5,1,drop=FALSE])),
-           "variable 'x1' used when building the model is not in colnames(newdata)")
-expect.err(try(predict(linmod1, newdata=trees[3:5,1,drop=TRUE])),
-           "variable 'x1' used when building the model is not in colnames(newdata)")
+expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=FALSE])),
+           "variable 'x1' is missing from newdata")
+expect.err(try(predict(lm1, newdata=trees[3:5,1,drop=FALSE])),
+           "(converted from warning) 'newdata' had 3 rows but variables found have 31 rows")
+expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=TRUE])),
+           "variable 'x1' is missing from newdata")
 
-newdata.x1 <- trees[3:5,1,drop=FALSE]
-colnames(newdata.x1) <- "x1"
-stopifnot(almost.equal(predict(linmod1, newdata=newdata.x1),
-          c(7.63607739644657, 16.24803331528098, 17.26120459984973)))
+linmod6.form <- linmod(y1~x1)
+check.lm(linmod6.form, linmod.y1.x1, check.newdata=FALSE)
 
-check.lm(fit6.mat, linmod1, newdata=x1[3:5],
-         check.newdata=FALSE, # TODO needed because linmod1 ignores newdata(!)
-         check.coef.names=FALSE, check.casenames=FALSE)
-print(predict(fit6.mat, newdata=x1[3:5]))
-stopifnot(almost.equal(predict(fit6.mat, newdata=x1[3]), 7.63607739644657))
-
-# production version only:
-stopifnot(coef(fit6.mat) == coef(linmod1),
-          names(coef(fit6.mat)) == c("(Intercept)", "V1")) # names(coef(linmod1) are "(Intercept)" "x1"
-
-fit6.form <- linmod(y1~x1)
-check.lm(fit6.form, linmod1, check.newdata=FALSE)
-
-fit1.form <- linmod(Volume~., data=tr)
 newdata <- trees[5:6,]
 colnames(newdata) <- c("Girth", "Height", "Volume999") # doesn't matter what we call the response
-stopifnot(identical(predict(fit1.form, newdata=newdata),
-                    predict(fit1.form, newdata=trees[5:6,])))
+stopifnot(identical(predict(linmod.form.Volume.tr, newdata=newdata),
+                    predict(linmod.form.Volume.tr, newdata=trees[5:6,])))
 newdata <- trees[5:6,3:1] # reverse columns and their colnames
 colnames(newdata) <- c("Volume", "Height", "Girth")
-stopifnot(identical(predict(fit1.form, newdata=newdata),
-                    predict(fit1.form, newdata=trees[5:6,])))
+stopifnot(identical(predict(linmod.form.Volume.tr, newdata=newdata),
+                    predict(linmod.form.Volume.tr, newdata=trees[5:6,])))
 newdata <- trees[5:6,2:1] # reverse columns and their colnames, delete response column
 colnames(newdata) <- c("Height", "Girth")
-stopifnot(identical(predict(fit1.form, newdata=newdata),
-                    predict(fit1.form, newdata=trees[5:6,])))
-stopifnot(identical(predict(fit1.form, newdata=as.matrix(trees[5:6,])), # allow matrix newdata
-                    predict(fit1.form, newdata=trees[5:6,])))
+stopifnot(identical(predict(linmod.form.Volume.tr, newdata=newdata),
+                    predict(linmod.form.Volume.tr, newdata=trees[5:6,])))
+stopifnot(identical(predict(linmod.form.Volume.tr, newdata=as.matrix(trees[5:6,])), # allow matrix newdata
+                    predict(linmod.form.Volume.tr, newdata=trees[5:6,])))
 newdata <- trees[5:6,]
 colnames(newdata) <- c("Girth99", "Height", "Volume")
-expect.err(try(predict(fit1.form, newdata=newdata)),
-           "variable 'Girth' used when building the model is not in colnames(newdata)")
+expect.err(try(predict(linmod.form.Volume.tr, newdata=newdata)),
+           "variable 'Girth' is missing from newdata")
 colnames(newdata) <- c("Girth", "Height99", "Volume")
-expect.err(try(predict(fit1.form, newdata=newdata)),
-           "variable 'Height' used when building the model is not in colnames(newdata)")
+expect.err(try(predict(linmod.form.Volume.tr, newdata=newdata)),
+           "variable 'Height' is missing from newdata")
 
-cat("==check integer input (sibsp is an integer) \n")
+cat0("==check integer input (sibsp is an integer)\n")
 
 library(earth) # for etitanic data
 data(etitanic)
 tit <- etitanic[seq(1, nrow(etitanic), by=60), ] # small set of data for tests (18 cases)
 tit$survived <- tit$survived != 0 # convert to logical
 rownames(tit) <- paste("pas", 1:nrow(tit), sep="")
-cat(paste(colnames(tit), "=", sapply(tit, class), sep="", collapse=", "), "\n")
+cat0(paste(colnames(tit), "=", sapply(tit, class), sep="", collapse=", "), "\n")
 
-fit7.mat <- linmod(tit$age, tit$sibsp)
+linmod7.xy <- linmod(tit$age, tit$sibsp)
 lm7 <- lm.fit(cbind(1, tit$age), tit$sibsp)
-stopifnot(coef(fit7.mat) == coef(lm7)) # coef names will differ
+stopifnot(coef(linmod7.xy) == coef(lm7)) # coef names will differ
 
-fit7.form <- linmod(sibsp~age, data=tit)
+linmod7.form <- linmod(sibsp~age, data=tit)
 lm7.form  <- lm(sibsp~age, data=tit)
-check.lm(fit7.form, lm7.form, newdata=tit[3:5,])
+check.lm(linmod7.form, lm7.form, newdata=tit[3:5,])
 
-fit8.mat <- linmod(tit$sibsp, tit$age)
+linmod8.xy <- linmod(tit$sibsp, tit$age)
 lm8 <- lm.fit(cbind(1, tit$sibsp), tit$age)
-stopifnot(coef(fit8.mat) == coef(lm8)) # coef names will differ
+stopifnot(coef(linmod8.xy) == coef(lm8)) # coef names will differ
 
-fit8.form <- linmod(age~sibsp, data=tit)
+linmod8.form <- linmod(age~sibsp, data=tit)
 lm8.form  <- lm(age~sibsp, data=tit)
-check.lm(fit8.form, lm8.form, newdata=tit[3:5,])
+check.lm(linmod8.form, lm8.form, newdata=tit[3:5,])
 
 # drop=FALSE so response is a data frame
-fit1a.mat <- linmod(trees[,1:2], trees[, 3, drop=FALSE])
-print(fit1a.mat)
-print(summary(fit1.mat))
-plotres(fit1a.mat) # plot caption shows response name "Volume"
+linmod1a.xy <- linmod(trees[,1:2], trees[, 3, drop=FALSE])
+print(linmod1a.xy)
+print(summary(linmod1a.xy))
+plotres(linmod1a.xy) # plot caption shows response name "Volume"
 
-cat("==test model building with different non numeric args\n")
+cat0("==test model building with different non numeric args\n")
 
 library(earth) # for etitanic data
 data(etitanic)
-tit <- etitanic[seq(1, nrow(etitanic), by=60), ] # small set of data for tests (18 cases)
-tit$survived <- tit$survived != 0 # convert to logical
-rownames(tit) <- paste("pas", 1:nrow(tit), sep="")
-cat(paste(colnames(tit), "=", sapply(tit, class), sep="", collapse=", "), "\n")
+etit <- etitanic[seq(1, nrow(etitanic), by=60), ] # small set of data for tests (18 cases)
+etit$survived <- etit$survived != 0 # convert to logical
+rownames(etit) <- paste("pas", 1:nrow(etit), sep="")
+cat0(paste(colnames(etit), "=", sapply(etit, class), sep="", collapse=", "), "\n")
 
-lm9 <- lm(survived~., data=tit)
-fit9.form <- linmod(survived~., data=tit)
-check.lm(fit9.form, lm9, newdata=tit[3:5,])
+lm9 <- lm(survived~., data=etit)
+linmod9.form <- linmod(survived~., data=etit)
+check.lm(linmod9.form, lm9, newdata=etit[3:5,])
 
-expect.err(try(linmod(tit[,c(1,3,4,5,6)], tit[,"survived"])),
-           "non-numeric column in 'x'")
-fit9a.form <- lm.fit(data.matrix(cbind("(Intercept)"=1, tit[,c(1,3,4,5,6)])), tit[,"survived"])
-lm9 <- lm.fit(data.matrix(cbind("(Intercept)"=1, tit[,c(1,3,4,5,6)])), tit[,"survived"])
-stopifnot(coef(fit9a.form) == coef(lm9))
-stopifnot(names(coef(fit9a.form)) == names(coef(lm9)))
+# change class of pclass to numeric
+etit.pclass.numeric <- etit
+etit.pclass.numeric$pclass <- as.numeric(etit$pclass)
+expect.err(try(predict(lm9,       newdata=etit.pclass.numeric)), "(converted from warning) variable 'pclass' is not a factor")
+expect.err(try(predict(linmod9.form, newdata=etit.pclass.numeric)), "(converted from warning) variable 'pclass' is not a factor")
+
+# change class of age to factor
+etit.age.factor <- etit
+etit.age.factor$age <- etit$pclass
+expect.err(try(predict(lm9,       newdata=etit.age.factor)), "variable 'age' was fitted with type \"numeric\" but type \"factor\" was supplied")
+expect.err(try(predict(linmod9.form, newdata=etit.age.factor)), "variable 'age' was fitted with type \"numeric\" but type \"factor\" was supplied")
+
+# predict for formula model ignores extra column(s) in newdata
+etit.extra.col <- etit
+etit.extra.col$extra <- etit$sibsp
+stopifnot(identical(predict(lm9, newdata=etit), predict(lm9, newdata=etit.extra.col)))
+stopifnot(identical(predict(linmod9.form, newdata=etit), predict(linmod9.form, newdata=etit.extra.col)))
+etit.extra.col$extra2 <- etit$sibsp
+stopifnot(identical(predict(lm9, newdata=etit), predict(lm9, newdata=etit.extra.col)))
+stopifnot(identical(predict(linmod9.form, newdata=etit), predict(linmod9.form, newdata=etit.extra.col)))
+
+# predict for formula model doesn't care if columns in different order
+etit.different.col.order <- etit[,ncol(etit):1] # reverse order of columns
+stopifnot(identical(predict(lm9, newdata=etit), predict(lm9, newdata=etit.different.col.order)))
+stopifnot(identical(predict(linmod9.form, newdata=etit), predict(linmod9.form, newdata=etit.different.col.order)))
+
+# linmod.default, non numeric x (factors in x)
+expect.err(try(linmod(etit[c(1,3,4,5,6)], etit[,"survived"])), "non-numeric column in 'x'")
+expect.err(try(linmod.fit(etit[c(1,3,4,5,6)], etit[,"survived"])), "'x' is not a matrix or could not be converted to a matrix")
+# lousy error message from lm.fit
+expect.err(try(lm.fit(etit[,c(1,3,4,5,6)], etit[,"survived"])), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
+
+expect.err(try(linmod(data.matrix(cbind("(Intercept)"=1, etit[,c(1,3,4,5,6)])), etit[,"survived"])), "column name \"(Intercept)\" in 'x' is duplicated")
+linmod9a.xy <- linmod(data.matrix(etit[,c(1,3,4,5,6)]), etit[,"survived"])
+lm9.fit <- lm.fit(data.matrix(cbind("(Intercept)"=1, etit[,c(1,3,4,5,6)])), etit[,"survived"])
+stopifnot(coef(linmod9a.xy) == coef(lm9.fit))
+stopifnot(names(coef(linmod9a.xy)) == names(coef(lm9.fit)))
+expect.err(try(predict(linmod9a.xy, newdata=etit.age.factor[,c(1,3,4,5,6)])), "non-numeric column in 'newdata' (after processing)")
+expect.err(try(predict(linmod9a.xy, newdata=etit[,c(1,3,4,5)])), "ncol(newdata) is 4 but should be 5")
+expect.err(try(predict(linmod9a.xy, newdata=etit[,c(1,3,4,5,6,6)])), "ncol(newdata) is 6 but should be 5")
+
+# linmod.formula, logical response
+data.logical.response <- data.frame(etit[1:6,c("age","sibsp","parch")], response=c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))
+linmod9b.form <- linmod(response~., data=data.logical.response)
+print(linmod9b.form)
+lm9b.form <- lm(response~., data=data.logical.response)
+check.lm(linmod9b.form, lm9b.form, newdata=data.logical.response[2,,drop=FALSE])
+
+# linmod.formula, factor response (not allowed)
+data.fac.response <- data.frame(etit[1:6,c("age","sibsp","parch")], response=factor(c("a", "a", "b", "a", "b", "b")))
+expect.err(try(linmod(response~., data=data.fac.response)), "'y' is not numeric or logical")
+# lm.formula
+expect.err(try(lm(response~., data=data.fac.response)), "(converted from warning) using type = \"numeric\" with a factor response will be ignored")
+
+# linmod.formula, string response (not allowed)
+data.string.response <- data.frame(etit[1:6,c("age","sibsp","parch")], response=c("a", "a", "b", "a", "b", "b"))
+expect.err(try(linmod(response~., data=data.string.response)), "'y' is not numeric or logical")
+# lm.formula
+expect.err(try(lm(response~., data=data.string.response)), "(converted from warning) using type = \"numeric\" with a factor response will be ignored")
+
+# linmod.default, logical response
+linmod9b.xy <- linmod(etit[1:6,c("age","sibsp","parch")], c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))
+print(linmod9b.xy)
+# lm.fit, logical response (lousy error message from lm.fit)
+expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
+# linmod.default, factor response
+expect.err(try(linmod(etit[1:6,c("age","sibsp","parch")], factor(c("a", "a", "b", "a", "b", "b")))), "'y' is not numeric or logical")
+# linmod.default, string response
+expect.err(try(linmod(etit[1:6,c("age","sibsp","parch")], c("a", "a", "b", "a", "b", "b"))), "'y' is not numeric or logical")
+# lm.fit, string and factor responses (lousy error messages from lm.fit)
+expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], factor(c("a", "a", "b", "a", "b", "b")))), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
+expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], c("a", "a", "b", "a", "b", "b"))), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
 
 options(warn=2) # treat warnings as errors
-expect.err(try(lm(pclass~., data=tit)), "using type = \"numeric\" with a factor response will be ignored")
-expect.err(try(linmod(pclass~., data=tit)), "'y' is not numeric or logical")
+expect.err(try(lm(pclass~., data=etit)), "using type = \"numeric\" with a factor response will be ignored")
+expect.err(try(linmod(pclass~., data=etit)), "'y' is not numeric or logical")
 
 options(warn=1) # print warnings as they occur
-lm10 <- lm(pclass~., data=tit) # will give warnings
+lm10 <- lm(pclass~., data=etit) # will give warnings
 options(warn=2) # treat warnings as errors
-fit10.form <- linmod(as.numeric(pclass)~., data=tit)
-stopifnot(coef(fit10.form) == coef(lm10))
-stopifnot(names(coef(fit10.form)) == names(coef(lm10)))
-# check.lm(fit10.form, lm10) # fails because lm10 fitted is all NA
+linmod10.form <- linmod(as.numeric(pclass)~., data=etit)
+stopifnot(coef(linmod10.form) == coef(lm10))
+stopifnot(names(coef(linmod10.form)) == names(coef(lm10)))
+# check.lm(linmod10.form, lm10) # fails because lm10 fitted is all NA
 
-expect.err(try(linmod(pclass~., data=tit)), "'y' is not numeric or logical")
-expect.err(try(linmod(tit[,-1], tit[,1])), "non-numeric column in 'x'")
+expect.err(try(linmod(pclass~., data=etit)), "'y' is not numeric or logical")
+expect.err(try(linmod(etit[,-1], etit[,1])), "non-numeric column in 'x'")
 expect.err(try(linmod(1:10, paste(1:10))), "'y' is not numeric or logical")
 
-fit10a.form <- linmod(survived~pclass, data=tit)
-lm10a <- lm(survived~pclass, data=tit)
-check.lm(fit10a.form, lm10a, newdata=tit[3:5,])
+linmod10a.form <- linmod(survived~pclass, data=etit)
+lm10a <- lm(survived~pclass, data=etit)
+check.lm(linmod10a.form, lm10a, newdata=etit[3:5,])
 
-expect.err(try(linmod(tit[,"pclass"], tit[,"age"])), "non-numeric column in 'x'")
+expect.err(try(linmod(etit[,"pclass"], etit[,"age"])), "non-numeric column in 'x'")
 
 expect.err(try(linmod(paste(1:10), 1:10)), "non-numeric column in 'x'")
 
-lm11 <- lm(as.numeric(pclass)~., data=tit)
-fit11.form <- linmod(as.numeric(pclass)~., data=tit)
-check.lm(fit11.form, lm11, newdata=tit[3:5,])
+lm11 <- lm(as.numeric(pclass)~., data=etit)
+linmod11.form <- linmod(as.numeric(pclass)~., data=etit)
+check.lm(linmod11.form, lm11, newdata=etit[3:5,])
 
 # logical data (not numeric)
 bool.data <- data.frame(x=rep(c(TRUE, FALSE, TRUE), length.out=10),
                         y=rep(c(TRUE, FALSE, FALSE), length.out=10))
 lm12 <- lm(y~x, data=bool.data)
-fit12.form <- linmod(y~x, data=bool.data)
-check.lm(fit12.form, lm12, newdata=bool.data[3:5,1],
+linmod12.form <- linmod(y~x, data=bool.data)
+check.lm(linmod12.form, lm12, newdata=bool.data[3:5,1],
          check.newdata=FALSE) # needed because predict.lm gives invalid type (list) for variable 'x'
-fit12.xy <- linmod(bool.data$x, bool.data$y)
+linmod12.xy <- linmod(bool.data$x, bool.data$y)
 # hack: delete mismatching names so check.lm() doesn't fail
 names(lm12$coefficients) <- NULL     # were "(Intercept)" "xTRUE"
-names(fit12.xy$coefficients) <- NULL # were "(Intercept)" "V1"
-check.lm(fit12.xy, lm12, newdata=bool.data[3:5,1],
+names(linmod12.xy$coefficients) <- NULL # were "(Intercept)" "V1"
+check.lm(linmod12.xy, lm12, newdata=bool.data[3:5,1],
          check.newdata=FALSE, # needed because predict.lm gives invalid 'envir' argument of type 'logical'
          check.casenames=FALSE)
 
-cat("==data.frame with strings\n")
+cat0("==data.frame with strings\n")
 
 df.with.string <-
     data.frame(1:5,
@@ -462,21 +539,21 @@ df.with.string <-
                stringsAsFactors=FALSE)
 colnames(df.with.string) <- c("num1", "num2", "string")
 
-fit30.form <- linmod(num1~num2, df.with.string)
+linmod30.form <- linmod(num1~num2, df.with.string)
 lm30       <- lm(num1~num2, df.with.string)
-check.lm(fit30.form, lm30, check.newdata=FALSE)
+check.lm(linmod30.form, lm30, check.newdata=FALSE)
 
-fit31.form <- linmod(num1~., df.with.string)
+linmod31.form <- linmod(num1~., df.with.string)
 lm31       <- lm(num1~., df.with.string)
-check.lm(fit31.form, lm31, check.newdata=FALSE)
+check.lm(linmod31.form, lm31, check.newdata=FALSE)
 
 expect.err(try(linmod(string~., df.with.string)), "'y' is not numeric or logical")
 
 vec <- c(1,2,3,4,3)
 expect.err(try(linmod(df.with.string, vec)), "non-numeric column in 'x'")
-expect.err(try(linmod(tit$pclass, tit$survived)), "non-numeric column in 'x'")
+expect.err(try(linmod(etit$pclass, etit$survived)), "non-numeric column in 'x'")
 
-cat("==x is singular\n")
+cat0("==x is singular\n")
 
 set.seed(1)
 x2 <- matrix(rnorm(6), nrow=2)
@@ -489,7 +566,7 @@ expect.err(try(linmod(y3~x3)), "'x' is singular (it has 3 columns but its rank i
 
 expect.err(try(linmod(trees[1,1:2], trees[1,3])), "'x' is singular (it has 3 columns but its rank is 1)")
 
-cat("==nrow(x) does not match length(y)\n")
+cat0("==nrow(x) does not match length(y)\n")
 
 x4 <- matrix(1:10, ncol=2)
 y4 <- c(1,2,9,4)
@@ -499,14 +576,14 @@ x5 <- matrix(1:10, ncol=2)
 y5 <- c(1,2,9,4,5,9)
 expect.err(try(linmod(x5, y5)), "nrow(x) is 5 but length(y) is 6")
 
-cat("==y has multiple columns\n")
+cat0("==y has multiple columns\n")
 
 vec <- c(1,2,3,4,3)
 y2 <- cbind(c(1,2,3,4,9), vec^2)
 expect.err(try(linmod(vec, y2)), "nrow(x) is 5 but length(y) is 10")
 expect.err(try(linmod(y2~vec)), "nrow(x) is 5 but length(y) is 10")
 
-cat("==NA in x\n")
+cat0("==NA in x\n")
 
 x <- tr[,1:2]
 y <- tr[,3]
@@ -518,7 +595,7 @@ y <- tr[,3]
 y[9] <- NA
 expect.err(try(linmod(x, y)), "NA in 'y'")
 
-cat("==misc tests with different kinds of data\n")
+cat0("==misc tests with different kinds of data\n")
 
 data3 <- data.frame(s=c("a", "b", "a", "c", "a"), num=c(1,5,1,9,2), y=c(1,3,2,5,3), stringsAsFactors=F)
 stopifnot(sapply(data3, class) == c("character", "numeric", "numeric"))
@@ -543,13 +620,13 @@ stopifnot(almost.equal(predict(a41, newdata=data5[1:3,1:2]),
                         c(1.5, 9.0, -2.5), max=0.001))
 
 data6 <- data.frame(s=c("a", "b", "c", "a9", "a"), num=c(1,9,4,2,6), y=c(1,2,3,5,3), stringsAsFactors=T)
-expect.err(try(predict(a41, newdata=data6[1:3,1])), "variable 's' used when building the model is not in colnames(newdata)")
-expect.err(try(predict(a41, newdata=data6[1:3,c(1,1)])), "variable 'num' used when building the model is not in colnames(newdata)")
+expect.err(try(predict(a41, newdata=data6[1:3,1])), "variable 's' is missing from newdata")
+expect.err(try(predict(a41, newdata=data6[1:3,c(1,1)])), "variable 'num' is missing from newdata")
 
 expect.err(try(predict(a41, newdata=data.frame(s=1, num=2, y=3))), "variable 's' is not a factor")
 
 expect.err(try(predict(a41, newdata=1:9)),
-           "variable 's' used when building the model is not in colnames(newdata)")
+           "variable 's' is missing from newdata")
 
 expect.err(try(predict(a41, newdata=data.frame())), "'newdata' is empty")
 
@@ -574,6 +651,9 @@ expect.err(try(predict(a42, newdata=newdata.with.NA)), "NA in 'newdata'")
 
 a43 <- linmod(Volume~.,data=trees)
 expect.err(try(predict(a43, newdata=newdata.with.NA)), "NA in 'newdata'")
+lm43 <- lm(Volume~.,data=trees)
+# message from predict.lm could be better
+expect.err(try(predict(lm43, newdata=newdata.with.NA)), "variable 'Height' was fitted with type \"numeric\" but type \"logical\" was supplied")
 
 y6 <- 1:5
 x6 <- data.frame()
@@ -603,121 +683,461 @@ expect.err(try(linmod(data7[,-1], data7[,1])), "column name \"V2\" in 'x' is dup
 # missing column names
 trees1 <- trees
 colnames(trees1) <- NULL
-cat("a52\n")
+cat0("a52\n")
 a52 <- linmod(trees1[,1:2], trees1[,3])
 print(summary(a52))
 
 trees1 <- trees
 colnames(trees1) <- c("", "Height", "Volume") # was Girth Height Volume
-cat("a53\n")
-a53 <- linmod(trees1[,1:2], trees1[,3])
-print(summary(a53))
-cat("a53.formula\n")
+cat0("linmod.form.Volume.trees1\n")
+linmod.form.Volume.trees1 <- linmod(trees1[,1:2], trees1[,3])
+print(summary(linmod.form.Volume.trees1))
+cat0("linmod.form.Volume.trees1.formula\n")
 expect.err(try(linmod(Volume~., data=trees1)), "attempt to use zero-length variable name")
 
 # very long names to test formatting in summary.linmod
 trees1 <- trees
-colnames(trees1) <- c("Girth.a.very.long.name.in.fact.an.exceptionally.long.name",
-                      "Height.a.very.long.name.in.fact.an.exceptionally.long.name",
-                      "Volume.a.very.long.name.in.fact.an.exceptionally.long.name")
-cat("a55\n")
-a55 <- linmod(Volume.a.very.long.name.in.fact.an.exceptionally.long.name~
-              Girth.a.very.long.name.in.fact.an.exceptionally.long.name+
-              Height.a.very.long.name.in.fact.an.exceptionally.long.name,
+colnames(trees1) <- c("Girth.a.very.long.name.in.fact.an.exceptionally.exceptionally.exceptionally.long.name",
+                      "Height.a.very.long.name.in.fact.an.exceptionally.exceptionally.exceptionally.long.name",
+                      "Volume.a.very.long.name.in.fact.an.exceptionally.exceptionally.exceptionally.long.name")
+cat0("a55\n")
+a55 <- linmod(Volume.a.very.long.name.in.fact.an.exceptionally.exceptionally.exceptionally.long.name~
+              Girth.a.very.long.name.in.fact.an.exceptionally.exceptionally.exceptionally.long.name+
+              Height.a.very.long.name.in.fact.an.exceptionally.exceptionally.exceptionally.long.name,
               data=trees1)
 print(summary(a55))
 
 # intercept-only model
-a56.form <- linmod(Volume~1, data=trees)
-print(summary(a56.form))
-stopifnot(length(coef(a56.form)) == 1)
-plotres(a56.form)
-expect.err(try(plotmo(a56.form)), "x is empty")
+intonly.form <- linmod(Volume~1, data=trees)
+print(summary(intonly.form))
+stopifnot(length(coef(intonly.form)) == 1)
+try(plotmo(intonly.form)) # Error in plotmo(intonly.form) : x is empty
+plotres(intonly.form)
+expect.err(try(plotmo(intonly.form)), "x is empty")
 expect.err(try(linmod(rep(1, length.out=nrow(trees)), trees$Volume)), "'x' is singular (it has 2 columns but its rank is 1)")
 
 # various tests for bad args
 expect.err(try(linmod(trees[,1:2])), "no 'y' argument")
 
+# test stop.if.dot.arg.used
 expect.err(try(linmod(Volume~., data=trees, nonesuch=99)), "unused argument (nonesuch = 99)")
 expect.err(try(linmod(trees[,1:2], trees[,3], nonesuch=linmod)), "unused argument (nonesuch = linmod)")
 expect.err(try(summary(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused argument (nonesuch = linmod)")
 expect.err(try(print(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused argument (nonesuch = linmod)")
-fit1.form <- linmod(Volume~., data=tr)
-expect.err(try(predict(fit1.form, nonesuch=99)), "unused argument (nonesuch = 99)")
-expect.err(try(predict(fit1.form, type="nonesuch")), "the 'type' argument is not yet supported")
+expect.err(try(predict(linmod.form.Volume.tr, nonesuch=99)), "unused argument (nonesuch = 99)")
 
-# method functions
+# check partial matching on type argument
+stopifnot(identical(predict(linmod.form.Volume.tr, type="r"),    predict(linmod.form.Volume.tr)))
+stopifnot(identical(predict(linmod.form.Volume.tr, type="resp"), predict(linmod.form.Volume.tr)))
+expect.err(try(predict(linmod.form.Volume.tr, type="nonesuch")), "'arg' should be one of \"response\"")
 
-case.names.linmod <- function(object, ...)
-{
-    stop.if.dot.arg.used(...)
-    names(residuals(object))
-}
-variable.names.linmod <- function(object, ...)
-{
-    stop.if.dot.arg.used(...)
-    names(coef(object))
-}
-deviance.linmod <- function(object, ...)
-{
-    stop.if.dot.arg.used(...)
-    sum(residuals(object)^2)
-}
-plot.linmod <- function(x, main=NULL, ...) # dots are passed to plot()
-{
-    call.as.char <- paste0(deparse(x$call, control=NULL, nlines=5),
-                           sep=" ", collapse=" ")
-    plot(fitted(x), residuals(x),
-         main=if(is.null(main)) substr(call.as.char, 1, 50) else main,
-         xlab="Fitted values", ylab="Residuals", ...)
-    smooth <- lowess(fitted(x), residuals(x), f=.5)
-    lines(smooth$x, smooth$y, col=2)
-}
+# test additional method functions (see linmod.methods.R)
+
+check.lm(linmod.form.Volume.tr, lm.Volume.tr, newdata=trees[3,1:2])
+stopifnot(almost.equal(coef(linmod.form.Volume.tr), coef(lm.Volume.tr)))
+stopifnot(identical(names(coef(linmod.form.Volume.tr)), names(coef(lm.Volume.tr))))
+stopifnot(almost.equal(fitted(linmod.form.Volume.tr), fitted(lm.Volume.tr)))
+stopifnot(identical(names(fitted(linmod.form.Volume.tr)), names(fitted(lm.Volume.tr))))
+stopifnot(identical(na.action(linmod.form.Volume.tr), na.action(lm.Volume.tr)))
+stopifnot(almost.equal(residuals(linmod.form.Volume.tr), residuals(lm.Volume.tr)))
+stopifnot(identical(names(residuals(linmod.form.Volume.tr)), names(residuals(lm.Volume.tr))))
+stopifnot(identical(names(case.names(linmod.form.Volume.tr)), names(case.names(lm.Volume.tr))))
+stopifnot(identical(variable.names(linmod.form.Volume.tr), variable.names(lm.Volume.tr)))
+stopifnot(identical(nobs(linmod.form.Volume.tr), nobs(lm.Volume.tr)))
+stopifnot(identical(weights(linmod.form.Volume.tr), weights(lm.Volume.tr)))
+stopifnot(almost.equal(df.residual(linmod.form.Volume.tr), df.residual(lm.Volume.tr)))
+stopifnot(identical(names(df.residual(linmod.form.Volume.tr)), names(df.residual(lm.Volume.tr))))
+stopifnot(almost.equal(deviance(linmod.form.Volume.tr), deviance(lm.Volume.tr)))
+stopifnot(identical(names(deviance(linmod.form.Volume.tr)), names(deviance(lm.Volume.tr))))
+stopifnot(identical(weights(linmod.form.Volume.tr), weights(lm.Volume.tr)))
+stopifnot(identical(model.frame(linmod.form.Volume.tr), model.frame(lm.Volume.tr)))
+stopifnot(identical(model.matrix(linmod.form.Volume.tr), model.matrix(lm.Volume.tr)))
+stopifnot(identical(model.matrix(linmod.form.Volume.tr, data=tr[1:2,]),
+                    model.matrix(lm.Volume.tr,          data=tr[1:2,])))
+
+linmod.form.Volume.tr.update <- update(linmod.form.Volume.tr, formula=Volume~Height)
+lm.Volume.tr.update          <- update(lm.Volume.tr, formula=Volume~Height)
+check.lm(linmod.form.Volume.tr.update, lm.Volume.tr.update)
+
+check.lm(linmod.xy.Volume.tr, lm.Volume.tr, newdata=trees[3,1:2])
+stopifnot(almost.equal(coef(linmod.xy.Volume.tr), coef(lm.Volume.tr)))
+stopifnot(identical(names(coef(linmod.xy.Volume.tr)), names(coef(lm.Volume.tr))))
+stopifnot(almost.equal(fitted(linmod.xy.Volume.tr), fitted(lm.Volume.tr)))
+stopifnot(identical(names(fitted(linmod.xy.Volume.tr)), names(fitted(lm.Volume.tr))))
+stopifnot(identical(na.action(linmod.xy.Volume.tr), na.action(lm.Volume.tr)))
+stopifnot(almost.equal(residuals(linmod.xy.Volume.tr), residuals(lm.Volume.tr)))
+stopifnot(identical(names(residuals(linmod.xy.Volume.tr)), names(residuals(lm.Volume.tr))))
+stopifnot(identical(case.names(linmod.xy.Volume.tr), case.names(lm.Volume.tr)))
+stopifnot(identical(variable.names(linmod.xy.Volume.tr), variable.names(lm.Volume.tr)))
+stopifnot(identical(nobs(linmod.xy.Volume.tr), nobs(lm.Volume.tr)))
+stopifnot(identical(weights(linmod.xy.Volume.tr), weights(lm.Volume.tr)))
+stopifnot(almost.equal(df.residual(linmod.xy.Volume.tr), df.residual(lm.Volume.tr)))
+stopifnot(identical(names(df.residual(linmod.xy.Volume.tr)), names(df.residual(lm.Volume.tr))))
+stopifnot(almost.equal(deviance(linmod.xy.Volume.tr), deviance(lm.Volume.tr)))
+stopifnot(identical(names(deviance(linmod.xy.Volume.tr)), names(deviance(lm.Volume.tr))))
+stopifnot(identical(weights(linmod.xy.Volume.tr), weights(lm.Volume.tr)))
+expect.err(try(model.frame(linmod.xy.Volume.tr)),  "model.frame cannot be used on linmod models built without a formula")
+expect.err(try(model.matrix(linmod.xy.Volume.tr)), "model.frame cannot be used on linmod models built without a formula")
+
 old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2))
+plot(linmod.form.Volume.tr)
+plot(lm.Volume.tr, which=1, main="lm.Volume.tr")
+plot(linmod.xy.Volume.tr)
+plot(linmod.form.Volume.tr, xlim=c(0,80), ylim=c(-10,10), pch=20, main="linmod.form.Volume.tr: test plot args")
+par(old.par)
 
-fit1.form <- linmod(Volume~., data=tr)
-fit1.lm <- lm(Volume~., data=tr)
-stopifnot(almost.equal(coef(fit1.form), coef(fit1.lm)))
-stopifnot(identical(names(coef(fit1.form)), names(coef(fit1.lm))))
-stopifnot(almost.equal(fitted(fit1.form), fitted(fit1.lm)))
-stopifnot(identical(names(fitted(fit1.form)), names(fitted(fit1.lm))))
-stopifnot(identical(na.action(fit1.form), na.action(fit1.lm)))
-stopifnot(almost.equal(residuals(fit1.form), residuals(fit1.lm)))
-stopifnot(identical(names(residuals(fit1.form)), names(residuals(fit1.lm))))
-stopifnot(identical(names(case.names(fit1.form)), names(case.names(fit1.lm))))
-stopifnot(identical(names(variable.names(fit1.form)), names(variable.names(fit1.lm))))
-stopifnot(identical(weights(fit1.form), weights(fit1.lm)))
-stopifnot(almost.equal(df.residual(fit1.form), df.residual(fit1.lm)))
-stopifnot(identical(names(df.residual(fit1.form)), names(df.residual(fit1.lm))))
-# print(model.matrix(fit1.form)) # TODO doesn't work
-stopifnot(almost.equal(deviance(fit1.form), deviance(fit1.lm)))
-stopifnot(identical(names(deviance(fit1.form)), names(deviance(fit1.lm))))
-stopifnot(identical(weights(fit1.form), weights(fit1.lm)))
+cat0("==test one predictor model\n")
 
-plot(fit1.form)
-plot(fit1.form, xlim=c(0,80), ylim=c(-10,10), pch=20, main="fit1.form: test plot args")
+linmod.onepred.form <- linmod(Volume~Girth, data=tr) # one predictor
+lm.onepred.form <- lm(Volume~Girth, data=tr)
+check.lm(linmod.onepred.form, lm.onepred.form, newdata=trees[3,1:2])
+linmod.onepred.xy <- linmod(tr[,1,drop=FALSE], tr[,3]) # one predictor
+print(summary(linmod.onepred.xy))
+check.lm(linmod.onepred.xy, lm.onepred.form, newdata=trees[3,1,drop=FALSE])
 
-fit1.mat <- linmod(tr[,1:2], tr[,3]) # note no need for intercept term
-stopifnot(almost.equal(coef(fit1.mat), coef(fit1.lm)))
-stopifnot(identical(names(coef(fit1.mat)), names(coef(fit1.lm))))
-stopifnot(almost.equal(fitted(fit1.mat), fitted(fit1.lm)))
-stopifnot(identical(names(fitted(fit1.mat)), names(fitted(fit1.lm))))
-stopifnot(identical(na.action(fit1.mat), na.action(fit1.lm)))
-stopifnot(almost.equal(residuals(fit1.mat), residuals(fit1.lm)))
-stopifnot(identical(names(residuals(fit1.mat)), names(residuals(fit1.lm))))
-stopifnot(identical(names(case.names(fit1.mat)), names(case.names(fit1.lm))))
-stopifnot(identical(names(variable.names(fit1.mat)), names(variable.names(fit1.lm))))
-stopifnot(identical(weights(fit1.mat), weights(fit1.lm)))
-stopifnot(almost.equal(df.residual(fit1.mat), df.residual(fit1.lm)))
-stopifnot(identical(names(df.residual(fit1.mat)), names(df.residual(fit1.lm))))
-# print(model.matrix(fit1.mat)) # TODO doesn't work
-stopifnot(almost.equal(deviance(fit1.mat), deviance(fit1.lm)))
-stopifnot(identical(names(deviance(fit1.mat)), names(deviance(fit1.lm))))
-stopifnot(identical(weights(fit1.mat), weights(fit1.lm)))
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(2,2))
+plot(linmod.onepred.form)
+plot(lm.onepred.form, which=1, main="lm.onepred.form")
+plot(linmod.onepred.xy)
+par(old.par)
+plotres(linmod.onepred.form)
+plotmo(linmod.onepred.form, pt.col=2)
 
-plot(fit1.mat)
-plot(fit1.mat, xlim=c(0,80), ylim=c(-10,10), pch=20, main="fit1.mat: test plot args")
+cat0("==test no intercept model\n")
+# no intercept models are only supported with the formula interface (not x,y interface)
+
+linmod.noint <- linmod(Volume~.-1, data=trees) # no intercept
+print(summary(linmod.noint))
+lm.noint <- lm(Volume~.-1, data=trees) # no intercept
+check.lm(linmod.noint, lm.noint)
+linmod.noint.keep <- linmod(Volume~.-1, data=trees, keep=TRUE)
+print(summary(linmod.noint.keep))
+
+check.lm(linmod.noint, lm.noint)
+stopifnot(class(linmod.noint.keep$x)   == class(linmod.form.Volume.trees.keep$x))
+stopifnot(all(dim(linmod.noint.keep$x) == dim(linmod.form.Volume.trees.keep$x)))
+stopifnot(all(linmod.noint.keep$x == linmod.form.Volume.trees.keep$x))
+stopifnot(class(linmod.noint.keep$y)   == class(linmod.form.Volume.trees.keep$y))
+stopifnot(all(dim(linmod.noint.keep$x) == dim(linmod.form.Volume.trees.keep$x)))
+stopifnot(all(linmod.noint.keep$x == linmod.form.Volume.trees.keep$x))
+
+# check method functions in no-intercept model
+stopifnot(almost.equal(coef(linmod.noint), coef(lm.noint)))
+stopifnot(identical(names(coef(linmod.noint)), names(coef(lm.noint))))
+stopifnot(almost.equal(fitted(linmod.noint), fitted(lm.noint)))
+stopifnot(identical(names(fitted(linmod.noint)), names(fitted(lm.noint))))
+stopifnot(identical(na.action(linmod.noint), na.action(lm.noint)))
+stopifnot(almost.equal(residuals(linmod.noint), residuals(lm.noint)))
+stopifnot(identical(names(residuals(linmod.noint)), names(residuals(lm.noint))))
+stopifnot(identical(case.names(linmod.noint), case.names(lm.noint)))
+stopifnot(identical(variable.names(linmod.noint), variable.names(lm.noint)))
+stopifnot(identical(nobs(linmod.noint), nobs(lm.noint)))
+stopifnot(identical(weights(linmod.noint), weights(lm.noint)))
+stopifnot(almost.equal(df.residual(linmod.noint), df.residual(lm.noint)))
+stopifnot(identical(names(df.residual(linmod.noint)), names(df.residual(lm.noint))))
+stopifnot(almost.equal(deviance(linmod.noint), deviance(lm.noint)))
+stopifnot(identical(names(deviance(linmod.noint)), names(deviance(lm.noint))))
+stopifnot(identical(weights(linmod.noint), weights(lm.noint)))
+stopifnot(identical(model.frame(linmod.noint), model.frame(lm.noint)))
+stopifnot(identical(model.matrix(linmod.noint), model.matrix(lm.noint)))
+stopifnot(identical(model.matrix(linmod.noint, data=tr[1:2,]),
+                    model.matrix(lm.noint,     data=tr[1:2,])))
+
+# check error messages with bad newdata in no-intercept model
+expect.err(try(predict(linmod.noint, newdata=NA)), "variable 'Girth' is missing from newdata")
+expect.err(try(predict(linmod.noint, newdata=data.frame(Height=c(1,NA), Girth=c(3,4)))), "NA in 'newdata'")
+expect.err(try(predict(linmod.noint, newdata=trees[0,])), "'newdata' is empty")
+expect.err(try(predict(linmod.noint, newdata=trees[3:5,"Height"])), "variable 'Girth' is missing from newdata")
+# check that extra fields in predict newdata are ok with (formula) models without intercept
+stopifnot(almost.equal(predict(linmod.noint, newdata=data.frame(Girth=10, Height=80, extra=99)),
+                       predict(lm.noint,  newdata=data.frame(Girth=10, Height=80, extra=99))))
+
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(2,2))
+plot(linmod.noint)
+plot(lm.noint, which=1, main="lm.noint")
+par(old.par)
+
+plotres(linmod.noint)
+plotmo(linmod.noint)
+
+cat0("==test one predictor no intercept model\n")
+# no intercept models are only supported with the formula interface (not x,y interface)
+
+linmod.onepred.noint <- linmod(Volume~Girth-1, data=trees) # one predictor, no intercept
+print(summary(linmod.onepred.noint))
+lm.onepred.noint <- lm(Volume~Girth-1, data=trees) # one predictor, no intercept
+check.lm(linmod.onepred.noint, lm.onepred.noint)
+linmod.onepred.noint.keep <- linmod(Volume~.-1, data=trees, keep=TRUE)
+print(summary(linmod.onepred.noint.keep))
+
+check.lm(linmod.onepred.noint, lm.onepred.noint)
+stopifnot(class(linmod.onepred.noint.keep$x)   == class(linmod.form.Volume.trees.keep$x))
+stopifnot(all(dim(linmod.onepred.noint.keep$x) == dim(linmod.form.Volume.trees.keep$x)))
+stopifnot(all(linmod.onepred.noint.keep$x == linmod.form.Volume.trees.keep$x))
+stopifnot(class(linmod.onepred.noint.keep$y)   == class(linmod.form.Volume.trees.keep$y))
+stopifnot(all(dim(linmod.onepred.noint.keep$x) == dim(linmod.form.Volume.trees.keep$x)))
+stopifnot(all(linmod.onepred.noint.keep$x == linmod.form.Volume.trees.keep$x))
+
+# check method functions in one predictor no-intercept model
+stopifnot(almost.equal(coef(linmod.onepred.noint), coef(lm.onepred.noint)))
+stopifnot(identical(names(coef(linmod.onepred.noint)), names(coef(lm.onepred.noint))))
+stopifnot(almost.equal(fitted(linmod.onepred.noint), fitted(lm.onepred.noint)))
+stopifnot(identical(names(fitted(linmod.onepred.noint)), names(fitted(lm.onepred.noint))))
+stopifnot(identical(na.action(linmod.onepred.noint), na.action(lm.onepred.noint)))
+stopifnot(almost.equal(residuals(linmod.onepred.noint), residuals(lm.onepred.noint)))
+stopifnot(identical(names(residuals(linmod.onepred.noint)), names(residuals(lm.onepred.noint))))
+stopifnot(identical(case.names(linmod.onepred.noint), case.names(lm.onepred.noint)))
+stopifnot(identical(variable.names(linmod.onepred.noint), variable.names(lm.onepred.noint)))
+stopifnot(identical(nobs(linmod.onepred.noint), nobs(lm.onepred.noint)))
+stopifnot(identical(weights(linmod.onepred.noint), weights(lm.onepred.noint)))
+stopifnot(almost.equal(df.residual(linmod.onepred.noint), df.residual(lm.onepred.noint)))
+stopifnot(identical(names(df.residual(linmod.onepred.noint)), names(df.residual(lm.onepred.noint))))
+stopifnot(almost.equal(deviance(linmod.onepred.noint), deviance(lm.onepred.noint)))
+stopifnot(identical(names(deviance(linmod.onepred.noint)), names(deviance(lm.onepred.noint))))
+stopifnot(identical(weights(linmod.onepred.noint), weights(lm.onepred.noint)))
+stopifnot(identical(model.frame(linmod.onepred.noint), model.frame(lm.onepred.noint)))
+stopifnot(identical(model.matrix(linmod.onepred.noint), model.matrix(lm.onepred.noint)))
+stopifnot(identical(model.matrix(linmod.onepred.noint, data=tr[1:2,]),
+                    model.matrix(lm.onepred.noint,     data=tr[1:2,])))
+
+# check error messages with bad newdata in one predictor no-intercept model
+expect.err(try(predict(linmod.onepred.noint, newdata=99)), "variable 'Girth' is missing from newdata")
+expect.err(try(predict(linmod.onepred.noint, newdata=data.frame(Girth=NA))), "NA in 'newdata'")
+expect.err(try(predict(linmod.onepred.noint, newdata=trees[0,1])), "'newdata' is empty")
+expect.err(try(predict(linmod.onepred.noint, newdata=trees[3:5,"Height"])), "variable 'Girth' is missing from newdata")
+# check that extra fields in predict newdata are ok with (formula) models without intercept
+stopifnot(almost.equal(predict(linmod.onepred.noint, newdata=data.frame(Girth=10, extra=99)),
+                       predict(lm.onepred.noint,     newdata=data.frame(Girth=10, extra=99))))
+
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(2,2))
+plot(linmod.onepred.noint)
+plot(lm.onepred.noint, which=1, main="lm.onepred.noint")
+par(old.par)
+
+plotres(linmod.onepred.noint)
+plotmo(linmod.onepred.noint)
+
+expect.err(try(linmod(Volume~nonesuch, data=trees)), "object 'nonesuch' not found")
+expect.err(try(linmod(Volume~0, data=trees)),   "'x' is empty") # no predictor
+expect.err(try(linmod(Volume~-1, data=trees)), "'x' is empty") # no predictor, no intercept
+
+cat0("==check use of matrix as data in linmod.form\n")
+# linmod.form allows a matrix, lm doesn't TODO is this inconsistency what we want?
+tr.mat <- as.matrix(tr)
+cat0("class(tr.mat)=", class(tr.mat), "\n") # class(tr.mat)=matrix
+expect.err(try(lm(Volume~., data=tr.mat)), "'data' must be a data.frame, not a matrix or an array")
+linmod.form.Volume.mat.tr <- linmod(Volume~., data=tr.mat)
+check.lm(linmod.form.Volume.mat.tr, linmod.form.Volume.tr)
+cat0("==print(summary(linmod.form.Volume.mat.tr))\n")
+print(summary(linmod.form.Volume.mat.tr))
+plotres(linmod.form.Volume.mat.tr)
+
+tr.mat.no.colnames <- as.matrix(tr)
+colnames(tr.mat.no.colnames) <- NULL
+expect.err(try(linmod(Volume~., data=tr.mat.no.colnames)), "object 'Volume' not found")
+linmod.form.Volume.mat.tr.no.colnames <- linmod(V3~., data=tr.mat.no.colnames)
+check.lm(linmod.form.Volume.mat.tr.no.colnames, linmod.form.Volume.tr,
+         check.coef.names=FALSE, check.newdata=FALSE) # no check.newdata else variable 'V1' is missing from newdata
+
+# Check what happens when we change the original data used to build the model.
+# Use plotres as an example function that must figure out residuals from predict().
+
+pr <- function(model, main=deparse(substitute(model)))
+{
+    plotres(model, which=3, main=main) # which=3 for just the residuals plot
+}
+cat0("==linmod.formula: change data used to build the model\n")
+
+trees1 <- trees
+linmod.trees1 <- linmod(Volume~., data=trees1)
+# delete the saved residuals and fitted.values so plotres has to use the saved
+# call etc. to get the x and y used to build the model, and rely on predict()
+linmod.trees1$residuals <- NULL
+linmod.trees1$fitted.values <- NULL
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3,3))
+pr(linmod.trees1)
+trees1 <- trees[, 3:1]                      # change column order in original data
+pr(linmod.trees1, "change col order")
+trees1 <- trees[1:3, ]                      # change number of rows in original data
+pr(linmod.trees1, "change nbr rows")        # TODO wrong residuals! (lm has the same issue)
+cat("call$data now refers to the changed data:\n") # lm has the same problem if called with model=FALSE
+print(eval(linmod.trees1$call$data))
+cat("model.frame now returns the changed data:\n")
+print(model.frame(linmod.trees1))
+trees1 <- trees[nrow(tr):1, ]               # change row order (but keep same nbr of rows)
+pr(linmod.trees1, "change row order")
+colnames(trees1) <- c("x1", "x2", "x3")     # change column names in original data
+expect.err(try(pr(linmod.trees1, "change colnames")), "cannot get the original model predictors")
+trees1 <- "garbage"
+expect.err(try(pr(linmod.trees1, "trees1=\"garbage\"")), "cannot get the original model predictors (use trace=2 for details)")
+trees1 <- 1:1000
+expect.err(try(pr(linmod.trees1, "trees1=1:1000")), "cannot get the original model predictors (use trace=2 for details)")
+trees1 <- NULL                              # original data no longer available
+expect.err(try(pr(linmod.trees1, "trees1=NULL")), "cannot get the original model predictors")
+remove(trees1)
+expect.err(try(pr(linmod.trees1, "remove(trees1)")), "cannot get the original model predictors (use trace=2 for details)")
+
+# similar to above, but don't delete the saved residuals and fitted.values
+trees1 <- trees
+linmod2.trees1 <- linmod(Volume~., data=trees1)
+trees1 <- trees[1:3, ]                      # change number of rows in original data
+expect.err(try(plotmo(linmod2.trees1)), "plotmo_y returned the wrong length (got 3 but expected 31)")
+
+par(old.par)
+
+cat0("==linmod.formula(keep=TRUE): change data used to build the model\n")
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3,3))
+trees1 <- trees
+linmod.trees1.keep <- linmod(Volume~., data=trees1, keep=TRUE)
+# delete the saved residuals and fitted.values so plotres has to use the saved
+# call etc. to get the x and y used to build the model, and rely on predict()
+linmod.trees1.keep$residuals <- NULL
+linmod.trees1.keep$fitted.values <- NULL
+pr(linmod.trees1.keep)
+trees1 <- trees[, 3:1]                      # change column order in original data
+pr(linmod.trees1.keep, "change col order")
+trees1 <- trees[1:3, ]                      # change number of rows in original data
+pr(linmod.trees1.keep, "change nbr rows")
+trees1 <- trees[nrow(tr):1, ]               # change row order (but keep same nbr of rows)
+pr(linmod.trees1.keep, "change row order")
+colnames(trees1) <- c("x1", "x2", "x3")     # change column names in original data
+pr(linmod.trees1.keep, "change colnames")
+trees1 <- NULL                              # original data no longer available
+pr(linmod.trees1.keep, "trees1=NULL")
+remove(trees1)
+pr(linmod.trees1.keep, "remove(trees1)")
+par(old.par)
+
+cat0("==linmod.default: change data used to build the model\n")
+trees1 <- trees
+x1 <- trees1[,1:2]
+y1 <- trees1[,3]
+linmod.xy <- linmod(x1, y1)
+# delete the saved residuals and fitted.values so plotres has to use the saved
+# call etc. to get the x1 and y1 used to build the model, and rely on predict()
+linmod.xy$residuals <- NULL
+linmod.xy$fitted.values <- NULL
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3,3))
+pr(linmod.xy)
+x1 <- trees1[,2:1]                 # change column order in original x1
+pr(linmod.xy, "change col order")
+x1 <- trees1[1:3, 1:2]                      # change number of rows in original x1
+expect.err(try(pr(linmod.xy, "change nbr rows")), "plotmo_y returned the wrong length (got 31 but expected 3)") # TODO different behaviour to linmod.trees1
+cat("call$x1 now refers to the changed x1:\n") # lm has the same problem if called with model=FALSE
+print(eval(linmod.xy$call$x1))
+x1 <- trees1[nrow(tr):1, 1:2]               # change row order (but keep same nbr of rows)
+pr(linmod.xy, "change row order")
+x1 <- trees1[,1:2]
+colnames(x1) <- c("x1", "x2")     # change column names in original x1
+pr(linmod.xy, "change colnames")
+x1 <- "garbage"
+expect.err(try(pr(linmod.xy, "x1=\"garbage\"")), "cannot get the original model predictors (use trace=2 for details)")
+x1 <- 1:1000
+expect.err(try(pr(linmod.xy, "x1=1:1000")), "ncol(newdata) is 1 but should be 2")
+x1 <- NULL                              # original x1 no longer available
+expect.err(try(pr(linmod.xy, "x1=NULL")), "cannot get the original model predictors")
+remove(x1)
+expect.err(try(pr(linmod.xy, "remove(x1)")), "cannot get the original model predictors (use trace=2 for details)")
+
+# similar to above, but don't delete the saved residuals and fitted.values
+trees1 <- trees
+x1 <- trees1[,1:2]
+y1 <- trees1[,3]
+linmod.xy <- linmod(x1, y1)
+x1 <- trees1[1:3, 1:2]                      # change number of rows in original x1
+expect.err(try(plotmo(linmod2.x1)), "object 'linmod2.x1' not found") # TODO error message misleading?
+
+par(old.par)
+
+cat0("==linmod.default(keep=TRUE): change data used to build the model\n")
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3,3))
+trees1 <- trees
+x1 <- trees1[,1:2]
+linmod.xy <- linmod(x1, y1, keep=TRUE)
+# delete the saved residuals and fitted.values so plotres has to use the saved
+# call etc. to get the x1 and y1 used to build the model, and rely on predict()
+linmod.xy$residuals <- NULL
+linmod.xy$fitted.values <- NULL
+pr(linmod.xy.keep)
+x1 <- trees1[, 2:1]                 # change column order in original x1
+pr(linmod.xy.keep, "change col order")
+x1 <- trees1[1:3, 1:2]                      # change number of rows in original x1
+pr(linmod.xy.keep, "change nbr rows")
+x1 <- trees1[nrow(tr):1, 1:2]               # change row order (but keep same nbr of rows)
+pr(linmod.xy.keep, "change row order")
+x1 <- trees1[,1:2]
+colnames(x1) <- c("x1", "x2")     # change column names in original x1
+pr(linmod.xy.keep, "change colnames")
+x1 <- NULL                              # original x1 no longer available
+pr(linmod.xy.keep, "x1=NULL")
+remove(x1)
+pr(linmod.xy.keep, "remove(x1)")
+par(old.par)
+
+cat("==test processing a model created in a function with local data\n")
+
+# pr <- function(model, main=deparse(substitute(model)))
+# {
+#     plotmo(model, degree1=1, degree2=0, pt.col=2, do.par=FALSE, main=main)
+# }
+pr <- function(model, main=deparse(substitute(model)))
+{
+    plotres(model, which=3, main=main) # which=3 for just the residuals plot
+}
+lm.form.func <- function(keep=FALSE)
+{
+    local.tr <- trees[1:20,]
+    lm(Volume~., data=local.tr, model=keep)
+}
+linmod.form.func <- function(keep=FALSE)
+{
+    local.tr <- trees[1:20,]
+    model <- linmod(Volume~., data=local.tr, keep=keep)
+    # delete the saved residuals and fitted.values so plotres has to use the saved
+    # call etc. to get the x and y used to build the model, and rely on predict()
+    model$residuals <- NULL
+    model$fitted.values <- NULL
+    model
+}
+linmod.xy.func <- function(keep)
+{
+    xx <- trees[1:20,1:2]
+    yy <- trees[1:20,3]
+    model <- linmod(xx, yy, keep=keep)
+    # delete the saved residuals and fitted.values so plotres has to use the saved
+    # call etc. to get the x and y used to build the model, and rely on predict()
+    model$residuals <- NULL
+    model$fitted.values <- NULL
+    model
+}
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3,2))
+
+lm.form <- lm.form.func(keep=FALSE)
+pr(lm.form)
+
+lm.form.keep <- lm.form.func(keep=TRUE)
+pr(lm.form.keep)
+
+linmod.form <- linmod.form.func(keep=FALSE)
+pr(linmod.form)
+
+linmod.form.keep <- linmod.form.func(keep=TRUE)
+pr(linmod.form.keep)
+
+linmod.xy <- linmod.xy.func(keep=FALSE)
+expect.err(try(pr(linmod.xy)), "cannot get the original model predictors")
+
+linmod.xy.keep <- linmod.xy.func(keep=TRUE)
+pr(linmod.xy.keep)
 
 par(old.par)
 

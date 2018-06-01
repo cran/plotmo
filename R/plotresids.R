@@ -71,13 +71,13 @@ plotresids <- function(
 
     if((which %in% W7VLOG:W9LOGLOG))
         check.that.most.are.positive(
-            versus1, "fitted", sprintf("which=%d", which), "nonpositive")
+            versus1, "fitted", sprint("which=%d", which), "nonpositive")
 
     # TODO following is redundant after above check?
     # abs(resids) must be nonnegative to take their log
     if(which %in% W7VLOG:W9LOGLOG)
         check.that.most.are.positive(
-            abs(resids), "abs(residuals)", sprintf("which=%d", which), "zero")
+            abs(resids), "abs(residuals)", sprint("which=%d", which), "zero")
 
     trans.versus <- trans.versus(versus1[iresids], which)
     trans.resids <- trans.resids(resids[iresids], which)
@@ -128,7 +128,7 @@ plotresids <- function(
         id.indices <-
             get.id.indices(rinfo$scale * rinfo$resids, id.n,
                            if(nversus == V4LEVER)
-                               hatvalues1(object, sprintf("versus=%g", V4LEVER))
+                               hatvalues1(object, sprint("versus=%g", V4LEVER))
                            else
                                NULL)
 
@@ -353,7 +353,7 @@ get.versus.info <- function(which, versus, object, fitted, nresponse, trace=0)
         } else if(versus == V4LEVER) {
             # TODO handle constant leverages for factors in the same way as plot.lm
             versus.mat <-
-                matrix(hatvalues1(object, sprintf("versus=%g", V4LEVER)), ncol=1)
+                matrix(hatvalues1(object, sprint("versus=%g", V4LEVER)), ncol=1)
             colnames(versus.mat) <- "Leverage"
         } else
             versus.err()
@@ -579,9 +579,9 @@ derive.xlab <- function(xlab, which, colname.versus1, nversus)
         xlab <- colname.versus1
     stopifnot.string(xlab)
     if(which %in% (W7VLOG:W9LOGLOG))
-        xlab <- sprintf("Log %s", xlab)
+        xlab <- sprint("Log %s", xlab)
     if(nversus == V2INDEX)
-        xlab <- sprintf("%s index", xlab)
+        xlab <- sprint("%s index", xlab)
     xlab
 }
 derive.ylab <- function(ylab, which, rinfo.name)
@@ -592,17 +592,17 @@ derive.ylab <- function(ylab, which, rinfo.name)
             return("")
     }
     if(!is.specified(ylab))
-        ylab <- sprintf("%ss", rinfo.name)
+        ylab <- sprint("%ss", rinfo.name)
     if(which == W5ABS)
-        ylab <- sprintf("Abs %s", ylab)
+        ylab <- sprint("Abs %s", ylab)
     else if(which == W6SQRT)
-        ylab <- sprintf("Sqrt Abs %s", ylab)
+        ylab <- sprint("Sqrt Abs %s", ylab)
     else if(which == W7VLOG)
-        ylab <- sprintf("Abs %s", ylab)
+        ylab <- sprint("Abs %s", ylab)
     else if(which == W8CUBE)
-        ylab <- sprintf("Cube Root Squared %s", ylab)
+        ylab <- sprint("Cube Root Squared %s", ylab)
     else if(which == W9LOGLOG)
-        ylab <- sprintf("Log Abs %s", ylab)
+        ylab <- sprint("Log Abs %s", ylab)
     ylab
 }
 derive.main <- function(main, xlab, ylab, level) # title of plot
@@ -617,9 +617,9 @@ derive.main <- function(main, xlab, ylab, level) # title of plot
         newline <- TRUE
 
     if(!is.specified(main)) # generate a main only if user didn't specify main
-        main <- sprintf("%s vs%s%s", ylab, if(newline) "\n" else " ", xlab)
+        main <- sprint("%s vs%s%s", ylab, if(newline) "\n" else " ", xlab)
     if(xlab != "Leverage" && level && !newline) # two newlines is too many
-        main <- sprintf("%s\n%g%% level shaded", main, 100*(level))
+        main <- sprint("%s\n%g%% level shaded", main, 100*(level))
 
     main
 }
@@ -694,19 +694,19 @@ draw.resids.info <- function(which, info, versus1, resids, nversus, rsq, coef.rl
         slope.text <- ""
         if(which == W5ABS || which == W9LOGLOG) { # added linear regression line?
             stopifnot(length(coef.rlm) == 2)
-            slope.text <- sprintf("    slope %.2g", coef.rlm[2])
+            slope.text <- sprint("    slope %.2g", coef.rlm[2])
         }
         # exact=FALSE else get warning "Cannot compute exact p-value with ties"
         cor.abs <- cor.test(versus1, abs(resids), method="spearman", exact=FALSE)
         if(nversus == V3RESPONSE) {
             cor <- cor.test(versus1, resids, method="spearman", exact=FALSE)
-            text <- sprintf("spearman abs  %.2f   resids %.2f\n%s",
+            text <- sprint("spearman abs  %.2f   resids %.2f\n%s",
                              cor.abs$estimate, cor$estimate, slope.text)
         } else if(which == W3RESID && nversus == V1FITTED)
-            text <- sprintf("rsq  %.2f     spearman abs  %.2f",
+            text <- sprint("rsq  %.2f     spearman abs  %.2f",
                             rsq, cor.abs$estimate)
         else
-            text <- sprintf("spearman abs  %.2f%s", cor.abs$estimate, slope.text)
+            text <- sprint("spearman abs  %.2f%s", cor.abs$estimate, slope.text)
         cex <- .9
         usr <- par("usr") # xmin, xmax, ymin, ymax
         text.on.white(x     = usr[1] + strwidth("x", font=1),

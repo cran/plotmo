@@ -19,9 +19,9 @@
 +                 deparse(substitute(object)), "\n", sep="")
 +         else
 +             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg, 1, 1000)))
++                          expected.msg, substr(msg[1], 1, 1000)))
 +     } else
-+         stop("did not get expected error ", expected.msg)
++         stop("Did not get expected error: ", expected.msg)
 + }
 > printf("library(earth)\n")
 library(earth)
@@ -462,6 +462,13 @@ Got error as expected from try(plotmo1(rpart.model.vignette, level = 0.9))
 library(gbm)
 > library(gbm)                                            # gbm
 Loading required package: survival
+
+Attaching package: 'survival'
+
+The following object is masked from 'package:rpart':
+
+    solder
+
 Loading required package: lattice
 Loading required package: splines
 Loading required package: parallel

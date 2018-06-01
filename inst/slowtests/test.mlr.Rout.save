@@ -1,0 +1,321 @@
+> # test.mlr.R: test the "mlr" package with plotmo and plotres
+> 
+> library(mlr)
+Loading required package: ParamHelpers
+> library(plotmo)
+Loading required package: plotrix
+Loading required package: TeachingDemos
+> library(rpart.plot)
+Loading required package: rpart
+> library(earth)
+> options(warn=1) # print warnings as they occur
+> 
+> # test that we got an error as expected from a try() call
+> expect.err <- function(object, expected.msg="")
++ {
++     if(class(object)[1] == "try-error") {
++         msg <- attr(object, "condition")$message[1]
++         if(length(grep(expected.msg, msg, fixed=TRUE)))
++             cat("Got error as expected from ",
++                 deparse(substitute(object)), "\n", sep="")
++         else
++             stop(sprintf("Expected: %s\n  Got:      %s",
++                          expected.msg, substr(msg[1], 1, 1000)))
++     } else
++         stop("Did not get expected error: ", expected.msg)
++ }
+> if(!interactive())
++     postscript(paper="letter")
+> 
+> cat("==simple regression model with earth ============================================\n")
+==simple regression model with earth ============================================
+> 
+> set.seed(2018)
+> library(earth)
+> 
+> task <- makeRegrTask(data=trees, target="Volume")
+> lrn <- makeLearner("regr.earth", degree=2)
+> regr.earth = train(lrn, task)
+> 
+> # compare to regular earth model
+> earth <- earth(Volume~., data=trees, degree=2)
+> set.seed(2018)
+> # SHOWCALL is just a testing thing, so we can see who created the plot on the plot itself
+> plotres(regr.earth$learner.model, SHOWCALL=TRUE)
+> set.seed(2018)
+> plotres(earth, SHOWCALL=TRUE)
+> 
+> plotmo(regr.earth$learner.model, trace=1, SHOWCALL=TRUE)
+stats::predict(earth.object, NULL, type="response")
+stats::fitted(object=earth.object)
+got model response from model.frame(Volume~Girth+Height,
+                                    data=call$data, na.action="na.fail")
+
+ plotmo grid:    Girth Height
+                  12.9     76
+
+> plotmo(earth, trace=1, SHOWCALL=TRUE)
+stats::predict(earth.object, NULL, type="response")
+stats::fitted(object=earth.object)
+got model response from model.frame(Volume~Girth+Height,
+                                    data=call$data, na.action="na.fail")
+
+ plotmo grid:    Girth Height
+                  12.9     76
+
+> 
+> # compare partial dependence plots from mlr and plotmo packages
+> plotmo(earth, degree1="Girth", degree2=0, pmethod="partdep", SHOWCALL=TRUE,
++        pt.col=2, grid.col="lightgray")
+calculating partdep for Girth 
+> set.seed(2018)
+> pd <- generatePartialDependenceData(regr.earth, task, "Girth")
+Loading required package: mmpf
+> print(plotPartialDependence(pd, data = getTaskData(task)))
+Warning in grid.Call.graphics(C_points, x$x, x$y, x$pch, x$size) :
+  semi-transparency is not supported on this device: reported only once per page
+> 
+> cat("==regression model with rpart====================================================\n")
+==regression model with rpart====================================================
+> 
+> set.seed(2018)
+> library(earth) # for etitanic data
+> data(etitanic)
+> task <- makeRegrTask(data=etitanic, target="survived")
+> lrn = makeLearner("regr.rpart")
+> regr.rpart = train(lrn, task)
+> 
+> # compare to regular rpart model
+> rpart <- rpart(survived~., data=etitanic, method="anova")
+> # earth <- earth(survived~., data=etitanic, degree=2)
+> set.seed(2018)
+> plotres(regr.rpart$learner.model, SHOWCALL=TRUE)
+> set.seed(2018)
+> plotres(rpart, SHOWCALL=TRUE)
+> 
+> plotmo(regr.rpart$learner.model, trace=1, SHOWCALL=TRUE)
+stats::predict(rpart.object, data.frame[3,5], type="vector")
+stats::fitted(object=rpart.object)
+fitted() was unsuccessful, will use predict() instead
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.pass")
+
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+
+> plotmo(rpart, trace=1, SHOWCALL=TRUE)
+stats::predict(rpart.object, data.frame[3,5], type="vector")
+stats::fitted(object=rpart.object)
+fitted() was unsuccessful, will use predict() instead
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.pass")
+
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+
+> 
+> # compare partial dependence plots from mlr and plotmo packages
+> plotmo(rpart, degree1="pclass", degree2=0, pmethod="partdep")
+calculating partdep for pclass 
+> set.seed(2018)
+> # TODO following fails
+> pd <- generatePartialDependenceData(regr.rpart, task, "pclass") # Warning: argument is not numeric or logical: returning NA
+> try(print(plotPartialDependence(pd, data = getTaskData(task)))) # Error: Discrete value supplied to continuous scale
+Error : Discrete value supplied to continuous scale
+> 
+> cat("==classification model with rpart================================================\n")
+==classification model with rpart================================================
+> 
+> set.seed(2018)
+> library(earth) # for etitanic data
+> data(etitanic)
+> task <- makeClassifTask(data=etitanic, target="survived")
+> 
+> # TODO following causes Error: classif.earth: Setting parameter glm without available description object
+> # lrn <- makeLearner("classif.earth", degree=2, glm=list(family=binomial))
+> 
+> lrn <- makeLearner("classif.rpart")
+> n <- nrow(etitanic)
+> train.set <- sample(n, size=2/3*n)
+> test.set <- setdiff(1:n, train.set)
+> classif.rpart <- train(lrn, task, subset=train.set)
+> 
+> # compare to regular rpart model
+> rpart <- rpart(survived~., data=etitanic, method="class")
+> set.seed(2018)
+> plotres(classif.rpart$learner.model, SHOWCALL=TRUE)
+> set.seed(2018)
+> plotres(rpart, type="prob", SHOWCALL=TRUE)
+> 
+> plotmo(classif.rpart$learner.model, trace=1, SHOWCALL=TRUE)
+stats::predict(rpart.object, data.frame[3,5], type="prob")
+stats::fitted(object=rpart.object)
+fitted() was unsuccessful, will use predict() instead
+set nresponse=2
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.pass")
+
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+
+> plotmo(rpart, trace=1, SHOWCALL=TRUE)
+stats::predict(rpart.object, data.frame[3,5], type="prob")
+stats::fitted(object=rpart.object)
+fitted() was unsuccessful, will use predict() instead
+set nresponse=2
+got model response from model.frame(survived~pclass+s...,
+                                    data=call$data, na.action="na.pass")
+
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+
+> 
+> # compare partial dependence plots
+> plotmo(rpart, degree1="pclass", degree2=0, pmethod="partdep")
+calculating partdep for pclass 
+> set.seed(2018)
+> # TODO following fails
+> pd <- generatePartialDependenceData(classif.rpart, task, "pclass") # Warning: argument is not numeric or logical: returning NA
+Warning in mean.default(X[[i]], ...) :
+  argument is not numeric or logical: returning NA
+Warning in mean.default(X[[i]], ...) :
+  argument is not numeric or logical: returning NA
+Warning in mean.default(X[[i]], ...) :
+  argument is not numeric or logical: returning NA
+> try(print(plotPartialDependence(pd, data = getTaskData(task)))) # Error: Discrete value supplied to continuous scale
+Error : Discrete value supplied to continuous scale
+> 
+> cat("==examples from plotmo-notes.pdf ===============================================\n")
+==examples from plotmo-notes.pdf ===============================================
+> 
+> #-- Regression model with mlr -------------------------------------------
+> 
+> library(mlr)
+> library(plotmo)
+> lrn <- makeLearner("regr.svm")
+> fit1 <- train(lrn, bh.task)
+> 
+> # generate partial dependence plots for all variables
+> # we use "apartdep" and not "partdep" to save testing time
+> plotmo(fit1$learner.model, pmethod="apartdep")
+calculating apartdep for crim 
+calculating apartdep for zn 
+calculating apartdep for indus 
+calculating apartdep for chas 
+calculating apartdep for nox 
+calculating apartdep for rm 
+calculating apartdep for age 
+calculating apartdep for dis 
+calculating apartdep for rad 
+calculating apartdep for tax 
+calculating apartdep for ptratio 
+calculating apartdep for b 
+calculating apartdep for lstat 
+> 
+> # generate partial dependence plot for just "lstat"
+> plotmo(fit1$learner.model,
++        degree1="lstat",           # what predictor to plot
++        degree2=0,                 # no interaction plots
++        pmethod="partdep",         # generate partial dependence plot
++        pt.col=2, grid.col="gray") # optional bells and whistles
+calculating partdep for lstat 
+> 
+> # compare to the function provided by the mlr package
+> set.seed(2018)
+> pd <- generatePartialDependenceData(fit1, bh.task, "lstat")
+> print(plotPartialDependence(pd, data = getTaskData(bh.task)))
+Warning in grid.Call.graphics(C_points, x$x, x$y, x$pch, x$size) :
+  semi-transparency is not supported on this device: reported only once per page
+> # # TODO following fails: Error: Discrete value supplied to continuous scale
+> # pd <- generatePartialDependenceData(fit1, bh.task, "chas")
+> # plotPartialDependence(pd, data = getTaskData(bh.task))
+> 
+> #-- Classification model with mlr ---------------------------------------
+> 
+> lrn <- makeLearner("classif.rpart", predict.type = "prob", minsplit = 10)
+> fit2 <- train(lrn, iris.task)
+> 
+> # generate partial dependence plots for all variables
+> # TODO plotmo can plot the response for only one class at a time
+> plotmo(fit2$learner.model,
++        nresponse="virginica",     # what response to plot
++        type="prob",               # type gets passed to predict.rpart
++        pmethod="apartdep")        # generate partial dependence plot
+calculating apartdep for Petal.Length 
+calculating apartdep for Petal.Width 
+calculating apartdep for Petal.Length:Petal.Width 01234567890
+> 
+> # generate partial dependence plot for just "Petal.Length"
+> plotmo(fit2$learner.model,
++        degree1="Petal.Length",    # what predictor to plot
++        degree2=0,                 # no interaction plots
++        nresponse="virginica",     # what response to plot
++        type="prob",               # type gets passed to predict.rpart
++        pmethod="apartdep")        # generate partial dependence plot
+calculating apartdep for Petal.Length 
+> 
+> # compare to the function provided by the mlr package
+> set.seed(2018)
+> pd <- generatePartialDependenceData(fit2, iris.task, "Petal.Length")
+> print(plotPartialDependence(pd, data = getTaskData(iris.task)))
+Warning in grid.Call.graphics(C_segments, x$x0, x$y0, x$x1, x$y1, x$arrow) :
+  semi-transparency is not supported on this device: reported only once per page
+> 
+> cat("==lda example from mlr documentation, and plotmo error handling =================\n")
+==lda example from mlr documentation, and plotmo error handling =================
+> 
+> set.seed(2018)
+> data(iris)
+> task <- makeClassifTask(data=iris, target="Species")
+> lrn <- makeLearner("classif.lda")
+> n <- nrow(iris)
+> train.set <- sample(n, size=2/3*n)
+> test.set <- setdiff(1:n, train.set)
+> classif.lda <- train(lrn, task, subset=train.set)
+> expect.err(try(plotres(classif.lda$learner.model)), "plotres does not (yet) support type=\"class\" for \"lda\" objects")
+Error : plotres does not (yet) support type="class" for "lda" objects
+       Try type="response" ?
+Got error as expected from try(plotres(classif.lda$learner.model))
+> expect.err(try(plotres(classif.lda$learner.model, type="response")), "predict.lda returned multiple columns (see above) but nresponse is not specified")
+
+predict.lda[3,2]:
+         LD1        LD2
+51 -1.480943  0.2427601
+70 -1.022992 -1.6827623
+9   6.621824 -1.1293807
+
+Error : predict.lda returned multiple columns (see above) but nresponse is not specified
+       Use the nresponse argument to specify a column.
+          Example: nresponse="LD2"
+          Example: nresponse=2
+Got error as expected from try(plotres(classif.lda$learner.model, type = "response"))
+> expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse="nonesuch")), "nresponse=\"nonesuch\" is not allowed")
+Error : nresponse="nonesuch" is not allowed
+Choose an integer index or one of: "LD1" "LD2"
+Got error as expected from try(plotres(classif.lda$learner.model, type = "response", nresponse = "nonesuch"))
+> expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse=0)), "nresponse=0 but it should be at least 1")
+Error : nresponse=0 but it should be at least 1
+Got error as expected from try(plotres(classif.lda$learner.model, type = "response", nresponse = 0))
+> expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse=99)), "nresponse is 99 but the number of columns is only 2")
+Error : nresponse is 99 but the number of columns is only 2
+Got error as expected from try(plotres(classif.lda$learner.model, type = "response", nresponse = 99))
+> expect.err(try(plotmo(classif.lda)), "Call plotmo like this: plotmo(classif.lda$learner.model, ...)")
+Error : Call plotmo like this: plotmo(classif.lda$learner.model, ...)
+Got error as expected from try(plotmo(classif.lda))
+> expect.err(try(plotres(classif.lda)), "Call plotres like this: plotres(classif.lda$learner.model, ...)")
+Error : Call plotres like this: plotres(classif.lda$learner.model, ...)
+Got error as expected from try(plotres(classif.lda))
+> plotres(classif.lda$learner.model, type="response", nresponse="LD2", SHOWCALL=TRUE)
+> plotmo(classif.lda$learner.model, pmethod="apartdep", SHOWCALL=TRUE)
+calculating apartdep for Sepal.Length 
+calculating apartdep for Sepal.Width 
+calculating apartdep for Petal.Length 
+calculating apartdep for Petal.Width 
+> plotmo(classif.lda$learner.model, type="response", nresponse="LD2", all2=TRUE, SHOWCALL=TRUE)
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                         5.85           3         4.45         1.3
+> 
+> if(!interactive()) {
++     dev.off()         # finish postscript plot
++     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
++ }

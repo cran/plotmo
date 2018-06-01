@@ -64,7 +64,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
         lines(y, col=col[1])
         leg.text <- c(leg.text,
             if(train.fraction == 1) "train"
-            else sprintf("train (frac %g)", train.fraction))
+            else sprint("train (frac %g)", train.fraction))
         leg.col  <- c(leg.col, col[1])
         leg.lty  <- c(leg.lty, 1)
         leg.vert <- c(leg.vert, FALSE)
@@ -81,7 +81,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
             lines(y, col=col[2])
             leg.text <- c(leg.text,
                 if(!imin) "test not plotted"
-                else      sprintf("test (frac %g)", 1-train.fraction))
+                else      sprint("test (frac %g)", 1-train.fraction))
             leg.col  <- c(leg.col, col[2])
             leg.lty  <- c(leg.lty, 1)
             leg.vert <- c(leg.vert, FALSE)
@@ -99,7 +99,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
             lines(y, col=col[3])
             leg.text <- c(leg.text,
                 if(!imin) "CV not plotted"
-                else      sprintf("CV (%g fold)", gbm.cv.folds(obj)))
+                else      sprint("CV (%g fold)", gbm.cv.folds(obj)))
             leg.col  <- c(leg.col, col[3])
             leg.lty  <- c(leg.lty, 1)
             leg.vert <- c(leg.vert, FALSE)

@@ -2,20 +2,22 @@
 # The paths below assume that this file is in the plotmo/inst/slowtests directory
 # Swindon May 2018
 
+library(plotmo)
+library(earth) # for the ozone1 data
+data(ozone1)
+library(randomForest)
+oz <- ozone1[, c("O3", "humidity", "temp")] # small set for illustration
+set.seed(2018)
+rf.mod <- randomForest(O3 ~ ., data=oz)
+
 # png("../../inst/README-figures/plotmo-randomForest.png", width=460, height=500)
-# library(earth) # for the ozone1 data
-# data(ozone1)
-# oz <- ozone1[, c("O3", "humidity", "temp")] # small set for illustration
-# library(randomForest)
-# set.seed(2018)
-# rf.mod <- randomForest(O3 ~ ., data=oz)
 # plotmo(rf.mod, cex.caption=1.5, font.caption=2, oma=c(0,0,5,0),
 #        persp.ticktype="detailed", persp.nticks=2)
 # dev.off()
 
 # png("../../inst/README-figures/plotres-randomForest.png", width=460, height=530)
 # set.seed(2018)
-# plotres(rf.mod, cex=1.1, cex.caption=1.5, font.caption=2, oma=c(1,0,5,0))
+# plotres(rf.mod, cex=1.1, cex.caption=1.5, font.caption=2, oma=c(1,0,3,0))
 # dev.off()
 
 # png("../../inst/README-figures/plotres-glmnet-gbm.png", width=700, height=400)

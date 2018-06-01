@@ -8,6 +8,20 @@ Loading required package: TeachingDemos
 > set.seed(2018)
 > options(warn=1) # print warnings as they occur
 > 
+> # test that we got an error as expected from a try() call
+> expect.err <- function(object, expected.msg="")
++ {
++     if(class(object)[1] == "try-error") {
++         msg <- attr(object, "condition")$message[1]
++         if(length(grep(expected.msg, msg, fixed=TRUE)))
++             cat("Got error as expected from ",
++                 deparse(substitute(object)), "\n", sep="")
++         else
++             stop(sprintf("Expected: %s\n  Got:      %s",
++                          expected.msg, substr(msg[1], 1, 1000)))
++     } else
++         stop("Did not get expected error: ", expected.msg)
++ }
 > if(!interactive())
 +     postscript(paper="letter")
 > 
@@ -18,7 +32,7 @@ Loading required package: TeachingDemos
 > airq <- airq[1:50, ] # small set of data for quicker test
 > 
 > set.seed(2018)
-> pre.mod <- pre(Ozone~., data=airq)
+> pre.mod <- pre(Ozone~., data=airq, ntrees=10) # ntrees=10 for faster test
 > plotres(pre.mod) # variable importance and residual plots
 > plotres(pre.mod, which=3, main="pre.mod residuals") # which=3 for just the residual vs fitted plot
 > plotmo(pre.mod) # plot model surface with background variables held at their medians
@@ -107,10 +121,30 @@ calculating apartdep for Wind:Temp 01234567890
 +        persp.ticktype="detailed", persp.nticks=2) # optional (these get passed on to persp)
  plotmo grid:    Wind Temp
                  10.3   75
-> plotmo(gpe.mod, degree1=0, degree2=c("Wind", "Temp")) # explictly specify degree2 plot
+> plotmo(gpe.mod, degree1=0, degree2=c("Wind", "Temp"), SHOWCALL=TRUE) # explictly specify degree2 plot
 > # which=3 below for only the residuals-vs-fitted plot
 > # optional info=TRUE to plot some extra information (RSq etc.)
 > plotres(gpe.mod, which=3, info=TRUE, main="gpe.mod residuals")
+> 
+> # multinomial response
+> 
+> set.seed(2018)
+> pre.iris <- pre(Species~., data=iris, ntrees=10) # ntrees=10 for faster test
+> options(warn=2) # treat warnings as errors
+> expect.err(try(plotmo(pre.iris)), "pre::importance(pre.object) failed")
+
+Error : (converted from warning) pre::importance(pre.object) failed
+(Will plot all variables regardless of importance. Use all2=TRUE to get degree2 plots.)
+
+Got error as expected from try(plotmo(pre.iris))
+> options(warn=1) # print warnings as they occur
+> plotmo(pre.iris, all2=TRUE, nresponse="virginica")
+
+Warning: pre::importance(pre.object) failed
+(Will plot all variables regardless of importance. Use all2=TRUE to get degree2 plots.)
+
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
+                          5.8           3         4.35         1.3
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot

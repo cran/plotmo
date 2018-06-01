@@ -1,10 +1,10 @@
-# linmod.milbo.tutorial.R:
+# modguide.model2.R:
 #
 # linmod code from Stephen Milborrow "Guidelines for S3 Regression Models"
+# This is called Model 2 in that document.
 #
-## A simple linear model (new version of linmod from Friedrich Leisch's tutorial).
-## Functions like print.linmod in the tutorial don't need to be modified for tools
-## like plotmo, and don't appear in the code below.
+## A simple linear model (extended from Friedrich Leisch's tutorial).
+## Functions like print.linmod in the tutorial don't appear in the code below.
 
 linmod <- function(...) UseMethod("linmod")
 
@@ -42,8 +42,8 @@ linmod.formula <- function(formula, data=parent.frame(), ...)
     mf <- model.frame(formula=formula, data=data)
     terms <- attr(mf, "terms")
     fit <- linmod.fit(model.matrix(terms, mf), model.response(mf))
-    fit$terms <- terms
     fit$call <- match.call()
+    fit$terms <- terms
     fit
 }
 predict.linmod <- function(object, newdata=NULL, ...)
@@ -52,7 +52,7 @@ predict.linmod <- function(object, newdata=NULL, ...)
         y <- fitted(object)
     else {
         if(is.null(object$terms))              # x,y interface
-            x <- cbind(1, as.matrix(newdata))  # columns must be in same order as orig x
+            x <- cbind(1, as.matrix(newdata))
         else {                                 # formula interface
             terms <- delete.response(object$terms)
             x <- model.matrix(terms, model.frame(terms, as.data.frame(newdata)))

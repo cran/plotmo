@@ -96,7 +96,7 @@ plotmo_meta <- function(object, type, nresponse, trace,
     nresponse.org <- nresponse
 
     nresponse <- plotmo_nresponse(yhat, object, nresponse, trace,
-                    sprintf("predict.%s", class(object)[1]), type)
+                    sprint("predict.%s", class(object)[1]), type)
     stopifnot(!is.na(nresponse))
     trace2(trace,
         "nresponse=%g%s ncol(fitted) %d ncol(predict) %d ncol(y) %s\n",
@@ -104,11 +104,11 @@ plotmo_meta <- function(object, type, nresponse, trace,
         if(identical(nresponse, nresponse.org))
             ""
         else
-            sprintf(" (was %s)",
+            sprint(" (was %s)",
                 if(is.character(nresponse.org)) paste0("\"", nresponse.org, "\"")
                 else                            paste(nresponse.org)),
         NCOL(plotmo_fitted$fitted), NCOL(predict),
-        sprintf("%d", NCOL(yfull)))
+        sprint("%d", NCOL(yfull)))
 
     y.as.numeric.mat <- NULL # y as single column numeric mat, only the nresponse column
     nresponse.y <- nresponse
@@ -234,7 +234,7 @@ process.y <- function(y, object, type, nresponse,
         stop0(fname, " NULL")
     if(length(y) == 0)
         stop0(fname, " zero length")
-    print_summary(y, sprintf("%s returned", fname), trace)
+    print_summary(y, sprint("%s returned", fname), trace)
     if(is.list(y) && !is.data.frame(y)) # data.frames are lists, hence must check both
         stop0(fname, " list, was expecting a vector, matrix, or data.frame\n",
               "       list(", list.as.char(y), ")")
@@ -250,13 +250,15 @@ process.y <- function(y, object, type, nresponse,
     else {
         check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
         nresponse <- plotmo_nresponse(y, object, nresponse, trace, fname, type)
-        stopifnot(!is.na(nresponse), nresponse >= 1, nresponse <= NCOL(y))
+        stopifnot(!is.na(nresponse), nresponse >= 1)
+        if(nresponse > NCOL(y))
+            stopf("nresponse is %d but the number of columns is only %d", nresponse, NCOL(y))
         resp.name <- colname(y, nresponse, fname)
         y <- get.specified.col.and.force.numeric(y, nresponse, resp.name,
                                                  expected.levs, trace, fname)
         if(!is.na(nresponse) && nresponse > 1)
-            print_summary(y, sprintf("%s returned", fname), trace,
-                sprintf(" after selecting nresponse=%d", nresponse))
+            print_summary(y, sprint("%s returned", fname), trace,
+                sprint(" after selecting nresponse=%d", nresponse))
     }
     any.nas <- anyNA(y)
     any.non.finites <- FALSE
@@ -278,9 +280,9 @@ process.y <- function(y, object, type, nresponse,
                fname[1], nrow(y), expected.len[1])
 
     print_summary(y,
-                  sprintf("%s after processing with nresponse=%s is ",
-                          fname,
-                          if(is.null(nresponse)) "NULL" else format(nresponse)),
+                  sprint("%s after processing with nresponse=%s is ",
+                         fname,
+                         if(is.null(nresponse)) "NULL" else format(nresponse)),
                   trace)
 
     list(y          = y, # n x 1 numeric, column name is original y column name
@@ -353,11 +355,11 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
                 colnames <- colnames(y)
             icol <- min(3, NCOL(y))
             if(is.null(colnames))
-                msg1 <- sprintf("%s\n       Example: nresponse=%d",
+                msg1 <- sprint("%s\n       Example: nresponse=%d",
                     "Use the nresponse argument to specify a column.",
                     icol)
             else
-                msg1 <- sprintf(
+                msg1 <- sprint(
                     "%s\n          Example: nresponse=%s\n          Example: nresponse=%d",
                     "Use the nresponse argument to specify a column.",
                     quotify(if(is.na(colnames(y)[icol])) colname(y, 1) else colname(y, icol)),

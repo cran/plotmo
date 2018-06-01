@@ -1,5 +1,5 @@
 # test.plotmo.R: regression tests for plotmo
-# Many of these tests are culled from man page examples and modified to try to confuse plotmo.
+# Some of these tests are culled from man page examples and modified to try to confuse plotmo.
 # Many of the plots are plotted twice so you can visually check by comparing
 # plots in the same window, they should be substantially the same.
 # Stephen Milborrow, Petaluma Jan 2007
@@ -36,13 +36,21 @@ dopar <- function(nrows, ncols, caption = "")
     par(mgp = c(1.6, 0.6, 0))
     par(cex = 0.7)
 }
-expect.err <- function(obj) # test that we got an error as expected from a try() call
+# test that we got an error as expected from a try() call
+expect.err <- function(object, expected.msg="")
 {
-    if(class(obj)[1] == "try-error")
-        cat("Got error as expected\n")
-    else
-        stop("did not get expected error")
+    if(class(object)[1] == "try-error") {
+        msg <- attr(object, "condition")$message[1]
+        if(length(grep(expected.msg, msg, fixed=TRUE)))
+            cat("Got error as expected from ",
+                deparse(substitute(object)), "\n", sep="")
+        else
+            stop(sprintf("Expected: %s\n  Got:      %s",
+                         expected.msg, substr(msg[1], 1, 1000)))
+    } else
+        stop("Did not get expected error: ", expected.msg)
 }
+example(plotmo)
 caption <- "basic earth test of plotmo"
 a <- earth(O3 ~ ., data=ozone1, degree=2)
 plotmo(a, degree1=2, degree2=4, caption=caption, trace=-1)
@@ -642,16 +650,22 @@ plotmo(a, extend=.5, pt.col=2, SHOWCALL=TRUE,
 
 # intercept only models
 
+old.par <- par(no.readonly=TRUE)
 dopar(2, 2, caption = "intercept-only models")
 set.seed(1)
 x <- 1:10
 y <- runif(length(x))
 earth.intercept.only <- earth(x, y)
-plotmo(earth.intercept.only, do.par=FALSE, main="intercept-only model")
+plotmo(earth.intercept.only, do.par=FALSE, main="earth intercept-only model")
 plotmo(earth.intercept.only, do.par=FALSE, col.response=1, pt.pch=20)
+# TODO following draws a plot but it shouldn't (very minor bug because int-only model with a bad degree1 spec)
+plotmo(earth.intercept.only, do.par=FALSE, degree1=3) # expect warning: 'degree1' specified but no degree1 plots
+plotmo(earth.intercept.only, do.par=FALSE, degree1=0) # expect warning: plotmo: nothing to plot
 library(rpart)
 rpart.intercept.only <- rpart(y~x)
-plotmo(rpart.intercept.only, do.par=FALSE)
+plotmo(rpart.intercept.only, do.par=FALSE, main="rpart.plot intercept-only model", trace=0)
+plotmo(rpart.intercept.only, do.par=FALSE, degree1=0)
+par(old.par)
 
 # nrug argument
 

@@ -99,7 +99,7 @@ fname.from.call <- function(call) # call was obtained using sys.call() or simila
 # TODO add n arg when match.call is fixed (R version 3.2.1)
 # TODO also then make this callable as printdots() instead of printdots(...)
 
-printdots <- function(..., EVAL=TRUE, PREFIX=sprintf("%s dots: ", callers.name))
+printdots <- function(..., EVAL=TRUE, PREFIX=sprint("%s dots: ", callers.name))
 {
     sys.call <- as.list(sys.call())
     ensure.dots.present(sys.call)

@@ -6,6 +6,20 @@ library(earth) # for ozone1
 set.seed(2018)
 options(warn=1) # print warnings as they occur
 
+# test that we got an error as expected from a try() call
+expect.err <- function(object, expected.msg="")
+{
+    if(class(object)[1] == "try-error") {
+        msg <- attr(object, "condition")$message[1]
+        if(length(grep(expected.msg, msg, fixed=TRUE)))
+            cat("Got error as expected from ",
+                deparse(substitute(object)), "\n", sep="")
+        else
+            stop(sprintf("Expected: %s\n  Got:      %s",
+                         expected.msg, substr(msg[1], 1, 1000)))
+    } else
+        stop("Did not get expected error: ", expected.msg)
+}
 if(!interactive())
     postscript(paper="letter")
 
@@ -16,7 +30,7 @@ rownames(airq) <- NULL
 airq <- airq[1:50, ] # small set of data for quicker test
 
 set.seed(2018)
-pre.mod <- pre(Ozone~., data=airq)
+pre.mod <- pre(Ozone~., data=airq, ntrees=10) # ntrees=10 for faster test
 plotres(pre.mod) # variable importance and residual plots
 plotres(pre.mod, which=3, main="pre.mod residuals") # which=3 for just the residual vs fitted plot
 plotmo(pre.mod) # plot model surface with background variables held at their medians
@@ -93,10 +107,19 @@ gpe.mod <- gpe(Ozone~., data=airq,
 plotmo(gpe.mod) # by default no degree2 plots because importance(gpe) not available
 plotmo(gpe.mod, all2=TRUE, # force degree2 plot(s) by specifying all2=TRUE
        persp.ticktype="detailed", persp.nticks=2) # optional (these get passed on to persp)
-plotmo(gpe.mod, degree1=0, degree2=c("Wind", "Temp")) # explictly specify degree2 plot
+plotmo(gpe.mod, degree1=0, degree2=c("Wind", "Temp"), SHOWCALL=TRUE) # explictly specify degree2 plot
 # which=3 below for only the residuals-vs-fitted plot
 # optional info=TRUE to plot some extra information (RSq etc.)
 plotres(gpe.mod, which=3, info=TRUE, main="gpe.mod residuals")
+
+# multinomial response
+
+set.seed(2018)
+pre.iris <- pre(Species~., data=iris, ntrees=10) # ntrees=10 for faster test
+options(warn=2) # treat warnings as errors
+expect.err(try(plotmo(pre.iris)), "pre::importance(pre.object) failed")
+options(warn=1) # print warnings as they occur
+plotmo(pre.iris, all2=TRUE, nresponse="virginica")
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

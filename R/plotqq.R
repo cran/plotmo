@@ -14,7 +14,7 @@ plotmo_qq <- function(rinfo, info, nfigs,
     resids <- rinfo$scale * rinfo$resids
     # qqnorm sets NAs in trans.resids (leverage==1) to NA in
     # qq$x and qq$y, and thus NAs don't get plotted (R PR#3750)
-    main <- dota("main", DEF=sprintf("%s QQ", rinfo$name), ...)
+    main <- dota("main", DEF=sprint("%s QQ", rinfo$name), ...)
     qq <- qqnorm(resids, main=main, plot.it=FALSE)
     id.indices <- get.id.indices(resids, id.n)
     xlim <- NULL
@@ -65,7 +65,7 @@ plotmo_qq <- function(rinfo, info, nfigs,
     pt.pch <- repl(pt.pch, length(resids))
 
     ylab <- rinfo$name
-    ylab <- sprintf("%s Quantiles", ylab)
+    ylab <- sprint("%s Quantiles", ylab)
     drop.line.col <- function(..., qqline.col=NA, qqline.lwd=NA, qqline.lty=NA)
     {
         call.plot(graphics::plot, PREFIX="qq.",

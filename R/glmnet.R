@@ -3,7 +3,7 @@
 plotmo.prolog.glmnet <- function(object, object.name, trace, ...) # invoked when plotmo starts
 {
     # stash (possibly user specified) s for use by plot_glmnet and predict.glmnet
-    s <- dota("predict.s", ...)     # get xlim from dots, NA if not in dots
+    s <- dota("predict.s", ...)     # get predict.s from dots, NA if not in dots
     check.numeric.scalar(s, na.ok=TRUE)
     if(is.na(s))
         s <- dota("s", ...)         # get s from dots, NA if not in dots

@@ -31,7 +31,7 @@ plotmo_rsq1 <- function(object, newdata, trace, meta, ...)
             print_summary(yhat, "predicted values", trace=2)
             printf("\n")
         }
-        stop0("response or predicted values have the wrong dimensions%s",
+        stopf("response or predicted values have the wrong dimensions%s",
               if(trace > -1) " (see above)" else "")
     }
     get.weighted.rsq(ynew, yhat)
@@ -121,7 +121,7 @@ response.from.xy.model <- function(object, newdata, trace, resp.name)
         which <- which(colnames.newdata == resp.name)
         if(length(which) == 0)
             stop0("no column names in newdata match the original response name\n",
-                  sprintf("       Response name: %s\n", resp.name),
+                  sprint("       Response name: %s\n", resp.name),
                   "       Column names in newdata: ", paste.collapse(colnames.newdata))
         if(length(which) > 1)
             stopf("multiple column names in newdata match the original response name %s",

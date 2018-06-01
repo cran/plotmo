@@ -7,7 +7,7 @@ plotmo_cum <- function(rinfo, info, nfigs=1, add=FALSE,
     # TODO what happens here if NA in trans.resids (leverage==1)
     ecdf <- ecdf(trans.resids[,1])
     xlab <- rinfo$name
-    xlab <- sprintf("abs(%ss)", xlab)
+    xlab <- sprint("abs(%ss)", xlab)
     cum.grid <- match.choices(cum.grid, c("none", "grid", "percentages"))
     annotation.cex <- .7 * dota("cum.cex", DEF=1, ...)
     if(!add && info && cum.grid == "percentages") {
@@ -112,6 +112,6 @@ draw.quantiles.on.right.side <- function(probs, q, annotation.cex)
     y <- TeachingDemos::spread.labs(x=probs,
             mindiff=1.2 * annotation.cex * strheight("A"), min=-.1)
     q[q < max(q) / 1e4] <- 0 # prevent labels like 2.22e-16
-    text(1.01 * par("usr")[2], y, sprintf("%.3g", q),
+    text(1.01 * par("usr")[2], y, sprint("%.3g", q),
          xpd=TRUE, cex=annotation.cex, adj=0)
 }

@@ -21,9 +21,9 @@ expect.err <- function(object, expected.msg="")
                 deparse(substitute(object)), "\n", sep="")
         else
             stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg, 1, 1000)))
+                         expected.msg, substr(msg[1], 1, 1000)))
     } else
-        stop("did not get expected error ", expected.msg)
+        stop("Did not get expected error: ", expected.msg)
 }
 data(etitanic)
 mod <- earth(survived~., data=etitanic, degree=2)

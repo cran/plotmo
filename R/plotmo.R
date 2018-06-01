@@ -136,27 +136,33 @@ plotmo <- function(object = stop("no 'object' argument"),
             pt.col <- 0
     }
     # singles is a vector of indices of predictors for degree1 plots
-    temp <- plotmo_singles(object, x, nresponse, trace, degree1, all1)
-        some.singles <- temp$some.singles
-        singles      <- temp$singles
+    singles <- plotmo_singles(object, x, nresponse, trace, degree1, all1)
+    nsingles <- length(singles)
 
     # each row of pairs is the indices of two predictors for a degree2 plot
-    temp <- plotmo_pairs(object, x, nresponse, trace, all2, degree2)
-        some.pairs <- temp$some.pairs
-        pairs      <- temp$pairs
-
-    nsingles <- length(singles)
-    npairs   <- NROW(pairs)
+    pairs <- plotmo_pairs(object, x, nresponse, trace, all2, degree2)
+    npairs <- NROW(pairs)
 
     temp <- get.pred.names(colnames(x), nsingles + npairs)
         pred.names      <- temp$pred.names
         abbr.pred.names <- temp$abbr.pred.names
         def.cex.main    <- temp$def.cex.main
 
-    is.int.only <- !some.singles && !some.pairs
+    is.int.only <- FALSE # is intercept only model?
+    if(nsingles == 0 && npairs == 0) {
+        # is this an intercept only model? (which causes nsingles == 0 && npairs == 0)
+        # if so, we plot it anyway (unless degree1=0)
+        trace2(trace, "\n----plotmo_singles for %s object, all1=FALSE %s \n",
+               class(object)[1], "(determine if is.int.only)")
+        sing <- plotmo.singles(object=object, x=x, nresponse=nresponse,
+                               trace=trace, all1=FALSE) # note that all1=FALSE
+        is.int.only <- length(sing) == 0
+        trace2(trace, if(is.int.only) "intercept-only model\n\n"
+                      else            "model has an intercept\n\n")
+    }
     if(is.int.only && int.only.ok && !all(degree1 == 0)) {
-        singles <- 1 # plot the first predictor
-        nsingles  <- 1
+        singles  <- 1 # plot the first predictor
+        nsingles <- 1
     }
     if(nsingles > 64 && trace >= 0) {
         cat0("More than 64 degree1 plots.\n",
@@ -195,12 +201,8 @@ plotmo <- function(object = stop("no 'object' argument"),
     }
     nfigs <- nsingles + npairs
     if(nfigs == 0) {
-        if(trace >= 0) {
-            if(is.int.only)
-                warning0("plotmo: nothing to plot (intercept-only model)")
-            else
-                warning0("plotmo: nothing to plot")
-        }
+        if(trace >= 0)
+            warning0("plotmo: nothing to plot")
         return(invisible())
     }
     do.par <- check.do.par(do.par, nfigs) # do.par is 0, 1, or 2
@@ -276,7 +278,8 @@ plotmo <- function(object = stop("no 'object' argument"),
             ndiscrete=ndiscrete,
             pred.names=pred.names, abbr.pred.names=abbr.pred.names,
             nfigs=nfigs, nsingles=nsingles, npairs=npairs, xflip=xflip, yflip=yflip,
-            swapxy=swapxy, def.cex.main=def.cex.main, n.apartdep=n.apartdep, ...)
+            swapxy=swapxy, def.cex.main=def.cex.main, n.apartdep=n.apartdep,
+            ...)
     draw.caption(caption, ...)
     invisible(x)
 }
@@ -403,7 +406,8 @@ get.ylim <- function(object,
                     pred.names=pred.names, abbr.pred.names=abbr.pred.names,
                     nfigs=nfigs,
                     nsingles=nsingles, npairs=npairs, xflip=xflip, yflip=yflip,
-                    swapxy=swapxy, def.cex.main=def.cex.main, n.apartdep=n.apartdep, ...))
+                    swapxy=swapxy, def.cex.main=def.cex.main, n.apartdep=n.apartdep,
+                    ...))
         }                            #  1    2   3    4  5
         q <- quantile(all.yhat, probs=c(0, .25, .5, .75, 1), names=FALSE)
         ylim <- c(q[1], q[5]) # all the data
@@ -440,15 +444,16 @@ get.ylim <- function(object,
     if(is.na.ylim)
         ylim <- c(NA, NA)  # won't be used
     else if(is.null(ylim)) # auto ylim
-        ylim <- if(is.predicting.probability(object, type)) {
-                    if(is.specified(pt.col))
-                        c(-0.1, 1.1) # leave space for possibly jittered points
-                    else
-                        c(0, 1)
-                } else if(is.int.only)
-                    range(y, na.rm=TRUE)
+        ylim <-
+            if(is.predict.prob.wrapper(object, type)) {
+                if(is.specified(pt.col))
+                    c(-0.1, 1.1) # leave space for possibly jittered points
                 else
-                    get.ylim.by.dummy.plots(trace=trace, ...)
+                    c(0, 1)
+            } else if(is.int.only)
+                range(y, na.rm=TRUE)
+            else
+                get.ylim.by.dummy.plots(trace=trace, ...)
     if(!anyNA(ylim))
         ylim <- fix.lim(ylim)
     if(trace >= 2)
@@ -456,9 +461,9 @@ get.ylim <- function(object,
                 ylim[1], ylim[2], if(clip) "TRUE" else "FALSE")
     list(ylim=ylim, trace2=trace2)
 }
-do.persp.auto.par <- function(simple.ticktype) # smaller margins for bigger persp plots
+do.persp.auto.par <- function(simple.ticktype) # want small margins for bigger persp plots
 {
-    # persp ignores both the global mgp and any mgp passed as asrguments
+    # persp ignores both the global mgp and any mgp passed as arguments
     # directly to persp so we must adjust margins using par()
     old.mar <- par("mar")
     axis.space <- max(par("mgp"))
@@ -497,85 +502,70 @@ do.degree2.auto.par <- function(type2, nfigs, simple.ticktype)
 plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
 {
     trace2(trace, "\n----plotmo_singles for %s object\n", class(object)[1])
-    singles <-
-        if(is.character(degree1))
-            seq_len(NCOL(x)) # get all singles, not just those used in the model
-        else
-            plotmo.singles(object=object,
-                           x=x, nresponse=nresponse, trace=trace, all1=all1)
-    some.singles <- FALSE
-    if(length(singles)) {
+    singles <- plotmo.singles(object=object, x=x, nresponse=nresponse,
+                              trace=trace, all1=all1)
+    if(is.character(degree1)) # get all singles, not just those used in the model?
+        singles <- seq_len(NCOL(x))
+    if(length(singles))
         singles <- sort.unique(singles)
-        some.singles <- TRUE
-    }
     nsingles <- length(singles)
-    if(nsingles) {
+    if(length(singles)) {
         degree1 <- check.index(degree1, "degree1", singles, colnames=colnames(x),
                                allow.empty=TRUE, is.degree.spec=TRUE)
         singles <- singles[degree1]
     } else if(is.degree.specified(degree1) && degree1[1] != 0 && trace >= 0)
         warning0("'degree1' specified but no degree1 plots")
     if(trace >= 2) {
-        if(nsingles)
+        if(length(singles))
             cat("singles:", paste0(singles, " ", colnames(x)[singles], collapse=", "), "\n")
         else
             cat("no singles\n")
     }
-    list(some.singles=some.singles,
-         singles     =singles) # a vector of indices of predictors for degree1 plots
+    singles # a vector of indices of predictors for degree1 plots
 }
 plotmo_pairs <- function(object, x, nresponse, trace, all2, degree2)
 {
     trace2(trace, "\n----plotmo_pairs for %s object\n", class(object)[1])
-    pairs <-
-        if(is.character(degree2) && length(degree2) == 2) # degree2 is a two elem char vec?
-            form.pairs(seq_len(NCOL(x))) # return pairs for all vars, not just those used in the model
-        else if(all2)
-            get.all.pairs.from.singles(object, x, trace, all2)
-        else
-            plotmo.pairs(object, x, nresponse, trace, all2)
-    if(!NROW(pairs) || !NCOL(pairs))
-        pairs <- NULL
-    npairs <- NROW(pairs)
-    some.pairs <- FALSE
-    if(npairs) {
-        some.pairs <- TRUE
-        # put lowest numbered predictor first and remove duplicate pairs
-        pairs <- unique(t(apply(pairs, 1, sort)))
-        # order the pairs on the predictor order
-        order <- order(pairs[,1], pairs[,2])
-        pairs <- pairs[order, , drop=FALSE]
-        # TODO There is an (intentional) inconsistency here. A two element
-        #      character vector is treated as a special case.
-        if(is.character(degree2) && length(degree2) == 2) {
-            # degree2 is a two element character vector
-            first <- check.index(degree2[1], "degree2", pairs, colnames=colnames(x),
-                                 allow.empty=TRUE, is.degree.spec=TRUE)
-            second <- check.index(degree2[2], "degree2", pairs, colnames=colnames(x),
-                                  allow.empty=TRUE, is.degree.spec=TRUE)
-            both <- first[first %in% second]
-            if(!any(both))
-                warning0("No degree2 plots match degree2=c(\"",
-                         degree2[1], "\", \"", degree2[2], "\")")
-            degree2 <- both
+    pairs <- NULL
+    if(is.character(degree2) && length(degree2) == 2) {
+        # degree2 is a two element character vector
+        # treat as a special case (intentional inconsistency)
+        singles <- seq_len(NCOL(x)) # get all singles, not just those used in the model
+        i1  <- check.index(degree2[1], "degree2", singles, colnames=colnames(x))
+        if(length(i1) > 0) {
+            i2 <- check.index(degree2[2], "degree2", singles, colnames=colnames(x))
+            if(length(i2) > 0) {
+                if(i1[1] == i2[1])
+                    warning0("both elements of degree2 are the same")
+                pairs <- matrix(c(i1[1], i2[1]), nrow=1, ncol=2)
             }
-        else
-            degree2 <- check.index(degree2, "degree2", pairs, colnames=colnames(x),
-                                   allow.empty=TRUE, is.degree.spec=TRUE)
-
-        pairs <- pairs[degree2, , drop=FALSE]
+        }
+    } else {
+        pairs <-
+            if(all2)
+                get.all.pairs.from.singles(object, x, trace, all2)
+            else
+                plotmo.pairs(object, x, nresponse, trace, all2)
+        if(NROW(pairs)) {
+            # put lowest numbered predictor first and remove duplicate pairs
+            pairs <- unique(t(apply(pairs, 1, sort)))
+            # order the pairs on the predictor order
+            order <- order(pairs[,1], pairs[,2])
+            pairs <- pairs[order, , drop=FALSE]
+            i <- check.index(degree2, "degree2", pairs, colnames=colnames(x),
+                             allow.empty=TRUE, is.degree.spec=TRUE)
+            pairs <- pairs[i, , drop=FALSE] # length(i) will be 0 if check.index not ok
+        } else if (is.degree.specified(degree2) && degree2[1] != 0 && trace >= 0)
+            warning0("'degree2' specified but no degree2 plots")
     }
     if(trace >= 2) {
-        if(npairs) {
+        if(NROW(pairs)) {
             cat("pairs:\n")
             print(matrix(paste(pairs, colnames(x)[pairs]), ncol=2))
         } else
             cat("no pairs\n")
     }
-    if(npairs == 0 && is.degree.specified(degree2) && degree2[1] != 0 && trace >= 0)
-        warning0("'degree2' specified but no degree2 plots")
-    list(some.pairs=some.pairs,
-         pairs     =pairs)
+    pairs
 }
 # pt.col is a formal arg, but for back compat we also support col.response
 get.pt.col <- function(pt.col, ...)
@@ -658,7 +648,7 @@ get.level <- function(level, ...)
         stop0("plotmo's 'se' argument is deprecated, please use 'level=.95' instead")
     else if (se > 0) {
         level <- 1 - 2 * (1 - pnorm(se)) # se=2 becomes level=.954
-        warning0(sprintf(
+        warning0(sprint(
             "plotmo's 'se' argument is deprecated, please use 'level=%.2f' instead",
             level))
     } else if(level != 0 && (level < .5 || level >= 1))
@@ -975,12 +965,12 @@ plot.degree1 <- function( # plot all degree1 graphs
                 !is.specified(grid.col) &&
                 !is.specified(dota("col.grid", ...)))
             abline(h=0, col="gray", lwd=.6) # gray line at y=0
-        if(is.int.only) # make it obvious that this is an intercept-only model
-            legend("topleft", "intercept-only model", bg="white")
         if(is.factor(x1))
             draw.degree1.fac(...)
         else
             draw.degree1.numeric(...)
+        if(is.int.only) # make it obvious that this is an intercept-only model
+            legend("topleft", "intercept-only model", bg="white")
     }
     #--- plot.degree1 starts here
     trace2(trace, "--plot.degree1(draw.plot=%s)\n", if(draw.plot) "TRUE" else "FALSE")
@@ -1239,6 +1229,17 @@ draw.func <- function(func, object, xframe, ipred, center, trace, ...)
                   ...)
     }
 }
+get.def.nticks <- function(x, ipred1, ipred2) # for persp plot
+{
+    # nticks is just a suggestion for persp, so we don't fret over it too much
+    nticks <- 5 # default nticks if both axes numeric (no factors)
+    if(is.factor(x[[ipred1]]))                # use number of factor levels to
+        nticks <- length(levels(x[[ipred1]])) # avoid e.g. "1.5" on factor axes
+    if(is.factor(x[[ipred2]]))
+        nticks <- max(nticks, length(levels(x[[ipred2]])))
+    nticks <- max(nticks, 2) # must be at least 2
+    min(nticks, 6)           # but not more than 6 (not enough space)
+}
 plot.degree2 <- function(  # plot all degree2 graphs
     # copy of args from plotmo, some have been tweaked slightly
     object, degree2, all2, center, ylim,
@@ -1264,11 +1265,12 @@ plot.degree2 <- function(  # plot all degree2 graphs
         # create data.frame of x values to be plotted,
         # by updating xgrid for this predictor (two columns get updated)
         # (but for partdep plots, xframe isn't used, we use just x1grid and x2grid)
+
         temp <- get.degree2.xframe(xgrid, x, ipred1, ipred2,
                                    ngrid2, xranges, ux.list, ndiscrete)
             xframe <- temp$xframe  # data frame of medians
-            x1grid  <- temp$x1grid # vec of values for the first predictor
-            x2grid  <- temp$x2grid # vec of values for the second predictor
+            x1grid <- temp$x1grid # vec of values for the first predictor
+            x2grid <- temp$x2grid # vec of values for the second predictor
 
         if(pmethod == "partdep" || pmethod == "apartdep") {
             stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
@@ -1295,13 +1297,14 @@ plot.degree2 <- function(  # plot all degree2 graphs
         }
         if(center)
             yhat <- my.center(yhat, trace2)
-        yhat <- matrix(yhat, nrow=length(x1grid), ncol=length(x2grid))
-        data <- list(xframe=xframe, x1grid=x1grid, x2grid=x2grid, yhat=yhat)
+        data <- list(xframe=xframe, x1grid=x1grid, x2grid=x2grid,
+                     yhat=matrix(yhat, nrow=length(x1grid), ncol=length(x2grid)),
+                     def.nticks=get.def.nticks(x, ipred1, ipred2))
         if(!draw.plot) # save the data, if there is going to be a next time
             degree2.data(ipair, data)
         data
     }
-    draw.degree2 <- function(type2 = c("persp", "contour", "image"), ...)
+    draw.degree2 <- function(type2 = c("persp", "contour", "image"), def.nticks, ...)
     {
         name1 <- abbr.pred.names[ipred1]
         name2 <- abbr.pred.names[ipred2]
@@ -1330,8 +1333,8 @@ plot.degree2 <- function(  # plot all degree2 graphs
                 x=x, x1grid=x1grid, x2grid=x2grid, yhat=yhat, name1=name1, name2=name2,
                 ipred1=ipred1, ipred2=ipred2, ipair=ipair, nsingles=nsingles,
                 trace=trace, ylim=ylim, xflip=xflip, yflip=yflip, swapxy=swapxy,
-                ngrid2=ngrid2, main2=main, ticktype2=ticktype, def.cex.main=def.cex.main,
-                ...),
+                ngrid2=ngrid2, main2=main, ticktype2=ticktype,
+                def.cex.main=def.cex.main, def.nticks=def.nticks, ...),
             contour=plot.contour(
                 x=x, x1grid=x1grid, x2grid=x2grid, yhat=yhat, name1=name1, name2=name2,
                 ipred1=ipred1, ipred2=ipred2, xflip=xflip, yflip=yflip, swapxy=swapxy,
@@ -1394,13 +1397,13 @@ plot.degree2 <- function(  # plot all degree2 graphs
         }
         temp <- get.degree2.data(ipair)
             xframe   <- temp$xframe
-            x1grid    <- temp$x1grid
-            x2grid    <- temp$x2grid
+            x1grid   <- temp$x1grid
+            x2grid   <- temp$x2grid
             yhat     <- temp$yhat
             all.yhat <- c(all.yhat, yhat)
 
         if(draw.plot)
-            draw.degree2(type2, ...)
+            draw.degree2(type2, temp$def.nticks, ...)
     }
     all.yhat
 }
@@ -1439,28 +1442,33 @@ draw.response.sites <- function(x, ipred1, ipred2, pt.col, jitter,
         y=apply.jitter(as.numeric(x2), jitter, adjust=1.5),
         pt.col=pt.col, iresponse=iresponse, ...)
 }
+get.diag.val <- function(yhat, diag1, diag2) # return first non NA along diag
+{
+    vals <- yhat[diag1, diag2]
+    (vals[!is.na(vals)])[1] # return first non NA in vals, length zero if all NA
+}
 plot.persp <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
                        ipair, nsingles, trace, ylim, xflip, yflip, swapxy, ngrid2,
-                       main2, ticktype2, def.cex.main, ...)
+                       main2, ticktype2, def.cex.main, def.nticks, ...)
 {
     get.theta <- function(...) # theta arg for persp()
     {
-        get.diag.val <- function(diag1, diag2) # return first non NA along diag
-        {
-            vals <- yhat[diag1, diag2]
-            (vals[!is.na(vals)])[1] # return first non NA in vals
-        }
         theta <- dota("persp.theta theta", EX=c(0,1), ...)
-        if(is.na(theta)) {  # no user specified theta?
-            # rotate graph so highest point is farthest (this could be improved)
+        if(anyNA(theta)) { # theta not specified by the user?
+            # rotate graph so highest point is farthest (this can swap axes)
+            # imax corner numbering with theta=-35
+            #    1
+            # 2 /\ 4
+            #   \/
+            #   3
             theta <- -35
             nr <- nrow(yhat)
             nc <- ncol(yhat)
             imax <- which.max(c(
-                    get.diag.val(nr:1, nc:1),
-                    get.diag.val(1:nr, nc:1),
-                    get.diag.val(1:nr, 1:nc),
-                    get.diag.val(nr:1, 1:nc)))
+                    get.diag.val(yhat, nr:1, nc:1),
+                    get.diag.val(yhat, 1:nr, nc:1),
+                    get.diag.val(yhat, 1:nr, 1:nc),
+                    get.diag.val(yhat, nr:1, 1:nc)))
             if(length(imax))   # length>0 unless entire diag is NA
                 theta <- theta + switch(imax, 0, 90, 180, 270)
         }
@@ -1483,6 +1491,7 @@ plot.persp <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
     }
     zlab <- dota("ylab", DEF="", ...) # use ylab as zlab if specified
     zlab <- repl(zlab, nsingles+ipair)[nsingles+ipair]
+    # zlab <- paste0("\n", zlab) # else zlab is too close to axis labels
     cex.lab <- dota("persp.cex.lab",
                     # make the labels small if multiple figures
                     DEF=if(def.cex.main < 1) .8 * def.cex.main else 1, ...)
@@ -1492,11 +1501,11 @@ plot.persp <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
     if(theta < 0) theta <- theta + 360
     theta <- theta %% 360
     if((0 < theta && theta <= 90) || (180 < theta && theta <= 270)) {
-        xlab <- paste0("\n", name1, "        ")
-        ylab <- paste0("\n        ", name2)
+        xlab <- paste0("\n", name1, "    ")
+        ylab <- paste0("\n    ", name2)
     } else {
-        xlab <- paste0("\n        ", name1)
-        ylab <- paste0("\n", name2, "        ")
+        xlab <- paste0("\n    ", name1)
+        ylab <- paste0("\n", name2, "    ")
     }
     # We use deprefix directly (and not call.plot) because
     # we have to do a bit of manipulation of the args for nticks.
@@ -1530,7 +1539,7 @@ plot.persp <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
         def.cex.axis  = cex.lab,
         def.zlab      = zlab,
         def.ticktype  = "simple",
-        def.nticks    = 5,
+        def.nticks    = def.nticks,
         def.cex       = cex1,
         force.col     = dota("persp.col col.persp",
                              EX=c(0,1), DEF="lightblue", NEW=1, ...),

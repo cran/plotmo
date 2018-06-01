@@ -29,7 +29,8 @@ plot_glmnet <- function(x=stop("no 'x' argument"),
     "norm"= {
         if(inherits(obj, "multnet") || inherits(obj, "mrelnet")) {
             # we don't (yet) precalc norm or support type.coef, so have to stop here
-            stop0("xvar=\"norm\" is not supported by plotres for multiple responses")
+            stop0("xvar=\"norm\" is not supported by plot_gbm for ",
+                  "multiple responses (use plot.glmnet instead)")
         }
         x <- apply(abs(beta), 2, sum)
         if(!is.specified(xlim))

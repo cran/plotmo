@@ -18,9 +18,9 @@
 +                 deparse(substitute(object)), "\n", sep="")
 +         else
 +             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg, 1, 1000)))
++                          expected.msg, substr(msg[1], 1, 1000)))
 +     } else
-+         stop("did not get expected error ", expected.msg)
++         stop("Did not get expected error: ", expected.msg)
 + }
 > library(earth)
 Loading required package: plotmo
@@ -64,10 +64,10 @@ Warning: plotmo: nothing to plot
 > plotmo(a81)
  plotmo grid:    pclass    sex age sibsp parch
                     1st female  28     0     0
-> old.par <- par(no.readonly=TRUE)
 > 
 > # degree1 tests
-> par(mfrow=c(3,3), mar=c(3,2.5,2,1), oma=c(0,0,4,0))
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(3,3), mar=c(1,2.5,2,1), oma=c(0,0,4,0))
 > plotmo(a81, do.par=FALSE, degree1="pclass", degree2=0, main='degree1="pclass"',
 +        caption="test degree1 with strings")
  plotmo grid:    pclass    sex age sibsp parch
@@ -86,12 +86,15 @@ Got error as expected from try(plotmo(a81, do.par = FALSE, degree1 = "survived",
 > plotmo(a81, do.par=FALSE, degree1=c("sibsp", "pclass"), degree2=0, main='degree1=c("sibsp", "pclass")')
  plotmo grid:    pclass    sex age sibsp parch
                     1st female  28     0     0
+> par(old.par)
 > 
 > # degree2 tests
-> par(mfrow=c(3,3), mar=c(3,2.5,2,1), oma=c(0,0,4,0))
+> old.par <- par(no.readonly=TRUE)
+> par(mfrow=c(3,3), mar=c(1,2.5,2,1), oma=c(0,0,4,0))
 > plotmo(a81, do.par=FALSE, degree1=0, degree2="pclass", main='degree2="pclass"',
 +        caption="test degree2 with two strings")
-> plotmo(a81, do.par=FALSE, degree1=0, degree2=c("age", "se"), main='degree2=c("age", "se")')
+> plotmo(a81, do.par=FALSE, degree1=0, degree2=c("age", "se"), persp.theta=-35,
++        main='degree2=c("age", "se")\npersp.theta=-35')
 > plotmo(a81, do.par=FALSE, degree1=0, degree2="ag", main='degree2="ag"')
 > plotmo(a81, do.par=FALSE, degree1=0, degree2=c("sex", "sibsp"), main='degree2=c("sex", "sibsp"')
 > plotmo(a81, do.par=FALSE, degree1=0, degree2=c("sibsp", "sex"), main='degree2=c("sibsp", "sex")')
@@ -109,9 +112,78 @@ Error : (converted from warning) "nonesuch" in degree2 does not match any names
 Got error as expected from try(plotmo(a81, do.par = FALSE, degree1 = 0, degree2 = c("nonesuch",     "pclass")))
 > par(old.par)
 > 
-> # following works but should possibly give a warning (both elems of degree2 the same)
-> plotmo(a81, degree1=0, degree2=c("sex", "sex"),
-+        main='degree2=c("sex", "sex")', SHOWCALL=TRUE)
+> old.par <- par(no.readonly=TRUE)
+> options(warn=1) # print warnings as they occur
+> par(mfrow=c(2,2), mar=c(1,2.5,2,1), oma=c(0,0,4,0))
+> 
+> # check that order of strings in two string degree2 is observed
+> cat('\n\ndegree2=c("age", "se"):\n')
+
+
+degree2=c("age", "se"):
+> plotmo(a81, do.par=FALSE, degree1=0,
++        degree2=c("age", "se"), main='degree2=c("age", "se")')
+> cat('\n\ndegree2=c("se", "age"):\n')
+
+
+degree2=c("se", "age"):
+> plotmo(a81, do.par=FALSE, degree1=0,
++        degree2=c("se", "age"), main='degree2=c("se", "age")')
+> 
+> # check handling of bad strings in two string degree2
+> cat('\n\ndegree2=c("nonesuch", "age"):\n')
+
+
+degree2=c("nonesuch", "age"):
+> try(plotmo(a81, do.par=FALSE, degree1=0,
++     degree2=c("nonesuch", "age"), main='degree2=c("nonesuch", "age")'))
+Warning: "nonesuch" in degree2 does not match any names
+         Available names are "pclass" "sex" "age" "sibsp" "parch"
+Warning: plotmo: nothing to plot
+> cat('\n\ndegree2=c("age", "nonesuch"):\n')
+
+
+degree2=c("age", "nonesuch"):
+> try(plotmo(a81, do.par=FALSE, degree1=0,
++        degree2=c("age", "nonesuch"),
++        main='degree2=c("age", "nonesuch")'))
+Warning: "nonesuch" in degree2 does not match any names
+         Available names are "pclass" "sex" "age" "sibsp" "parch"
+Warning: plotmo: nothing to plot
+> cat('\n\ndegree2=c("nevermore", "nonesuch"):\n')
+
+
+degree2=c("nevermore", "nonesuch"):
+> try(plotmo(a81, do.par=FALSE, degree1=0,
++        degree2=c("nevermore", "nonesuch"),
++        main='degree2=c("nevermore", "nonesuch")'))
+Warning: "nevermore" in degree2 does not match any names
+         Available names are "pclass" "sex" "age" "sibsp" "parch"
+Warning: plotmo: nothing to plot
+> # follow should still plot the degree1 plot even though degree2 spec is wrong
+> cat('\n\ndegree1=1, degree2=c("nevermore", "nonesuch"):\n')
+
+
+degree1=1, degree2=c("nevermore", "nonesuch"):
+> try(plotmo(a81, do.par=FALSE, degree1=1,
++        degree2=c("nevermore", "nonesuch"),
++        main='degree1=1\ndegree2=c("nevermore", "nonesuch")'))
+Warning: "nevermore" in degree2 does not match any names
+         Available names are "pclass" "sex" "age" "sibsp" "parch"
+ plotmo grid:    pclass    sex age sibsp parch
+                    1st female  28     0     0
+> 
+> # expect warning: both elements of degree2 are the same
+> cat('\n\ndegree2=c("sex", "sex"):\n')
+
+
+degree2=c("sex", "sex"):
+> try(plotmo(a81, do.par=FALSE, degree1=0,
++        degree2=c("sex", "sex"),
++        main='degree1=1\ndegree2=c("sex", "sex")'))
+Warning: both elements of degree2 are the same
+> 
+> par(old.par)
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot

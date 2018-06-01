@@ -1,5 +1,6 @@
-> # test.non.earth.R: test plotmo on non-earth models
-> # Stephen Milborrow, Basley KwaZulu-Natal Mar 2011
+> # test.caret.R: test plotmo on caret models
+> #
+> # TODO This is a minimal set of tests.
 > 
 > library(plotmo)
 Loading required package: plotrix
@@ -20,12 +21,19 @@ Loading required package: TeachingDemos
 +     par(mgp = c(1.6, 0.6, 0))
 +     par(cex = 0.7)
 + }
-> expect.err <- function(obj) # test that we got an error as expected from a try() call
+> # test that we got an error as expected from a try() call
+> expect.err <- function(object, expected.msg="")
 + {
-+     if(class(obj)[1] == "try-error")
-+         cat("Got error as expected\n")
-+     else
-+         stop("did not get expected error")
++     if(class(object)[1] == "try-error") {
++         msg <- attr(object, "condition")$message[1]
++         if(length(grep(expected.msg, msg, fixed=TRUE)))
++             cat("Got error as expected from ",
++                 deparse(substitute(object)), "\n", sep="")
++         else
++             stop(sprintf("Expected: %s\n  Got:      %s",
++                          expected.msg, substr(msg[1], 1, 1000)))
++     } else
++         stop("Did not get expected error: ", expected.msg)
 + }
 > library(caret)
 Loading required package: lattice
@@ -33,6 +41,7 @@ Loading required package: ggplot2
 > set.seed(2015)
 > caret.earth.mod <- train(O3~., data=ozone1, method="earth",
 +                          tuneGrid=data.frame(degree=2, nprune=10))
+> # SHOWCALL is just a testing thing, so we can see who created the plot on the plot itself
 > plotmo(caret.earth.mod, trace=1, SHOWCALL=TRUE)
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
@@ -42,7 +51,6 @@ got model response from model.frame(O3~vh+wind+humidi...,
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
 
-> # but the pairs are plotted here
 > plotmo(caret.earth.mod$finalModel, trace=1, SHOWCALL=TRUE)
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
@@ -184,7 +192,7 @@ training rsq 0.45
 > etit <- etitanic
 > etit$survived <- factor(ifelse(etit$survived == 1, "yes", "no"),
 +                        levels = c("yes", "no"))
-> # TODO pairs are not plotted
+> # TODO pairs are not automatically plotted
 > caret.earth.mod2 <- train(survived ~ .,
 +             data = etit,
 +             method = "earth",

@@ -62,7 +62,7 @@ stopifnot.identifier <- function(s, name=short.deparse(substitute(s)),
 {
     if(!is.character(s))
         stop0(name, " is not a character variable (class(",
-              name, ") is \"", class(s), "\")")
+              name, ") is \"", class(s)[1], "\")")
     if(length(s) != 1)
         stop0(name, " has more than one element\n       ",
               name, " = c(", paste.trunc("\"", s, "\"", sep=""), ")")

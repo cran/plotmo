@@ -157,9 +157,9 @@ plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace, ...)
             ipred2 <- which(pred.names == pair[2])
             trace2(trace, " ->%s%s",
                 if(length(ipred1))
-                    sprintf(" %g=%s", ipred1, pred.names[ipred1]) else "",
+                    sprint(" %g=%s", ipred1, pred.names[ipred1]) else "",
                 if(length(ipred2))
-                    sprintf(" %g=%s", ipred2, pred.names[ipred2]) else "")
+                    sprint(" %g=%s", ipred2, pred.names[ipred2]) else "")
             if(length(ipred1) == 1 && length(ipred2) == 1 && pair[1] != pair[2])
                 pairs <- c(pairs, ipred1, ipred2)
         }

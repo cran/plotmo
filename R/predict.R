@@ -25,7 +25,7 @@ plotmo_predict <- function(object, newdata, nresponse,
             trace2(trace, "calling predict.%s with NULL newdata\n", class(object)[1])
         else { # assume object cannot handle newdata=NULL
             trace2(trace, "plotmo_predict with NULL newdata%s, %s",
-                   if(nrows) sprintf(" (nrows=%d)", nrows) else "",
+                   if(nrows) sprint(" (nrows=%d)", nrows) else "",
                    "using plotmo_x to get the data\n")
             newdata <- plotmo_x(object, trace)
             if(nrows)

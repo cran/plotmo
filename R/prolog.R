@@ -1,6 +1,7 @@
 # prolog.R: plotmo.prolog functions, called at the start of plotmo and plotres
 
-plotmo.prolog <- function(object, object.name, trace, ...) # gets called at the start of plotmo
+# gets called at the start of plotmo and plotres
+plotmo.prolog <- function(object, object.name, trace, ...)
 {
     UseMethod("plotmo.prolog")
 }

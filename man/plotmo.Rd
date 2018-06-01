@@ -1,14 +1,16 @@
 \name{plotmo}
 \alias{plotmo}
 \concept{partial dependence plot}
-\title{Plot a model's response over a range of predictor values}
+\title{Plot a model's response over a range of predictor values (the model surface)}
 \description{
 Plot model surfaces for a wide variety of models.
 
 This function plots the model's response when varying one or two
 predictors while holding the other predictors constant (a poor man's
 partial-dependence plot).
-It can also generate partial-dependence plots.
+
+It can also generate partial-dependence plots (by specifying
+\code{pmethod="partdep"}).
 
 Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}
 (also available \href{http://www.milbo.org/doc/plotmo-notes.pdf}{here}).
@@ -166,7 +168,7 @@ One of \code{"\link[graphics]{persp}"} (default),
 \code{"\link[graphics]{image}"}, or \code{"\link[graphics]{contour}"}.
 You can pass arguments to these functions if necessary by using
 \code{persp.}, \code{image.}, or \code{contour.} as a prefix.
-Examples:\preformatted{    plotmo(mod, persp.ticktype="detailed", persp.nticks=2)
+Examples:\preformatted{    plotmo(mod, persp.ticktype="detailed", persp.nticks=3)
     plotmo(mod, type2="image")
     plotmo(mod, type2="image", image.col=heat.colors(12))
     plotmo(mod, type2="contour", contour.col=2, contour.labcex=.4)
@@ -480,6 +482,7 @@ if (require(earth)) {
     data(ozone1)
     earth.model <- earth(O3 ~ ., data=ozone1, degree=2)
     plotmo(earth.model)
+    # plotmo(earth.model, pmethod="partdep") # partial dependence plots
 }
 }
 \keyword{partial dependence}

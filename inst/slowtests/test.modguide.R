@@ -1,10 +1,4 @@
-# test.ltut.R: test modified version of linmod from
-#              Friedrich Leisch "Creating R Packages: A Tutorial"
-#
-# Contains three version of linmod (grep for "###" or "source")
-#   1. original code from Leisch tutorial
-#   2. minimal changes for Milborrow tutorial (and for plotmo)
-#   3. production version (includes error checks) (Oct 2016 moved to test.linmod.R)
+# test.modguide.bat: test model1 and model2 (linmod examples) in modguide.pdf
 
 options(warn=2) # treat warnings as errors
 set.seed(2016)
@@ -21,13 +15,14 @@ expect.err <- function(object, expected.msg="")
                 deparse(substitute(object)), "\n", sep="")
         else
             stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg, 1, 1000)))
+                         expected.msg, substr(msg[1], 1, 1000)))
     } else
-        stop("did not get expected error ", expected.msg)
+        stop("Did not get expected error: ", expected.msg)
 }
-almost.equal <- function(x, y)
+almost.equal <- function(x, y, max=1e-8)
 {
-    length(x) == length(y) && max(abs(x - y)) < 1e-8
+    stopifnot(max >= 0 && max < .01)
+    length(x) == length(y) && max(abs(x - y)) < max
 }
 # check that fit model matches ref lm model in all essential details
 check.lm <- function(fit, ref, newdata=trees[3:5,],
@@ -94,9 +89,9 @@ check.lm <- function(fit, ref, newdata=trees[3:5,],
                     names(predict(ref, newdata=newdata)))
     }
 }
-### Version1: original code from tutorial
+### Model 1: original code from Friedrich Leisch tutorial
 
-source("linmod.leisch.tutorial.R")
+source("modguide.model1.R")
 
 cat("==example issues with predict with functions in the tutorial\n")
 data(trees)
@@ -130,9 +125,9 @@ plotmo(fit1, pt.col=2, caption="fit1 with original tutorial code and plotmo.pred
 plotmo(fit2, pt.col=2, caption="fit2 with original tutorial code and plotmo.predict.linmod")
 remove(plotmo.predict.linmod)
 
-### Version2: minimal changes version for vignette "Guidelines for S3 Regression Models"
+### Model 2: minimal changes version for vignette "Guidelines for S3 Regression Models"
 
-source("linmod.milbo.tutorial.R")
+source("modguide.model2.R")
 
 cat("==check that example issues with functions in the tutorial have gone\n")
 fit1.form <- linmod(Volume~., data=tr)
@@ -262,8 +257,9 @@ fit9.form <- linmod(survived~., data=tit)
 check.lm(fit9.form, lm9, newdata=tit[3:5,])
 
 options(warn=2) # treat warnings as errors
+# factors in x
 expect.err(try(linmod(tit[,c(1,3,4,5,6)], tit[,"survived"])), "NAs introduced by coercion")
-options(warn=1)
+options(warn=1) # print warnings as they occur
 expect.err(try(linmod(tit[,c(1,3,4,5,6)], tit[,"survived"])), "NA/NaN/Inf in foreign function call (arg 1)")
 
 options(warn=2) # treat warnings as errors
@@ -368,7 +364,7 @@ expect.err(try(linmod(vec, y2)), "'qr' and 'y' must have the same number of rows
 # following does not issue any error message, it should
 # expect.err(try(linmod(y2~vec)), "error message")
 
-### Version 3: production version of linmod is tested in test.linmod.R
+### Model 3: production version of linmod is tested in test.linmod.R
 
 if(!interactive()) {
     dev.off()        # finish postscript plot

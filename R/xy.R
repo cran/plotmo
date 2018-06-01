@@ -148,11 +148,11 @@ get.x.or.y <- function(
     object.x <- get.object.x.or.y(object, field, trace, try.object.x.or.y, naked)
     # object.x is object$x or NULL or an err msg
     if(is.good.data(object.x))
-        return(ret.good.field(object.x, FALSE, sprintf("object$%s", field)))
+        return(ret.good.field(object.x, FALSE, sprint("object$%s", field)))
 
     call <- object[["call"]]
     if(!is.null(call))
-        trace2(trace, "object$call is %s\n", trunc.deparse(call))
+        trace2(trace, "\nobject$call is %s\n", trunc.deparse(call))
 
     # try getting x or y from the model formula and model frame
 
@@ -160,6 +160,7 @@ get.x.or.y <- function(
         model.frame.x <- temp$x
         do.subset     <- temp$do.subset
         source        <- temp$source
+
     # model.frame.x is now x or y or NULL or an err msg
     if(is.good.data(model.frame.x)) {
         model.frame.x <-
@@ -173,7 +174,7 @@ get.x.or.y <- function(
     call.x <- get.data.from.object.call.field(object, field, trace)
     # call.x is object$call$x or an error message
     if(is.good.data(call.x))
-        return(ret.good.field(call.x, TRUE, sprintf("object$call$%s", field)))
+        return(ret.good.field(call.x, TRUE, sprint("object$call$%s", field)))
 
     # else { # TODO may not want to do this if x is ok except for no colnames
     #     # try object$call$X (note upper case "X")
@@ -186,20 +187,22 @@ get.x.or.y <- function(
     #         ok <- names(object$call)[ifield] == upfield
     #         if(!is.na(ok) && length(ok == 1) && ok)
     #             return(ret.good.field(call.x, TRUE,
-    #                sprintf("object$call$%s", upfield)))
+    #                sprint("object$call$%s", upfield)))
     #         else if(trace >= 2)
     #             printf("ignoring object$call$%s because it isn't arg number %d\n",
     #                upfield, ifield)
     #     }
     # }
 
+    trace2(trace, "\n")
+
     # consider argument number argn of the model call (ignoring its name)
 
-    temp <- get.argn(argn, object, field, trace, nrows.argn)
+    temp <- get.argn.from.call(argn, object, field, trace, nrows.argn)
         argn.x <- temp$x
         argn   <- temp$argn # may clear argn (for uncluttered errmsg later)
     # argn.x is the evaluated n'th arg or NULL or an err msg
-    argn.name <- sprintf("argument %g of the model call", argn)
+    argn.name <- sprint("argument %g of the model call", argn)
     if(is.good.data(argn.x))
         return(ret.good.field(argn.x, TRUE, argn.name))
 
@@ -209,23 +212,24 @@ get.x.or.y <- function(
 
     if(try.object.x.or.y &&
            !is.errmsg(object.x) &&
-           is.good.data(object.x, sprintf("object$%s", field),
+           is.good.data(object.x, sprint("object$%s", field),
                         trace, check.colnames=FALSE))
-        return(ret.good.field(object.x, FALSE, sprintf("object$%s", field)))
+        return(ret.good.field(object.x, FALSE, sprint("object$%s", field)))
 
     if(!is.errmsg(call.x) &&
-           is.good.data(call.x, sprintf("call$%s", field),
+           is.good.data(call.x, sprint("call$%s", field),
                         trace, check.colnames=FALSE))
-        return(ret.good.field(call.x, TRUE, sprintf("object$call$%s", field)))
+        return(ret.good.field(call.x, TRUE, sprint("object$call$%s", field)))
 
     if(argn && !is.errmsg(argn.x) &&
             is.good.data(argn.x, argn.name, trace, check.colnames=FALSE))
-        return(ret.good.field(argn.x, TRUE, sprintf("object$%s", field)))
+        return(ret.good.field(argn.x, TRUE, sprint("object$%s", field)))
 
     # unsuccessful
 
     errmsg.for.get.x.or.y(field, trace,
-        try.object.x.or.y, argn, object.x, model.frame.x, call.x, argn.x)
+        try.object.x.or.y, argn, object.x,
+        model.frame.x, call.x, argn.x)
 
     stopf("cannot get the original model %s%s",
           if(field == "x") "predictors" else "response",
@@ -255,13 +259,13 @@ trace.data <- function(good, has.colnames,
     stopifnot.string(xname)
     colnames.msg <-
         if(good && has.colnames) {
-            sprintf(" and has column name%s %s",
-                    if(length(colnames(x)) == 1) "" else "s",
-                    paste.trunc(colnames(x)))
+            sprint(" and has column name%s %s",
+                   if(length(colnames(x)) == 1) "" else "s",
+                   paste.trunc(colnames(x)))
         } else if(good)
-            sprintf(" but without colnames %s",
-                if(check.colnames) "so we will keep on searching"
-                else               "but we will use it anyway")
+            sprint(" but without colnames %s",
+                   if(check.colnames) "so we will keep on searching"
+                   else               "but we will use it anyway")
         else
             ""
     if(good)
@@ -314,20 +318,20 @@ format.err.field <- function(x, xname, trace=0)
         errmsg <- gsub("\n *\\^",  "",  errmsg) # strip "    ^" in some err msgs
         errmsg <- gsub("[\n\t ]+", " ", errmsg) # collapse newlines and multiple spaces
         errmsg <- gsub("^ *| *$",  "",  errmsg) # delete remaining leading and trailing space
-        sprintf(" %s", errmsg)
+        sprint(" %s", errmsg)
     } else if(is.errmsg(x))
-        sprintf(" %s", x)
+        sprint(" %s", x)
     else if(is.null(x))
-        sprintf(" NULL")
+        sprint(" NULL")
     else if(NROW(x) < 3)
-        sprintf(" less than three rows")
+        sprint(" less than three rows")
     else if(!is.null(dim(x))) {
         printf("")
         print_summary(x, xname, trace=2)
-        sprintf(" is not usable (see above)")
+        sprint(" is not usable (see above)")
     } else
-        sprintf(" class \"%s\" with value %s",
-                class(x), try(paste.trunc(format(x))[1]))
+        sprint(" class \"%s\" with value %s",
+               class(x), try(paste.trunc(format(x))[1]))
 }
 # Get object$x or object$y from the model.
 # Return x (or y) or NULL or an error message.
@@ -344,8 +348,9 @@ get.object.x.or.y <- function( # get object$x or object$y
     try.object.x.or.y=TRUE, # FALSE if object[[field]] should be ignored
     naked=TRUE)             # TRUE for columns like "x3" not "ns(x3,4)"
 {
+    trace2(trace, "\nget.object.%s:\n", field)
     x <- NULL
-    xname <- sprintf("object$%s", field) # for tracing
+    xname <- sprint("object$%s", field) # for tracing
     if(!try.object.x.or.y) # e.g. we must ignore object$x for mda::mars models
         trace2(trace, "ignoring %s for this %s object\n", xname, class(object)[1])
     else {
@@ -372,8 +377,9 @@ get.object.x.or.y <- function( # get object$x or object$y
 get.data.from.object.call.field <- function(object, field, trace,
                                             check.is.good.data=TRUE)
 {
+    trace2(trace, "\nget.data.from.object.call.field:\n")
     x <- NULL
-    xname <- sprintf("object$call$%s", field)
+    xname <- sprint("object$call$%s", field)
     call <- object[["call"]]
     if(is.null(call))
         trace2(trace, "object$call is NULL so cannot get %s\n", xname)
@@ -399,29 +405,29 @@ get.data.from.object.call.field <- function(object, field, trace,
 # where argn.x is the evaluated n'th argument or NULL or an error message.
 # and argn will be set 0 if routine processing says we should ignore argn.
 
-get.argn <- function(argn, object, field, trace, nrows.argn)
+get.argn.from.call <- function(argn, object, field, trace, nrows.argn)
 {
     x <- NULL
     if(argn) {
-        temp <- get.argn.aux(argn, object, field, trace, nrows.argn)
+        temp <- get.argn.from.call.aux(argn, object, field, trace, nrows.argn)
             x    <- temp$x
             argn <- temp$argn
         if(is.errmsg(x))
             trace2(trace, "%s\n", x)
         else # invoke is.good.data purely for issuing trace messages
-            is.good.data(x, sprintf("argument %d of the model call", argn), trace)
+            is.good.data(x, sprint("argument %d of the model call", argn), trace)
     }
     list(x=x, argn=argn)
 }
-# auxilary function for get.argn
+# auxilary function for get.argn.from.call
 
-get.argn.aux <- function(argn, object, field, trace, nrows.argn)
+get.argn.from.call.aux <- function(argn, object, field, trace, nrows.argn)
 {
     ret <- function(x, argn)
     {
         list(x=x, argn=argn)
     }
-    #--- get.argn.x starts here
+    #--- get.argn.from.call.x starts here
     stopifnot(argn > 0)
     call <- object$call
     if(is.null(call))
@@ -429,7 +435,7 @@ get.argn.aux <- function(argn, object, field, trace, nrows.argn)
     if(!is.call(call))
         return(ret("object$call is not actually a call so cannot use argn", argn))
     if(length(call) <= argn)
-        return(ret(sprintf(
+        return(ret(sprint(
             "cannot use argn %d because object$call does not have %d arguments",
             argn, argn), argn))
     names.call <- names(call) # some names may be ""
@@ -442,7 +448,7 @@ get.argn.aux <- function(argn, object, field, trace, nrows.argn)
     # If the arg name is "" in object$call this won't work, not serious.
 
     if(identical(names.call[argn+1], field))
-        return(ret(sprintf(
+        return(ret(sprint(
             "the name of argument %d is \"%s\" so we will not process it with argn",
             argn, field),
             argn=0))
@@ -452,21 +458,21 @@ get.argn.aux <- function(argn, object, field, trace, nrows.argn)
     # This is a a common case, so clear argn.
 
     if(pmatch("formula", names.call[2], 0))
-        return(ret(sprintf(
+        return(ret(sprint(
             "ignoring argn %g because there is a formula argument", argn),
             argn=0))
     x <- try.eval(call[[argn+1]], model.env(object), trace=trace,
-                  sprintf("argument %d of the model call", argn))
+                  sprint("argument %d of the model call", argn))
     if(is.data.frame(x))
         x <- x[[1]]
     if(!(is.numeric(x[1]) || is.logical(x[1]) || is.factor(x[1])))
-        return(ret(sprintf(
+        return(ret(sprint(
             "cannot use argn %d because it is not numeric, logical, or a factor",
             argn), argn))
     if(is.null(nrows.argn)) # should never happen
         stop0("cannot use argn because the expected number of rows is unspecified")
     if(NROW(x) != nrows.argn)
-        return(ret(sprintf(
+        return(ret(sprint(
             "cannot use argn %g because it has %g rows but expected %g rows",
             argn, NROW(x), nrows.argn), argn))
     list(x=x, argn=argn)
@@ -480,15 +486,17 @@ get.x.or.y.from.model.frame <- function(object, field, trace, naked,
 {
     ret <- function(...)  # ... is an err msg in printf form
     {
-        err.msg <- sprintf(...)
+        err.msg <- sprint(...)
         trace2(trace, "%s\n", err.msg)
         list(x=err.msg, do.subset=FALSE, source="model frame")
     }
     #--- get.x.or.y.from.model.frame starts here
     stopifnot(field == "x" || field == "y")
+    trace2(trace, "\nget.%s.from.model.frame:\n", field)
     temp <- get.model.frame(object, field, trace, naked, na.action, newdata)
     if(!is.good.data(temp$x))
         return(temp)
+
     model.frame <- temp$x
     do.subset   <- temp$do.subset
     source      <- temp$source
@@ -516,20 +524,20 @@ get.x.or.y.from.model.frame <- function(object, field, trace, naked,
             # this hack was added for gre objects in the pre package
             trace1(trace, "response index is 0, forcing to iresponse=1\n", iresponse)
             iresponse <- 1
-            }
+        }
     }
     if(iresponse != 1) # have only ever seen this in the pre package
         trace2(trace, "response index is %g\n", iresponse)
     if(field == "x") {
         # drop the response column
         x <- model.frame[, -iresponse, drop=FALSE]
-        if(!is.good.data(x, sprintf("model.frame[,-%g]", iresponse), trace))
+        if(!is.good.data(x, sprint("model.frame[,-%g]", iresponse), trace))
             return(ret("invalid model.frame[,-iresponse]"))
     } else { # field == "y"
         # select the response column
         # we don't use model.response() here because that drops the column name
         x <- model.frame[, iresponse, drop=FALSE]
-        if(!is.good.data(x, sprintf("model.frame[,%g]", iresponse), trace))
+        if(!is.good.data(x, sprint("model.frame[,%g]", iresponse), trace))
             return(ret("invalid model.frame[,iresponse]"))
     }
     list(x=x, do.subset=do.subset, source=source)
@@ -578,10 +586,12 @@ get.model.frame <- function(object, field, trace, naked,
                 return(ret(x, FALSE, "object$model"))
         }
         temp <- get.data.for.model.frame(object, trace)
-        data        <- temp$data
-        data.source <- temp$source
+            data        <- temp$data
+            data.source <- temp$source
         if(!is.good.data(data)) {
-            data <- model.env(object) # data is not usable (could be NULL)
+            # data is not usable (could be NULL)
+            # following is for when no data argument when model was built
+            data <- model.env(object)
             data.source <- "model.env(object)"
         }
     }
@@ -596,7 +606,7 @@ get.model.frame <- function(object, field, trace, naked,
         trace2(trace, "na.action(object) is %s\n", as.char(na.action))
     }
     if(!is.function(na.action) && !is.character(na.action)) {
-        err.msg <- sprintf("bad na.action: %s", as.char(na.action))
+        err.msg <- sprint("bad na.action: %s", as.char(na.action))
         trace2(trace, "%s\n", err.msg)
         return(ret(err.msg))
     }
@@ -608,8 +618,9 @@ get.model.frame <- function(object, field, trace, naked,
         if(is.environment(data)) environment.as.char(data)
         else if(is.null(data))   "NULL"
         else                     data.source
+
     model.frame.string <-
-        sprintf("model.frame(%s, data=%s, na.action=%s)",
+        sprint("model.frame(%s, data=%s, na.action=%s)",
             paste.trunc(strip.space(format(formula)), maxlen=20), data.source,
             trunc.deparse(na.action))
 
@@ -650,11 +661,13 @@ get.data.for.model.frame <- function(object, trace)
     data <- NULL
     argname <- "NULL"
     # try object$call$data
-    idata <- match(c("data"), names(call), 0)
+    idata <- match(c("data"), names(call), 0)[1]
     if(idata > 0) {
         trace2(trace, "argument %g of the call is 'data'\n", idata-1)
         argname <- "call$data"
-        data <- eval.trace(call[[idata]], model.env(object), trace=trace, expr.name=argname)
+        data <- try(eval.trace(call[[idata]], model.env(object),
+                               trace=trace, expr.name=argname),
+                    silent=FALSE) # so user can see what went wrong
         is.good.data(data, argname, trace) # purely for tracing
     } else {
         # no object$call$data, search for an arg that looks like good data
@@ -664,7 +677,7 @@ get.data.for.model.frame <- function(object, trace)
             for(icall in 3:length(call)) {
                 arg <- call[[icall]]
                 if(class(arg)[1] == "name") { # paranoia, will always be true?
-                    argname <- sprintf("call$%s", quotify(as.character(arg)))
+                    argname <- sprint("call$%s", quotify(as.character(arg)))
                     data <- eval.trace(arg, model.env(object), trace=trace, expr.name=argname)
                     if(is.good.data(data, argname, trace=trace)) {
                         trace2(trace, "%s appears to be the model data\n", argname)
@@ -684,7 +697,7 @@ get.data.for.model.frame <- function(object, trace)
         if(!is.data.frame(data)) {
             data <- try(my.data.frame(data, trace))
             # invoke is.good.data purely for issuing trace messages
-            is.good.data(data, sprintf(
+            is.good.data(data, sprint(
                 "%s converted from \"%s\" to \"data.frame\"",
                 argname, class(data)[1]), trace)
         }
@@ -720,7 +733,7 @@ get.model.formula <- function(object, trace, naked)
     }
     ret <- function(...)      # ... is an err msg in printf form
     {
-        s <- sprintf(...)
+        s <- sprint(...)
         trace2(trace, "%s\n", s)
         s
     }
@@ -753,7 +766,7 @@ get.model.formula <- function(object, trace, naked)
     # names.call <- names(call)
     # names.call[iform] <- "formula"
     # names(call) <- names.call # note <<- not <-
-    form.name <- sprintf("model call argument %d", iform-1)
+    form.name <- sprint("model call argument %d", iform-1)
     form <- eval(call[[iform]], model.env(object))
     form <- formula.as.char.with.check(form, form.name, trace)
     if(is.null(form$formula))
@@ -766,7 +779,7 @@ formula.as.char.with.check <- function(form, form.name, trace)
 {
     ret.null <- function(...) # ... is an err msg in printf form
     {
-        err.msg <- sprintf(...)
+        err.msg <- sprint(...)
         trace2(trace, "%s\n", err.msg)
         list(formula=NULL, err.msg=err.msg)
     }
@@ -814,10 +827,10 @@ process.formula <- function(object, form, trace, naked)
     if(is.try.err(form)) {
         # prepend "formula(%s) failed" for a clearer msg in format.err.field later
         form <- sub(".* : *", "", form[1]) # strip prefix "Error in xxx : "
-        form <- sprintf("formula(%s) failed: %s",
-                        quotify(sform), gsub("\n.*", "", form))
+        form <- sprint("formula(%s) failed: %s",
+                       quotify(sform), gsub("\n.*", "", form))
         trace2(trace, "%s\n", form)
-        form <- sprintf("Error : %s ", form)
+        form <- sprint("Error : %s ", form)
     }
     form
 }
@@ -933,7 +946,7 @@ check.naked <- function(x, xname, trace)
     is.naked <- is.naked(colnames)
     if(any(!is.naked)) {
         # e.g. lm(formula=log(doy)~vh, ...)
-        errmsg <- sprintf(
+        errmsg <- sprint(
             "%s cannot be used because it has%s non-naked column name%s %s",
             xname,
             if(sum(!is.naked) > 1) "" else " a",
@@ -994,7 +1007,7 @@ handle.nonvector.vars <- function(object, x, field, trace)
         # may not be vectors i.e. they could be single column mats)
         return(x)
     }
-    msg <- sprintf(
+    msg <- sprint(
         "%s variable on the %s side of the formula is a matrix or data.frame",
         if(ncol(x) == 1) "the" else "a",
         if(field == "x") "right" else "left")
@@ -1010,7 +1023,7 @@ handle.nonvector.vars <- function(object, x, field, trace)
         printf("the number of dimensions of each variable in %s is %s and ",
                field, paste.trunc(ndims.of.each.var))
         # details is 1 not 2 below else huge output
-        print_summary(x, sprintf("%s is ", field), trace, details=-1)
+        print_summary(x, sprint("%s is ", field), trace, details=-1)
     }
     # Attempt to fix the problem by replacing x with x[[1]].  However
     # for the rhs this only sometimes works --- there may be downstream

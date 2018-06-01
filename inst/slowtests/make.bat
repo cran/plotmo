@@ -35,7 +35,9 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call test.pre.bat
                         @if %errorlevel% NEQ 0 goto error
-@call test.ltut.bat
+@call test.mlr.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call test.modguide.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.linmod.bat
                         @if %errorlevel% NEQ 0 goto error

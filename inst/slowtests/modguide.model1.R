@@ -1,4 +1,4 @@
-# linmod.leisch.tutorial.R:
+# modguide.model1.R:
 #
 # linmod code from Friedrich Leisch "Creating R Packages: A Tutorial"
 

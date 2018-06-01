@@ -1,10 +1,24 @@
 # pre.R: plotmo functions for "pre" package
 
+plotmo.prolog.pre <- function(object, object.name, trace, ...) # invoked when plotmo starts
+{
+    # importance is a vector of variable indices, most important vars first
+    importance <- order.pre.vars.on.importance(object)
+    attr(object, "plotmo.importance") <- importance
+    if(trace > 0)
+        cat0("importance: ",
+             paste.trunc(object$predictors[importance], maxlen=120), "\n")
+    object
+}
 order.pre.vars.on.importance <- function(object, x, trace)
 {
     varimps <- try(pre::importance(object, plot=FALSE)$varimps, silent=TRUE)
     if(is.try.err(varimps)) {
-        warning0("pre::importance(pre.object) failed")
+        cat("\n")
+        warning0("pre::importance(pre.object) failed\n",
+"(Will plot all variables regardless of importance. Use all2=TRUE to get degree2 plots.)\n")
+        # NULL be will be treated as all vars by plotmo.single.pre,
+        # and as no vars by plotmo.pairs.pre.
         return(NULL)
     }
     stopifnot(is.data.frame(varimps))
@@ -16,7 +30,9 @@ order.pre.vars.on.importance <- function(object, x, trace)
     # discard variables whose importance is less than 1% of max importance
     varname <- varimps[varimps$imp > .01 * varimps$imp[1], ]$varname
     # convert variable names to column indices
-    importance <- match(varname, colnames(x))
+    allvarnames <- object$x_names
+    stopifnot(!is.null(allvarnames) && length(allvarnames) > 0) # paranoia
+    importance <- match(varname, allvarnames)
     if(any(is.na(importance)| importance == 0)) { # sanity check
         warning0("could not get variable importances\n  varname=",
             paste.c(varname), " colnames(x)=", paste.c(colnames(x)))
@@ -26,7 +42,7 @@ order.pre.vars.on.importance <- function(object, x, trace)
 }
 plotmo.singles.pre <- function(object, x, nresponse, trace, all1, ...)
 {
-    importance <- order.pre.vars.on.importance(object, x, trace)
+    importance <- attr(object, "plotmo.importance")
     if(all1 || is.null(importance))
         return(seq_len(NCOL(x))) # all variables
     # 10 most important variables
@@ -35,9 +51,9 @@ plotmo.singles.pre <- function(object, x, nresponse, trace, all1, ...)
 }
 plotmo.pairs.pre <- function(object, x, ...)
 {
-    importance <- order.pre.vars.on.importance(object, x, trace)
+    importance <- attr(object, "plotmo.importance")
     if(is.null(importance))
-        return(NULL)
+        return(NULL) # importances not available so don't plot any pairs
     # pairs of four most important variables (i.e. 6 plots)
     form.pairs(importance[1: min(4, length(importance))])
 }

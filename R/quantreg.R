@@ -59,7 +59,7 @@ plotmo.pint.rq <- function(object, newdata, type, level, ...) # quantreg package
             if(length(tau) == 1)
                 tau
             else
-                sprintf("c(%s)", paste(tau, collapse=", ")),
+                sprint("c(%s)", paste(tau, collapse=", ")),
             "\n         Try plotmo level=", 1 - 2 * tau[1],
             " to make this warning go away",
             "\n         Continuing anyway, with confidence bands for tau=",

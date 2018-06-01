@@ -19,9 +19,9 @@
 +                 deparse(substitute(object)), "\n", sep="")
 +         else
 +             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg, 1, 1000)))
++                          expected.msg, substr(msg[1], 1, 1000)))
 +     } else
-+         stop("did not get expected error ", expected.msg)
++         stop("Did not get expected error: ", expected.msg)
 + }
 > printf("library(earth)\n")
 library(earth)
@@ -31,6 +31,14 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(ozone1)
 > data(etitanic)
+> example(plotres)
+
+plotrs> # we use lm in this example, but plotres is more useful for models
+plotrs> # that don't have a function like plot.lm for plotting residuals
+plotrs> 
+plotrs> lm.model <- lm(Volume~., data=trees)
+
+plotrs> plotres(lm.model)
 > 
 > # basic tests of plotmo on abbreviated titanic data
 > 

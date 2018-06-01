@@ -18,12 +18,19 @@ dopar <- function(nrows, ncols, caption = "")
     par(mgp = c(1.6, 0.6, 0))
     par(cex = 0.7)
 }
-expect.err <- function(obj) # test that we got an error as expected from a try() call
+# test that we got an error as expected from a try() call
+expect.err <- function(object, expected.msg="")
 {
-    if(class(obj)[1] == "try-error")
-        cat("Got error as expected\n")
-    else
-        stop("did not get expected error")
+    if(class(object)[1] == "try-error") {
+        msg <- attr(object, "condition")$message[1]
+        if(length(grep(expected.msg, msg, fixed=TRUE)))
+            cat("Got error as expected from ",
+                deparse(substitute(object)), "\n", sep="")
+        else
+            stop(sprintf("Expected: %s\n  Got:      %s",
+                         expected.msg, substr(msg[1], 1, 1000)))
+    } else
+        stop("Did not get expected error: ", expected.msg)
 }
 caption <- "test lm(log(doy) ~ vh+wind+humidity+temp+log(ibh), data=ozone1)"
 dopar(4,5,caption)

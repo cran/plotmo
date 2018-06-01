@@ -20,16 +20,18 @@ and many others.
 
 ## An example model surface
 
-For example, let's generate a
+Let's generate a
 [randomForest]( https://CRAN.R-project.org/package=randomForest)
-model from the well-known ozone dataset:
+model from the well-known ozone dataset.
+(We use a random forest for this example, but any model could be
+used.)
 
 ```r
-library(earth) # for the ozone1 data
-data(ozone1)
-oz <- ozone1[, c("O3", "humidity", "temp")] # simple dataset for illustration
-library(randomForest)
-mod <- randomForest(O3 ~ ., data=oz)
+    library(earth) # for the ozone1 data
+    data(ozone1)
+    oz <- ozone1[, c("O3", "humidity", "temp")] # simple dataset for illustration
+    library(randomForest)
+    mod <- randomForest(O3 ~ ., data=oz)
 ```
 
 We now have a model, but what does it tell us about the relationship
@@ -37,8 +39,8 @@ between ozone pollution (O3) and humidity and temperature?
 We can visualize this relationship with `plotmo`:
 
 ```r
-library(plotmo)
-plotmo(mod)
+    library(plotmo)
+    plotmo(mod)
 ```
 
 ![](inst/README-figures/plotmo-randomForest.png)
@@ -56,7 +58,7 @@ median values.
 Plotmo automatically creates a separate plot for each variable
 in the model.
 
-The lower interaction plot shows the the predicted response as two
+The lower interaction plot shows the predicted response as two
 variables are changed (once again with  other variables if any held
 at their median values).
 Plotmo draws just one interaction plot for this model, since there are
@@ -70,25 +72,26 @@ In partial dependence plots, the effect of the background variables is
 averaged (instead of simply holding the background variables at their
 medians).
 Partial dependence plots can be very slow, but they do incorporate
-more information about the distribution of the data.
+more information about the distribution of the response.
 
 ## Plotting model residuals
 
 The `plotres` function is also included in the `plotmo` package.
 This function shows residuals and other useful information
 about the model, if available.
-
 Using the above model as an example:
 
 ```r
-plotres(mod)
+    plotres(mod)
 ```
+
+which gives
 
 ![](inst/README-figures/plotres-randomForest.png)
 
-Note the the "<" shape in the residuals plot in the lower left.
-This suggests that we should transform the response before
-building the model, maybe by taking the square or cube-root.
+Note the "<" shape in the residuals plot in the lower left.
+This suggests that we should transform the response before building
+the model, maybe by taking the square or cube-root.
 Cases 53, 237, and 258 have the largest residuals and perhaps
 should be investigated.
 This kind of information is not obvious without plotting the residuals
@@ -97,9 +100,9 @@ This kind of information is not obvious without plotting the residuals
 
 More details and examples may be found in the package vignettes:
 
-- [Plotting regression surfaces with `plotmo`](http://www.milbo.org/doc/plotmo-notes.pdf?plotmoreadme)
+- [Plotting regression surfaces with `plotmo`](http://www.milbo.org/doc/plotmo-notes.pdf)
 
-- [Plotting model residuals with `plotres`](http://www.milbo.org/doc/plotres-notes.pdf?plotmoreadme)
+- [Plotting model residuals with `plotres`](http://www.milbo.org/doc/plotres-notes.pdf)
 
 The package also provides a few utility functions such as
 `plot_glmnet` and `plot_gbm`.
@@ -119,7 +122,7 @@ and multiple response models.
 It knows how to handle different `type` arguments to `predict` functions.
 
 Package authors may want to look at
-[Guidelines for S3 Regression Models](http://www.milbo.org/doc/modguide.pdf?plotmoreadme).
+[Guidelines for S3 Regression Models](http://www.milbo.org/doc/modguide.pdf).
 If `plotmo` or `plotres` doesn't work with your model, contact the `plotmo` package maintainer.
 Often a minor tweak to the model code is all that is needed.
 
