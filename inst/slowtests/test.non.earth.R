@@ -403,7 +403,7 @@ plotmo(a, type="class", all2=TRUE,
 #        col.response=as.numeric(cush.data$tp)+1, drawlabels=F, nlevels=2, ngrid2=100)
 # par(mfrow=c(1,1))
 
-library(rpart.plot)
+library(rpart)
 data(kyphosis)
 # kyphosis data, earth model
 a <- earth(Kyphosis ~ ., data=kyphosis, degree=2, glm=list(family=binomial))
@@ -418,8 +418,10 @@ par(mar=old.mar)
 
 # kyphosis data, rpart models (also test ngrid2)
 fit1 <- rpart(Kyphosis ~ ., data=kyphosis)
+plotres(fit1, SHOWCALL=TRUE)
 par(mfrow=c(3, 3))
 old.par <- par(mar=c(.5, 0.5, 2, .5), mgp = c(1.6, 0.6, 0))  # b l t r small margins to pack figs in
+library(rpart.plot)
 prp(fit1, main="rpart kyphosis\nno prior")
 plotmo(fit1, degree1=NA, do.par=F, main="", persp.theta=220, nresponse=2)
 par(mar=c(4, 4, 2, .5))

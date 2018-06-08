@@ -47,7 +47,7 @@ degree1.partdep.yhat <- function(object,
     check.grid.class(partdep.x[[ipred]], xgrid, pred.names[ipred])
     # For efficiency, predict for all values in xgrid at once.
     # This reduces the number of calls to plotmo_predict, but requires more memory.
-    expanded.partdep.x <- partdep.x[rep(1:nrow(partdep.x), times=nxgrid), ]
+    expanded.partdep.x <- partdep.x[rep(1:nrow(partdep.x), times=nxgrid), , drop=FALSE]
     expanded.partdep.x[[ipred]] <- rep(xgrid, each=nrow(partdep.x)) # gets recyled
     # plotmo_predict always returns a numeric 1 x n matrix
     yhats <- plotmo_predict(object, expanded.partdep.x, nresponse,
@@ -80,7 +80,7 @@ degree2.partdep.yhat <- function(object,
     yhat <- matrix(0., nrow=n1, ncol=n2) # will store predictions in here
     pacifier.i <- n1 / 10 # for pacifier
     pacifier.digit <- -1
-    expanded.partdep.x <- partdep.x[rep(1:nrow(partdep.x), times=n2), ]
+    expanded.partdep.x <- partdep.x[rep(1:nrow(partdep.x), times=n2), , drop=FALSE]
     for(i in 1:n1) {
         while(pacifier.i < i) { # print pacifier
             if(trace >= 0 && pacifier.digit != floor(10 * pacifier.i / n1)) {

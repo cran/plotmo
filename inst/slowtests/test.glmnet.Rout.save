@@ -121,10 +121,12 @@ got model response from object$call$y
 ==Test plotmo trace=2 and lambda.min
 > plotmo1(mod.cv.glmnet.xmat, predict.s="lambda.min", trace=2)
 plotmo1(object=mod.cv.glmnet.xmat,predict.s="lambda.min",trace=2)
-assuming the environment of the cv.glmnet model is that of plotmo's caller: env(..., call, caption, object, SHOWCALL, trace)
 plotmo trace 2: plotmo(object, trace=trace, SHOWCALL=SHOWCALL, caption=caption,
                        ...)
-object$call is glmnet(x=xmat, y=tit[, 4])
+object class is "cv.glmnet" with no object$call
+--get.model.env for cv.glmnet object
+assuming the environment of the cv.glmnet model is that of plotmo's caller: env(..., call, caption, object, SHOWCALL, trace)
+--plotmo_prolog for cv.glmnet object 'object'
 --plotmo_x for cv.glmnet object
 
 get.object.x:
@@ -368,10 +370,12 @@ training rsq 0.13
 ==Test plotres trace=2 and lambda.1se
 > plotres1(mod.cv.glmnet.xmat, predict.s="lambda.1se", trace=2)
 plotres1(object=mod.cv.glmnet.xmat,predict.s="lambda.1se",trace=2)
-assuming the environment of the cv.glmnet model is that of plotres's caller: env(..., call, caption, object, SHOWCALL, trace)
 plotres trace 2: plotres(object, trace=trace, SHOWCALL=SHOWCALL,
                          caption=caption, ...)
-object$call is glmnet(x=xmat, y=tit[, 4])
+object class is "cv.glmnet" with no object$call
+--get.model.env for cv.glmnet object
+assuming the environment of the cv.glmnet model is that of plotres's caller: env(..., call, caption, object, SHOWCALL, trace)
+--plotmo_prolog for cv.glmnet object 'object'
 
 ----Metadata: plotmo_resids(object, type="response", nresponse=NULL)
 doTryCatch invoked call.dots
@@ -550,6 +554,11 @@ resp.levs is NULL
 
 --plotmo_response for plotmo_rsq1
 --plotmo_response for newdata: NULL
+plotmo_response trace 2: plotmo_response(object=object, newdata=newdata,
+                         trace=max(0,trace), nresponse=meta$nresponse,
+                         type=meta$type, meta=meta, ...)
+object$call is glmnet(x=xmat, y=tit[, 4])
+--get.model.env for cv.glmnet object
 using attr(object,".Environment") saved with cv.glmnet model: env(..., call, caption, object, SHOWCALL, trace)
 --plotmo_y with nresponse=1 for cv.glmnet object
 

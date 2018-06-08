@@ -41,9 +41,7 @@ set.seed(2016)
 gbm.gaussian <- gbm(age~., data=ptit, train.frac=train.frac,
                    distribution="gaussian",
                    n.trees=50, shrinkage=.1, keep.data=FALSE)
-expect.err(try(plotres(gbm.gaussian)),
-           "use keep.data=TRUE in the call to gbm (object$data is NULL)")
-#           "use keep_gbm_data=TRUE in the call to gbmt")
+expect.err(try(plotres(gbm.gaussian)), "use keep.data=TRUE in the call to gbm")
 set.seed(2016)
 gbm.gaussian <- gbm(age~., data=ptit, train.frac=train.frac,
                    distribution="gaussian",
@@ -473,8 +471,7 @@ plot_gbm(gbm.iris)
 #             train_params = train_params,
 #             is_verbose = FALSE)
 # expect.err(try(plotres(gbmt.gaussian)),
-#            "use keep.data=TRUE in the call to gbm (object$data is NULL)")
-# #           "use keep_gbm_data=TRUE in the call to gbmt")
+#            "use keep.data=TRUE in the call to gbm")
 # set.seed(2016)
 # gbmt.gaussian <- gbmt(age~., data=ptit,
 #             distribution=gbm_dist("Gaussian"),

@@ -43,6 +43,7 @@ Loading required package: ggplot2
 +                          tuneGrid=data.frame(degree=2, nprune=10))
 > # SHOWCALL is just a testing thing, so we can see who created the plot on the plot itself
 > plotmo(caret.earth.mod, trace=1, SHOWCALL=TRUE)
+plotmo.prolog(object$finalModel) succeeded
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
 got model response from model.frame(O3~vh+wind+humidi...,
@@ -60,6 +61,7 @@ got model response from object$y
                5760    5       64   62 2112.5  24 167.5 120 205.5
 
 > plotres(caret.earth.mod, trace=1, SHOWCALL=TRUE)
+plotmo.prolog(object$finalModel) succeeded
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
@@ -200,6 +202,7 @@ training rsq 0.45
 +             trControl = trainControl(method = "none",
 +                                      classProbs = TRUE))
 > plotmo(caret.earth.mod2, trace=1, SHOWCALL=TRUE)
+plotmo.prolog(object$finalModel) succeeded
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
 got model response from model.frame(survived~pclass+s...,
@@ -209,6 +212,7 @@ got model response from model.frame(survived~pclass+s...,
                     1st female  28     0     0
 
 > plotres(caret.earth.mod2, trace=1, SHOWCALL=TRUE)
+plotmo.prolog(object$finalModel) succeeded
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
@@ -221,6 +225,7 @@ training rsq 0.21
 > a <- train(O3 ~ ., data = ozone1,  method = "earth",
 +             tuneGrid = data.frame(degree = 2, nprune = 14))
 > plotmo(a, trace=1, SHOWCALL=TRUE)
+plotmo.prolog(object$finalModel) succeeded
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
 got model response from model.frame(O3~vh+wind+humidi...,
@@ -230,6 +235,7 @@ got model response from model.frame(O3~vh+wind+humidi...,
                5760    5       64   62 2112.5  24 167.5 120 205.5
 
 > plotres(a, trace=1, SHOWCALL=TRUE)
+plotmo.prolog(object$finalModel) succeeded
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)

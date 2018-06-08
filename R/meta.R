@@ -3,7 +3,7 @@
 plotmo_type <- function(object, trace, fname="plotmo", type, ...)
 {
     if(is.null(type)) # get default type for this object class?
-        type <- plotmo.type(object, ...)
+        type <- plotmo.type(object, ..., TRACE=trace)
     else {
         stopifnot.string(type)
         if(pmatch(type, "terms", nomatch=0))
@@ -11,10 +11,10 @@ plotmo_type <- function(object, trace, fname="plotmo", type, ...)
     }
     type
 }
-plotmo_residtype <- function(object, trace, fname="plotmo", type, ...)
+plotmo_residtype <- function(object, trace, fname="plotmo", type, ..., TRACE)
 {
     if(is.null(type)) # get default type for this object class?
-        type <- plotmo.residtype(object, ...)
+        type <- plotmo.residtype(object, ..., TRACE=TRACE)
     else
         stopifnot.string(type)
     type
@@ -220,8 +220,6 @@ plotmo_resplevs <- function(object, plotmo_fitted, yfull, trace)
 #   If nresponse is an integer, return only the specified column.
 #   If nresponse=NA, try to convert it to a column index, error if cannot
 #
-# If subset is not NULL, take the specified subset of rows.
-#
 # If !is.null(nresponse) and y is character vector then convert it to a factor.
 # expected.levs is used to do this (and not for anything else).
 #
@@ -353,7 +351,7 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
             colnames <- NULL
             if(is.null(colnames) && !is.null(dim(y)))
                 colnames <- colnames(y)
-            icol <- min(3, NCOL(y))
+            icol <- min(2, NCOL(y))
             if(is.null(colnames))
                 msg1 <- sprint("%s\n       Example: nresponse=%d",
                     "Use the nresponse argument to specify a column.",

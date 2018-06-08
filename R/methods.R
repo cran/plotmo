@@ -5,14 +5,14 @@ plotmo.x.mars <- function(object, trace, ...) # mda package
     # like plotmo.x.default but ignore object$x
     get.x.or.y(object, "x", trace, try.object.x.or.y=FALSE)
 }
-plotmo.type.bruto <- function(object, ...) "fitted"
+plotmo.type.bruto <- function(object, ..., TRACE) "fitted"
 
 plotmo.predict.bruto <- function(object, newdata, type, ..., TRACE) # mda package
 {
     # TODO fails: predict.bruto returned a response of the wrong length
     plotmo.predict.defaultm(object, newdata, type=type, ..., TRACE=TRACE)
 }
-plotmo.type.lars <- function(object, ...) "fit"
+plotmo.type.lars <- function(object, ..., TRACE) "fit"
 
 plotmo.predict.lars <- function(object, newdata, type, ..., TRACE) # lars package
 {
@@ -39,7 +39,7 @@ plotmo.predict.quantregForest <- function(object, newdata, ..., TRACE)
 }
 # plotmo.type.cosso works only if before calling plotmo
 # you manually do class(cosso.object) <- "cosso"
-plotmo.type.cosso <- function(object, ...) "fit" # cosso package
+plotmo.type.cosso <- function(object, ..., TRACE) "fit" # cosso package
 
 plotmo.predict.cosso <- function(object, newdata, type, ..., TRACE)
 {
@@ -53,9 +53,9 @@ plotmo.predict.cosso <- function(object, newdata, type, ..., TRACE)
     class(yhat) <- "vector"
     yhat
 }
-plotmo.type.lda <- function(object, ...) "class"
+plotmo.type.lda <- function(object, ..., TRACE) "class"
 
-plotmo.type.qda <- function(object, ...) "class"
+plotmo.type.qda <- function(object, ..., TRACE) "class"
 
 plotmo.predict.lda <- function(object, newdata, type, ..., TRACE) # MASS package
 {
@@ -96,7 +96,7 @@ get.lda.yhat <- function(object, yhat, type, trace)
     }
     yhat1
 }
-plotmo.type.varmod <- function(object, ...) "se"
+plotmo.type.varmod <- function(object, ..., TRACE) "se"
 
 plotmo.x.varmod <- function(object, trace, ...)
 {

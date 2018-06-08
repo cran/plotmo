@@ -546,7 +546,7 @@ foo6 <- function()
     a.foo6 <- lm(y~x1+x2, model=FALSE)
     y[1] <- NA
     # Error in na.fail.default: missing values in object
-    expect.err(try(plotmo(a.foo6, col.response=3))) # plotmo.y.default: cannot get the original model response
+    expect.err(try(plotmo(a.foo6, col.response=3)), "cannot get the original model predictors")
 }
 foo6()
 foo7 <- function()

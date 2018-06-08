@@ -1,4 +1,4 @@
-# Build the figures used by plotmo README.md
+# make.README.figs.R: Build the figures used by plotmo README.md
 # The paths below assume that this file is in the plotmo/inst/slowtests directory
 # Swindon May 2018
 

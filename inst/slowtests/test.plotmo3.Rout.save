@@ -267,8 +267,8 @@ predict.earth[88,3]:
 
 Error : predict.earth returned multiple columns (see above) but nresponse is not specified
        Use the nresponse argument to specify a column.
-          Example: nresponse="first"
-          Example: nresponse=3
+          Example: nresponse="classthird"
+          Example: nresponse=2
 Got error as expected from try(plotmo(a.tit))
 > # following two graphs should be identical
 > plotmo1(a.tit.orgpclass, nresponse="1st",   all1=T, col.resp=3, type2="im")
@@ -304,8 +304,8 @@ predict.earth[88,3]:
 
 Error : predict.earth returned multiple columns (see above) but nresponse is not specified
        Use the nresponse argument to specify a column.
-          Example: nresponse="first"
-          Example: nresponse=3
+          Example: nresponse="classthird"
+          Example: nresponse=2
 Got error as expected from try(plotmo1(mod.earth.pclass))
 > plotmo1(mod.earth.pclass, nresponse="fi")
 plotmo1(object=mod.earth.pclass,nresponse="fi")
@@ -347,8 +347,8 @@ predict.earth[88,3]:
 
 Error : predict.earth returned multiple columns (see above) but nresponse is not specified
        Use the nresponse argument to specify a column.
-          Example: nresponse="first"
-          Example: nresponse=3
+          Example: nresponse="classthird"
+          Example: nresponse=2
 Got error as expected from try(plotmo1(mod.earth.tit))
 > plotmo1(mod.earth.tit, nresponse="first")
 plotmo1(object=mod.earth.tit,nresponse="first")

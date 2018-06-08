@@ -322,14 +322,6 @@ plotmo_prolog <- function(object, object.name, trace, ...)
 {
     object <- plotmo.prolog(object, object.name, trace, ...)
     my.call <- call.as.char(n=2)
-    callers.name <- callers.name()
-    if(trace >= 2) {
-        printf.wrap("%s trace %g: %s\n", callers.name, trace, my.call)
-        if(is.null(object$call))
-            printf("object class is \"%s\" with no object$call\n", class(object)[1])
-        else
-            printf.wrap("object$call is %s\n", strip.deparse(object$call))
-    }
     SHOWCALL <- dota("SHOWCALL", ...)
     if(!is.specified(SHOWCALL))
         my.call <- NULL
@@ -445,7 +437,7 @@ get.ylim <- function(object,
         ylim <- c(NA, NA)  # won't be used
     else if(is.null(ylim)) # auto ylim
         ylim <-
-            if(is.predict.prob.wrapper(object, type)) {
+            if(is.predict.prob(object, type, trace)) {
                 if(is.specified(pt.col))
                     c(-0.1, 1.1) # leave space for possibly jittered points
                 else
@@ -870,9 +862,10 @@ plot.degree1 <- function( # plot all degree1 graphs
             draw.grid(grid.col, nx=NA, ...) # nx=NA for horiz-only grid
             draw.fac.intervals(xframe[,ipred], intervals, ...)
             if(is.specified(pt.col))
-                points.or.text(x=jittered.x, y=jittered.y, pt.col=pt.col,
-                               iresponse=iresponse, ...)
-            draw.smooth1(smooth.col, x, ipred, y, ux.list, ndiscrete, center, ...)
+               points.or.text(x=jittered.x, y=yscale * (yshift + jittered.y),
+                              pt.col=pt.col, iresponse=iresponse, ...)
+            draw.smooth1(smooth.col, x, ipred, yscale * (yshift + y),
+                         ux.list, ndiscrete, center, ...)
             # formal args for plot.factor, needed because "CRAN check"
             # doesn't allow ":::" and plot.factor isn't public
             plot.factor.formals <- c("x", "y", "legend.text")
@@ -901,9 +894,10 @@ plot.degree1 <- function( # plot all degree1 graphs
             draw.numeric.intervals(xframe[,ipred], intervals, ...)
             draw.func(func, object, xframe, ipred, center, trace, ...)
             if(is.specified(pt.col))
-               points.or.text(x=jittered.x, y=jittered.y, pt.col=pt.col,
-                              iresponse=iresponse, ...)
-            draw.smooth1(smooth.col, x, ipred, y, ux.list, ndiscrete, center, ...)
+               points.or.text(x=jittered.x, y=yscale * (yshift + jittered.y),
+                              pt.col=pt.col, iresponse=iresponse, ...)
+            draw.smooth1(smooth.col, x, ipred, yscale * (yshift + y),
+                         ux.list, ndiscrete, center, ...)
             call.plot(graphics::lines.default, PREFIX="degree1.",
                 force.x = xframe[,ipred], force.y = yhat,
                 force.col = dota("degree1.col col.degree1 col",
@@ -965,6 +959,9 @@ plot.degree1 <- function( # plot all degree1 graphs
                 !is.specified(grid.col) &&
                 !is.specified(dota("col.grid", ...)))
             abline(h=0, col="gray", lwd=.6) # gray line at y=0
+        temp <-  get.y.shift.scale(pt.col, ylim, uy, ndiscrete, trace)
+            yshift <- temp$yshift
+            yscale <- temp$yscale
         if(is.factor(x1))
             draw.degree1.fac(...)
         else
@@ -1012,6 +1009,30 @@ plot.degree1 <- function( # plot all degree1 graphs
             draw.degree1(...)
     }
     all.yhat # numeric vector of all predicted values
+}
+# When we are predicting a probability (0 to 1), we want the displayed
+# points to be on the plot, even if factor levels are say 1 and 2.
+# In that situation, we scale the displayed points into range 0...1.
+
+get.y.shift.scale <- function(pt.col, ylim, uy, ndiscrete, trace)
+{
+    yshift <- 0
+    yscale <- 1
+    if(is.specified(pt.col)) { # for efficiency, only calculate if necessary
+        ymin <- min(uy)
+        ymax <- max(uy)
+        if(is.specified(ylim[1]) && round(ylim[1]) >= 0 &&
+           is.specified(ylim[2]) && round(ylim[2]) <= 1 &&
+            # check that y is a factor (or factor-like)
+           round(ymax) == ymax && length(uy) <= ndiscrete && min(uy) >= 0) {
+         yshift <- -ymin
+         yscale <- 1 / (yshift + ymax)
+         trace2(trace,
+"Will shift and scale displayed points specified by pt.col: yshift %g yscale %g\n",
+                yshift, yscale)
+        }
+    }
+    list(yshift=yshift, yscale=yscale)
 }
 get.degree1.xlim <- function(ipred, xframe, ux.list, ndiscrete,
                              pt.col, jittered.x, xflip, ...)

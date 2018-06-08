@@ -372,11 +372,22 @@ get.model.env <- function(object, object.name="object", trace=0)
     # check args, because this func is called very early in plotmo (and friends)
     stopifnot.string(object.name)
     check.numeric.scalar(trace, logical.ok=TRUE)
+    if(is.null(object))
+        stopf("%s is NULL", object.name)
     if(!is.list(object))
         stopf("%s is not an S3 model", object.name)
     if(class(object)[1] == "list")
         stopf("%s is a plain list, not an S3 model", object.name)
-
+    if(trace >= 2) {
+        callers.name <- callers.name()
+        my.call <- call.as.char(n=2)
+        printf.wrap("%s trace %g: %s\n", callers.name, trace, my.call)
+        if(is.null(object$call))
+            printf("object class is \"%s\" with no object$call\n", class(object)[1])
+        else
+            printf.wrap("object$call is %s\n", strip.deparse(object$call))
+        printf("--get.model.env for %s object\n", class(object)[1])
+    }
     # following will fail for non-formula models because they have no terms field
     terms <- try(terms(object), silent=trace < 3)
     if(!is.try.err(terms) && !is.null(terms)) {
@@ -410,11 +421,9 @@ get.model.env <- function(object, object.name="object", trace=0)
         stop0("attr(object, \".Environment\") is not an environment")
 
     model.env <- parent.frame(n=2) # caller of the function that called model.env
-    if(trace >= 2) {
-        callers.name <- callers.name()
-        printf("assuming the environment of the %s model is that of %s's caller: %s\n",
-               class(object)[1], callers.name, environment.as.char(model.env))
-    }
+    trace2(trace,
+           "assuming the environment of the %s model is that of %s's caller: %s\n",
+           class(object)[1], callers.name, environment.as.char(model.env))
     return(model.env)
 }
 get.rsq <- function(rss, tss)

@@ -10,28 +10,24 @@
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
-  Version of 'plot.rpart'. R package version 2.2.0.
-  http://www.milbo.org/rpart-plot
+  Stephen Milborrow (2018). rpart.plot: Plot 'rpart' Models: An
+  Enhanced Version of 'plot.rpart'. R package version 2.2.0.
+  https://CRAN.R-project.org/package=rpart.plot
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
+    year = {2018},
     note = {R package version 2.2.0},
-    url = {http://www.milbo.org/rpart-plot},
+    url = {https://CRAN.R-project.org/package=rpart.plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")'.
 
-Warning messages:
-1: In citation("rpart.plot") :
-  no date field in DESCRIPTION file of package 'rpart.plot'
-2: In citation("rpart.plot") :
-  could not determine year for 'rpart.plot' from package DESCRIPTION file
 > 
 > library(earth)
 Loading required package: plotmo
@@ -121,9 +117,11 @@ got model response from model.frame(O3~vh+wind+humidi...,
                               test 4 x 4 layout with ylab 
 > a <- earth(O3 ~ ., data=ozone1, nk=30, pmethod="n", degree=2)
 > plotmo(a, caption=caption, trace=2)
-using the environment saved with the earth model: R_GlobalEnv
 plotmo trace 2: plotmo(object=a, caption=caption, trace=2)
 object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
+--get.model.env for earth object
+using the environment saved with the earth model: R_GlobalEnv
+--plotmo_prolog for earth object 'a'
 --plotmo_x for earth object
 
 get.object.x:
@@ -377,9 +375,11 @@ persp(ibt:vis) theta 235
                               test 3 x 3 layout 
 > a <- earth(O3 ~ ., data=ozone1, nk=16, pmethod="n", degree=2)
 > plotmo(a, caption=caption, trace=3)
-using the environment saved with the earth model: R_GlobalEnv
 plotmo trace 3: plotmo(object=a, caption=caption, trace=3)
 object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
+--get.model.env for earth object
+using the environment saved with the earth model: R_GlobalEnv
+--plotmo_prolog for earth object 'a'
 --plotmo_x for earth object
 
 get.object.x:
@@ -1063,11 +1063,13 @@ GCV 8954.829    RSS 2590958    GRSq 0.1805267    RSq 0.2771303
 + }
 > func1()
                               test environments and finding the correct data 
-using the environment saved with the earth model: R_GlobalEnv
 plotmo trace 2: plotmo(object=a.glob, type2="im", degree1=1, degree2=1, all2=1,
                        do.par=FALSE, trace=2, main="a.glob oz", col.response=3,
                        pt.pch=20)
 object$call is earth(formula=O3~temp+humidity, data=oz, degree=2)
+--get.model.env for earth object
+using the environment saved with the earth model: R_GlobalEnv
+--plotmo_prolog for earth object 'a.glob'
 --plotmo_x for earth object
 
 get.object.x:
@@ -1280,11 +1282,13 @@ graphics::plot.default(x=c(48,48.92,49.8...), y=c(7.99,8.279,8...), type="n",
                        main="a.glob oz", xlab="", ylab="", xaxt="s", yaxt="s",
                        xlim=c(47.98,93.08), ylim=c(1.94,33.94))
 --plot.degree2(draw.plot=TRUE)
-assuming the environment of the earth model is that of plotmo's caller: env(caption)
 plotmo trace 2: plotmo(object=ad.glob, type2="im", degree1=1, degree2=1,
                        all2=1, do.par=FALSE, trace=2, main="ad.glob oz",
                        col.response=3, pch.response=20)
 object$call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
+--get.model.env for earth object
+assuming the environment of the earth model is that of plotmo's caller: env(caption)
+--plotmo_prolog for earth object 'ad.glob'
 --plotmo_x for earth object
 
 get.object.x:
@@ -1526,11 +1530,13 @@ Got error as expected from try(plotmo(a.oz10, do.par = FALSE, main = "func1:a.oz
  plotmo grid:    x1 x2
                   6  6
 ==lm.18.keep
-using the environment saved with the lm model: env(frame, lm.18.out, x1, y)
 plotmo trace 2: plotmo(object=lm.18.keep, degree1=1, do.par=FALSE, clip=FALSE,
                        ylim=c(0,20), trace=2, main="lm.18.keep",
                        col.response=2, pt.pch=20)
 object$call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
+--get.model.env for lm object
+using the environment saved with the lm model: env(frame, lm.18.out, x1, y)
+--plotmo_prolog for lm object 'lm.18.keep'
 --plotmo_x for lm object
 
 get.object.x:
@@ -2348,7 +2354,7 @@ Got error as expected from try(plotmo(a.foo5))
 +     a.foo6 <- lm(y~x1+x2, model=FALSE)
 +     y[1] <- NA
 +     # Error in na.fail.default: missing values in object
-+     expect.err(try(plotmo(a.foo6, col.response=3))) # plotmo.y.default: cannot get the original model response
++     expect.err(try(plotmo(a.foo6, col.response=3)), "cannot get the original model predictors")
 + }
 > foo6()
 

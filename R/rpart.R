@@ -1,6 +1,6 @@
 # rpart.R: plotmo methods for rpart objects
 
-plotmo.type.rpart <- function(object, ...)
+plotmo.type.rpart <- function(object, ..., TRACE)
 {
     # use same default as predict.rpart
     if(object$method == "class")
@@ -8,7 +8,7 @@ plotmo.type.rpart <- function(object, ...)
     else
         "vector"
 }
-plotmo.residtype.rpart <- function(object, ...)
+plotmo.residtype.rpart <- function(object, ..., TRACE)
 {
     "usual"
 }

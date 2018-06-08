@@ -51,14 +51,12 @@ plotmo_rinfo <- function(object, type=NULL, residtype=type, nresponse=1,
             plotmo_y <- try(plotmo_y(object, nresponse, tracex, nrow(fitted), object$levels),
                             silent=trace == 0)
             if(is.try.err(plotmo_y)) {
-                if(trace >= 1)
-                    printf(
+                trace1(trace,
 "the call to plotmo_y was unsuccessful with nresponse=%g, trying again with nresponse=1\n",
                         nresponse)
                 nresponse <- 1
                 plotmo_y <- plotmo_y(object, nresponse, trace, nrow(fitted), object$levels)
-                if(trace >= 1)
-                    printf("plotmo_y is ok with nresponse forced to 1\n")
+                trace1(trace, "plotmo_y is ok with nresponse forced to 1\n")
             }
         }
         y <- plotmo_y$y

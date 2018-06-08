@@ -6,7 +6,7 @@ plotmo.prolog.gbm <- function(object, object.name, trace, ...) # invoked when pl
 {
     if(is.null(object$data)) # TODO could do more if object had a call component
         stop0("use keep.data=TRUE in the call to gbm ",
-              "(object$data is NULL)")
+              "(cannot determine the variable importances)")
 
     # "importance" is a vector of variable indices (column numbers in x), most
     # important vars first, no variables with relative.influence < 1%.  We attach

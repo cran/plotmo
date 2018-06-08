@@ -1,6 +1,24 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.4.1  June 8, 2018
+
+If plotting a probability and pt.col is specified, we now scale the
+response range to 0...1 so the points are displayed on the probability
+scale.
+
+Expanded is.predict.prob() function for more models.
+
+Fixed a minor bug in pmethod="partdep" which sometimes incorrectly
+caused an error message under certain conditions when there is only
+one predictor (added a missing drop=FALSE).
+
+Enhanced support for the mlr package (but we can't support mlr
+objects properly until the call is saved with WrappedModels).
+
+Enhanced support for the caret package (we now use get.singles and
+get.pairs on the submodel).
+
 --- 3.4.0  May 31, 2018
 
 If predict.rpart is predicting a probability, plotmo now recognizes
