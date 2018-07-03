@@ -1,6 +1,7 @@
 @rem plotmo/inst/slowtests/make.bat
 
 time /T
+
 @call test.plotmo.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.degree.bat
@@ -47,7 +48,9 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call test.c50.bat
                         @if %errorlevel% NEQ 0 goto error
-@rem for a thorough test, we also run \a\r\earth\inst\slowtests\make.bat
+@call test.partykit.bat
+                        @if %errorlevel% NEQ 0 goto error
+@rem we also run the earth package tests in \a\r\earth\inst\slowtests\make.bat
 @cd \a\r\earth\inst\slowtests
                         @if %errorlevel% NEQ 0 goto error
 @call make.bat

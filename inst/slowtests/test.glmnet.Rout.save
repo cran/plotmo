@@ -1,45 +1,17 @@
 > # test.glmnet.R: glmnet tests for plotmo and plotres
 > 
-> options(warn=1) # print warnings as they occur
-> 
-> if(!interactive())
-+     postscript(paper="letter")
-> 
-> printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-> 
-> strip.space <- function(s) gsub("[ \t\n]", "", s)
-> 
-> # test that we got an error as expected from a try() call
-> expect.err <- function(object, expected.msg="")
-+ {
-+     if(class(object)[1] == "try-error") {
-+         msg <- attr(object, "condition")$message[1]
-+         if(length(grep(expected.msg, msg, fixed=TRUE)))
-+             cat("Got error as expected from ",
-+                 deparse(substitute(object)), "\n", sep="")
-+         else
-+             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg[1], 1, 1000)))
-+     } else
-+         stop("Did not get expected error: ", expected.msg)
-+ }
-> printf("library(earth)\n")
-library(earth)
+> source("test.prolog.R")
 > library(earth)
 Loading required package: plotmo
 Loading required package: plotrix
 Loading required package: TeachingDemos
-> printf("library(glmnet)\n")
-library(glmnet)
 > library(glmnet)
 Loading required package: Matrix
 Loading required package: foreach
 Loaded glmnet 2.0-16
 
-> 
 > data(ozone1)
 > data(etitanic)
-> 
 > get.tit <- function() # abbreviated titanic data
 + {
 +     tit <- etitanic
@@ -112,7 +84,7 @@ plotmo1(object=mod.cv.glmnet.xmat,predict.s="lambda.min",trace=1)
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.min")
 stats::fitted(object=cv.glmnet.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from object$call$y
+got model response from getCall(object)$y
 
  plotmo grid:    survived sibsp  logage
                         0     0 3.06991
@@ -123,7 +95,7 @@ got model response from object$call$y
 plotmo1(object=mod.cv.glmnet.xmat,predict.s="lambda.min",trace=2)
 plotmo trace 2: plotmo(object, trace=trace, SHOWCALL=SHOWCALL, caption=caption,
                        ...)
-object class is "cv.glmnet" with no object$call
+object class is "cv.glmnet" with no call
 --get.model.env for cv.glmnet object
 assuming the environment of the cv.glmnet model is that of plotmo's caller: env(..., call, caption, object, SHOWCALL, trace)
 --plotmo_prolog for cv.glmnet object 'object'
@@ -132,15 +104,15 @@ assuming the environment of the cv.glmnet model is that of plotmo's caller: env(
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.x.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
-object$call$x is usable and has column names survived sibsp logage
+eval(getCall(object)$x, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -156,15 +128,15 @@ plotmo_predict with NULL newdata (nrows=3), using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.x.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
-object$call$x is usable and has column names survived sibsp logage
+eval(getCall(object)$x, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -194,15 +166,15 @@ plotmo_predict with NULL newdata, using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.x.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
-object$call$x is usable and has column names survived sibsp logage
+eval(getCall(object)$x, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -234,15 +206,15 @@ got fitted values by calling predict (see above)
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.y.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
-object$call$y is usable but without colnames so we will keep on searching
+eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$y is usable but without colnames so we will keep on searching
 
 names(call) is "" "x" "y"
 the name of argument 2 is "y" so we will not process it with argn
@@ -271,21 +243,21 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.y.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
-object$call$y is usable but without colnames so we will keep on searching
+eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$y is usable but without colnames so we will keep on searching
 
 names(call) is "" "x" "y"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
-got model response from object$call$y
+got model response from getCall(object)$y
 plotmo_y returned[88,1] with no column names:
       
 1   29
@@ -362,7 +334,7 @@ residuals() was unsuccessful, will use predict() instead
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.1se")
 stats::fitted(object=cv.glmnet.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from object$call$y
+got model response from getCall(object)$y
 graphics::plot(cv.glmnet.object)
 
 training rsq 0.13
@@ -372,7 +344,7 @@ training rsq 0.13
 plotres1(object=mod.cv.glmnet.xmat,predict.s="lambda.1se",trace=2)
 plotres trace 2: plotres(object, trace=trace, SHOWCALL=SHOWCALL,
                          caption=caption, ...)
-object class is "cv.glmnet" with no object$call
+object class is "cv.glmnet" with no call
 --get.model.env for cv.glmnet object
 assuming the environment of the cv.glmnet model is that of plotres's caller: env(..., call, caption, object, SHOWCALL, trace)
 --plotmo_prolog for cv.glmnet object 'object'
@@ -403,15 +375,15 @@ plotmo_predict with NULL newdata (nrows=3), using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.x.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
-object$call$x is usable and has column names survived sibsp logage
+eval(getCall(object)$x, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -441,15 +413,15 @@ plotmo_predict with NULL newdata, using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.x.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
-object$call$x is usable and has column names survived sibsp logage
+eval(getCall(object)$x, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -481,15 +453,15 @@ got fitted values by calling predict (see above)
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.y.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
-object$call$y is usable but without colnames so we will keep on searching
+eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$y is usable but without colnames so we will keep on searching
 
 names(call) is "" "x" "y"
 the name of argument 2 is "y" so we will not process it with argn
@@ -518,21 +490,21 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.y.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
-object$call$y is usable but without colnames so we will keep on searching
+eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$y is usable but without colnames so we will keep on searching
 
 names(call) is "" "x" "y"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
-got model response from object$call$y
+got model response from getCall(object)$y
 plotmo_y returned[88,1] with no column names:
       
 1   29
@@ -557,7 +529,7 @@ resp.levs is NULL
 plotmo_response trace 2: plotmo_response(object=object, newdata=newdata,
                          trace=max(0,trace), nresponse=meta$nresponse,
                          type=meta$type, meta=meta, ...)
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 --get.model.env for cv.glmnet object
 using attr(object,".Environment") saved with cv.glmnet model: env(..., call, caption, object, SHOWCALL, trace)
 --plotmo_y with nresponse=1 for cv.glmnet object
@@ -565,15 +537,15 @@ using attr(object,".Environment") saved with cv.glmnet model: env(..., call, cap
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.y.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
-object$call$y is usable but without colnames so we will keep on searching
+eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$y is usable but without colnames so we will keep on searching
 
 names(call) is "" "x" "y"
 the name of argument 2 is "y" so we will not process it with argn
@@ -615,15 +587,15 @@ plotmo_predict with NULL newdata, using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.x.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
-object$call$x is usable and has column names survived sibsp logage
+eval(getCall(object)$x, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -671,15 +643,15 @@ plotmo_predict with NULL newdata, using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.x.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$x, env(..., call, caption, object, SHOWCALL, trace))
-object$call$x is usable and has column names survived sibsp logage
+eval(getCall(object)$x, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$x is usable and has column names survived sibsp logage
 plotmo_x returned[88,3]:
      survived sibsp   logage
 1           1     0 1.821847
@@ -708,15 +680,15 @@ predict after processing with nresponse=1 is [88,1]:
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is glmnet(x=xmat, y=tit[, 4])
+object call is glmnet(x=xmat, y=tit[, 4])
 
 get.y.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$y, env(..., call, caption, object, SHOWCALL, trace))
-object$call$y is usable but without colnames so we will keep on searching
+eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
+getCall(object)$y is usable but without colnames so we will keep on searching
 
 names(call) is "" "x" "y"
 the name of argument 2 is "y" so we will not process it with argn
@@ -880,7 +852,7 @@ residuals() was unsuccessful, will use predict() instead
 stats::predict(elnet.object, matrix[3,2], type="response", s=0)
 stats::fitted(object=elnet.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from object$call$y
+got model response from getCall(object)$y
 plot_glmnet(elnet.object, xvar="rlambda", grid.col=0, s=0, nresponse=1)
 
 training rsq 0.95
@@ -890,7 +862,7 @@ residuals() was unsuccessful, will use predict() instead
 stats::predict(elnet.object, matrix[3,2], type="response", s=5)
 stats::fitted(object=elnet.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from object$call$y
+got model response from getCall(object)$y
 plot_glmnet(elnet.object, xvar="rlambda", grid.col=0, s=5, nresponse=1)
 
 training rsq 0.84
@@ -1319,7 +1291,4 @@ Warning: predict.earth ignored argument 's'
 > plot_glmnet(mod, col=c("black","red", 0), main="col=c('black','red', 0)") # test recycling, including 0
 > par(old.par)
 > 
-> if(!interactive()) {
-+     dev.off()         # finish postscript plot
-+     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-+ }
+> source("test.epilog.R")

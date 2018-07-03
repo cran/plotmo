@@ -1,31 +1,8 @@
 # test.dots.plotmo.R: test dots functions with the plotmo and earth libraries
 
-options(warn=1) # print warnings as they occur
-
-if(!interactive())
-    postscript(paper="letter")
-
-strip.space <- function(s) gsub("[ \t\n]", "", s)
-
-cat0 <- function(...) cat(..., sep="")
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
+source("test.prolog.R")
 library(plotmo)
-
-library(earth) # will also load plotmo
+library(earth)
 data(ozone1)
 
 a <- earth(O3~., data=ozone1, degree=2)
@@ -60,7 +37,4 @@ plotmo(a, lwd=2, trace=1, thresh=.9, do.par=FALSE, degree1=1, degree2=1) # no er
 
 options(warn=old.warn$warn)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

@@ -1,31 +1,10 @@
 # test.c50.R: c50 tests for plotmo and plotres
 
+source("test.prolog.R")
 library(C50)
 library(rpart.plot) # for ptitanic, want data with NAs for testing
 library(plotmo)
 library(earth) # for etitanic
-options(warn=1) # print warnings as they occur
-if(!interactive())
-    postscript(paper="letter")
-
-printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-
-strip.space <- function(s) gsub("[ \t\n]", "", s)
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
 data(etitanic)
 get.tit <- function() # abbreviated titanic data
 {
@@ -68,7 +47,4 @@ plotmo(c50.tree.survived, type="class")
 # try(plotmo(c50.tree.survived, type="confidence"))
 plotres(c50.tree.survived, type="prob", nresponse="yes")
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

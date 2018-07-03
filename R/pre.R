@@ -54,8 +54,10 @@ plotmo.pairs.pre <- function(object, x, ...)
     importance <- attr(object, "plotmo.importance")
     if(is.null(importance))
         return(NULL) # importances not available so don't plot any pairs
-    # pairs of four most important variables (i.e. 6 plots)
-    form.pairs(importance[1: min(4, length(importance))])
+    # choose npairs so a total of no more than 16 plots
+    # npairs=5 gives 10 pairplots, npairs=4 gives 6 pairplots
+    npairs <- if(length(importance) <= 6) 5 else 4
+    form.pairs(importance[1: min(npairs, length(importance))])
 }
 plotmo.pairs.gpe <- function(object, x, nresponse=1, trace=0, all2=FALSE, ...)
 {

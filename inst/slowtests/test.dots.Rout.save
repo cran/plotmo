@@ -1,32 +1,6 @@
 > # test.dots.R
 > 
-> library(plotmo)
-Loading required package: plotrix
-Loading required package: TeachingDemos
-> set.seed(2016)
-> options(warn=1) # print warnings as they occur
-> 
-> if(!interactive())
-+     postscript(paper="letter")
-> 
-> strip.space <- function(s) gsub("[ \t\n]", "", s)
-> 
-> cat0 <- function(...) cat(..., sep="")
-> 
-> # test that we got an error as expected from a try() call
-> expect.err <- function(object, expected.msg="")
-+ {
-+     if(class(object)[1] == "try-error") {
-+         msg <- attr(object, "condition")$message[1]
-+         if(length(grep(expected.msg, msg, fixed=TRUE)))
-+             cat("Got error as expected from ",
-+                 deparse(substitute(object)), "\n", sep="")
-+         else
-+             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg[1], 1, 1000)))
-+     } else
-+         stop("Did not get expected error: ", expected.msg)
-+ }
+> source("test.prolog.R")
 > cat0("=== test callers.name\n")
 === test callers.name
 > 
@@ -1198,7 +1172,4 @@ return dotnames      x y main xlab ylab
 graphics::plot.default(x=c(-11,0,11,22,3...), y=c(12,4,-2,-6,-8...),
                        main="plot3b", xlab="fitted", ylab="residuals")
 > 
-> if(!interactive()) {
-+     dev.off()        # finish postscript plot
-+     q(runLast=FALSE) # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-+ }
+> source("test.epilog.R")

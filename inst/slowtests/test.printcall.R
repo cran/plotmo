@@ -2,28 +2,8 @@
 #
 # TODO we don't test use of printcall in a namespace
 
+source("test.prolog.R")
 library(plotmo)
-
-options(warn=1) # print warnings as they occur
-
-printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-
-cat0 <- function(...) cat(..., sep="")
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
 for(all in c(FALSE, TRUE)) {
     for(EVAL in c(FALSE, TRUE)) {
         printf("=== Test printcall with all=%s EVAL=%s ===\n", all, EVAL)
@@ -118,6 +98,4 @@ for(all in c(FALSE, TRUE)) {
         foo50(a=1)
     }
 }
-
-if(!interactive())
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
+source("test.epilog.R")

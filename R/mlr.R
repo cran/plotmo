@@ -16,10 +16,10 @@ plotmo.prolog.WrappedModel <- function(object, object.name, trace, ...)
 {
     object.name <- gsub("'", "", object.name) # remove begin and end quotes
     callers.name <- callers.name(n=3) # TODO this is fragile
-    call <- object[["call"]]
+    call <- getCall(object)
     if(is.null(call))
         stopf(
-"model \"%s\" does not have a \"call\" field\n       Workaround: call %s like this: %s(%s$learner.model, ...)",
+"getCall(%s) failed.\n       Possible  workaround: call %s like this: %s(%s$learner.model, ...)",
           object.name, callers.name, callers.name, object.name)
 
     # make x and y available for get.plotmo.x.default and get.plotmo.y.default
@@ -29,7 +29,7 @@ plotmo.prolog.WrappedModel <- function(object, object.name, trace, ...)
     #      was built, then we may get the wrong task object.
     task <- eval(call[["task"]])
     if(is.null(task))
-        stop0("object$call does not have a \"task\" field")
+        stop0("object call does not have a \"task\" field")
     stopifnot(inherits(task, "Task"))
     stopifnot.string(task$task.desc$id)
     trace2(trace,

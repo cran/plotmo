@@ -11,8 +11,8 @@
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (2018). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 2.2.0.
-  https://CRAN.R-project.org/package=rpart.plot
+  Enhanced Version of 'plot.rpart'. R package version 2.3.0.
+  http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
 
@@ -20,25 +20,25 @@ A BibTeX entry for LaTeX users is
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
     year = {2018},
-    note = {R package version 2.2.0},
-    url = {https://CRAN.R-project.org/package=rpart.plot},
+    note = {R package version 2.3.0},
+    url = {http://www.milbo.org/rpart-plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")'.
 
+Warning message:
+In citation("rpart.plot") :
+  no date field in DESCRIPTION file of package 'rpart.plot'
 > 
+> source("test.prolog.R")
 > library(earth)
 Loading required package: plotmo
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(ozone1)
 > data(etitanic)
-> options(warn=1) # print warnings as they occur
-> if(!interactive())
-+     postscript(paper="letter")
-> set.seed(2016)
 > make.space.for.caption <- function(caption="CAPTION")
 + {
 +     oma <- par("oma")
@@ -60,20 +60,6 @@ Loading required package: TeachingDemos
 +     par(mar = c(3, 3, 1.7, 0.5))
 +     par(mgp = c(1.6, 0.6, 0))
 +     par(cex = 0.7)
-+ }
-> # test that we got an error as expected from a try() call
-> expect.err <- function(object, expected.msg="")
-+ {
-+     if(class(object)[1] == "try-error") {
-+         msg <- attr(object, "condition")$message[1]
-+         if(length(grep(expected.msg, msg, fixed=TRUE)))
-+             cat("Got error as expected from ",
-+                 deparse(substitute(object)), "\n", sep="")
-+         else
-+             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg[1], 1, 1000)))
-+     } else
-+         stop("Did not get expected error: ", expected.msg)
 + }
 > example(plotmo)
 
@@ -118,7 +104,7 @@ got model response from model.frame(O3~vh+wind+humidi...,
 > a <- earth(O3 ~ ., data=ozone1, nk=30, pmethod="n", degree=2)
 > plotmo(a, caption=caption, trace=2)
 plotmo trace 2: plotmo(object=a, caption=caption, trace=2)
-object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
 --get.model.env for earth object
 using the environment saved with the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'a'
@@ -127,7 +113,7 @@ using the environment saved with the earth model: R_GlobalEnv
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
 
 get.x.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -190,7 +176,7 @@ fitted(object) after processing with nresponse=NULL is [330,1]:
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
 
 get.y.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -227,7 +213,7 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
 
 get.y.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -376,7 +362,7 @@ persp(ibt:vis) theta 235
 > a <- earth(O3 ~ ., data=ozone1, nk=16, pmethod="n", degree=2)
 > plotmo(a, caption=caption, trace=3)
 plotmo trace 3: plotmo(object=a, caption=caption, trace=3)
-object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
 --get.model.env for earth object
 using the environment saved with the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'a'
@@ -385,7 +371,7 @@ using the environment saved with the earth model: R_GlobalEnv
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
 
 get.x.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -463,7 +449,7 @@ fitted(object) after processing with nresponse=NULL is [330,1]:
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
 
 get.y.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -515,7 +501,7 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
 
 get.y.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -1066,7 +1052,7 @@ GCV 8954.829    RSS 2590958    GRSq 0.1805267    RSq 0.2771303
 plotmo trace 2: plotmo(object=a.glob, type2="im", degree1=1, degree2=1, all2=1,
                        do.par=FALSE, trace=2, main="a.glob oz", col.response=3,
                        pt.pch=20)
-object$call is earth(formula=O3~temp+humidity, data=oz, degree=2)
+object call is earth(formula=O3~temp+humidity, data=oz, degree=2)
 --get.model.env for earth object
 using the environment saved with the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'a.glob'
@@ -1075,7 +1061,7 @@ using the environment saved with the earth model: R_GlobalEnv
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~temp+humidity, data=oz, degree=2)
+object call is earth(formula=O3~temp+humidity, data=oz, degree=2)
 
 get.x.from.model.frame:
 formula(object) is O3~temp+humidity
@@ -1138,7 +1124,7 @@ fitted(object) after processing with nresponse=NULL is [51,1]:
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~temp+humidity, data=oz, degree=2)
+object call is earth(formula=O3~temp+humidity, data=oz, degree=2)
 
 get.y.from.model.frame:
 formula(object) is O3~temp+humidity
@@ -1175,7 +1161,7 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is earth(formula=O3~temp+humidity, data=oz, degree=2)
+object call is earth(formula=O3~temp+humidity, data=oz, degree=2)
 
 get.y.from.model.frame:
 formula(object) is O3~temp+humidity
@@ -1285,7 +1271,7 @@ graphics::plot.default(x=c(48,48.92,49.8...), y=c(7.99,8.279,8...), type="n",
 plotmo trace 2: plotmo(object=ad.glob, type2="im", degree1=1, degree2=1,
                        all2=1, do.par=FALSE, trace=2, main="ad.glob oz",
                        col.response=3, pch.response=20)
-object$call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
+object call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
 --get.model.env for earth object
 assuming the environment of the earth model is that of plotmo's caller: env(caption)
 --plotmo_prolog for earth object 'ad.glob'
@@ -1294,15 +1280,15 @@ assuming the environment of the earth model is that of plotmo's caller: env(capt
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object$call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
+object call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
 
 get.x.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$x, env(caption))
-object$call$x is usable and has column names temp humidity
+eval(getCall(object)$x, env(caption))
+getCall(object)$x is usable and has column names temp humidity
 plotmo_x returned[51,2]:
     temp humidity
 150   48       81
@@ -1352,15 +1338,15 @@ fitted(object) after processing with nresponse=NULL is [51,1]:
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
+object call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
 
 get.y.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$y, env(caption))
-object$call$y is usable but without colnames so we will keep on searching
+eval(getCall(object)$y, env(caption))
+getCall(object)$y is usable but without colnames so we will keep on searching
 
 names(call) is "" "x" "y" "degree"
 the name of argument 2 is "y" so we will not process it with argn
@@ -1390,21 +1376,21 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object$call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
+object call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
 
 get.y.from.model.frame:
 formula(object) did not return a formula
-no formula in object$call
+no formula in getCall(object)
 
 get.data.from.object.call.field:
-eval(object$call$y, env(caption))
-object$call$y is usable but without colnames so we will keep on searching
+eval(getCall(object)$y, env(caption))
+getCall(object)$y is usable but without colnames so we will keep on searching
 
 names(call) is "" "x" "y" "degree"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
-got model response from object$call$y
+got model response from getCall(object)$y
 y colname was NULL now "y"
 plotmo_y returned[51,1]:
      y
@@ -1533,7 +1519,7 @@ Got error as expected from try(plotmo(a.oz10, do.par = FALSE, main = "func1:a.oz
 plotmo trace 2: plotmo(object=lm.18.keep, degree1=1, do.par=FALSE, clip=FALSE,
                        ylim=c(0,20), trace=2, main="lm.18.keep",
                        col.response=2, pt.pch=20)
-object$call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
+object call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
 --get.model.env for lm object
 using the environment saved with the lm model: env(frame, lm.18.out, x1, y)
 --plotmo_prolog for lm object 'lm.18.keep'
@@ -1591,7 +1577,7 @@ fitted(object) after processing with nresponse=NULL is [9,1] with no column name
 get.object.y:
 object$y is usable but without colnames so we will keep on searching
 
-object$call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
+object call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
 
 get.y.from.model.frame:
 formula(object) is y~x1+x2
@@ -1622,7 +1608,7 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is usable but without colnames so we will keep on searching
 
-object$call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
+object call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
 
 get.y.from.model.frame:
 formula(object) is y~x1+x2
@@ -2275,7 +2261,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: invalid type (NULL) for variable 'x1'
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a.foo1))
@@ -2295,7 +2281,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: variable lengths differ (found for 'x1')
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a.foo2))
@@ -2345,7 +2331,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: variable lengths differ (found for 'x1')
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a.foo5))
@@ -2364,7 +2350,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: missing values in object
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a.foo6, col.response = 3))
@@ -2406,7 +2392,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: formula(object): "$" in formula is not allowed
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a.foo9))
@@ -2555,7 +2541,4 @@ Warning: plotmo: nothing to plot
 > # a <- earth(Volume~poly(Height, degree=3)+Girth, data=trees, subset=4:23, linpreds=TRUE)
 > # plotmo(a, trace=-1, do.par=FALSE, caption="all three rows should be the same")
 > 
-> if(!interactive()) {
-+     dev.off()         # finish postscript plot
-+     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-+ }
+> source("test.epilog.R")

@@ -2,14 +2,12 @@
 #
 # TODO This is a minimal set of tests.
 
+source("test.prolog.R")
 library(plotmo)
 library(earth)
+library(caret)
 data(ozone1)
 data(etitanic)
-options(warn=1) # print warnings as they occur
-if(!interactive())
-    postscript(paper="letter")
-set.seed(2016)
 dopar <- function(nrows, ncols, caption = "")
 {
     cat("                             ", caption, "\n")
@@ -19,22 +17,6 @@ dopar <- function(nrows, ncols, caption = "")
     par(mgp = c(1.6, 0.6, 0))
     par(cex = 0.7)
 }
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
-library(caret)
-set.seed(2015)
 caret.earth.mod <- train(O3~., data=ozone1, method="earth",
                          tuneGrid=data.frame(degree=2, nprune=10))
 # SHOWCALL is just a testing thing, so we can see who created the plot on the plot itself
@@ -82,7 +64,4 @@ a <- train(O3 ~ ., data = ozone1,  method = "earth",
 plotmo(a, trace=1, SHOWCALL=TRUE)
 plotres(a, trace=1, SHOWCALL=TRUE)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

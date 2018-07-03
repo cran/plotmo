@@ -1,5 +1,10 @@
 # dotlib.R: miscellaneous functions for the dots routines
 
+# Arguments for par() which take a vector value (i.e. length of value is not one).
+
+PAR.VEC <- c("fig", "fin", "lab", "mai", "mar", "mfcol", "mfg", "mfrow", "mgp",
+             "oma", "omd", "omi", "pin", "plt", "usr", "xaxp", "yaxp")
+
 # Add the elements of the extra list to the original list.  Elements of the
 # original list that have the same names as extra elements get overwritten.
 #

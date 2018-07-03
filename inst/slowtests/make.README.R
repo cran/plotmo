@@ -3,6 +3,5 @@
 library(rpart.plot)
 library(rmarkdown)
 rmarkdown::render("../../README.md", output_dir="../../.#")
-if(!interactive()) {
+if(!interactive())
     q(runLast=FALSE)
-}

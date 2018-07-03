@@ -128,6 +128,7 @@ do.linmod.fit <- function(x, y)
     # returned fields match lm's fields
     list(coefficients  = coef,
          residuals     = y - fitted.values,
+         rank          = qx$rank,
          fitted.values = fitted.values,
          vcov          = vcov,
          sigma         = sqrt(sigma2),
@@ -148,9 +149,9 @@ predict.linmod <- function(object = stop("no 'object' argument"),
             stop("'newdata' is empty")      # preempt obscure message later
 
         x <- if(is.null(object$terms))      # model built with linmod.default?
-                process.default.newdata(object, newdata)
+                process.newdata(object, newdata)
             else                            # model built with linmod.formula
-                process.formula.newdata(object, newdata)
+                process.newdata.formula(object, newdata)
 
         # The following tests suffice to catch all illegal input.  However
         # they aren't ideal in that they don't always direct you to the root
@@ -168,7 +169,7 @@ predict.linmod <- function(object = stop("no 'object' argument"),
     }
     yhat
 }
-process.default.newdata <- function(object, newdata)
+process.newdata <- function(object, newdata)
 {
     # process newdata for models built with linmod.default
 
@@ -179,18 +180,18 @@ process.default.newdata <- function(object, newdata)
 
     cbind(1, x)                     # return data with an intercept column
 }
-process.formula.newdata <- function(object, newdata)
+process.newdata.formula <- function(object, newdata)
 {
     # process newdata for models built with linmod.formula
 
+    newdata <- as.data.frame(newdata) # allows newdata to be a matrix
     terms <- object$terms
     dataClasses <- attr(terms, "dataClasses")
-    newdata <- as.data.frame(newdata) # allows newdata to be a matrix
 
     # The code below preempts code in model.frame that issues
     #   Warning: 'newdata' had M rows but variables found have N rows
     # This code gives a clearer error message.
-    # Variable names check is necessary else model.frame can return bad data.
+    # The var names check is necessary else model.frame can return bad data.
     varnames <- names(dataClasses)
     varnames <- varnames[-attr(terms, "response")]
     missing <- which(!(varnames %in% colnames(newdata)))

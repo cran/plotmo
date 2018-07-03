@@ -162,8 +162,10 @@ plotmo.pairs.randomForest <- function(object, x, ...)
     importance <- order.randomForest.vars.on.importance(object, x, trace=FALSE)
     if(is.null(importance))
         return(NULL)
-    # pairs of four most important variables (i.e. 6 plots)
-    form.pairs(importance[1: min(4, length(importance))])
+    # choose npairs so a total of no more than 16 plots
+    # npairs=5 gives 10 pairplots, npairs=4 gives 6 pairplots
+    npairs <- if(length(importance) <= 6) 5 else 4
+    form.pairs(importance[1: min(npairs, length(importance))])
 }
 possible.biglm.warning <- function(object, trace)
 {

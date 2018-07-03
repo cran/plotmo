@@ -1,29 +1,12 @@
 # test.mlr.R: test the "mlr" package with plotmo and plotres
 #
-# TODO generally, plotres residuals for WrappedModel prob models aretn't right
+# TODO generally, plotres residuals for WrappedModel prob models aren't right
 
+source("test.prolog.R")
 library(mlr)
 library(plotmo)
 library(rpart.plot)
 library(earth)
-options(warn=1) # print warnings as they occur
-
-printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
 # TODO following function is temporary until mlr package is updated
 train.with.call <- function(learner, task, subset=NULL, weights=NULL)
 {
@@ -31,13 +14,9 @@ train.with.call <- function(learner, task, subset=NULL, weights=NULL)
     retval$call <- match.call()
     retval
 }
-if(!interactive())
-    postscript(paper="letter")
 
 cat("==simple one variable regression model with earth ===============================\n")
 
-set.seed(2018)
-library(earth)
 data(trees)
 trees1 <- trees[,c("Volume", "Girth")]
 
@@ -94,12 +73,12 @@ rf <- randomForest(survived~., data=etitanic, subset=train.subset)
 stopifnot(identical(predict(regr.rf.with.call$learner.model), predict(rf)))
 
 plotres(regr.rf.with.call, info=TRUE, SHOWCALL=TRUE)
-# plotres(regr.rf$learner.model, info=TRUE, SHOWCALL=TRUE) # Error: no formula in object$call
+# plotres(regr.rf$learner.model, info=TRUE, SHOWCALL=TRUE) # Error: no formula in getCall(object)
 plotres(rf, info=TRUE, SHOWCALL=TRUE)
 
 set.seed(2018) # for repeatable jitter in points (specified with pt.col)
 plotmo(regr.rf.with.call, pt.col=2, SHOWCALL=TRUE)
-# plotmo(regr.rf$learner.model, trace=1, SHOWCALL=TRUE) # Error: no formula in object$call
+# plotmo(regr.rf$learner.model, trace=1, SHOWCALL=TRUE) # Error: no formula in getCall(object)
 set.seed(2018)
 plotmo(rf, pt.col=2, SHOWCALL=TRUE)
 
@@ -289,9 +268,9 @@ expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse=0))
 expect.err(try(plotres(classif.lda.with.call, type="response", nresponse=99)), "nresponse is 99 but the number of columns is only 1")
 expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse=99)), "nresponse is 99 but the number of columns is only 2")
 
-expect.err(try(plotmo(classif.lda)), "model \"classif.lda\" does not have a \"call\" field")
+expect.err(try(plotmo(classif.lda)), "getCall(classif.lda) failed")
 
-expect.err(try(plotres(classif.lda)), "model \"classif.lda\" does not have a \"call\" field")
+expect.err(try(plotres(classif.lda)), "getCall(classif.lda) failed")
 
 # TODO residuals don't match
 plotres(classif.lda.with.call,     SHOWCALL=TRUE, type="response")
@@ -314,7 +293,7 @@ plotmo(lda,                       SHOWCALL=TRUE, all2=TRUE, type="class")
 plotmo(classif.lda$learner.model, SHOWCALL=TRUE, all2=TRUE, type="response", nresponse="LD1")
 plotmo(lda,                       SHOWCALL=TRUE, all2=TRUE, type="response", nresponse="LD1")
 
-cat("==test recusrive call to plotmo_prolog for learner.model===============\n")
+cat("==test recursive call to plotmo_prolog for learner.model===============\n")
 
 set.seed(2018)
 n <- 100
@@ -360,7 +339,4 @@ lrn = makeClassificationViaRegressionWrapper(lrn)
 ClassificationViaRegression = train.with.call(lrn, sonar.task, subset = 1:140)
 plotmo(ClassificationViaRegression, SHOWCALL=TRUE)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

@@ -1,6 +1,16 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.4.2  July 3, 2018
+
+Added support for the partykit and evtree packages.
+Thanks to Achim Zeilis for his help.
+
+Plotmo is now more intelligent about maximizing the number of
+degree2 plots in the 4x4 grid.
+
+Minor updates to linmod.R and linmod.methods.R.
+
 --- 3.4.1  June 8, 2018
 
 If plotting a probability and pt.col is specified, we now scale the
@@ -89,7 +99,7 @@ is now issued when necessary.
 
 Tweaked test scripts because cosso models fail with R version 3.4.0.
 
---- 3.4.1  Dec 2, 2016
+--- 3.3.2  Dec 2, 2016
 
 Support for the C50 package.
 

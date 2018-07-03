@@ -1,14 +1,12 @@
 # test.center.R: test plotmo's center and ndiscrete args
 # Stephen Milborrow, Berea Apr 2011
 
+source("test.prolog.R")
 library(rpart.plot)
 library(plotmo)
 library(earth)
 data(etitanic)
-options(warn=1) # print warnings as they occur
-if(!interactive())
-    postscript(paper="letter")
-set.seed(2016)
+
 et <- etitanic[, c("survived", "pclass", "sex", "age")]
 et$pclassn <- as.numeric(et$pclass)
 et <- et[c(30:80,330:380,630:680), ]
@@ -134,7 +132,4 @@ plotmo(a4, do.par=F, xflip=F, all1=T, center=TRUE, clip=F,
        pt.col=ifelse(et$survived, "black", "red"),
        pt.pch=".", pt.cex=2.5)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

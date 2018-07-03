@@ -38,7 +38,7 @@ importFrom("graphics", "abline", "axis", "box", "grid", "image",
      "polygon", "rect", "segments", "strheight", "strwidth",
      "text", "xinch", "yinch")
 importFrom("stats", "approx", "coef", "cor.test", "density",
-     "deviance", "df.residual", "formula", "hatvalues", "loess",
+     "deviance", "df.residual", "formula", "getCall", "hatvalues", "loess",
      "lowess", "median", "model.matrix", "na.omit", "na.pass",
      "pnorm", "predict", "qqline", "qqnorm", "quantile", "rnorm",
      "sd", "update", "weighted.mean")

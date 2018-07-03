@@ -1,28 +1,9 @@
 # test.pre.R: test the "pre" package with plotmo and plotres
 
+source("test.prolog.R")
 library(pre)
 library(plotmo)
 library(earth) # for ozone1
-set.seed(2018)
-options(warn=1) # print warnings as they occur
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
-if(!interactive())
-    postscript(paper="letter")
-
 data(airquality)
 airq <- airquality[complete.cases(airquality), (c("Ozone", "Wind", "Temp"))]
 # prevent confusion caused by integer rownames which don't match row numbers
@@ -121,7 +102,4 @@ expect.err(try(plotmo(pre.iris)), "pre::importance(pre.object) failed")
 options(warn=1) # print warnings as they occur
 plotmo(pre.iris, all2=TRUE, nresponse="virginica")
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

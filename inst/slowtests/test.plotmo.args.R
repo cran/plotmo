@@ -1,34 +1,11 @@
 # test.plotmo.args..R: test dot and other argument handling in plotmo
 
-options(warn=1) # print warnings as they occur
-
-if(!interactive())
-    postscript(paper="letter")
-
-printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-
-strip.space <- function(s) gsub("[ \t\n]", "", s)
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
-printf("library(earth)\n")
+source("test.prolog.R")
 library(earth)
 data(ozone1)
 
 old.warn <- options("warn")
-options(warn=2)
+options(warn=2) # treat warnings as errors
 lm.mod <- lm(O3~wind, data=ozone1)
 
 expect.err(try(plotmo(lm.mod, se=2, leve=.95)), "plotmo's 'se' argument is deprecated, please use 'level' instead")
@@ -102,7 +79,4 @@ a20 <- earth(pclass ~ ., data=etitanic, degree=2)
 plotmo(a20, nresponse=1, col=2, col.degree1=3, persp.col="pink", SHOWCALL=1, degree1=1:2, degree2=1:2)
 plotmo(a20, nresponse=1, lty=2, persp.lty=1, SHOWCALL=1, degree1=1:2, degree2=1:2)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

@@ -57,9 +57,6 @@ are fixed at their medians (or first level for factors).
 
 \code{"partdep"} Partial dependence plots, i.e. at each point the effect
 of the background variables is averaged.
-% See Hastie, Tibshirani and Friedman ``Elements of Statistical
-% Learning'' 2nd Edition Section 10.13.2.
-% Plotting these is slow and may require large amounts of memory.
 
 \code{"apartdep"} Approximate partial dependence plots.
 Faster than \code{"partdep"} especially for big datasets.

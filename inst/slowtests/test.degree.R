@@ -1,30 +1,8 @@
 # test.pre.R: test the "pre" package with plotmo and plotres
 
-options(warn=1) # print warnings as they occur
-if(!interactive())
-    postscript(paper="letter")
-
-printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-
-strip.space <- function(s) gsub("[ \t\n]", "", s)
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
+source("test.prolog.R")
 library(earth)
 library(plotmo)
-set.seed(2018)
 
 # test character degree1 and degree2 (added in plotmo version 1.3-0)
 
@@ -112,7 +90,4 @@ try(plotmo(a81, do.par=FALSE, degree1=0,
 
 par(old.par)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

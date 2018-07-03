@@ -1,15 +1,12 @@
 # test.fac.R: test factor plotting in plotmo. This also tests swapxy, xflip, and yflip
 # Stephen Milborrow, Berea Mar 2011
 
+source("test.prolog.R")
 library(plotmo)
 library(earth)
 library(rpart)
 data(ozone1)
 data(etitanic)
-options(warn=1) # print warnings as they occur
-if(!interactive())
-    postscript(paper="letter")
-set.seed(2016)
 
 cat("==test plotmo with factors==\n")
 test.fac.with.rpart <- function(ngrid2=20)
@@ -271,7 +268,4 @@ plotmo(a, ndiscrete=10, main="non integral var\nndiscrete=10", cex.lab=.8,
 plotmo(a, ndiscrete=10,
        do.par=F, smooth.col="indianred", ylim=c(-.5,1), degree2=0, degree1=1)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

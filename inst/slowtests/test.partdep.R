@@ -1,31 +1,10 @@
 # test.partdep.R: partdep tests for plotmo and plotres
 
+source("test.prolog.R")
 library(plotmo)
 library(earth)
-set.seed(2016)
-options(warn=1) # print warnings as they occur
-if(!interactive())
-    postscript(paper="letter")
-
-printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-
-strip.space <- function(s) gsub("[ \t\n]", "", s)
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
 data(etitanic)
+
 mod <- earth(survived~., data=etitanic, degree=2)
 
 plotmo(mod, caption="plotmo classical")
@@ -223,7 +202,4 @@ plot(mod, i.var=1, n.trees=n.trees, continuous.resolution=ngrid1)
 plot(mod, i.var=2, n.trees=n.trees, continuous.resolution=ngrid1)
 par(old.par)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

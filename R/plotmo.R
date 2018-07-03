@@ -210,7 +210,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     # can only display it later after at least one plot.
     # nfigs=2 (any number greater than 1) because by default we do.par in plotmo.
     caption <- get.caption(nfigs=2, do.par, caption, resp.name, type,
-                           object$call, object.name, my.call)
+                           getCall(object), object.name, my.call)
     if(do.par) {
         # TODO document what happens here and in plotres if only one plot
         oldpar <- par(no.readonly=TRUE)
@@ -1724,7 +1724,7 @@ plot.image <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
     if(swapxy)
         image.with.lightblue.na(x1grid=x2grid, x2grid=x1grid, yhat=t(yhat),
             force.col     = dota("image.col col.image", EX=c(0,1),
-                                 DEF=gray((0:10)/10), NEW=1, ...),
+                                 DEF=grDevices::gray((0:10)/10), NEW=1, ...),
             force.main    = main2,
             force.xlim    = ylim,
             force.ylim    = xlim,
@@ -1736,7 +1736,7 @@ plot.image <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
     else
         image.with.lightblue.na(x1grid=x1grid, x2grid=x2grid, yhat=yhat,
             force.col     = dota("image.col col.image", EX=c(0,1),
-                                 DEF=gray((0:10)/10), NEW=1, ...),
+                                 DEF=grDevices::gray((0:10)/10), NEW=1, ...),
             force.main    = main2,
             force.xlim    = xlim,
             force.ylim    = ylim,

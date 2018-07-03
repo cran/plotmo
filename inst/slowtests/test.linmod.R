@@ -1,27 +1,16 @@
 # test.linmod.R: test example S3 model at http://www.milbo.org/doc/linmod.R
 
-cat0 <- function(...) cat(..., sep="")
+source("test.prolog.R")
+source("linmod.R")         # linear model code (http://www.milbo.org/doc/linmod.R)
+source("linmod.methods.R") # additional method functions for linmod
+options(warn=2) # treat warnings as errors
 
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat0("Got error as expected from ",
-                 deparse(substitute(object)), "\n")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
 almost.equal <- function(x, y, max=1e-8)
 {
     stopifnot(max >= 0 && max < .01)
     length(x) == length(y) && max(abs(x - y)) < max
 }
-# check that fit model matches ref lm model in all essential details
+# check that linmod model matches reference lm model in all essential details
 check.lm <- function(fit, ref, newdata=trees[3:5,],
                      check.coef.names=TRUE,
                      check.casenames=TRUE,
@@ -60,6 +49,8 @@ check.lm <- function(fit, ref, newdata=trees[3:5,],
     stopifnot(length(fit$fitted.values) == length(ref$fitted.values))
     stopifnot(almost.equal(fit$fitted.values, ref$fitted.values))
 
+    stopifnot(identical(fit$rank, ref$rank))
+
     if(!is.null(fit$vcov) && !is.null(ref$vcov)) {
         stopifnot(identical(dim(fit$vcov), dim(ref$vcov)))
         stopifnot(length(fit$vcov) == length(ref$vcov))
@@ -87,15 +78,6 @@ check.lm <- function(fit, ref, newdata=trees[3:5,],
                     names(predict(ref, newdata=newdata)))
     }
 }
-source("linmod.R") # linear model code (http://www.milbo.org/doc/linmod.R)
-source("linmod.methods.R") # additional method functions for linmod
-
-options(warn=2) # treat warnings as errors
-set.seed(2016)
-
-if(!interactive())
-    postscript(paper="letter") # create Rplots.ps for comparing to reference ps file
-
 tr <- trees # trees data but with rownames
 rownames(tr) <- paste("tree", 1:nrow(trees), sep="")
 
@@ -754,6 +736,10 @@ stopifnot(identical(model.frame(linmod.form.Volume.tr), model.frame(lm.Volume.tr
 stopifnot(identical(model.matrix(linmod.form.Volume.tr), model.matrix(lm.Volume.tr)))
 stopifnot(identical(model.matrix(linmod.form.Volume.tr, data=tr[1:2,]),
                     model.matrix(lm.Volume.tr,          data=tr[1:2,])))
+stopifnot(almost.equal(logLik(linmod.form.Volume.tr), logLik(lm.Volume.tr)))
+expect.err(try(logLik(linmod.form.Volume.tr, REML=TRUE)), "!REML is not TRUE")
+library(sandwich) # for estfun.lm
+stopifnot(almost.equal(estfun(linmod.form.Volume.tr), estfun(lm.Volume.tr)))
 
 linmod.form.Volume.tr.update <- update(linmod.form.Volume.tr, formula=Volume~Height)
 lm.Volume.tr.update          <- update(lm.Volume.tr, formula=Volume~Height)
@@ -778,6 +764,7 @@ stopifnot(identical(names(deviance(linmod.xy.Volume.tr)), names(deviance(lm.Volu
 stopifnot(identical(weights(linmod.xy.Volume.tr), weights(lm.Volume.tr)))
 expect.err(try(model.frame(linmod.xy.Volume.tr)),  "model.frame cannot be used on linmod models built without a formula")
 expect.err(try(model.matrix(linmod.xy.Volume.tr)), "model.frame cannot be used on linmod models built without a formula")
+stopifnot(almost.equal(logLik(linmod.xy.Volume.tr), logLik(lm.Volume.tr)))
 
 old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2))
@@ -844,6 +831,8 @@ stopifnot(identical(model.frame(linmod.noint), model.frame(lm.noint)))
 stopifnot(identical(model.matrix(linmod.noint), model.matrix(lm.noint)))
 stopifnot(identical(model.matrix(linmod.noint, data=tr[1:2,]),
                     model.matrix(lm.noint,     data=tr[1:2,])))
+stopifnot(almost.equal(logLik(linmod.noint), logLik(lm.noint)))
+stopifnot(almost.equal(estfun(linmod.noint), estfun(lm.noint)))
 
 # check error messages with bad newdata in no-intercept model
 expect.err(try(predict(linmod.noint, newdata=NA)), "variable 'Girth' is missing from newdata")
@@ -902,6 +891,8 @@ stopifnot(identical(model.frame(linmod.onepred.noint), model.frame(lm.onepred.no
 stopifnot(identical(model.matrix(linmod.onepred.noint), model.matrix(lm.onepred.noint)))
 stopifnot(identical(model.matrix(linmod.onepred.noint, data=tr[1:2,]),
                     model.matrix(lm.onepred.noint,     data=tr[1:2,])))
+stopifnot(almost.equal(logLik(linmod.onepred.noint), logLik(lm.onepred.noint)))
+stopifnot(almost.equal(estfun(linmod.onepred.noint), estfun(lm.onepred.noint)))
 
 # check error messages with bad newdata in one predictor no-intercept model
 expect.err(try(predict(linmod.onepred.noint, newdata=99)), "variable 'Girth' is missing from newdata")
@@ -1141,7 +1132,4 @@ pr(linmod.xy.keep)
 
 par(old.par)
 
-if(!interactive()) {
-    dev.off()        # finish postscript plot
-    q(runLast=FALSE) # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

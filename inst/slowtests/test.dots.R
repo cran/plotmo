@@ -1,30 +1,6 @@
 # test.dots.R
 
-library(plotmo)
-set.seed(2016)
-options(warn=1) # print warnings as they occur
-
-if(!interactive())
-    postscript(paper="letter")
-
-strip.space <- function(s) gsub("[ \t\n]", "", s)
-
-cat0 <- function(...) cat(..., sep="")
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
+source("test.prolog.R")
 cat0("=== test callers.name\n")
 
 test.callers.name <- function(x) {
@@ -652,7 +628,4 @@ plot3 <- function(object, ..., TRACE=2)
 plot3(lmfit, type="pearson", main="plot3a") # type goes only to pearson, no prefix needed
 plot3(lmfit, type="pearson", predict.type="response", main="plot3b")
 
-if(!interactive()) {
-    dev.off()        # finish postscript plot
-    q(runLast=FALSE) # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

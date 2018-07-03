@@ -1,6 +1,7 @@
 > # test.fac.R: test factor plotting in plotmo. This also tests swapxy, xflip, and yflip
 > # Stephen Milborrow, Berea Mar 2011
 > 
+> source("test.prolog.R")
 > library(plotmo)
 Loading required package: plotrix
 Loading required package: TeachingDemos
@@ -8,10 +9,6 @@ Loading required package: TeachingDemos
 > library(rpart)
 > data(ozone1)
 > data(etitanic)
-> options(warn=1) # print warnings as they occur
-> if(!interactive())
-+     postscript(paper="letter")
-> set.seed(2016)
 > 
 > cat("==test plotmo with factors==\n")
 ==test plotmo with factors==
@@ -371,7 +368,4 @@ table(et$var):> print(table(et$var))
  plotmo grid:    var age
                    0  28
 > 
-> if(!interactive()) {
-+     dev.off()         # finish postscript plot
-+     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-+ }
+> source("test.epilog.R")

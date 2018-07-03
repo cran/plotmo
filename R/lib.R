@@ -382,10 +382,11 @@ get.model.env <- function(object, object.name="object", trace=0)
         callers.name <- callers.name()
         my.call <- call.as.char(n=2)
         printf.wrap("%s trace %g: %s\n", callers.name, trace, my.call)
-        if(is.null(object$call))
-            printf("object class is \"%s\" with no object$call\n", class(object)[1])
+        call <- getCall(object)
+        if(is.null(call))
+            printf("object class is \"%s\" with no call\n", class(object)[1])
         else
-            printf.wrap("object$call is %s\n", strip.deparse(object$call))
+            printf.wrap("object call is %s\n", strip.deparse(call))
         printf("--get.model.env for %s object\n", class(object)[1])
     }
     # following will fail for non-formula models because they have no terms field
@@ -507,7 +508,8 @@ imatch.choices <- function(arg, choices,
 }
 is.integral <- function(object)
 {
-    all(floor(object) == object)
+    object <- object[!is.na(object)]
+    length(object) > 0 && all(floor(object) == object)
 }
 # is.specified's main purpose is to see if a plot component should be
 # drawn, i.e., to see if the component "has a color"
@@ -515,9 +517,10 @@ is.integral <- function(object)
 is.specified <- function(object)
 {
     try <-
-      try(!is.null(object) && !anyNA(object) && !identical(object, 0) &&
+      try(!is.null(object) && !anyNA(object) && !is.zero(object) &&
           # following needed for e.g. col=c("red", 0) because 0 is converted to string
-          !identical(object, "0") && !identical(object, "NA"), silent=FALSE)
+          !identical(object, "0") && !identical(object, "0L") &&
+          !identical(object, "NA"), silent=FALSE)
     if(is.try.err(try)) {
         # this occurs if object is say a closure and anyNA fails
         # anyNA was introduced in R 3.1.0
@@ -529,6 +532,10 @@ is.specified <- function(object)
 is.try.err <- function(object)
 {
     class(object)[1] == "try-error"
+}
+is.zero <- function(object) # needed because identical(object, 0) fails if object is 0L
+{
+    identical(object, 0) || identical(object, 0L)
 }
 # Lighten color by amount 0 ... 1 where 1 is white.
 # If amount is negative, then darken the color, -1 is black.
@@ -614,9 +621,12 @@ my.data.frame <- function(x, trace, stringsAsFactors=TRUE)
     colnames(df) <- safe.colnames(x) # restore original column names
     df
 }
-my.fixed.point <- function(x, digits)
+# default min.nrow=3 to use fixed point only if more than intercept and one other term
+my.fixed.point <- function(x, digits, min.nrow=3)
 {
-    if(NROW(x) > 2) # only use fixed point if more than intercept and one other term
+    if(is.null(dim(x)))
+        x <- as.matrix(x)
+    if(NROW(x) >= min.nrow)
         x <- apply(x, 2, zapsmall, digits+1)
     x
 }
@@ -699,9 +709,7 @@ print.first.few.elements.of.vector <- function(x, trace, name=NULL)
 sprint <- function(fmt, ...)
 {
     dots <- list(...)
-    for(i in seq_along(dots))
-        if(is.null(dots[[i]]))
-            dots[[i]] <- "NULL"
+    dots <- lapply(dots, function(e) if(is.null(e)) "NULL" else e)
     do.call(sprintf, c(fmt, dots))
 }
 printf <- function(fmt, ...) # like c printf
@@ -860,16 +868,16 @@ stopifnot.string <- function(s, name=short.deparse(substitute(s)),
         if(null.ok)
             return()
         else
-            stop0(name, " is NULL (it should be a string)")
+            stop0("'", name, "' is NULL (it should be a string)")
     }
     if(!is.character(s))
-        stop0(name, " is not a character variable (class(",
+        stop0("'", name, "' is not a character variable (class(",
               name, ") is \"", class(s), "\")")
     if(length(s) != 1)
-        stop0(name, " has more than one element\n       ",
+        stop0("'", name, "' has more than one element\n       ",
               name, " = c(", paste.trunc("\"", s, "\"", sep=""), ")")
     if(!allow.empty && !nzchar(s))
-        stop0(name, " is an empty string")
+        stop0("'", name, "' is an empty string")
 }
 strip.deparse <- function(object) # deparse, collapse, remove most white space
 {
@@ -933,7 +941,7 @@ to.logical <- function(object, len)
 }
 trace1 <- function(trace, fmt, ...)
 {
-    stopifnot(is.numeric(trace))
+    stopifnot(!(is.numeric(trace) && is.logical(trace)))
     if(trace >= 1)
         cat(sprint(fmt, ...), sep="")
 }

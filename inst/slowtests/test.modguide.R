@@ -1,24 +1,6 @@
 # test.modguide.bat: test model1 and model2 (linmod examples) in modguide.pdf
 
-options(warn=2) # treat warnings as errors
-set.seed(2016)
-if(!interactive())
-    postscript(paper="letter")
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
-}
+source("test.prolog.R")
 almost.equal <- function(x, y, max=1e-8)
 {
     stopifnot(max >= 0 && max < .01)
@@ -366,7 +348,4 @@ expect.err(try(linmod(vec, y2)), "'qr' and 'y' must have the same number of rows
 
 ### Model 3: production version of linmod is tested in test.linmod.R
 
-if(!interactive()) {
-    dev.off()        # finish postscript plot
-    q(runLast=FALSE) # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

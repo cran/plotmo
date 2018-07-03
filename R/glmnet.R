@@ -57,8 +57,9 @@ plotmo.singles.glmnet <- function(object, x, nresponse, trace, all1, ...)
 }
 plotmo.prolog.cv.glmnet <- function(object, object.name, trace, ...) # invoked when plotmo starts
 {
-    # cv.glmnet objects don't have their call field in the usual place, so fix that
-    # (tested on glmnet version 2.0-2)
+    # cv.glmnet objects don't have their call field in the usual place,
+    # so fix that (tested on glmnet version 2.0-2).
+    # Note that getCall() doesn't work on cv.glmnet objects.
     if(is.null(object[["call"]])) {
         object$call <- object$glmnet.fit$call
         stopifnot(!is.null(object$call), is.call(object$call))

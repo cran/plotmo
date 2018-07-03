@@ -42,6 +42,35 @@ model.matrix.linmod <- function(object, data = NULL, ...)
         data <- model.frame.linmod(object)
     model.matrix.default(object, data = data, ...)
 }
+logLik.linmod <- function(object, REML = FALSE, ...)
+{
+    stopifnot(inherits(object, "linmod"))
+    stop.if.dot.arg.used(...)
+    stopifnot(!REML) # linmod does not save qr hence cannot do REML
+    res <- object$residuals
+    p <- object$rank
+    n <- length(res)
+    w <- rep.int(1, n)
+    n0 <- n
+    val <- .5* (sum(log(w)) - n * (log(2 * pi) + 1 - log(n) +
+                                   log(sum(w*res^2))))
+    attr(val, "nall") <- n0
+    attr(val, "nobs") <- n
+    attr(val, "df") <- p + 1
+    class(val) <- "logLik"
+    val
+}
+estfun.linmod <- function (x, ...) # for sandwich package
+{
+    stopifnot(inherits(x, "linmod"))
+    stop.if.dot.arg.used(...)
+    xmat <- model.matrix(x)
+    res <- residuals(x)
+    rval <- as.vector(res) * xmat
+    attr(rval, "assign") <- NULL
+    attr(rval, "contrasts") <- NULL
+    return(rval)
+}
 plot.linmod <- function(x, main = NULL, ...) # dots are passed to plot()
 {
     stopifnot(inherits(x, "linmod"))

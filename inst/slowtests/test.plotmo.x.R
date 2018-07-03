@@ -1,13 +1,10 @@
 # test.plotmo.x.R: test plotmo_x and related functions
 
-options(warn=1) # print warnings as they occur
-
+source("test.prolog.R")
 library(plotmo)
 library(earth)
 data(ozone1)
 data(etitanic)
-set.seed(2016)
-
 get.tit <- function()
 {
     tit <- etitanic
@@ -23,28 +20,6 @@ get.tit <- function()
     tit$parch <- NULL
     # by=12 gives us a small fast model with an additive and a interaction term
     tit <- tit[seq(1, nrow(etitanic), by=12), ]
-}
-
-if(!interactive())
-    postscript(paper="letter")
-
-printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-
-strip.space <- function(s) gsub("[ \t\n]", "", s)
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
 }
 X <- X1 <- X2 <- Y <- DF <- NULL
 get.data <- function()
@@ -367,7 +342,4 @@ stopifnot(x.lm.survived.vs.pclass == x.earth.survived.vs.pclass)
 
 printf("-- test.plotmo.x done\n")
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

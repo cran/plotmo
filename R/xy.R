@@ -6,7 +6,7 @@
 
 # Return the "x" matrix for a model.  This returns a data.frame which
 # always has column names.  It tries hard to get x regardless of the model.
-# It can be used for models without a formula, provided that object$call
+# It can be used for models without a formula, provided that getCall(object)
 # or model$x is available.
 #
 # The returned columns are for the "naked" predictors e.g. "x3" instead of
@@ -150,9 +150,9 @@ get.x.or.y <- function(
     if(is.good.data(object.x))
         return(ret.good.field(object.x, FALSE, sprint("object$%s", field)))
 
-    call <- object[["call"]]
+    call <- getCall(object)
     if(!is.null(call))
-        trace2(trace, "\nobject$call is %s\n", trunc.deparse(call))
+        trace2(trace, "\nobject call is %s\n", trunc.deparse(call))
 
     # try getting x or y from the model formula and model frame
 
@@ -169,27 +169,27 @@ get.x.or.y <- function(
         if(!is.errmsg(model.frame.x))
             return(ret.good.field(model.frame.x, do.subset, source))
     }
-    # try object$call$x
+    # try getCall(object)$x
 
     call.x <- get.data.from.object.call.field(object, field, trace)
-    # call.x is object$call$x or an error message
+    # call.x is getCall(object)$x or an error message
     if(is.good.data(call.x))
-        return(ret.good.field(call.x, TRUE, sprint("object$call$%s", field)))
+        return(ret.good.field(call.x, TRUE, sprint("getCall(object)$%s", field)))
 
     # else { # TODO may not want to do this if x is ok except for no colnames
-    #     # try object$call$X (note upper case "X")
+    #     # try getCall(object)$X (note upper case "X")
     #     upfield <- toupper(field)
     #     call.x <- get.data.from.object.call.field(object, upfield, trace)
-    #     # call.x is object$call$X or an error message
+    #     # call.x is getCall(object)$X or an error message
     #     if(is.good.data(call.x)) {
     #         # paranoia, check that argument number is correct
     #         ifield <- if(field == "x") 2 else 3
-    #         ok <- names(object$call)[ifield] == upfield
+    #         ok <- names(getCall(object))[ifield] == upfield
     #         if(!is.na(ok) && length(ok == 1) && ok)
     #             return(ret.good.field(call.x, TRUE,
-    #                sprint("object$call$%s", upfield)))
+    #                sprint("getCall(object)$%s", upfield)))
     #         else if(trace >= 2)
-    #             printf("ignoring object$call$%s because it isn't arg number %d\n",
+    #             printf("ignoring getCall(object)$%s because it isn't arg number %d\n",
     #                upfield, ifield)
     #     }
     # }
@@ -219,7 +219,7 @@ get.x.or.y <- function(
     if(!is.errmsg(call.x) &&
            is.good.data(call.x, sprint("call$%s", field),
                         trace, check.colnames=FALSE))
-        return(ret.good.field(call.x, TRUE, sprint("object$call$%s", field)))
+        return(ret.good.field(call.x, TRUE, sprint("getCall(object)$%s", field)))
 
     if(argn && !is.errmsg(argn.x) &&
             is.good.data(argn.x, argn.name, trace, check.colnames=FALSE))
@@ -301,7 +301,7 @@ errmsg.for.get.x.or.y <- function(field, trace, try.object.x.or.y,
            ifield, format.err.field(model.frame.x, field, trace))
     ifield <- ifield + 1
 
-    printf("\n(%d) object$call$%s:%s\n",
+    printf("\n(%d) getCall(object)$%s:%s\n",
            ifield, field, format.err.field(call.x, field, trace))
     ifield <- ifield + 1
 
@@ -371,7 +371,7 @@ get.object.x.or.y <- function( # get object$x or object$y
     }
     x   # return x or NULL or an error message
 }
-# Get object$call$x (or similar) from the model's call field.
+# Get getCall(object)$x (or similar) from the model's call field.
 # Return x (or similar) or NULL or an error message.
 
 get.data.from.object.call.field <- function(object, field, trace,
@@ -379,12 +379,12 @@ get.data.from.object.call.field <- function(object, field, trace,
 {
     trace2(trace, "\nget.data.from.object.call.field:\n")
     x <- NULL
-    xname <- sprint("object$call$%s", field)
-    call <- object[["call"]]
+    xname <- sprint("getCall(object)$%s", field)
+    call <- getCall(object)
     if(is.null(call))
-        trace2(trace, "object$call is NULL so cannot get %s\n", xname)
+        trace2(trace, "getCall(object) is NULL so cannot get %s\n", xname)
     else if(!is.call(call))
-        trace2(trace, "object$call is not actually a call so cannot get %s", xname)
+        trace2(trace, "getCall(object) is not actually a call so cannot get %s", xname)
     else {
         x <- try.eval(call[[field]], model.env(object), trace=trace, expr.name=xname)
         if(is.errmsg(x))
@@ -429,14 +429,14 @@ get.argn.from.call.aux <- function(argn, object, field, trace, nrows.argn)
     }
     #--- get.argn.from.call.x starts here
     stopifnot(argn > 0)
-    call <- object$call
+    call <- getCall(object)
     if(is.null(call))
-        return(ret("object$call is NULL so cannot use argn", argn))
+        return(ret("getCall(object) is NULL so cannot use argn", argn))
     if(!is.call(call))
-        return(ret("object$call is not actually a call so cannot use argn", argn))
+        return(ret("getCall(object) is not actually a call so cannot use argn", argn))
     if(length(call) <= argn)
         return(ret(sprint(
-            "cannot use argn %d because object$call does not have %d arguments",
+            "cannot use argn %d because getCall(object) does not have %d arguments",
             argn, argn), argn))
     names.call <- names(call) # some names may be ""
     trace2(trace, "names(call) is %s\n", quotify(names.call))
@@ -445,7 +445,7 @@ get.argn.from.call.aux <- function(argn, object, field, trace, nrows.argn)
     # we process call$x and call$y elsewhere (in get.data.from.object.call.field).
     # This is a common case, so we clear argn for uncluttered message
     # later in errmsg.for.get.x.or.y.
-    # If the arg name is "" in object$call this won't work, not serious.
+    # If the arg name is "" in getCall(object) this won't work, not serious.
 
     if(identical(names.call[argn+1], field))
         return(ret(sprint(
@@ -581,7 +581,7 @@ get.model.frame <- function(object, field, trace, naked,
                 print_summary(x, "model.frame", trace)
             # Note that we call check.naked even when the naked=FALSE.  Not
             # essential, but gives more consistency so we select the same object$x,
-            # object$call, or etc. regardless of whether naked is set or clear.
+            # getCall(object), or etc. regardless of whether naked is set or clear.
             if(is.null(check.naked(x, "object$model", trace)))
                 return(ret(x, FALSE, "object$model"))
         }
@@ -595,13 +595,19 @@ get.model.frame <- function(object, field, trace, naked,
             data.source <- "model.env(object)"
         }
     }
-    # TODO add na.action tests to to test suite
     if(is.character(na.action) && length(na.action) == 1 && na.action == "auto") {
         na.action <- na.action(object)
+        class.na.action <- class(na.action)
+        # following is for rpart's and ctree's (special but useful) NA handling
         if(is.null(na.action))
-            # following is for rpart's (special but useful) NA handling
-            na.action <- if(inherits(object, "rpart")) "na.pass" else "na.fail"
-        else if(class(na.action)[1] %in% c("exclude", "fail", "omit", "pass"))
+            na.action <-
+                if(inherits(object, "rpart") || inherits(object, "party_plotmo"))
+                    "na.pass"
+                else
+                    "na.fail"
+        else if(length(class.na.action) == 2 && class.na.action[1] == "na.rpart")
+            na.action <- paste0("na.", class(na.action)[2])
+        else if(class.na.action[1] %in% c("exclude", "fail", "omit", "pass"))
             na.action <- paste0("na.", class(na.action)[1])
         trace2(trace, "na.action(object) is %s\n", as.char(na.action))
     }
@@ -648,19 +654,22 @@ get.data.for.model.frame <- function(object, trace)
         list(data=data, source=source)
     }
     # try object$data e.g. earth models with formula and keepxy=T
-    data <- object[["data"]]
-    if(is.good.data(data, "object$data", trace))
-        return(ret(NULL, data, "object$data"))
-
-    # look for the data in object$call
+    # the inherits check is becauses party objects for e.g. "medv ~ log(lstat) + rm^2"
+    # save "log(lstat)" not "lstat" in object data, that confuses model.frame.default
+    if(!inherits(object, "party_plotmo")) {
+        data <- object[["data"]]
+        if(is.good.data(data, "object$data", trace))
+            return(ret(NULL, data, "object$data"))
+    }
+    # look for the data in getCall(object)
     call <- object[["call"]]
     if(is.null(call))
-        return(ret("object$call is NULL so cannot get the data from the call"))
+        return(ret("getCall(object) is NULL so cannot get the data from the call"))
     if(!is.call(call))
-        return(ret("object$call is not actually a call so cannot get the data from the call"))
+        return(ret("getCall(object) is not actually a call so cannot get the data from the call"))
     data <- NULL
     argname <- "NULL"
-    # try object$call$data
+    # try getCall(object)$data
     idata <- match(c("data"), names(call), 0)[1]
     if(idata > 0) {
         trace2(trace, "argument %g of the call is 'data'\n", idata-1)
@@ -670,9 +679,9 @@ get.data.for.model.frame <- function(object, trace)
                     silent=FALSE) # so user can see what went wrong
         is.good.data(data, argname, trace) # purely for tracing
     } else {
-        # no object$call$data, search for an arg that looks like good data
+        # no getCall(object)$data, search for an arg that looks like good data
         trace2(trace,
-"object$call has no arg named 'data', will search for an arg that looks like data\n")
+"getCall(object) has no arg named 'data', will search for an arg that looks like data\n")
         if(length(call) >= 3) { # start at 3 to ignore fname and first arg (the formula)
             for(icall in 3:length(call)) {
                 arg <- call[[icall]]
@@ -725,7 +734,7 @@ get.model.formula <- function(object, trace, naked)
         for(iform in 2:length(call)) {
             if(isa.formula(call[[iform]])) {
                 # warning0("the formula in the model call is not named 'formula'")
-                trace2(trace, "argument %d in object$call is a formula\n", iform)
+                trace2(trace, "argument %d in getCall(object) is a formula\n", iform)
                 return(iform) # note return
             }
         }
@@ -750,16 +759,16 @@ get.model.formula <- function(object, trace, naked)
     if(grepl("\"$\"", form$err.msg, fixed=TRUE))
         return(ret(form$err.msg))
 
-    # try getting the formula from object$call
+    # try getting the formula from getCall(object)
 
     call <- object[["call"]]
     if(is.null(call))
-        return(ret("object$call is NULL so cannot get the formula from the call"))
+        return(ret("getCall(object) is NULL so cannot get the formula from the call"))
     if(!is.call(call))
-        return(ret("object$call is not actually a call so cannot get the formula from the call"))
+        return(ret("getCall(object) is not actually a call so cannot get the formula from the call"))
     iform <- get.index.of.formula.in.call(call, trace)
     if(iform == 0) # no formula?
-        return(ret("no formula in object$call"))
+        return(ret("no formula in getCall(object)"))
 
     # nasty name change, else model.frame.default: invalid type (language)
     # TODO clean this up, this won't work because it doesn't change the calling obj
@@ -1147,11 +1156,11 @@ get.and.check.subset <- function(x, object, trace)
     if(is.valid(subset))
         msg <- "object$subset"
     else {
-        subset <- try(eval(object$call$subset, model.env(object)), silent=TRUE)
+        subset <- try(eval(getCall(object)$subset, model.env(object)), silent=TRUE)
         if(is.try.err(subset))
             subset <- NULL
         else
-            msg <- "object$call$subset"
+            msg <- "getCall(object)$subset"
     }
     if(!is.valid(subset))
         subset <- NULL

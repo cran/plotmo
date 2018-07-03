@@ -1,30 +1,6 @@
 > # test.plotmo.args..R: test dot and other argument handling in plotmo
 > 
-> options(warn=1) # print warnings as they occur
-> 
-> if(!interactive())
-+     postscript(paper="letter")
-> 
-> printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-> 
-> strip.space <- function(s) gsub("[ \t\n]", "", s)
-> 
-> # test that we got an error as expected from a try() call
-> expect.err <- function(object, expected.msg="")
-+ {
-+     if(class(object)[1] == "try-error") {
-+         msg <- attr(object, "condition")$message[1]
-+         if(length(grep(expected.msg, msg, fixed=TRUE)))
-+             cat("Got error as expected from ",
-+                 deparse(substitute(object)), "\n", sep="")
-+         else
-+             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg[1], 1, 1000)))
-+     } else
-+         stop("Did not get expected error: ", expected.msg)
-+ }
-> printf("library(earth)\n")
-library(earth)
+> source("test.prolog.R")
 > library(earth)
 Loading required package: plotmo
 Loading required package: plotrix
@@ -32,7 +8,7 @@ Loading required package: TeachingDemos
 > data(ozone1)
 > 
 > old.warn <- options("warn")
-> options(warn=2)
+> options(warn=2) # treat warnings as errors
 > lm.mod <- lm(O3~wind, data=ozone1)
 > 
 > expect.err(try(plotmo(lm.mod, se=2, leve=.95)), "plotmo's 'se' argument is deprecated, please use 'level' instead")
@@ -163,7 +139,4 @@ after par: cex=0.83 col.main=#456789 col.axis=black mar=3331 mfcol=22
  plotmo grid:    survived    sex age sibsp parch
                         0 female  28     0     0
 > 
-> if(!interactive()) {
-+     dev.off()         # finish postscript plot
-+     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-+ }
+> source("test.epilog.R")

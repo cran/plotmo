@@ -1,30 +1,6 @@
 > # test.plotmo3.R: extra tests for plotmo version 3 and higher
 > 
-> options(warn=1) # print warnings as they occur
-> 
-> if(!interactive())
-+     postscript(paper="letter")
-> 
-> printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-> 
-> strip.space <- function(s) gsub("[ \t\n]", "", s)
-> 
-> # test that we got an error as expected from a try() call
-> expect.err <- function(object, expected.msg="")
-+ {
-+     if(class(object)[1] == "try-error") {
-+         msg <- attr(object, "condition")$message[1]
-+         if(length(grep(expected.msg, msg, fixed=TRUE)))
-+             cat("Got error as expected from ",
-+                 deparse(substitute(object)), "\n", sep="")
-+         else
-+             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg[1], 1, 1000)))
-+     } else
-+         stop("Did not get expected error: ", expected.msg)
-+ }
-> printf("library(earth)\n")
-library(earth)
+> source("test.prolog.R")
 > library(earth)
 Loading required package: plotmo
 Loading required package: plotrix
@@ -433,7 +409,7 @@ plotmo1(object=mars.model.vignette2)
 plotres1(object=mars.model.vignette2,trace=1)
 stats::residuals(object=mars.object, type="response")
 stats::fitted(object=mars.object)
-got model response from object$call$y
+got model response from getCall(object)$y
 calling mars.to.earth (needed for the model selection plot)
 
 training rsq 0.76
@@ -462,6 +438,7 @@ Got error as expected from try(plotmo1(rpart.model.vignette, level = 0.9))
 library(gbm)
 > library(gbm)                                            # gbm
 Loading required package: survival
+Warning: package 'survival' was built under R version 3.5.1
 
 Attaching package: 'survival'
 
@@ -669,7 +646,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: formula(object): "$" in formula is not allowed
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a))
@@ -684,7 +661,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: formula(object): "$" in formula is not allowed
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a))
@@ -699,7 +676,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: formula(object): "$" in formula is not allowed
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a))
@@ -714,7 +691,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: formula(object): "$" in formula is not allowed
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(a))
@@ -781,7 +758,4 @@ Got error as expected from try(plotmo(a))
 > 
 > par(old.par)
 > 
-> if(!interactive()) {
-+     dev.off()         # finish postscript plot
-+     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-+ }
+> source("test.epilog.R")

@@ -10,7 +10,7 @@ plotmo.prolog <- function(object, object.name, trace, ...)
 plotmo.prolog.default <- function(object, object.name, ...)
 {
     # prevent confusing downstream errors by doing an initial check here
-    if(is.null(object$call) && is.null(object[["x"]]))
+    if(is.null(getCall(object)) && is.null(object[["x"]]))
         stopf("%s does not have a 'call' field or %s",
               object.name,
               if(is.null(object[["y"]])) "'x' and 'y' fields"

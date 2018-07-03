@@ -39,9 +39,9 @@ call.as.char <- function(call=NULL, all=FALSE, n=1)
         call <- merge.list(formals, call)
     } else
         call[[1]] <- NULL               # delete func name from call, leave args
-    rv <- paste(fname, "(", list.as.char(call, maxlen=50), ")", sep="")
-    attr(rv, "fname") <- fname # needed for alignment with nchar in printcall
-    rv
+    ret <- paste(fname, "(", list.as.char(call, maxlen=50), ")", sep="")
+    attr(ret, "fname") <- fname # needed for alignment with nchar in printcall
+    ret
 }
 # Similar to match.call but with args "all" and "n".
 # Also, this always returns a call, even if it is merely "unknown()".

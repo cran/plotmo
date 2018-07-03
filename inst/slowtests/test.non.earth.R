@@ -1,14 +1,11 @@
 # test.non.earth.R: test plotmo on non-earth models
 # Stephen Milborrow, Basley KwaZulu-Natal Mar 2011
 
+source("test.prolog.R")
 library(plotmo)
 library(earth)
 data(ozone1)
 data(etitanic)
-options(warn=1) # print warnings as they occur
-set.seed(2016)
-if(!interactive())
-    postscript(paper="letter")
 dopar <- function(nrows, ncols, caption = "")
 {
     cat("                             ", caption, "\n")
@@ -17,20 +14,6 @@ dopar <- function(nrows, ncols, caption = "")
     par(mar = c(3, 3, 1.7, 0.5))
     par(mgp = c(1.6, 0.6, 0))
     par(cex = 0.7)
-}
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg, fixed=TRUE)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected: %s\n  Got:      %s",
-                         expected.msg, substr(msg[1], 1, 1000)))
-    } else
-        stop("Did not get expected error: ", expected.msg)
 }
 caption <- "test lm(log(doy) ~ vh+wind+humidity+temp+log(ibh), data=ozone1)"
 dopar(4,5,caption)
@@ -485,6 +468,19 @@ tree1 <- tree(O3~., data=ozone1)
 plotmo(tree1)
 plotres(tree1)
 
+# rpart data with NAs
+
+rpart.airquality <- rpart(Ozone~., data=airquality) # airquality has NAs in response and variables
+plotmo <- plotmo(rpart.airquality, trace=0, SHOWCALL=TRUE)
+print(rpart.rules(rpart.airquality))
+
+airquality.nonaOzone <- subset(airquality, !is.na(Ozone)) # no NAs in response but NAs in variables
+rpart.nonaOzone <- rpart(Ozone~., data=airquality.nonaOzone)
+print(rpart.rules(rpart.nonaOzone))
+plotmo.nonaOzone <- plotmo(rpart.nonaOzone, trace=0, SHOWCALL=TRUE)
+airquality.nonaOzone$Ozone <- NULL
+stopifnot(identical(plotmo.nonaOzone, airquality.nonaOzone))
+
 # test xflip and yflip
 
 par(mfrow=c(4, 4))
@@ -543,13 +539,13 @@ etit$survived <- factor(ifelse(etit$survived == 1, "survived", "died"),
 cat("=== rf.classification ===\n")
 set.seed(2016)
 rf.classification <- randomForest(survived~., data=etit, ntree=100, importance = FALSE)
-plotmo(rf.classification, trace=1, type="prob", nresponse="surv", do.par=2)
-plotmo(rf.classification, trace=1, type="prob", nresponse="died", degree2=0, do.par=0)
+plotmo(rf.classification, trace=1, type="prob", nresponse="surv", SHOWCALL=TRUE)
+plotmo(rf.classification, trace=1, type="prob", nresponse="died", degree2=0, SHOWCALL=TRUE)
 
 cat("=== rf.classification.importance ===\n")
 set.seed(2016)
 rf.classification.importance <- randomForest(survived~., data=etit, ntree=100, importance = TRUE)
-plotmo(rf.classification.importance, trace=1, type="prob", nresponse="surv", do.par=2)
+plotmo(rf.classification.importance, trace=1, type="prob", nresponse="surv", SHOWCALL=TRUE)
 
 cat("=== plotres randomForest ===\n")
 plotres(rf.regression)
@@ -672,7 +668,4 @@ expect.err(try(plotmo(svm.form, decision.values=TRUE, probab=TRUE))) # not both
 plotres(svm.form, predict.prob=TRUE, nresponse="vers", info=TRUE)
 plotres(svm.form, jitter=5, info=TRUE)
 
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

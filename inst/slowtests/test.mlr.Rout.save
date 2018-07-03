@@ -1,7 +1,8 @@
 > # test.mlr.R: test the "mlr" package with plotmo and plotres
 > #
-> # TODO generally, plotres residuals for WrappedModel prob models aretn't right
+> # TODO generally, plotres residuals for WrappedModel prob models aren't right
 > 
+> source("test.prolog.R")
 > library(mlr)
 Loading required package: ParamHelpers
 > library(plotmo)
@@ -10,24 +11,6 @@ Loading required package: TeachingDemos
 > library(rpart.plot)
 Loading required package: rpart
 > library(earth)
-> options(warn=1) # print warnings as they occur
-> 
-> printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
-> 
-> # test that we got an error as expected from a try() call
-> expect.err <- function(object, expected.msg="")
-+ {
-+     if(class(object)[1] == "try-error") {
-+         msg <- attr(object, "condition")$message[1]
-+         if(length(grep(expected.msg, msg, fixed=TRUE)))
-+             cat("Got error as expected from ",
-+                 deparse(substitute(object)), "\n", sep="")
-+         else
-+             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg[1], 1, 1000)))
-+     } else
-+         stop("Did not get expected error: ", expected.msg)
-+ }
 > # TODO following function is temporary until mlr package is updated
 > train.with.call <- function(learner, task, subset=NULL, weights=NULL)
 + {
@@ -35,14 +18,10 @@ Loading required package: rpart
 +     retval$call <- match.call()
 +     retval
 + }
-> if(!interactive())
-+     postscript(paper="letter")
 > 
 > cat("==simple one variable regression model with earth ===============================\n")
 ==simple one variable regression model with earth ===============================
 > 
-> set.seed(2018)
-> library(earth)
 > data(trees)
 > trees1 <- trees[,c("Volume", "Girth")]
 > 
@@ -99,7 +78,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: object 'Girth' not found
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(plotmo(earth, do.par = 0, degree1 = 1, degree2 = 0))
@@ -134,14 +113,14 @@ Warning in randomForest.default(m, y, ...) :
 > stopifnot(identical(predict(regr.rf.with.call$learner.model), predict(rf)))
 > 
 > plotres(regr.rf.with.call, info=TRUE, SHOWCALL=TRUE)
-> # plotres(regr.rf$learner.model, info=TRUE, SHOWCALL=TRUE) # Error: no formula in object$call
+> # plotres(regr.rf$learner.model, info=TRUE, SHOWCALL=TRUE) # Error: no formula in getCall(object)
 > plotres(rf, info=TRUE, SHOWCALL=TRUE)
 > 
 > set.seed(2018) # for repeatable jitter in points (specified with pt.col)
 > plotmo(regr.rf.with.call, pt.col=2, SHOWCALL=TRUE)
  plotmo grid:    pclass    sex age sibsp parch
                     1st female  29     0     0
-> # plotmo(regr.rf$learner.model, trace=1, SHOWCALL=TRUE) # Error: no formula in object$call
+> # plotmo(regr.rf$learner.model, trace=1, SHOWCALL=TRUE) # Error: no formula in getCall(object)
 > set.seed(2018)
 > plotmo(rf, pt.col=2, SHOWCALL=TRUE)
  plotmo grid:    pclass    sex age sibsp parch
@@ -222,7 +201,7 @@ Got error as expected from try(plotmo(classif.rf.with.call))
 > plotmo(classif.rf.with.call,               SHOWCALL=TRUE, nresponse="prob.survived", pt.col=2, trace=2)
 plotmo trace 2: plotmo(object=classif.rf.with.call, nresponse="prob.survived",
                        pt.col=2, trace=2, SHOWCALL=TRUE)
-object$call is train.with.call(learner=lrn.classif.rf, task=task.classif.rf,
+object call is train.with.call(learner=lrn.classif.rf, task=task.classif.rf,
                          subset=train.subset)
 --get.model.env for WrappedModel object
 assuming the environment of the WrappedModel model is that of plotmo's caller: R_GlobalEnv
@@ -370,13 +349,17 @@ singles: 1 pclass, 2 sex, 3 age, 4 sibsp, 5 parch
 ----plotmo_pairs for WrappedModel object
 plotmo.pairs(object$learner.model) succeeded
 pairs:
-     [,1]       [,2]     
-[1,] "1 pclass" "2 sex"  
-[2,] "1 pclass" "3 age"  
-[3,] "1 pclass" "5 parch"
-[4,] "2 sex"    "3 age"  
-[5,] "2 sex"    "5 parch"
-[6,] "3 age"    "5 parch"
+      [,1]       [,2]     
+ [1,] "1 pclass" "2 sex"  
+ [2,] "1 pclass" "3 age"  
+ [3,] "1 pclass" "4 sibsp"
+ [4,] "1 pclass" "5 parch"
+ [5,] "2 sex"    "3 age"  
+ [6,] "2 sex"    "4 sibsp"
+ [7,] "2 sex"    "5 parch"
+ [8,] "3 age"    "4 sibsp"
+ [9,] "3 age"    "5 parch"
+[10,] "4 sibsp"  "5 parch"
 
 graphics::par(mfrow=c(4,4), mgp=c(1.5,0.4,0), tcl=-0.3, font.main=2,
               mar=c(3,2,1.2,0.8), oma=c(0,0,4,0), cex.main=1.1, cex.lab=1,
@@ -464,14 +447,22 @@ persp(pclass:sex) theta 145
 Reducing trace level for subsequent degree2 plots
 degree2 plot 2 pclass:age
 persp(pclass:age) theta 145
-degree2 plot 3 pclass:parch
+degree2 plot 3 pclass:sibsp
+persp(pclass:sibsp) theta 55
+degree2 plot 4 pclass:parch
 persp(pclass:parch) theta 145
-degree2 plot 4 sex:age
+degree2 plot 5 sex:age
 persp(sex:age) theta 145
-degree2 plot 5 sex:parch
+degree2 plot 6 sex:sibsp
+persp(sex:sibsp) theta 55
+degree2 plot 7 sex:parch
 persp(sex:parch) theta 145
-degree2 plot 6 age:parch
+degree2 plot 8 age:sibsp
+persp(age:sibsp) theta 145
+degree2 plot 9 age:parch
 persp(age:parch) theta 145
+degree2 plot 10 sibsp:parch
+persp(sibsp:parch) theta 235
 > set.seed(2018)
 > plotmo(classif.rf.with.call$learner.model, SHOWCALL=TRUE, type="prob", pt.col=2)
  plotmo grid:    pclass    sex age sibsp parch
@@ -687,14 +678,14 @@ Got error as expected from try(plotres(classif.lda.with.call, type = "response",
 Error : nresponse is 99 but the number of columns is only 2
 Got error as expected from try(plotres(classif.lda$learner.model, type = "response", nresponse = 99))
 > 
-> expect.err(try(plotmo(classif.lda)), "model \"classif.lda\" does not have a \"call\" field")
-Error : model "classif.lda" does not have a "call" field
-       Workaround: call plotmo like this: plotmo(classif.lda$learner.model, ...)
+> expect.err(try(plotmo(classif.lda)), "getCall(classif.lda) failed")
+Error : getCall(classif.lda) failed.
+       Possible  workaround: call plotmo like this: plotmo(classif.lda$learner.model, ...)
 Got error as expected from try(plotmo(classif.lda))
 > 
-> expect.err(try(plotres(classif.lda)), "model \"classif.lda\" does not have a \"call\" field")
-Error : model "classif.lda" does not have a "call" field
-       Workaround: call plotres like this: plotres(classif.lda$learner.model, ...)
+> expect.err(try(plotres(classif.lda)), "getCall(classif.lda) failed")
+Error : getCall(classif.lda) failed.
+       Possible  workaround: call plotres like this: plotres(classif.lda$learner.model, ...)
 Got error as expected from try(plotres(classif.lda))
 > 
 > # TODO residuals don't match
@@ -735,8 +726,8 @@ calculating partdep for Petal.Width
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
                          5.85           3         4.45         1.3
 > 
-> cat("==test recusrive call to plotmo_prolog for learner.model===============\n")
-==test recusrive call to plotmo_prolog for learner.model===============
+> cat("==test recursive call to plotmo_prolog for learner.model===============\n")
+==test recursive call to plotmo_prolog for learner.model===============
 > 
 > set.seed(2018)
 > n <- 100
@@ -756,6 +747,7 @@ calculating partdep for Petal.Width
 > set.seed(2018)
 > library(gbm)
 Loading required package: survival
+Warning: package 'survival' was built under R version 3.5.1
 
 Attaching package: 'survival'
 
@@ -821,7 +813,4 @@ got model response from object$y
     V60
  0.0059
 > 
-> if(!interactive()) {
-+     dev.off()         # finish postscript plot
-+     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-+ }
+> source("test.epilog.R")

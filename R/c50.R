@@ -34,8 +34,10 @@ plotmo.singles.C5.0 <- function(object, x, nresponse, trace, all1, ...)
 }
 plotmo.pairs.C5.0 <- function(object, ...)
 {
-    # pairs of four most important variables (i.e. 6 plots)
     importance <- attr(object, "plotmo.importance")
     stopifnot(!is.null(importance)) # uninitialized?
-    form.pairs(importance[1: min(4, length(importance))])
+    # choose npairs so a total of no more than 16 plots
+    # npairs=5 gives 10 pairplots, npairs=4 gives 6 pairplots
+    npairs <- if(length(importance) <= 6) 5 else 4
+    form.pairs(importance[1: min(npairs, length(importance))])
 }

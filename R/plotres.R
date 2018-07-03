@@ -96,7 +96,7 @@ plotres <- function(object = stop("no 'object' argument"),
     # Prepare caption --- we need it now for do.par() but
     # can only display it later after at least one plot.
     caption <- get.caption(nfigs, do.par, caption, resp.name, type,
-                           object$call, object.name, my.call)
+                           getCall(object), object.name, my.call)
     if(do.par) {
         oldpar <- par(no.readonly=TRUE)
         do.par(nfigs = nfigs, caption=caption,

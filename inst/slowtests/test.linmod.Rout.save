@@ -1,27 +1,16 @@
 > # test.linmod.R: test example S3 model at http://www.milbo.org/doc/linmod.R
 > 
-> cat0 <- function(...) cat(..., sep="")
+> source("test.prolog.R")
+> source("linmod.R")         # linear model code (http://www.milbo.org/doc/linmod.R)
+> source("linmod.methods.R") # additional method functions for linmod
+> options(warn=2) # treat warnings as errors
 > 
-> # test that we got an error as expected from a try() call
-> expect.err <- function(object, expected.msg="")
-+ {
-+     if(class(object)[1] == "try-error") {
-+         msg <- attr(object, "condition")$message[1]
-+         if(length(grep(expected.msg, msg, fixed=TRUE)))
-+             cat0("Got error as expected from ",
-+                  deparse(substitute(object)), "\n")
-+         else
-+             stop(sprintf("Expected: %s\n  Got:      %s",
-+                          expected.msg, substr(msg[1], 1, 1000)))
-+     } else
-+         stop("Did not get expected error: ", expected.msg)
-+ }
 > almost.equal <- function(x, y, max=1e-8)
 + {
 +     stopifnot(max >= 0 && max < .01)
 +     length(x) == length(y) && max(abs(x - y)) < max
 + }
-> # check that fit model matches ref lm model in all essential details
+> # check that linmod model matches reference lm model in all essential details
 > check.lm <- function(fit, ref, newdata=trees[3:5,],
 +                      check.coef.names=TRUE,
 +                      check.casenames=TRUE,
@@ -60,6 +49,8 @@
 +     stopifnot(length(fit$fitted.values) == length(ref$fitted.values))
 +     stopifnot(almost.equal(fit$fitted.values, ref$fitted.values))
 + 
++     stopifnot(identical(fit$rank, ref$rank))
++ 
 +     if(!is.null(fit$vcov) && !is.null(ref$vcov)) {
 +         stopifnot(identical(dim(fit$vcov), dim(ref$vcov)))
 +         stopifnot(length(fit$vcov) == length(ref$vcov))
@@ -87,15 +78,6 @@
 +                     names(predict(ref, newdata=newdata)))
 +     }
 + }
-> source("linmod.R") # linear model code (http://www.milbo.org/doc/linmod.R)
-> source("linmod.methods.R") # additional method functions for linmod
-> 
-> options(warn=2) # treat warnings as errors
-> set.seed(2016)
-> 
-> if(!interactive())
-+     postscript(paper="letter") # create Rplots.ps for comparing to reference ps file
-> 
 > tr <- trees # trees data but with rownames
 > rownames(tr) <- paste("tree", 1:nrow(trees), sep="")
 > 
@@ -188,6 +170,9 @@ $residuals
 -2.27770232  4.45713224  3.47624891  4.87148717 -2.39932888 -2.89932888 
      tree31 
  8.48469518 
+
+$rank
+[1] 3
 
 $fitted.values
     tree1     tree2     tree3     tree4     tree5     tree6     tree7     tree8 
@@ -303,11 +288,11 @@ Got error as expected from try(predict(linmod.xy.Volume.tr, newdata = data.frame
 > 
 > # missing variables in newdata
 > expect.err(try(predict(linmod.form.Volume.tr, newdata=data.frame(Girth=10))), "variable 'Height' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'Height' is missing from newdata
 Got error as expected from try(predict(linmod.form.Volume.tr, newdata = data.frame(Girth = 10)))
 > expect.err(try(predict(linmod.form.Volume.tr, newdata=c(8.3, 70))),           "variable 'Girth' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'Girth' is missing from newdata
 Got error as expected from try(predict(linmod.form.Volume.tr, newdata = c(8.3, 70)))
 > expect.err(try(predict(lm.Volume.tr,          newdata=data.frame(Girth=10))), "object 'Height' not found")
@@ -345,6 +330,9 @@ $residuals
 -2.27770232  4.45713224  3.47624891  4.87148717 -2.39932888 -2.89932888 
      tree31 
  8.48469518 
+
+$rank
+[1] 3
 
 $fitted.values
     tree1     tree2     tree3     tree4     tree5     tree6     tree7     tree8 
@@ -633,7 +621,7 @@ Got error as expected from try(predict(lm1, newdata = trees[3:5, 1, drop = TRUE]
 > # following checks that predict.linmod gives better error messages than predict.lm
 > expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=FALSE])),
 +            "variable 'x1' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'x1' is missing from newdata
 Got error as expected from try(predict(linmod.y1.x1, newdata = trees[3:5, 1, drop = FALSE]))
 > expect.err(try(predict(lm1, newdata=trees[3:5,1,drop=FALSE])),
@@ -642,7 +630,7 @@ Error : (converted from warning) 'newdata' had 3 rows but variables found have 3
 Got error as expected from try(predict(lm1, newdata = trees[3:5, 1, drop = FALSE]))
 > expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=TRUE])),
 +            "variable 'x1' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'x1' is missing from newdata
 Got error as expected from try(predict(linmod.y1.x1, newdata = trees[3:5, 1, drop = TRUE]))
 > 
@@ -668,13 +656,13 @@ check linmod6.form vs linmod.y1.x1
 > colnames(newdata) <- c("Girth99", "Height", "Volume")
 > expect.err(try(predict(linmod.form.Volume.tr, newdata=newdata)),
 +            "variable 'Girth' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'Girth' is missing from newdata
 Got error as expected from try(predict(linmod.form.Volume.tr, newdata = newdata))
 > colnames(newdata) <- c("Girth", "Height99", "Volume")
 > expect.err(try(predict(linmod.form.Volume.tr, newdata=newdata)),
 +            "variable 'Height' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'Height' is missing from newdata
 Got error as expected from try(predict(linmod.form.Volume.tr, newdata = newdata))
 > 
@@ -1082,11 +1070,11 @@ num          1.5000e+00  8.6603e-01  1.7321  0.3333
 > 
 > data6 <- data.frame(s=c("a", "b", "c", "a9", "a"), num=c(1,9,4,2,6), y=c(1,2,3,5,3), stringsAsFactors=T)
 > expect.err(try(predict(a41, newdata=data6[1:3,1])), "variable 's' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 's' is missing from newdata
 Got error as expected from try(predict(a41, newdata = data6[1:3, 1]))
 > expect.err(try(predict(a41, newdata=data6[1:3,c(1,1)])), "variable 'num' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'num' is missing from newdata
 Got error as expected from try(predict(a41, newdata = data6[1:3, c(1, 1)]))
 > 
@@ -1097,7 +1085,7 @@ Got error as expected from try(predict(a41, newdata = data.frame(s = 1, num = 2,
 > 
 > expect.err(try(predict(a41, newdata=1:9)),
 +            "variable 's' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 's' is missing from newdata
 Got error as expected from try(predict(a41, newdata = 1:9))
 > 
@@ -1144,7 +1132,7 @@ Got error as expected from try(predict(a42, newdata = newdata.with.NA))
 > 
 > a43 <- linmod(Volume~.,data=trees)
 > expect.err(try(predict(a43, newdata=newdata.with.NA)), "NA in 'newdata'")
-Error in process.formula.newdata(object, newdata) : NA in 'newdata'
+Error in process.newdata.formula(object, newdata) : NA in 'newdata'
 Got error as expected from try(predict(a43, newdata = newdata.with.NA))
 > lm43 <- lm(Volume~.,data=trees)
 > # message from predict.lm could be better
@@ -1333,6 +1321,13 @@ check linmod.form.Volume.tr vs lm.Volume.tr
 > stopifnot(identical(model.matrix(linmod.form.Volume.tr), model.matrix(lm.Volume.tr)))
 > stopifnot(identical(model.matrix(linmod.form.Volume.tr, data=tr[1:2,]),
 +                     model.matrix(lm.Volume.tr,          data=tr[1:2,])))
+> stopifnot(almost.equal(logLik(linmod.form.Volume.tr), logLik(lm.Volume.tr)))
+> expect.err(try(logLik(linmod.form.Volume.tr, REML=TRUE)), "!REML is not TRUE")
+Error in logLik.linmod(linmod.form.Volume.tr, REML = TRUE) : 
+  !REML is not TRUE
+Got error as expected from try(logLik(linmod.form.Volume.tr, REML = TRUE))
+> library(sandwich) # for estfun.lm
+> stopifnot(almost.equal(estfun(linmod.form.Volume.tr), estfun(lm.Volume.tr)))
 > 
 > linmod.form.Volume.tr.update <- update(linmod.form.Volume.tr, formula=Volume~Height)
 > lm.Volume.tr.update          <- update(lm.Volume.tr, formula=Volume~Height)
@@ -1365,6 +1360,7 @@ Got error as expected from try(model.frame(linmod.xy.Volume.tr))
 Error in model.frame.linmod(object) : 
   model.frame cannot be used on linmod models built without a formula
 Got error as expected from try(model.matrix(linmod.xy.Volume.tr))
+> stopifnot(almost.equal(logLik(linmod.xy.Volume.tr), logLik(lm.Volume.tr)))
 > 
 > old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
@@ -1452,21 +1448,23 @@ check linmod.noint vs lm.noint
 > stopifnot(identical(model.matrix(linmod.noint), model.matrix(lm.noint)))
 > stopifnot(identical(model.matrix(linmod.noint, data=tr[1:2,]),
 +                     model.matrix(lm.noint,     data=tr[1:2,])))
+> stopifnot(almost.equal(logLik(linmod.noint), logLik(lm.noint)))
+> stopifnot(almost.equal(estfun(linmod.noint), estfun(lm.noint)))
 > 
 > # check error messages with bad newdata in no-intercept model
 > expect.err(try(predict(linmod.noint, newdata=NA)), "variable 'Girth' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'Girth' is missing from newdata
 Got error as expected from try(predict(linmod.noint, newdata = NA))
 > expect.err(try(predict(linmod.noint, newdata=data.frame(Height=c(1,NA), Girth=c(3,4)))), "NA in 'newdata'")
-Error in process.formula.newdata(object, newdata) : NA in 'newdata'
+Error in process.newdata.formula(object, newdata) : NA in 'newdata'
 Got error as expected from try(predict(linmod.noint, newdata = data.frame(Height = c(1,     NA), Girth = c(3, 4))))
 > expect.err(try(predict(linmod.noint, newdata=trees[0,])), "'newdata' is empty")
 Error in predict.linmod(linmod.noint, newdata = trees[0, ]) : 
   'newdata' is empty
 Got error as expected from try(predict(linmod.noint, newdata = trees[0, ]))
 > expect.err(try(predict(linmod.noint, newdata=trees[3:5,"Height"])), "variable 'Girth' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'Girth' is missing from newdata
 Got error as expected from try(predict(linmod.noint, newdata = trees[3:5, "Height"]))
 > # check that extra fields in predict newdata are ok with (formula) models without intercept
@@ -1535,21 +1533,23 @@ check linmod.onepred.noint vs lm.onepred.noint
 > stopifnot(identical(model.matrix(linmod.onepred.noint), model.matrix(lm.onepred.noint)))
 > stopifnot(identical(model.matrix(linmod.onepred.noint, data=tr[1:2,]),
 +                     model.matrix(lm.onepred.noint,     data=tr[1:2,])))
+> stopifnot(almost.equal(logLik(linmod.onepred.noint), logLik(lm.onepred.noint)))
+> stopifnot(almost.equal(estfun(linmod.onepred.noint), estfun(lm.onepred.noint)))
 > 
 > # check error messages with bad newdata in one predictor no-intercept model
 > expect.err(try(predict(linmod.onepred.noint, newdata=99)), "variable 'Girth' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'Girth' is missing from newdata
 Got error as expected from try(predict(linmod.onepred.noint, newdata = 99))
 > expect.err(try(predict(linmod.onepred.noint, newdata=data.frame(Girth=NA))), "NA in 'newdata'")
-Error in process.formula.newdata(object, newdata) : NA in 'newdata'
+Error in process.newdata.formula(object, newdata) : NA in 'newdata'
 Got error as expected from try(predict(linmod.onepred.noint, newdata = data.frame(Girth = NA)))
 > expect.err(try(predict(linmod.onepred.noint, newdata=trees[0,1])), "'newdata' is empty")
 Error in predict.linmod(linmod.onepred.noint, newdata = trees[0, 1]) : 
   'newdata' is empty
 Got error as expected from try(predict(linmod.onepred.noint, newdata = trees[0, 1]))
 > expect.err(try(predict(linmod.onepred.noint, newdata=trees[3:5,"Height"])), "variable 'Girth' is missing from newdata")
-Error in process.formula.newdata(object, newdata) : 
+Error in process.newdata.formula(object, newdata) : 
   variable 'Girth' is missing from newdata
 Got error as expected from try(predict(linmod.onepred.noint, newdata = trees[3:5, "Height"]))
 > # check that extra fields in predict newdata are ok with (formula) models without intercept
@@ -1657,7 +1657,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: object 'Volume' not found
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.trees1, "change colnames"))
@@ -1670,7 +1670,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: object 'Volume' not found
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.trees1, "trees1=\"garbage\""))
@@ -1683,7 +1683,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: object 'Volume' not found
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.trees1, "trees1=1:1000"))
@@ -1696,7 +1696,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: object 'Volume' not found
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.trees1, "trees1=NULL"))
@@ -1710,7 +1710,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (2) model.frame: object 'Volume' not found
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.trees1, "remove(trees1)"))
@@ -1785,9 +1785,9 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (1) object$x: NULL
 
-(2) model.frame: no formula in object$call
+(2) model.frame: no formula in getCall(object)
 
-(3) object$call$x: garbage
+(3) getCall(object)$x: garbage
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.xy, "x1=\"garbage\""))
@@ -1806,9 +1806,9 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (1) object$x: NULL
 
-(2) model.frame: no formula in object$call
+(2) model.frame: no formula in getCall(object)
 
-(3) object$call$x: NULL
+(3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.xy, "x1=NULL"))
@@ -1819,9 +1819,9 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (1) object$x: NULL
 
-(2) model.frame: no formula in object$call
+(2) model.frame: no formula in getCall(object)
 
-(3) object$call$x: object 'x1' not found
+(3) getCall(object)$x: object 'x1' not found
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.xy, "remove(x1)"))
@@ -1924,9 +1924,9 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (1) object$x: NULL
 
-(2) model.frame: no formula in object$call
+(2) model.frame: no formula in getCall(object)
 
-(3) object$call$x: object 'xx' not found
+(3) getCall(object)$x: object 'xx' not found
 
 Error : cannot get the original model predictors (use trace=2 for details)
 Got error as expected from try(pr(linmod.xy))
@@ -1936,7 +1936,4 @@ Got error as expected from try(pr(linmod.xy))
 > 
 > par(old.par)
 > 
-> if(!interactive()) {
-+     dev.off()        # finish postscript plot
-+     q(runLast=FALSE) # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-+ }
+> source("test.epilog.R")
