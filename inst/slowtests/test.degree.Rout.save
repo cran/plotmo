@@ -40,30 +40,30 @@ Warning: plotmo: nothing to plot
 > a81 <- earth(survived~., data=etitanic, degree=2)
 > options(warn=2) # treat warnings as errors
 > plotmo(a81)
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  28     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
 > 
 > # degree1 tests
 > old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,3), mar=c(1,2.5,2,1), oma=c(0,0,4,0))
 > plotmo(a81, do.par=FALSE, degree1="pclass", degree2=0, main='degree1="pclass"',
 +        caption="test degree1 with strings")
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  28     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
 > expect.err(try(plotmo(a81, do.par=FALSE, degree1="survived", degree2=0)), '"survived" in degree1 does not match any names')
 Error : (converted from warning) "survived" in degree1 does not match any names
          Available names are "pclass" "sex" "age" "sibsp" "parch"
 Got error as expected from try(plotmo(a81, do.par = FALSE, degree1 = "survived", degree2 = 0))
 > plotmo(a81, do.par=FALSE, degree1="sibsp", degree2=0, main='degree1="sibsp"')
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  28     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
 > # parch does not appear in the standard degree1 plotmo plots, but we can still specify it explictly
 > plotmo(a81, do.par=FALSE, degree1="parch", degree2=0, trace=0, main='degree1="parch"')
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  28     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
 > plotmo(a81, do.par=FALSE, degree1=c("sibsp", "pclass"), degree2=0, main='degree1=c("sibsp", "pclass")')
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  28     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
 > par(old.par)
 > 
 > # degree2 tests
@@ -148,8 +148,8 @@ degree1=1, degree2=c("nevermore", "nonesuch"):
 +        main='degree1=1\ndegree2=c("nevermore", "nonesuch")'))
 Warning: "nevermore" in degree2 does not match any names
          Available names are "pclass" "sex" "age" "sibsp" "parch"
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  28     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
 > 
 > # expect warning: both elements of degree2 are the same
 > cat('\n\ndegree2=c("sex", "sex"):\n')

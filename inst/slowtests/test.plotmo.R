@@ -85,6 +85,54 @@ plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, ylim=c(0,20), xlab="ylim=c(0,20)
 plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, xlim=c(190,250), xlab="xlim=c(190,250)")
 plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, xlim=c(190,250), ylim=c(11,18), xlab="xlim=c(190,250), ylim=c(11,18)")
 
+# check various types of predictors with grid.func and ndiscrete
+
+varied.type.data <- data.frame(
+    y    = 1:13,
+    num  = c(1, 3, 2, 3, 4, 5, 6, 4, 5, 6.5, 3, 6, 5), # 7 unique values (but one is non integral)
+    int  = c(1L, 2L, 2L, 3L, 4L, 6L, 7L, 8L, 6L, 7L, 6L, 7L, 20L), # 8 unique values
+    bool = c(F, F, F, T, F, T, T, T, T, T, T, T, T),
+    date = as.Date(
+           c("2018-08-01", "2018-08-02", "2018-08-03",
+             "2018-08-04", "2018-08-05", "2018-08-07",
+             "2018-08-07", "2018-08-08", "2018-08-07",
+             "2018-08-06", "2018-08-08", "2018-08-08", "2018-08-08")),
+    ord  = ordered(c("ord3", "ord3", "ord3",
+                     "ord1", "ord2", "ord3",
+                     "ord1", "ord2", "ord3",
+                     "ord1", "ord1", "ord1", "ord1"),
+                   levels=c("ord1", "ord3", "ord2")),
+    fac  = as.factor(c("fac1", "fac1", "fac1",
+                       "fac2", "fac2", "fac2",
+                       "fac3", "fac3", "fac3",
+                       "fac1", "fac2", "fac3", "fac3")),
+    str  = c("str1", "str1", "str1", # will be treated like a factor
+             "str2", "str2", "str2",
+             "str3", "str3", "str3",
+             "str3", "str3", "str3", "str3"))
+
+varied.type.lm <- lm(y ~ ., data = varied.type.data)
+print(summary(varied.type.lm))
+set.seed(2018)
+plotres(varied.type.lm, info=TRUE)
+plotmo(varied.type.lm, pmethod="apartdep", all2=TRUE, ticktype="d", col.response="red", caption="varied.type.lm\npmethod=\"apartdep\" default grid func")
+plotmo(varied.type.lm, all2=TRUE, ticktype="d", col.response="red", caption="varied.type.lm\ndefault grid func")
+plotmo(varied.type.lm, all2=TRUE, ndiscrete=1, caption="varied.type.lm\nndiscrete=1")
+plotmo(varied.type.lm, all2=TRUE, ndiscrete=2, caption="varied.type.lm\nndiscrete=2")
+plotmo(varied.type.lm, all2=TRUE, ndiscrete=100, caption="varied.type.lm\nndiscrete=100")
+cat("grid.func=median:\n")
+plotmo(varied.type.lm, all2=TRUE, grid.func=median, caption="varied.type.lm\ngrid.func=median")
+cat("grid.func=quantile:\n")
+plotmo(varied.type.lm, all2=TRUE, grid.func=function(x, ...) quantile(x, 0.5), caption="varied.type.lm\ngrid.func=function(x, ...) quantile(x, 0.5)")
+cat("grid.func=mean:\n")
+plotmo(varied.type.lm, all2=TRUE, grid.func=mean, caption="varied.type.lm\ngrid.func=mean")
+
+varied.type.earth <- earth(y ~ ., data = varied.type.data, thresh=0, penalty=-1, trace=1)
+print(summary(varied.type.earth))
+set.seed(2018)
+plotres(varied.type.earth, info=TRUE)
+plotmo(varied.type.earth, all1=TRUE, all2=TRUE, persp.ticktype="d", col.response="red")
+
 # term.plot calls predict.earth with an se parameter, even with termplot(se=FALSE)
 
 caption <- "basic earth test against termplot"

@@ -1,4 +1,4 @@
-# test.partdep.R: partdep tests for plotmo and plotres
+# partdep.test.R: partdep tests for plotmo and plotres
 
 source("test.prolog.R")
 library(plotmo)
@@ -42,7 +42,7 @@ ngrid1 <- 50
 ngrid2 <- 30
 plotmo(mod, pmethod="plot", do.par=0, degree2=2, type2="im", ylim=NULL,
        clip=FALSE, image.col=image.col, ngrid1=ngrid1, ngrid=ngrid2)
-title("row1: plotmo classic\nrow2: plotmo apardep\nrow3: plotmo pardep\nrow4: plot.gbm\n\n\n\n\n\n\n", xpd=NA)
+title("row1: plotmo classic\nrow2: plotmo apartdep\nrow3: plotmo partdep\nrow4: plot.gbm\n\n\n\n\n\n\n", xpd=NA)
 ylim <- c(.21, .40)
 set.seed(2016) # for consistent selection of rows for partdep.x
 plotmo(mod, pmethod="apartdep",  do.par=0, degree2=2, type2="im", ylim=ylim,

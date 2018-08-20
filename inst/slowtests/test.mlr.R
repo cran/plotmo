@@ -102,7 +102,7 @@ set.seed(2018)
 partialPlot(rf, pred.data=etitanic[train.subset,], x.var="pclass", n.pt=50, ylim=c(0, 1))
 grid()
 # TODO following fails
-pd <- generatePartialDependenceData(regr.rf.with.call, task.regr.rf, "pclass", n=c(50, NA)) # Warning: argument is not numeric or logical: returning NA
+pd <- generatePartialDependenceData(regr.rf.with.call, task.regr.rf, "pclass", n=c(50, NA))
 try(print(plotPartialDependence(pd, data = getTaskData(task.regr.rf)))) # Error: Discrete value supplied to continuous scale
 
 cat("==classification model with randomForest (binary response)======================\n")
@@ -152,7 +152,7 @@ set.seed(2018)
 plotmo(rf,              degree1="pclass", degree2=0, pmethod="partdep", pt.col=2, SHOWCALL=TRUE)
 set.seed(2018)
 # TODO following fails
-pd <- generatePartialDependenceData(classif.rf.with.call, task.classif.rf, "pclass", n=c(50, NA)) # Warning: argument is not numeric or logical: returning NA
+pd <- generatePartialDependenceData(classif.rf.with.call, task.classif.rf, "pclass", n=c(50, NA))
 try(print(plotPartialDependence(pd, data = getTaskData(task.classif.rf)))) # Error: Discrete value supplied to continuous scale
 
 plotmo(rf, type="prob", nresponse="notsurvived", degree1="age", degree2=0,

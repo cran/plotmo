@@ -5,14 +5,14 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 3.5.0 (2018-04-23)"
+[1] "R version 3.5.1 (2018-07-02)"
 > print(citation("rpart.plot"))
 
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (2018). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 2.3.0.
-  http://www.milbo.org/rpart-plot
+  Enhanced Version of 'plot.rpart'. R package version 3.0.4.
+  https://CRAN.R-project.org/package=rpart.plot
 
 A BibTeX entry for LaTeX users is
 
@@ -20,17 +20,14 @@ A BibTeX entry for LaTeX users is
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
     year = {2018},
-    note = {R package version 2.3.0},
-    url = {http://www.milbo.org/rpart-plot},
+    note = {R package version 3.0.4},
+    url = {https://CRAN.R-project.org/package=rpart.plot},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")'.
 
-Warning message:
-In citation("rpart.plot") :
-  no date field in DESCRIPTION file of package 'rpart.plot'
 > 
 > source("test.prolog.R")
 > library(earth)
@@ -866,6 +863,189 @@ persp(temp:dpg) theta 235
 > plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, xlim=c(190,250), ylim=c(11,18), xlab="xlim=c(190,250), ylim=c(11,18)")
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
+> 
+> # check various types of predictors with grid.func and ndiscrete
+> 
+> varied.type.data <- data.frame(
++     y    = 1:13,
++     num  = c(1, 3, 2, 3, 4, 5, 6, 4, 5, 6.5, 3, 6, 5), # 7 unique values (but one is non integral)
++     int  = c(1L, 2L, 2L, 3L, 4L, 6L, 7L, 8L, 6L, 7L, 6L, 7L, 20L), # 8 unique values
++     bool = c(F, F, F, T, F, T, T, T, T, T, T, T, T),
++     date = as.Date(
++            c("2018-08-01", "2018-08-02", "2018-08-03",
++              "2018-08-04", "2018-08-05", "2018-08-07",
++              "2018-08-07", "2018-08-08", "2018-08-07",
++              "2018-08-06", "2018-08-08", "2018-08-08", "2018-08-08")),
++     ord  = ordered(c("ord3", "ord3", "ord3",
++                      "ord1", "ord2", "ord3",
++                      "ord1", "ord2", "ord3",
++                      "ord1", "ord1", "ord1", "ord1"),
++                    levels=c("ord1", "ord3", "ord2")),
++     fac  = as.factor(c("fac1", "fac1", "fac1",
++                        "fac2", "fac2", "fac2",
++                        "fac3", "fac3", "fac3",
++                        "fac1", "fac2", "fac3", "fac3")),
++     str  = c("str1", "str1", "str1", # will be treated like a factor
++              "str2", "str2", "str2",
++              "str3", "str3", "str3",
++              "str3", "str3", "str3", "str3"))
+> 
+> varied.type.lm <- lm(y ~ ., data = varied.type.data)
+> print(summary(varied.type.lm))
+
+Call:
+lm(formula = y ~ ., data = varied.type.data)
+
+Residuals:
+         1          2          3          4          5          6          7 
+-1.441e-01  8.824e-01 -7.383e-01  3.137e-01 -6.939e-17 -3.137e-01 -1.849e+00 
+         8          9         10         11         12         13 
+-1.388e-17  3.137e-01  4.580e-16 -1.388e-17  1.450e+00  8.543e-02 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)
+(Intercept) -3.019e+04  2.232e+04  -1.352    0.309
+num         -9.194e-01  1.302e+00  -0.706    0.553
+int          1.111e-01  2.174e-01   0.511    0.660
+boolTRUE    -4.921e+00  4.396e+00  -1.119    0.379
+date         1.701e+00  1.258e+00   1.352    0.309
+ord.L       -3.182e+00  2.559e+00  -1.243    0.340
+ord.Q       -1.044e+00  1.710e+00  -0.611    0.603
+facfac2     -5.509e+00  7.294e+00  -0.755    0.529
+facfac3     -3.312e+00  3.273e+00  -1.012    0.418
+strstr2      8.514e+00  9.896e+00   0.860    0.480
+strstr3      8.690e+00  7.429e+00   1.170    0.363
+
+Residual standard error: 1.893 on 2 degrees of freedom
+Multiple R-squared:  0.9606,	Adjusted R-squared:  0.7637 
+F-statistic: 4.878 on 10 and 2 DF,  p-value: 0.182
+
+> set.seed(2018)
+> plotres(varied.type.lm, info=TRUE)
+> plotmo(varied.type.lm, pmethod="apartdep", all2=TRUE, ticktype="d", col.response="red", caption="varied.type.lm\npmethod=\"apartdep\" default grid func")
+calculating apartdep for num 
+calculating apartdep for int 
+calculating apartdep for bool 
+calculating apartdep for date 
+calculating apartdep for ord 
+calculating apartdep for fac 
+calculating apartdep for str 
+calculating apartdep for num:int 01234567890
+calculating apartdep for num:bool 01234567890
+calculating apartdep for num:date 01234567890
+calculating apartdep for num:ord 01234567890
+calculating apartdep for num:fac 01234567890
+calculating apartdep for num:str 01234567890
+calculating apartdep for int:bool 01234567890
+calculating apartdep for int:date 01234567890
+calculating apartdep for int:ord 01234567890
+calculating apartdep for int:fac 01234567890
+calculating apartdep for int:str 01234567890
+calculating apartdep for bool:date 0123456790
+calculating apartdep for bool:ord 0123456790
+calculating apartdep for bool:fac 0123456790
+calculating apartdep for bool:str 0123456790
+calculating apartdep for date:ord 01234567890
+calculating apartdep for date:fac 01234567890
+calculating apartdep for date:str 01234567890
+calculating apartdep for ord:fac 01234567890
+calculating apartdep for ord:str 01234567890
+calculating apartdep for fac:str 01234567890
+> plotmo(varied.type.lm, all2=TRUE, ticktype="d", col.response="red", caption="varied.type.lm\ndefault grid func")
+ plotmo grid:    num int bool       date  ord  fac  str
+                   4   6 TRUE 2018-08-07 ord1 fac3 str3
+> plotmo(varied.type.lm, all2=TRUE, ndiscrete=1, caption="varied.type.lm\nndiscrete=1")
+ plotmo grid:    num int bool       date  ord  fac  str
+                   4   6 TRUE 2018-08-07 ord1 fac3 str3
+> plotmo(varied.type.lm, all2=TRUE, ndiscrete=2, caption="varied.type.lm\nndiscrete=2")
+ plotmo grid:    num int bool       date  ord  fac  str
+                   4   6 TRUE 2018-08-07 ord1 fac3 str3
+> plotmo(varied.type.lm, all2=TRUE, ndiscrete=100, caption="varied.type.lm\nndiscrete=100")
+ plotmo grid:    num int bool       date  ord  fac  str
+                   4   6 TRUE 2018-08-07 ord1 fac3 str3
+> cat("grid.func=median:\n")
+grid.func=median:
+> plotmo(varied.type.lm, all2=TRUE, grid.func=median, caption="varied.type.lm\ngrid.func=median")
+Warning: grid.func failed for ord, so will use the most common value of ord
+Warning: grid.func failed for fac, so will use the most common value of fac
+Warning: grid.func failed for str, so will use the most common value of str
+Warning: grid.func failed for ord, so will use the most common value of ord
+Warning: grid.func failed for fac, so will use the most common value of fac
+Warning: grid.func failed for str, so will use the most common value of str
+ plotmo grid:    num int bool       date  ord  fac  str
+                   4   6 TRUE 2018-08-07 ord1 fac3 str3
+> cat("grid.func=quantile:\n")
+grid.func=quantile:
+> plotmo(varied.type.lm, all2=TRUE, grid.func=function(x, ...) quantile(x, 0.5), caption="varied.type.lm\ngrid.func=function(x, ...) quantile(x, 0.5)")
+Warning: grid.func failed for date, so will use the default grid.func for date
+Warning: grid.func failed for ord, so will use the most common value of ord
+Warning: grid.func failed for fac, so will use the most common value of fac
+Warning: grid.func failed for str, so will use the most common value of str
+Warning: grid.func failed for date, so will use the default grid.func for date
+Warning: grid.func failed for ord, so will use the most common value of ord
+Warning: grid.func failed for fac, so will use the most common value of fac
+Warning: grid.func failed for str, so will use the most common value of str
+ plotmo grid:    num int bool       date  ord  fac  str
+                   4   6 TRUE 2018-08-07 ord1 fac3 str3
+> cat("grid.func=mean:\n")
+grid.func=mean:
+> plotmo(varied.type.lm, all2=TRUE, grid.func=mean, caption="varied.type.lm\ngrid.func=mean")
+Warning in mean.default(x, na.rm = TRUE) :
+  argument is not numeric or logical: returning NA
+Warning: grid.func returned NA for ord, so will use the default grid.func for ord
+Warning in mean.default(x, na.rm = TRUE) :
+  argument is not numeric or logical: returning NA
+Warning: grid.func returned NA for fac, so will use the default grid.func for fac
+Warning in mean.default(x, na.rm = TRUE) :
+  argument is not numeric or logical: returning NA
+Warning: grid.func returned NA for str, so will use the default grid.func for str
+Warning in mean.default(x, na.rm = TRUE) :
+  argument is not numeric or logical: returning NA
+Warning: grid.func returned NA for ord, so will use the default grid.func for ord
+Warning in mean.default(x, na.rm = TRUE) :
+  argument is not numeric or logical: returning NA
+Warning: grid.func returned NA for fac, so will use the default grid.func for fac
+Warning in mean.default(x, na.rm = TRUE) :
+  argument is not numeric or logical: returning NA
+Warning: grid.func returned NA for str, so will use the default grid.func for str
+ plotmo grid:    num int bool       date  ord  fac  str
+            4.115385   6 TRUE 2018-08-05 ord1 fac3 str3
+> 
+> varied.type.earth <- earth(y ~ ., data = varied.type.data, thresh=0, penalty=-1, trace=1)
+x[13,10] with colnames num int boolTRUE date ord.L ord.Q facfac2 facfac3 strstr2...
+y[13,1] with colname y
+Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
+No new term increases RSq (perhaps reached numerical limits) at 19 terms, 12 terms used
+After forward pass GRSq 0.996 RSq 0.996
+Prune method "backward" penalty -1 nprune null: selected 12 of 12 terms, and 9 of 10 preds
+After pruning pass GRSq 0.996 RSq 0.996
+> print(summary(varied.type.earth))
+Call: earth(formula=y~., data=varied.type.data, trace=1, thresh=0, penalty=-1)
+
+            coefficients
+(Intercept)   -78663.579
+boolTRUE           2.654
+date               4.431
+ord.L              3.741
+ord.Q             -3.732
+facfac2            6.879
+facfac3           -4.932
+strstr3           15.158
+h(4-num)          -2.579
+h(num-4)           4.741
+h(6-int)           8.699
+h(int-6)           0.471
+
+Selected 12 of 12 terms, and 9 of 10 predictors
+Termination condition: No new term increases RSq at 12 terms
+Importance: date, strstr3, int, facfac3, num, ord.Q, facfac2, ord.L, ...
+Number of terms at each degree of interaction: 1 11 (additive model)
+GCV 0.05481655    RSS 0.7126152    GRSq 0.9960845    RSq 0.9960845
+> set.seed(2018)
+> plotres(varied.type.earth, info=TRUE)
+> plotmo(varied.type.earth, all1=TRUE, all2=TRUE, persp.ticktype="d", col.response="red")
+ plotmo grid:    num int bool       date  ord  fac  str
+                   4   6 TRUE 2018-08-07 ord1 fac3 str3
 > 
 > # term.plot calls predict.earth with an se parameter, even with termplot(se=FALSE)
 > 
@@ -1992,20 +2172,20 @@ Importance: sexmale, pclass3rd, pclass2nd, age
 Number of terms at each degree of interaction: 1 1 5
 GCV 0.1442766    RSS 146.3318    GRSq 0.4039126    RSq 0.4209023
 > plotmo(a, caption="plotmo with facs: pclass+sex+age")
- plotmo grid:    pclass    sex age
-                    1st female  28
+ plotmo grid:    pclass  sex age
+                    3rd male  28
 > plotmo(a, caption="plotmo with facs: pclass+sex+age, all1=T, grid.col=\"gray\"", all1=T, grid.col="gray")
- plotmo grid:    pclass    sex age
-                    1st female  28
+ plotmo grid:    pclass  sex age
+                    3rd male  28
 > plotmo(a, caption="plotmo with facs: pclass+sex+age, all2=T, col.grid=\"green\"", all2=T, col.grid="green")
- plotmo grid:    pclass    sex age
-                    1st female  28
+ plotmo grid:    pclass  sex age
+                    3rd male  28
 > plotmo(a, caption="plotmo with facs: pclass+sex+age, all1=T, all2=T, grid=2", all1=T, all2=T, grid.col=2)
- plotmo grid:    pclass    sex age
-                    1st female  28
+ plotmo grid:    pclass  sex age
+                    3rd male  28
 > plotmo(a, clip=FALSE, degree2=FALSE, caption="plotmo (no degree2) with facs: pclass+sex+age")
- plotmo grid:    pclass    sex age
-                    1st female  28
+ plotmo grid:    pclass  sex age
+                    3rd male  28
 > plotmo(a, clip=FALSE, grid.levels=list(pclass="2n", sex="ma"),
 +        caption="plotmo with grid.levels: pclass+sex+age")
  plotmo grid:    pclass  sex age
@@ -2032,7 +2212,7 @@ Number of terms at each degree of interaction: 1 4 2
 GCV 0.2040487    RSS 206.9554    GRSq 0.1569604    RSq 0.1809888
 > plotmo(a, caption="plotmo with mixed fac and non-fac degree2 terms", persp.border=NA)
  plotmo grid:    pclass age sibsp
-                    1st  28     0
+                    3rd  28     0
 > plotmo(a, caption="plotmo with mixed fac and non-fac degree2 terms and grid.levels",
 +        grid.levels=list(pclass="2n", age=20), # test partial matching of grid levels, and numeric preds
 +        persp.ticktype="d", persp.nticks=2)
@@ -2047,22 +2227,22 @@ Got error as expected from try(plotmo(a, grid.levels = list(pcla = "1", pclass =
 Error : illegal grid.levels argument ("pclass" and "pcla" both match "pclass")
 Got error as expected from try(plotmo(a, grid.levels = list(pclass = "1", pcla = "2")))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=1))))
-Error : illegal level for "pcla" in grid.levels (specify factor levels with a string)
+Error : illegal level for "pclass" in grid.levels (specify factor levels with a string)
 Got error as expected from try(plotmo(a, grid.levels = list(pcla = 1)))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=c("ab", "cd")))))
-Error : illegal value for pclass in grid.levels
+Error : illegal level for "pclass" in grid.levels (specify factor levels with a string)
 Got error as expected from try(plotmo(a, grid.levels = list(pcla = c("ab", "cd"))))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=NA))))
-Error : illegal value for pclass in grid.levels
+Error : illegal level for "pclass" in grid.levels (specify factor levels with a string)
 Got error as expected from try(plotmo(a, grid.levels = list(pcla = NA)))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=Inf))))
-Error : illegal level for "pcla" in grid.levels (specify factor levels with a string)
+Error : illegal level for "pclass" in grid.levels (specify factor levels with a string)
 Got error as expected from try(plotmo(a, grid.levels = list(pcla = Inf)))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=9))))
-Error : illegal level for "pcla" in grid.levels (specify factor levels with a string)
+Error : illegal level for "pclass" in grid.levels (specify factor levels with a string)
 Got error as expected from try(plotmo(a, grid.levels = list(pcla = 9)))
 > expect.err(try(plotmo(a, grid.levels=list(age="ab"))))
-Error : illegal value for age in grid.levels
+Error : the class "character" of "age" in grid.levels does not match its class "numeric" in the input data
 Got error as expected from try(plotmo(a, grid.levels = list(age = "ab")))
 > expect.err(try(plotmo(a, grid.levels=list(age=NA))))
 Error : illegal value for age in grid.levels
@@ -2099,23 +2279,23 @@ Earth GCV 0.2040487    RSS 206.9554    GRSq 0.1569604    RSq 0.1809888
 GLM null.deviance 1414.62 (1045 dof)   deviance 1212.212 (1039 dof)   iters 5
 > plotmo(a, ylim=c(0, 1), caption="plotmo glm with mixed fac and non-fac degree2 terms")
  plotmo grid:    pclass age sibsp
-                    1st  28     0
+                    3rd  28     0
 > plotmo(a, ylim=c(0, 1), caption="plotmo glm with mixed fac and non-fac degree2 terms and grid.levels",
 +        grid.levels=list(pcl="2nd")) # test partial matching of variable name in grid levels
  plotmo grid:    pclass age sibsp
                     2nd  28     0
 > plotmo(a, type="earth", ylim=c(0, 1), caption="type=\"earth\" plotmo glm with mixed fac and non-fac degree2 terms")
  plotmo grid:    pclass age sibsp
-                    1st  28     0
+                    3rd  28     0
 > plotmo(a, type="link", ylim=c(0, 1), clip=FALSE, caption="type=\"link\" plotmo glm with mixed fac and non-fac degree2 terms")
  plotmo grid:    pclass age sibsp
-                    1st  28     0
+                    3rd  28     0
 > plotmo(a, type="class", ylim=c(0, 1), caption="type=\"class\" plotmo glm with mixed fac and non-fac degree2 terms")
  plotmo grid:    pclass age sibsp
-                    1st  28     0
+                    3rd  28     0
 > plotmo(a, ylim=c(0, 1), caption="default type (\"response\")\nplotmo glm with mixed fac and non-fac degree2 terms")
  plotmo grid:    pclass age sibsp
-                    1st  28     0
+                    3rd  28     0
 > # now with different type2s
 > set.seed(2016)
 > plotmo(a, do.par=FALSE, type2="persp", persp.theta=-20, degree1=FALSE, grid.levels=list(pclass="2nd"))
@@ -2477,12 +2657,12 @@ Got error as expected from try(plotmo(a.foo9))
 > 
 > plotmo(a, nresponse=1,             pt.col=2, degree2=0, SHOWCALL=TRUE,
 +        caption="test extend: extend=0 (reference plot)")
- plotmo grid:    survived    sex age sibsp parch
-                        0 female  29     0     0
+ plotmo grid:    survived  sex age sibsp parch
+                        0 male  29     0     0
 > plotmo(a, nresponse=1, extend=.5, pt.col=2, SHOWCALL=TRUE,
 +        caption="test extend: extend=.5")
- plotmo grid:    survived    sex age sibsp parch
-                        0 female  29     0     0
+ plotmo grid:    survived  sex age sibsp parch
+                        0 male  29     0     0
 > plotmo(a, nresponse=1, degree1=0, extend=.2, pt.col=2, SHOWCALL=TRUE) # nothing to plot
 Warning: plotmo: nothing to plot
 > 
@@ -2492,7 +2672,7 @@ Warning: plotmo: nothing to plot
 +        caption="test extend: extend=.5")
 Warning: extend=0.5: will not plot degree2 plots (extend is not yet implemented for degree2 plots)
  plotmo grid:    pclass age
-                    1st  28
+                    3rd  28
 > 
 > # intercept only models
 > 

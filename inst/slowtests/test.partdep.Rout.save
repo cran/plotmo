@@ -1,4 +1,4 @@
-> # test.partdep.R: partdep tests for plotmo and plotres
+> # partdep.test.R: partdep tests for plotmo and plotres
 > 
 > source("test.prolog.R")
 > library(plotmo)
@@ -10,8 +10,8 @@ Loading required package: TeachingDemos
 > mod <- earth(survived~., data=etitanic, degree=2)
 > 
 > plotmo(mod, caption="plotmo classical")
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  28     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
 > 
 > plotmo(mod, pmethod="partdep", caption="plotmo partdep age")
 calculating partdep for pclass 
@@ -41,7 +41,6 @@ calculating apartdep for sex:age 0123456790
 > # compare to gbm with an artifical function of variables with a very strong interaction
 > library(gbm)
 Loading required package: survival
-Warning: package 'survival' was built under R version 3.5.1
 Loading required package: lattice
 Loading required package: splines
 Loading required package: parallel
@@ -70,7 +69,7 @@ Loading required package: viridisLite
 +        clip=FALSE, image.col=image.col, ngrid1=ngrid1, ngrid=ngrid2)
  plotmo grid:    x1        x2        x3
           0.5048516 0.4915547 0.5632489
-> title("row1: plotmo classic\nrow2: plotmo apardep\nrow3: plotmo pardep\nrow4: plot.gbm\n\n\n\n\n\n\n", xpd=NA)
+> title("row1: plotmo classic\nrow2: plotmo apartdep\nrow3: plotmo partdep\nrow4: plot.gbm\n\n\n\n\n\n\n", xpd=NA)
 > ylim <- c(.21, .40)
 > set.seed(2016) # for consistent selection of rows for partdep.x
 > plotmo(mod, pmethod="apartdep",  do.par=0, degree2=2, type2="im", ylim=ylim,

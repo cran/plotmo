@@ -99,7 +99,8 @@ x <- runif(n);
 z1 <- runif(n);
 y <- test1(cbind(x,z1)) + rnorm(n) * 0.1
 a <- gam(y ~ s(x) + s(x,z1))
-plotmo(a, do.par=FALSE, type2="contour", caption=caption, col.response=3, smooth.col="indianred",
+plotmo(a, do.par=FALSE, type2="contour", caption=caption,
+      col.response=3, smooth.col="indianred",
       func=test1, func.col="indianred", func.lwd=5, func.lty=2, smooth.lwd=3)
 
 plotmo(a, do.par=FALSE, degree1=F, degree2=1, type2="image", ylim=NA)
@@ -127,7 +128,7 @@ a <- gam(y~s(x0,x1,k=12)+s(x2)+s(x3,k=20,fx=20))
 plot(a, select=2)
 plot(a, select=3)
 plot(a, select=1)
-plotmo(a, do.par=FALSE, type2="contour", caption=caption, xlab=NULL, main="", func=test.func, ngrid2=10, drawlabels=FALSE)
+plotmo(a, do.par=FALSE, type2="contour", caption=caption, xlab=NULL, main="", func=test.func, ngrid2=10, contour.drawlabels=FALSE)
 plotmo(a, do.par=FALSE, degree1=F, degree2=1, persp.the=-35)
 
 set.seed(1)
@@ -345,7 +346,7 @@ lcush <- data.frame(Type=as.numeric(Cushings$Type), log(Cushings[,1:2]))[1:21,]
 a <- qda(lcush[,2:3], lcush[,1])
 plotmo(a, type="class", all2=TRUE,
        caption= "plotmo.y from 2nd argument of call (qda)",
-       type2="contour", ngrid2=100, nlevels=2, drawlabels=FALSE,
+       type2="contour", ngrid2=100, contour.nlevels=2, contour.drawlabels=FALSE,
        col.response=as.numeric(lcush$Type)+1,
        pt.pch=as.character(lcush$Type))
 

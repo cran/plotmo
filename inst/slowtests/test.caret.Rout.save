@@ -190,8 +190,8 @@ stats::fitted(object=train.object)
 got model response from model.frame(survived~pclass+s...,
                                     data=call$data, na.action="na.fail")
 
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  28     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
 
 > plotres(caret.earth.mod2, trace=1, SHOWCALL=TRUE)
 plotmo.prolog(object$finalModel) succeeded

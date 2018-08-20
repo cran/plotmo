@@ -118,13 +118,13 @@ Warning in randomForest.default(m, y, ...) :
 > 
 > set.seed(2018) # for repeatable jitter in points (specified with pt.col)
 > plotmo(regr.rf.with.call, pt.col=2, SHOWCALL=TRUE)
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  29     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  29     0     0
 > # plotmo(regr.rf$learner.model, trace=1, SHOWCALL=TRUE) # Error: no formula in getCall(object)
 > set.seed(2018)
 > plotmo(rf, pt.col=2, SHOWCALL=TRUE)
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  29     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  29     0     0
 > 
 > # compare partial dependence plots
 > set.seed(2018)
@@ -150,7 +150,7 @@ calculating partdep for pclass
 > partialPlot(rf, pred.data=etitanic[train.subset,], x.var="pclass", n.pt=50, ylim=c(0, 1))
 > grid()
 > # TODO following fails
-> pd <- generatePartialDependenceData(regr.rf.with.call, task.regr.rf, "pclass", n=c(50, NA)) # Warning: argument is not numeric or logical: returning NA
+> pd <- generatePartialDependenceData(regr.rf.with.call, task.regr.rf, "pclass", n=c(50, NA))
 > try(print(plotPartialDependence(pd, data = getTaskData(task.regr.rf)))) # Error: Discrete value supplied to continuous scale
 Error : Discrete value supplied to continuous scale
 > 
@@ -370,37 +370,37 @@ ylim c(-0.1, 1.1)    clip TRUE
 
 --plot.degree1(draw.plot=TRUE)
 
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  29     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  29     0     0
 
 degree1 plot 1 pclass
 newdata[3,5]:
-  pclass    sex age sibsp parch
-1    1st female  29     0     0
-2    2nd female  29     0     0
-3    3rd female  29     0     0
+  pclass  sex age sibsp parch
+1    1st male  29     0     0
+2    2nd male  29     0     0
+3    3rd male  29     0     0
   factors: pclass sex
 predict returned[3,3]:
   prob.notsurvived prob.survived    response
-1            0.032         0.968    survived
-2            0.098         0.902    survived
-3            0.890         0.110 notsurvived
+1            0.872         0.128 notsurvived
+2            0.904         0.096 notsurvived
+3            0.928         0.072 notsurvived
   response is a factor with levels: notsurvived survived
 predict returned[3,1] after selecting nresponse=2:
   prob.survived
-1         0.968
-2         0.902
-3         0.110
+1         0.128
+2         0.096
+3         0.072
 predict after processing with nresponse=2 is [3,1]:
   prob.survived
-1         0.968
-2         0.902
-3         0.110
-graphics::plot.default(x=factor.object, y=c(0.968,0.902,0.11), type="n",
+1         0.128
+2         0.096
+3         0.072
+graphics::plot.default(x=factor.object, y=c(0.128,0.096,0...), type="n",
                        main="1 pclass", xlab="", ylab="", xaxt="n", yaxt="s",
                        xlim=c(0.6,3.4), ylim=c(-0.1,1.1))
 Will shift and scale displayed points specified by pt.col: yshift -1 yscale 1
-graphics::plot(x=factor.object, y=c(0.968,0.902,0.11), xaxt="n", yaxt="s",
+graphics::plot(x=factor.object, y=c(0.128,0.096,0...), xaxt="n", yaxt="s",
                add=TRUE, lty=1, lwd=1)
 Reducing trace level for subsequent degree1 plots
 degree1 plot 2 sex
@@ -446,37 +446,37 @@ predict after processing with nresponse=2 is [6,1]:
 persp(pclass:sex) theta 145
 Reducing trace level for subsequent degree2 plots
 degree2 plot 2 pclass:age
-persp(pclass:age) theta 145
+persp(pclass:age) theta 235
 degree2 plot 3 pclass:sibsp
 persp(pclass:sibsp) theta 55
 degree2 plot 4 pclass:parch
-persp(pclass:parch) theta 145
+persp(pclass:parch) theta 55
 degree2 plot 5 sex:age
 persp(sex:age) theta 145
 degree2 plot 6 sex:sibsp
 persp(sex:sibsp) theta 55
 degree2 plot 7 sex:parch
-persp(sex:parch) theta 145
+persp(sex:parch) theta 55
 degree2 plot 8 age:sibsp
 persp(age:sibsp) theta 145
 degree2 plot 9 age:parch
 persp(age:parch) theta 145
 degree2 plot 10 sibsp:parch
-persp(sibsp:parch) theta 235
+persp(sibsp:parch) theta 55
 > set.seed(2018)
 > plotmo(classif.rf.with.call$learner.model, SHOWCALL=TRUE, type="prob", pt.col=2)
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  29     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  29     0     0
 > set.seed(2018)
 > # note that in the following, get.y.shift.scale (in plotmo code) rescales the plotted y to 0..1
 > plotmo(rf,                                 SHOWCALL=TRUE, type="prob", pt.col="gray")
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  29     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  29     0     0
 > set.seed(2018)
 > # in following graph, note that get.y.shift.scale doesn't rescale the plotted y because ylim=c(0,2)
 > plotmo(rf,                                 SHOWCALL=TRUE, type="prob", ylim=c(0,2), pt.col="gray")
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  29     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  29     0     0
 > 
 > # compare partial dependence plots
 > set.seed(2018)
@@ -487,7 +487,7 @@ calculating partdep for pclass
 calculating partdep for pclass 
 > set.seed(2018)
 > # TODO following fails
-> pd <- generatePartialDependenceData(classif.rf.with.call, task.classif.rf, "pclass", n=c(50, NA)) # Warning: argument is not numeric or logical: returning NA
+> pd <- generatePartialDependenceData(classif.rf.with.call, task.classif.rf, "pclass", n=c(50, NA))
 > try(print(plotPartialDependence(pd, data = getTaskData(task.classif.rf)))) # Error: Discrete value supplied to continuous scale
 Error : Discrete value supplied to continuous scale
 > 
@@ -747,7 +747,6 @@ calculating partdep for Petal.Width
 > set.seed(2018)
 > library(gbm)
 Loading required package: survival
-Warning: package 'survival' was built under R version 3.5.1
 
 Attaching package: 'survival'
 

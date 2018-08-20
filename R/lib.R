@@ -290,6 +290,10 @@ eval.trace <- function(
 
     eval(expr, envir, enclos)
 }
+exp10 <- function(x) # e.g. exp10(-3) = 1e-3
+{
+    exp(x * log(10))
+}
 # This function is used for checking both xlim and ylim.
 # This checks that lim is is a 2 element numeric vector.
 # Also, if xlim[1] == xlim[2], then plot() issues a confusing message.
@@ -298,7 +302,7 @@ eval.trace <- function(
 
 fix.lim <- function(lim)
 {
-    if(!is.null(lim)) {
+    if(!is.null(lim) && !isDate(lim)) {
         stopifnot(is.numeric(lim), length(lim) == 2)
         # constants below are arbitrary
         small <- max(1e-6, .001 * abs(lim[1]), .001 * abs(lim[2]))
@@ -464,7 +468,7 @@ grepany <- function(pattern, x, ignore.case=FALSE, ...)
     any(grepl(pattern, x, ignore.case=ignore.case, ...))
 }
 # scalar form of ifelse, with short name :-)
-# only evaluates no argument if necessary
+# only evaluates the "no" argument if necessary
 ife <- function(ife.test, ife.yes, ife.no)
 {
     ife.test <- check.boolean(ife.test)
@@ -506,10 +510,19 @@ imatch.choices <- function(arg, choices,
     }
     imatch
 }
+isDate <- function(x)
+{
+    inherits(x, "Date")
+}
+# TRUE if all values in object are integers, ignoring NAs
+# assumes object is numeric or logical (check this before call this function)
 is.integral <- function(object)
 {
     object <- object[!is.na(object)]
-    length(object) > 0 && all(floor(object) == object)
+
+    length(object) > 0 &&
+    is.null(dim(object)) && # prevent error in floor for e.g. survival objects
+    all(floor(object) == object)
 }
 # is.specified's main purpose is to see if a plot component should be
 # drawn, i.e., to see if the component "has a color"
@@ -847,10 +860,10 @@ short.deparse <- function(object, alternative="object")
         s
 }
 # Remove duplicates in x, then sort (smallest first).
-# Following is faster than sort(unique(x)) because it requires only one sort.
+# Also works for Dates.
 sort.unique <- function(x)
 {
-    rle(sort(x, na.last=NA))[["values"]]  # rle() is in base, na.last=NA drops NAs
+    sort(unique(x), na.last=NA) # na.last=NA drops NAs
 }
 stop0 <- function(...)
 {

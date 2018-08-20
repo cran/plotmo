@@ -28,7 +28,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     caption      = NULL,
     trace        = 0,
 
-    grid.func    = median,
+    grid.func    = NULL,
     grid.levels  = NULL,
     extend       = 0,
     ngrid1       = 50,
@@ -498,8 +498,16 @@ plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
                               trace=trace, all1=all1)
     if(is.character(degree1)) # get all singles, not just those used in the model?
         singles <- seq_len(NCOL(x))
+    if(any(is.na(singles))) {
+        # Following occurs when plotting
+        #   train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
+        # because caret converts factor predictors to indicator columns and
+        # thus creates new variable names e.g. Speciesversicolor
+        warning0("NA in singles, will plot all variables (as if all1=TRUE)")
+        singles <- seq_len(NCOL(x))
+    }
     if(length(singles))
-        singles <- sort.unique(singles)
+        singles <- sort.unique(singles) # this will drop NAs if any
     nsingles <- length(singles)
     if(length(singles)) {
         degree1 <- check.index(degree1, "degree1", singles, colnames=colnames(x),
@@ -814,7 +822,6 @@ plot.degree1 <- function( # plot all degree1 graphs
         # by updating xgrid for this predictor (one column gets updated)
         xframe <- get.degree1.xframe(xgrid, x, ipred, ngrid1,
                                      ndiscrete, ux.list, extend)
-
         if(pmethod == "partdep" || pmethod == "apartdep") {
             stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
             yhat <- degree1.partdep.yhat(object,
@@ -1302,7 +1309,6 @@ plot.degree2 <- function(  # plot all degree2 graphs
         } else { # classic plotmo plot
             trace2(trace, "degree2 plot %d %s:%s\n",
                    ipair, pred.names[ipred1], pred.names[ipred2])
-
             yhat <- plotmo_predict(object, xframe, nresponse,
                         type, resp.levs, trace2, inverse.func, ...)$yhat
         }
@@ -1430,7 +1436,8 @@ plot.degree2 <- function(  # plot all degree2 graphs
 }
 get.degree2.xranges <- function(x, extend, ux.list, ndiscrete)
 {
-    xranges <- matrix(NA, ncol=ncol(x), nrow=2)
+    # we use a data.frame for xranges so columns can have different types (e.g. Dates)
+    xranges <- as.data.frame(matrix(NA, ncol=ncol(x), nrow=2))
     colnames(xranges) <- colnames(x)
     for(icol in seq_len(ncol(x))) {
         x1 <- x[,icol]
@@ -1621,7 +1628,7 @@ plot.contour <- function(x, x1grid, x2grid, yhat, name1, name2, ipred1, ipred2,
     # We use suppressWarnings below to suppress the warning "all z values are
     # equal" This warning may be issued multiple times and may be annoying to
     # the plotmo user.  (Unfortunately this also suppress any other warnings
-    # in persp.)
+    # in contour.default.)
 
     suppressWarnings(
         call.plot(graphics::contour.default,

@@ -114,7 +114,7 @@ names(et): survived pclass.fac parch.num parch.fac pclass.num
  plotmo grid:    pclass.num parch.num
                           2         0
  plotmo grid:    pclass.fac parch.num
-                        1st         0
+                        3rd         0
 stats::predict(rpart.object, data.frame[3,2], type="vector")
 stats::fitted(object=rpart.object)
 fitted() was unsuccessful, will use predict() instead
@@ -125,7 +125,7 @@ got model response from model.frame(survived~pclass.n...,
                           2      levz
 
  plotmo grid:    pclass.fac parch.fac
-                        1st      levz
+                        3rd      levz
  plotmo grid:    pclass.num parch.num
                           2         0
 Warning: forcing clip=FALSE because center=TRUE (a limitation of the current implementation)
@@ -237,7 +237,7 @@ Warning: forcing clip=FALSE because center=TRUE (a limitation of the current imp
 Levels: lev.zero lev.one lev.two.or.more
 names(et): survived pclass.fac parch.num parch.fac pclass.num 
  plotmo grid:    pclass.fac parch.fac
-                        1st  lev.zero
+                        2nd  lev.zero
 > 
 > aflip <- earth(O3~vh + wind + humidity + temp, data=ozone1, degree=2)
 > col.response<- ifelse(ozone1$O3 == 38, "red", "pink")

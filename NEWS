@@ -1,6 +1,23 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.5.0  Aug 19, 2018
+
+The default pegged value of background variables has changed in this
+version, but only for logical and factor variables.  For these
+variables the value occurring most often in the training data is used
+as the background value.  (In previous plotmo versions, the first
+level of factors was used.  But the majority level seems more
+consistent with the median used for numerics.  Also, in previous
+versions logicals and integers were sometimes incorrectly converted to
+numeric.)
+Note this change doesn't affect pmethod="partdep" and "apartdep",
+which continue to behave as in previous versions.
+
+We now support base::Date variables.
+
+Plotmo now has better support for caret rpart models with factor predictors.
+
 --- 3.4.2  July 3, 2018
 
 Added support for the partykit and evtree packages.

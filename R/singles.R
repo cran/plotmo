@@ -92,6 +92,10 @@ get.all.pairs.from.singles <- function(object, x, trace, all2)
     singles <- plotmo.singles(object, x, nresponse=1, trace, all1=TRUE)
     if(length(singles) == 0)
         return(NULL)    # no pairs (must be an intercept only model)
+    if(any(is.na(singles))) {
+        # We already issued warning0("NA in singles, will plot all variables")
+        singles <- seq_len(NCOL(x)) # plot all pairs
+    }
     singles <- unique(singles)
     if(all2 >= 2) {
         max <- 20      # note that 20 * 19 / 2 is 120 plots

@@ -231,7 +231,7 @@ lcush <- data.frame(Type=as.numeric(Cushings$Type),log(Cushings[,1:2]))
 lcush <- lcush[1:21,]
 qda.model.vignette <- qda(Type~., data=lcush)
 plotmo1(qda.model.vignette, type="class", all2=TRUE,
-       type2="contour", ngrid2=100, nlevels=2, drawlabels=FALSE,
+       type2="contour", ngrid2=100, contour.nlevels=2, contour.drawlabels=FALSE,
        pt.col=as.numeric(lcush$Type)+1,
        pt.pch=as.character(lcush$Type))
 

@@ -640,13 +640,18 @@ draw.density.along.the.bottom <- function(x, den.col=NULL, scale=NULL, ...)
 {
     if(is.null(den.col))
         den.col <- dota("density.col", DEF="gray57", EX=0, ...)
-    den <- density(x, adjust=dota("density.adjust", DEF=.5, EX=0, ...), na.rm=TRUE)
-    usr <- par("usr") # xmin, xmax, ymin, ymax
-    if(is.null(scale))
-        scale <- .08 / (max(den$y) - min(den$y))
-    den$y <- usr[3] + den$y * scale * (usr[4] - usr[3])
-    call.plot(graphics::lines.default, PREFIX="density.", drop.adjust=1,
-              force.x=den, force.y=NULL, def.col=den.col, ...)
+    den <- try(density(x, adjust=dota("density.adjust", DEF=.5, EX=0, ...), na.rm=TRUE),
+               silent=TRUE)
+    if(is.try.err(den))
+        warning0("draw.density.along.the.bottom: cannot determine density")
+    else {
+        usr <- par("usr") # xmin, xmax, ymin, ymax
+        if(is.null(scale))
+            scale <- .08 / (max(den$y) - min(den$y))
+        den$y <- usr[3] + den$y * scale * (usr[4] - usr[3])
+        call.plot(graphics::lines.default, PREFIX="density.", drop.adjust=1,
+                  force.x=den, force.y=NULL, def.col=den.col, ...)
+    }
 }
 draw.rlm.line <- function(which, versus1, resids, nversus, ...)
 {

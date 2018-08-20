@@ -322,7 +322,8 @@ This is mgcv 1.8-24. For overview type 'help("mgcv-package")'.
 > z1 <- runif(n);
 > y <- test1(cbind(x,z1)) + rnorm(n) * 0.1
 > a <- gam(y ~ s(x) + s(x,z1))
-> plotmo(a, do.par=FALSE, type2="contour", caption=caption, col.response=3, smooth.col="indianred",
+> plotmo(a, do.par=FALSE, type2="contour", caption=caption,
++       col.response=3, smooth.col="indianred",
 +       func=test1, func.col="indianred", func.lwd=5, func.lty=2, smooth.lwd=3)
  plotmo grid:    x        z1
          0.4878107 0.5185988
@@ -353,7 +354,7 @@ This is mgcv 1.8-24. For overview type 'help("mgcv-package")'.
 > plot(a, select=2)
 > plot(a, select=3)
 > plot(a, select=1)
-> plotmo(a, do.par=FALSE, type2="contour", caption=caption, xlab=NULL, main="", func=test.func, ngrid2=10, drawlabels=FALSE)
+> plotmo(a, do.par=FALSE, type2="contour", caption=caption, xlab=NULL, main="", func=test.func, ngrid2=10, contour.drawlabels=FALSE)
  plotmo grid:    x0        x1        x2       x3
            0.474141 0.5151294 0.4460308 0.479208
 > plotmo(a, do.par=FALSE, degree1=F, degree2=1, persp.the=-35)
@@ -816,7 +817,7 @@ This is mgcv 1.8-24. For overview type 'help("mgcv-package")'.
                               test wind=factor, lm(doy ~ vh + wind + I(humidity*temp) + log(ibh), data=ozone2) 
 > plotmo(a, col.response="gray", level=.95, nrug=-1, do.par=FALSE, caption=caption, smooth.col="indianred")
  plotmo grid:    vh  wind humidity temp    ibh
-               5760 wind0       64   62 2112.5
+               5760 wind5       64   62 2112.5
 > termplot(a, se=2)
 > 
 > caption <- "test level options"
@@ -824,13 +825,13 @@ This is mgcv 1.8-24. For overview type 'help("mgcv-package")'.
                               test level options 
 > plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, level=.95, level.shade=0, caption=caption)
  plotmo grid:    vh  wind humidity temp    ibh
-               5760 wind0       64   62 2112.5
+               5760 wind5       64   62 2112.5
 > plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, level=.95, level.shade="orange")
  plotmo grid:    vh  wind humidity temp    ibh
-               5760 wind0       64   62 2112.5
+               5760 wind5       64   62 2112.5
 > plotmo(a, do.par=FALSE, degree1=2, degree2=FALSE, level=.95, level.shade2=0)
  plotmo grid:    vh  wind humidity temp    ibh
-               5760 wind0       64   62 2112.5
+               5760 wind5       64   62 2112.5
 > 
 > caption <- "test wind=factor, glm(y ~ i + j, family=poisson())"
 > y <- c(18,17,15,20,10,20,25,13,12)
@@ -854,11 +855,11 @@ Warning: the level argument may not work correctly on glm objects built with wei
 > a <- gam(doy ~ vh + wind + s(humidity) + s(vh) + temp, data=ozone2)
 > plotmo(a, level=.95, caption=caption)
  plotmo grid:    vh  wind temp humidity
-               5760 wind0   62       64
+               5760 wind5   62       64
 > caption <- "test wind=factor, clip=TRUE, gam(doy ~ vh + wind + s(humidity) + s(vh) + temp, data=ozone2)"
 > plotmo(a, level=.95, caption=caption, clip=FALSE)
  plotmo grid:    vh  wind temp humidity
-               5760 wind0   62       64
+               5760 wind5   62       64
 > # termplot doesn't work here so code commented out
 > # dopar(3,3,caption)
 > # plotmo(a, do.par=FALSE)
@@ -897,7 +898,7 @@ Warning: the level argument may not work correctly on glm objects built with wei
 > a <- qda(lcush[,2:3], lcush[,1])
 > plotmo(a, type="class", all2=TRUE,
 +        caption= "plotmo.y from 2nd argument of call (qda)",
-+        type2="contour", ngrid2=100, nlevels=2, drawlabels=FALSE,
++        type2="contour", ngrid2=100, contour.nlevels=2, contour.drawlabels=FALSE,
 +        col.response=as.numeric(lcush$Type)+1,
 +        pt.pch=as.character(lcush$Type))
  plotmo grid:    Tetrahydrocortisone Pregnanetriol
@@ -1154,8 +1155,8 @@ got model response from model.frame(survived~pclass+s...,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=FALSE, ranking variables on IncNodePurity
 
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  38     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    1st male  38     0     0
 
 > 
 > cat("=== rf.regression.importance ===\n")
@@ -1173,8 +1174,8 @@ got model response from model.frame(survived~pclass+s...,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=TRUE, ranking variables on %IncMSE
 
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  38     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    1st male  38     0     0
 
 > 
 > etit <- etitanic[1:300,]
@@ -1192,8 +1193,8 @@ got model response from model.frame(survived~pclass+s...,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
 
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  38     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    1st male  38     0     0
 
 > plotmo(rf.classification, trace=1, type="prob", nresponse="died", degree2=0, SHOWCALL=TRUE)
 stats::predict(randomForest.formula.object, data.frame[3,5], type="prob")
@@ -1203,8 +1204,8 @@ got model response from model.frame(survived~pclass+s...,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
 
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  38     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    1st male  38     0     0
 
 > 
 > cat("=== rf.classification.importance ===\n")
@@ -1219,8 +1220,8 @@ got model response from model.frame(survived~pclass+s...,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=TRUE, ranking variables on MeanDecreaseAccuracy
 
- plotmo grid:    pclass    sex age sibsp parch
-                    1st female  38     0     0
+ plotmo grid:    pclass  sex age sibsp parch
+                    1st male  38     0     0
 
 > 
 > cat("=== plotres randomForest ===\n")

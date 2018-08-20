@@ -3,7 +3,6 @@
 > source("test.prolog.R")
 > library(gbm)
 Loading required package: survival
-Warning: package 'survival' was built under R version 3.5.1
 Loading required package: lattice
 Loading required package: splines
 Loading required package: parallel
@@ -371,7 +370,7 @@ train  test    CV   OOB
 > old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.bernoulli, do.par=2)
  plotmo grid:    sex age sibsp parch pclass
-              female  30     0     0  first
+                male  30     0     0  third
 > print(summary(gbm.bernoulli)) # will also plot
           var   rel.inf
 age       age 39.960711
@@ -428,7 +427,7 @@ train  test    CV   OOB
 > old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.huberized, do.par=2)
  plotmo grid:    sex age
-              female  30
+                male  30
 > print(summary(gbm.huberized)) # will also plot
     var rel.inf
 age age 74.6857
@@ -480,7 +479,7 @@ train  test    CV   OOB
 > old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.adaboost, do.par=2)
  plotmo grid:    sex age
-              female  31
+                male  31
 > print(summary(gbm.adaboost)) # will also plot
     var  rel.inf
 sex sex 71.68619

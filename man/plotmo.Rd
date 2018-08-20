@@ -23,7 +23,7 @@ plotmo(object=stop("no 'object' argument"),
     type2="persp",
     degree1=TRUE, all1=FALSE, degree2=TRUE, all2=FALSE,
     do.par=TRUE, clip=TRUE, ylim=NULL, caption=NULL, trace=0,
-    grid.func=median, grid.levels=NULL, extend=0,
+    grid.func=NULL, grid.levels=NULL, extend=0,
     ngrid1=50, ngrid2=20, ndiscrete=5, npoints=3000,
     center=FALSE, xflip=FALSE, yflip=FALSE, swapxy=FALSE, int.only.ok=TRUE,
     ...)
@@ -295,14 +295,15 @@ Error and warning messages will be printed as usual.
 }
 \item{grid.func}{
 Function applied to columns of the \code{x} matrix to pin the values of
-variables not on the axes.
-Default is \code{\link[stats]{median}}.
-This argument is not related to the \code{grid.col} argument.
+variables not on the axis of the current plot (the ``background'' variables).\cr
+The default is a function which for numeric variables returns the
+median and for logical and factors variables returns the value
+occurring most often in the training data.\cr
 Examples:\preformatted{    plotmo(mod, grid.func=mean)
     grid.func <- function(x, ...) quantile(x)[2] # 25\% quantile
     plotmo(mod, grid.func=grid.func)}
-This argument is ignored for factors.  The first level of
-factors is used. That can be changed with \code{grid.levels}, see below.
+This argument is not related to the \code{grid.col} argument.\cr
+This argument can be overridden for specific variables---see \code{grid.levels} below.
 }
 \item{grid.levels}{
 Default is \code{NULL}.
@@ -352,8 +353,9 @@ Use \code{npoints=TRUE} or \code{-1} for all points.
 \item{ndiscrete}{
 Default \code{5} (a somewhat arbitrary value).
 Variables with no more than \code{ndiscrete} unique values
-are plotted as quantized in plots (a staircase rather than a curve).
+are plotted as quantized in plots (a staircase rather than a curve).\cr
 Factors are always considered discrete.
+Variables with non-integer values are always considered non-discrete.
 }
 \item{int.only.ok}{
 Plot the model even if it is an intercept-only model (no predictors are

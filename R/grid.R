@@ -1,7 +1,7 @@
 # grid.R: functions for creating the grid of values to be plotted in plotmo graphs
 
-# Get the x matrix (actually a data.frame) with median values (or
-# first level for factors), ngrid1 rows, all rows identical, nrow(xgrid) is ngrid1.
+# Get the x matrix (actually a data.frame) with median values (or first level
+# for factors), ngrid1 rows, all rows identical, nrow(xgrid) is ngrid1.
 
 get.degree1.xgrid <- function(x, grid.func, grid.levels, pred.names, ngrid1)
 {
@@ -9,8 +9,8 @@ get.degree1.xgrid <- function(x, grid.func, grid.levels, pred.names, ngrid1)
     check.grid.levels.arg(x, grid.levels, pred.names)
     xgrid <- data.frame(matrix(0, ngrid1, ncol(x), byrow=TRUE))
     for(ipred in seq_len(ncol(x)))
-        xgrid[[ipred]] <- get.fixed.grid.lev(x[[ipred]], pred.names[ipred],
-                                             grid.func, grid.levels)
+        xgrid[[ipred]] <- get.fixed.gridval(x[[ipred]], pred.names[ipred],
+                                            grid.func, grid.levels)
     warn.if.not.all.finite(xgrid, "'xgrid' for degree1 plots")
     colnames(xgrid) <- pred.names
     xgrid
@@ -30,7 +30,7 @@ get.degree1.xframe <- function(xgrid, x, ipred, ngrid1,
               "of levels ",  length(u1), " in '",
               colnames(x)[ipred],
               "'\n       Workaround: call plotmo with ngrid1=", length(u1))
-    if(is.factor(x1) || length(u1) <= ndiscrete) {
+    if(is.factor(x1) || is.logical(x1) || length(u1) <= ndiscrete) {
         levels <- get.all.levs(x1, u1)
         xframe <- xgrid[1:length(levels), , drop=FALSE] # shorten xframe
         xframe[[ipred]] <- levels
@@ -44,12 +44,15 @@ get.degree1.xframe <- function(xgrid, x, ipred, ngrid1,
             xrange[1] <- xrange[1] - ext
             xrange[2] <- xrange[2] + ext
         }
-        xframe[[ipred]] <- seq(from=xrange[1], to=xrange[2], length=ngrid1)
+        xgrid <- seq(from=xrange[1], to=xrange[2], length=ngrid1)
+        # if(is.integer(x1))
+        #     xgrid <- as.integer(xgrid)
+        xframe[[ipred]] <- xgrid
     }
     xframe
 }
 # We want to display discrete variables in degree1 plots as quantized.
-# (Factors get handled elsewhere).  So if a variable is discrete, then
+# (Factors get handled elsewhere.)  So if a variable is discrete, then
 # modify the xframe and yhat to do so.  For example, an xframe that was
 #
 #      pclass yhat
@@ -73,7 +76,8 @@ blockify.degree1.frame <- function(xframe, yhat, intervals,
     u1 <- ux.list[[ipred]]
     # TODO the integral check is necessary for compatibility with blockify.degree2.frame
     # (the code here can handle non integers but the code in blockify.degree2.frame can't)
-    if(!is.factor(xframe[[ipred]]) && length(u1) <= ndiscrete && is.integral(u1)) {
+    if(length(u1) <= ndiscrete && !is.factor(xframe[[ipred]]) && !isDate(u1) &&
+            is.integral(u1)) {
         # discrete, so duplicate each elem in yhat
         yhat <- rep(yhat, each=2)
         if(!is.null(intervals)) {
@@ -107,8 +111,8 @@ get.degree2.xgrid <- function(x, grid.func, grid.levels, pred.names, ngrid2)
     check.grid.levels.arg(x, grid.levels, pred.names)
     xgrid <- list(ncol(x))
     for(ipred in seq_len(ncol(x)))
-        xgrid[[ipred]] <- get.fixed.grid.lev(x[[ipred]], pred.names[ipred],
-                                             grid.func, grid.levels)
+        xgrid[[ipred]] <- get.fixed.gridval(x[[ipred]], pred.names[ipred],
+                                            grid.func, grid.levels)
     warn.if.not.all.finite(xgrid, "'xgrid' for degree2 plots")
     names(xgrid) <- pred.names
     xgrid <- as.data.frame(xgrid)
@@ -127,42 +131,40 @@ get.degree2.xgrid <- function(x, grid.func, grid.levels, pred.names, ngrid2)
 get.degree2.xframe <- function(xgrid, x, ipred1, ipred2,
                                ngrid2, xranges, ux.list, ndiscrete)
 {
-    check.faclen <- function(ipred, nlevs)
-    {
-        if(is.factor(x[[ipred]]) && nlevs > ngrid2)
-            stop0("ngrid2=", ngrid2, " is less than the number",
-                  " of levels ", nlevs, " in '",
-                  colnames(x)[ipred],
-              "'\n       Workaround: call plotmo with ngrid2=", length(u1))
-    }
-    # get x1grid
+    ret1 <- get.degree2.xframe.aux(xgrid, x, ipred1,
+                                   ngrid2, xranges, ux.list, ndiscrete)
+    ret2 <- get.degree2.xframe.aux(xgrid, x, ipred2,
+                                   ngrid2, xranges, ux.list, ndiscrete)
+    # pack x1grid and x2grid into xgrid
+    if(ret1$n != ngrid2 || ret2$n != ngrid2)
+        xgrid <- xgrid[1:(ret1$n * ret2$n), , drop=FALSE] # shorten xgrid
+    xgrid[[ipred1]] <- ret1$xgrid # will recycle
+    xgrid[[ipred2]] <- rep(ret2$xgrid, each=ret1$n)
+    list(xframe=xgrid, x1grid=ret1$xgrid, x2grid=ret2$xgrid)
+}
+get.degree2.xframe.aux <- function(xgrid, x, ipred1,
+                                   ngrid2, xranges, ux.list, ndiscrete)
+{
     n1 <- ngrid2 # will change if ipred1 is discrete
     u1 <- ux.list[[ipred1]]
     nlevs1 <- length(u1)
-    check.faclen(ipred1, nlevs1)
+    if(is.factor(x[[ipred1]]) && nlevs1 > ngrid2)
+        stop0("ngrid2=", ngrid2, " is less than the number",
+              " of levels ", nlevs1, " in '",
+              colnames(x)[ipred1],
+          "'\n       Workaround: call plotmo with ngrid2=", length(u1))
+    x1 <- x[[ipred1]]
     x1grid <-
-        if(is.factor(x[[ipred1]]) || nlevs1 <= ndiscrete) { # discrete?
+        if(is.factor(x1) || is.logical(x1) || nlevs1 <= ndiscrete) { # discrete?
             n1 <- nlevs1
-            x1grid <- get.all.levs(x[[ipred1]], u1)
+            x1grid <- get.all.levs(x1, u1)
         } else
             seq(from=xranges[1,ipred1], to=xranges[2,ipred1], length=ngrid2)
-    # get x2grid
-    n2 <- ngrid2 # will change if ipred2 is discrete
-    u2 <- ux.list[[ipred2]]
-    nlevs2 <- length(u2)
-    check.faclen(ipred2, nlevs2)
-    x2grid <-
-        if(is.factor(x[[ipred2]]) || nlevs2 <= ndiscrete) { # discrete?
-            n2 <- nlevs2
-            get.all.levs(x[[ipred2]], u2)
-        } else
-            seq(from=xranges[1,ipred2], to=xranges[2,ipred2], length=ngrid2)
-    # pack x1grid and x2grid into xgrid
-    if(n1 != ngrid2 || n2 != ngrid2)
-        xgrid <- xgrid[1:(n1 * n2), , drop=FALSE] # shorten xgrid
-    xgrid[[ipred1]] <- x1grid # will recycle
-    xgrid[[ipred2]] <- rep(x2grid, each=n1)
-    list(xframe=xgrid, x1grid=x1grid, x2grid=x2grid)
+    if(is.integer(x1)) {
+        x1grid <- unique(as.integer(x1grid))
+        n1 <- length(x1grid)
+    }
+    list(xgrid=x1grid, n=n1)
 }
 # we want to draw discrete variables in persp and contour plots using "blocks"
 
@@ -203,84 +205,6 @@ blockify.degree2.frame <- function(x, yhat, x1grid, x2grid,
     }
     list(yhat=yhat, x1grid=x1grid, x2grid=x2grid)
 }
-# Check grid.levels arg passed in by the user.  This checks that the names
-# of the list elements are indeed predictor names.  The actual levels will
-# be checked later in get.fixed.grid.lev.
-
-check.grid.levels.arg <- function(x, grid.levels, pred.names)
-{
-    if(!is.null(grid.levels)) { # null is the default value
-        if(!is.list(grid.levels))
-            stop0("grid.levels must be a list.  ",
-                  "Example: grid.levels=list(sex=\"male\")")
-        for(name in names(grid.levels))
-            if(!pmatch(name, pred.names, 0))
-                stop0("illegal variable name '", name, "' in grid.levels")
-    }
-}
-# x1 is a column in the data matrix x
-get.fixed.grid.lev <- function(x1, pred.name, grid.func, grid.levels)
-{
-    lev <- NA
-    ilev <- 1
-    if(!is.null(grid.levels)) {
-        # look for pred.name in the grid.levels list, if found use its value
-        iname <- which(pmatch(names(grid.levels), pred.name, duplicates.ok=TRUE) == 1)
-        if(length(iname) > 1)
-            stop0("illegal grid.levels argument (\"",
-                  names(grid.levels)[iname[1]], "\" and \"",
-                  names(grid.levels)[iname[2]],
-                  "\" both match \"", pred.name, "\")")
-        if(length(iname)) {
-            lev <- grid.levels[[iname]]
-            if(length(lev) > 1 || is.na(lev))
-                stop0("illegal value for ", pred.name, " in grid.levels")
-            if(is.factor(x1)) {
-                lev.name <- grid.levels[[iname]]
-                if(!is.character(lev.name)    ||
-                        length(lev.name) != 1 ||
-                        !nzchar(lev.name))
-                    stop0("illegal level for \"",
-                          names(grid.levels)[iname], "\" in grid.levels ",
-                          "(specify factor levels with a string)")
-                lev.names <- levels(x1)
-                ilev <- pmatch(lev.name, lev.names, 0)
-                if(!ilev)
-                    stop0("illegal level \"", lev.name, "\" for \"",
-                          pred.name, "\" in grid.levels (allowed levels are ",
-                          quotify(lev.names), ")")
-            }
-            else if(!(is.numeric(lev) || is.logical(lev)) || !is.finite(lev))
-                stop0("illegal value for ", pred.name, " in grid.levels")
-        }
-    }
-    if(is.factor(x1)) {         # use ilev
-        lev.names <- levels(x1)
-        lev <- if(is.ordered(x1))
-                   ordered(lev.names, levels=lev.names)[ilev]
-               else
-                   factor(lev.names, levels=lev.names)[ilev]
-    } else if(is.na(lev)) {     # use lev
-        if(!is.function(grid.func))
-            stop0("'grid.func' is not a function");
-        formals <- names(formals(grid.func))
-        # check grid.func signature, we allow argname "na.rm" for mean and median
-        if(length(formals) < 2 || formals[1] != "x" ||
-                (!any(formals == "na.rm") && formals[2] != "..."))
-            stop0("the formal arguments of 'grid.func' should be 'x' and '...'\n",
-                  "       Your 'grid.func' has ",
-                  if(length(formals) == 0)      "no formal arguments"
-                  else if(length(formals) == 1) "a single formal argument "
-                  else                          "formal arguments ",
-                  if(length(formals) > 0) paste0("'", formals, "'", collapse=" ")
-                  else "")
-        lev <- grid.func(x1, na.rm=TRUE)
-        if(length(lev) != 1 || (!is.numeric(lev) && !is.numeric(lev)))
-            stop0("'grid.func' should return a single number\n",
-                  "       Your 'grid.func' returned ", as.char(lev))
-    }
-    lev
-}
 # if x is a factor
 #   return a factor vector with nlevs elements, e.g. pclass1, pclass2, pclass3.
 # else
@@ -306,7 +230,7 @@ get.all.levs <- function(x, levels)
 # Print the grid values, must do some finagling for a nice display
 print.grid.values <- function(xgrid, trace)
 {
-    trace1(trace, "\n")
+    trace1(trace, "\n") # extra space when tracing
     row <- xgrid[1, , drop=FALSE]
     names(row) <- c(paste("plotmo grid:   ", names(row)[1]), names(row)[-1])
     rownames(row) <- ""

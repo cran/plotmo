@@ -133,10 +133,10 @@ after par: cex=0.83 col.main=#456789 col.axis=black mar=3331 mfcol=22
 > data(etitanic)
 > a20 <- earth(pclass ~ ., data=etitanic, degree=2)
 > plotmo(a20, nresponse=1, col=2, col.degree1=3, persp.col="pink", SHOWCALL=1, degree1=1:2, degree2=1:2)
- plotmo grid:    survived    sex age sibsp parch
-                        0 female  28     0     0
+ plotmo grid:    survived  sex age sibsp parch
+                        0 male  28     0     0
 > plotmo(a20, nresponse=1, lty=2, persp.lty=1, SHOWCALL=1, degree1=1:2, degree2=1:2)
- plotmo grid:    survived    sex age sibsp parch
-                        0 female  28     0     0
+ plotmo grid:    survived  sex age sibsp parch
+                        0 male  28     0     0
 > 
 > source("test.epilog.R")

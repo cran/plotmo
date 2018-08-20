@@ -36,7 +36,7 @@ Loading required package: mvtnorm
 > 
 > plotmo(lmtree.boston1, SHOWCALL=TRUE)
  plotmo grid:    lstat     rm    crim ptratio tax     dis rad chas
-                 11.36 6.2085 0.25651   19.05 330 3.20745   1   no
+                 11.36 6.2085 0.25651   19.05 330 3.20745  24   no
 > plotmo(lmtree.boston2, trace=2, SHOWCALL=TRUE)
 plotmo trace 2: plotmo(object=lmtree.boston2, trace=2, SHOWCALL=TRUE)
 object call is
@@ -232,11 +232,11 @@ graphics::par(mfrow=c(4,4), mgp=c(1.5,0.4,0), tcl=-0.3, font.main=2,
 degree1 plot 1 log.lstat
 newdata[50,8]:
     log.lstat rm.squared    crim ptratio tax     dis rad chas
-1   0.5481214   38.54547 0.25651   19.05 330 3.20745   1   no
-2   0.6111556   38.54547 0.25651   19.05 330 3.20745   1   no
-3   0.6741898   38.54547 0.25651   19.05 330 3.20745   1   no
-... 0.7372240   38.54547 0.25651   19.05 330 3.20745   1   no
-50  3.6367964   38.54547 0.25651   19.05 330 3.20745   1   no
+1   0.5481214   38.54547 0.25651   19.05 330 3.20745  24   no
+2   0.6111556   38.54547 0.25651   19.05 330 3.20745  24   no
+3   0.6741898   38.54547 0.25651   19.05 330 3.20745  24   no
+... 0.7372240   38.54547 0.25651   19.05 330 3.20745  24   no
+50  3.6367964   38.54547 0.25651   19.05 330 3.20745  24   no
   factors: rad(ordered) chas
 stats::predict(lmtree.object, data.frame[50,8], type="response")
 predict returned[50,1] with no column names:
@@ -261,11 +261,11 @@ degree1 plot 4 tax
 degree2 plot 1 log.lstat:rm.squared
 newdata[400,8]:
     log.lstat rm.squared    crim ptratio tax     dis rad chas
-1   0.5481214   12.68072 0.25651   19.05 330 3.20745   1   no
-2   0.7106832   12.68072 0.25651   19.05 330 3.20745   1   no
-3   0.8732451   12.68072 0.25651   19.05 330 3.20745   1   no
-... 1.0358069   12.68072 0.25651   19.05 330 3.20745   1   no
-400 3.6367964   77.08840 0.25651   19.05 330 3.20745   1   no
+1   0.5481214   12.68072 0.25651   19.05 330 3.20745  24   no
+2   0.7106832   12.68072 0.25651   19.05 330 3.20745  24   no
+3   0.8732451   12.68072 0.25651   19.05 330 3.20745  24   no
+... 1.0358069   12.68072 0.25651   19.05 330 3.20745  24   no
+400 3.6367964   77.08840 0.25651   19.05 330 3.20745  24   no
   factors: rad(ordered) chas
 stats::predict(lmtree.object, data.frame[400,8], type="response")
 predict returned[400,1] with no column names:
@@ -295,7 +295,7 @@ ylim c(3.124, 53.64)    clip TRUE
 --plot.degree1(draw.plot=TRUE)
 
  plotmo grid:    log.lstat rm.squared    crim ptratio tax     dis rad chas
-                  2.430097   38.54547 0.25651   19.05 330 3.20745   1   no
+                  2.430097   38.54547 0.25651   19.05 330 3.20745  24   no
 
 graphics::plot.default(x=c(0.548,0.611,0...), y=c(23.26,23.24,2...), type="n",
                        main="1 log.lstat", xlab="", ylab="", xaxt="s",
@@ -315,14 +315,14 @@ got model response from model.frame(medv~log.lstat+rm...,
                                     data=call$data, na.action="na.pass")
 
  plotmo grid:    log.lstat rm.squared    crim ptratio tax     dis rad chas
-                  2.430097   38.54547 0.25651   19.05 330 3.20745   1   no
+                  2.430097   38.54547 0.25651   19.05 330 3.20745  24   no
 
 > plotmo(lmtree.boston2, all1=TRUE, all2=TRUE, SHOWCALL=TRUE)
 Warning: too many predictors to plot all pairs,
          so plotting degree2 plots for just the first 7 predictors.
          Call plotmo with all2=2 to plot degree2 plots for up to 20 predictors.
  plotmo grid:    log.lstat rm.squared    crim ptratio tax     dis rad chas
-                  2.430097   38.54547 0.25651   19.05 330 3.20745   1   no
+                  2.430097   38.54547 0.25651   19.05 330 3.20745  24   no
 > 
 > # TODO gives warnings because of because of price/citations in formula
 > # data("Journals", package = "AER")

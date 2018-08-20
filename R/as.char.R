@@ -14,7 +14,7 @@ as.char <- function(object, maxlen=20)
     else if(is.environment(object))
         environment.as.char(object)
 
-    else if(is.call(object)) { # e.g. obj is a call object in foo(x=1:3)
+    else if(is.call(object)) { # e.g. x is a call object in foo(x=1:3)
         s <- strip.space.collapse(format(object))
         if(nchar(s) > maxlen)
             s <- paste0(substr(s, 1, maxlen), "...)")
@@ -36,6 +36,9 @@ as.char <- function(object, maxlen=20)
 
     else if(class(object)[1] == "list") # not is.list() because e.g. lm objects are lists
         paste0("list(", paste.trunc(list.as.char(object), maxlen=maxlen+12), ")")
+
+    else if(class(object)[1] == "Date")
+        paste0("Date:", paste.trunc(object, maxlen=maxlen+12))
 
     else
         paste0(class(object)[1], ".object")
