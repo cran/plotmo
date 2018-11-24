@@ -500,7 +500,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(party.Kyphosis))
 > 
 > library(evtree)

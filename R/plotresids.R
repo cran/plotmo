@@ -406,7 +406,7 @@ get.resids.xlim <- function(xlim, force.auto.resids.xlim,
     if(force.auto.resids.xlim || !is.specified(xlim)) { # auto xlim?
         if(which == W9LOGLOG) {
             # don't show lower 5% of points
-            quant <- quantile(trans.versus, prob=c(.05, 1), names=FALSE)
+            quant <- quantile(trans.versus, probs=c(.05, 1), names=FALSE)
             min <- quant[1]
             max <- quant[2]
             # extra left margin so slope of linear fit not flattened
@@ -660,7 +660,7 @@ draw.rlm.line <- function(which, versus1, resids, nversus, ...)
     x <- if(nversus == V2INDEX) 1:length(trans.versus) else trans.versus
     if(which == W9LOGLOG) {
         # ignore lower 10% of points (very small residuals i.e. very neg logs)
-        quant <- quantile(trans.versus, prob=.1, na.rm=TRUE, names=FALSE)
+        quant <- quantile(trans.versus, probs=.1, na.rm=TRUE, names=FALSE)
         ok <- which(x > quant)
         x <- x[ok]
         trans.resids <- trans.resids[ok]

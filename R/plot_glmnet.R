@@ -257,7 +257,7 @@ add.s.line <- function(lambda, x, beta, s, grid.col, coef.col, s.col, ...)
             force.col=s.col, force.cex=.8, def.srt=90, def.xpd=NA, ...)
 }
 # Return NULL or an integer vector
-# Reproduced here (from glmnet version 2.0-5, march 2016)
+# Reproduced here (from glmnet version 2.0-16, nov 2018)
 # so don't have to import glmnet into plotmo.
 
 nonzeroCoef = function (beta, bystep = FALSE)

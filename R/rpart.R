@@ -50,6 +50,12 @@ plotmo.pairs.rpart <- function(object, x, ...)
 }
 plotmo.predict.rpart <- function(object, newdata, type, ..., TRACE)
 {
+    # change option warnPartialMatchDollar to work around issue within predict.rpart: Warning: partial match of 'split' to 'splits'
+    old.warnPartialMatchDollar <- getOption("warnPartialMatchDollar")
+    if(!is.null(old.warnPartialMatchDollar))
+        on.exit(options(warnPartialMatchDollar=old.warnPartialMatchDollar))
+    options(warnPartialMatchDollar=FALSE)
+
     # do some hand holding to avoid obscure message from predict.rpart
     pmatch <- pmatch(object$method, c("anova", "class", "exp", "poisson"))
     if(pmatch == 2) { # class

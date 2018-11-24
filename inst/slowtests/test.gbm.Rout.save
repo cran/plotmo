@@ -2,20 +2,9 @@
 > 
 > source("test.prolog.R")
 > library(gbm)
-Loading required package: survival
-Loading required package: lattice
-Loading required package: splines
-Loading required package: parallel
-Loaded gbm 2.1.3
+Loaded gbm 2.1.4
 > library(rpart.plot) # for ptitanic, want data with NAs for testing
 Loading required package: rpart
-
-Attaching package: 'rpart'
-
-The following object is masked from 'package:survival':
-
-    solder
-
 > library(plotmo)
 Loading required package: plotrix
 Loading required package: TeachingDemos

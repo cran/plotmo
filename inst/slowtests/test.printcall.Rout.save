@@ -3,6 +3,7 @@
 > # TODO we don't test use of printcall in a namespace
 > 
 > source("test.prolog.R")
+> options(warnPartialMatchArgs=FALSE)
 > library(plotmo)
 Loading required package: plotrix
 Loading required package: TeachingDemos

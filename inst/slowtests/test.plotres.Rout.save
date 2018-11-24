@@ -284,7 +284,7 @@ stats::predict(glm.object, data.frame[88,3], type="pearson")
 > library(gam)
 Loading required package: splines
 Loading required package: foreach
-Loaded gam 1.15
+Loaded gam 1.16
 
 > gam.package.loaded  <- "package:gam"  %in% search()
 > mgcv.package.loaded <- "package:mgcv" %in% search()

@@ -112,18 +112,21 @@ calculating apartdep for Wind:Temp 01234567890
 > set.seed(2018)
 > pre.iris <- pre(Species~., data=iris, ntrees=10) # ntrees=10 for faster test
 > options(warn=2) # treat warnings as errors
-> expect.err(try(plotmo(pre.iris)), "pre::importance(pre.object) failed")
+> expect.err(try(plotmo(pre.iris)), "predict.pre returned multiple columns (see above) but nresponse is not specified")
 
-Error : (converted from warning) pre::importance(pre.object) failed
-(Will plot all variables regardless of importance. Use all2=TRUE to get degree2 plots.)
+predict.pre[3,3]:
+     setosa versicolor  virginica
+1 0.9746686 0.01299582 0.01233561
+2 0.9746686 0.01299582 0.01233561
+3 0.9750720 0.01300120 0.01192680
 
+Error : predict.pre returned multiple columns (see above) but nresponse is not specified
+       Use the nresponse argument to specify a column.
+          Example: nresponse="versicolor"
+          Example: nresponse=2
 Got error as expected from try(plotmo(pre.iris))
 > options(warn=1) # print warnings as they occur
 > plotmo(pre.iris, all2=TRUE, nresponse="virginica")
-
-Warning: pre::importance(pre.object) failed
-(Will plot all variables regardless of importance. Use all2=TRUE to get degree2 plots.)
-
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
                           5.8           3         4.35         1.3
 > 

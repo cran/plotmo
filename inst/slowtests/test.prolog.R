@@ -17,8 +17,12 @@ expect.err <- function(object, expected.msg="")
     } else
         stop("Did not get expected error: ", expected.msg)
 }
+empty.plot <- function()
+{
+    plot(0, 0, col=0, bty="n", xaxt="n", yaxt="n", xlab="", ylab="", main="")
+}
 options(warn=1) # print warnings as they occur
 if(!interactive())
-    postscript(paper="letter", fonts=c("Helvetica", "NewCenturySchoolbook"))
+    postscript(paper="letter")
 old.par <- par(no.readonly=TRUE)
 set.seed(2018)

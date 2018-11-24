@@ -3,6 +3,7 @@
 # TODO we don't test use of printcall in a namespace
 
 source("test.prolog.R")
+options(warnPartialMatchArgs=FALSE)
 library(plotmo)
 for(all in c(FALSE, TRUE)) {
     for(EVAL in c(FALSE, TRUE)) {

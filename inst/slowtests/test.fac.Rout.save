@@ -18,14 +18,14 @@ Loading required package: TeachingDemos
 + 
 +     col.response <- as.numeric(et$sex)+2
 +     et$pclass.fac <- et$pclass
-+     et$parch.num <- et$parch
++     et$parch.int <- et$parch
 +     parch.fac <- et$parch
 +     parch.fac[parch.fac >= 3] <- 3
 +     # use non alphabetically sorted factor levels
 +     et$parch.fac <- factor(parch.fac, labels=c( "levz", "lev1", "lev2", "levf"))
 +     et$pclass.num <- as.numeric(et$pclass)
 +     et$pclass <- et$sex <- et$age <- et$sibsp <- et$parch <- NULL
-+     cat("names(et):", names(et), "\n") # survived pclass.fac parch.num parch.fac pclass.num
++     cat("names(et):", names(et), "\n") # survived pclass.fac parch.int parch.fac pclass.num
 + 
 +     old.par <- par(no.readonly=TRUE)
 +     on.exit(par(old.par))
@@ -33,7 +33,7 @@ Loading required package: TeachingDemos
 +     par(mar = c(2, 2, 3, 0.5), cex=.6)
 + 
 +     # numeric x numeric
-+     a2 <- rpart(survived ~ pclass.num+parch.num, data=et)
++     a2 <- rpart(survived ~ pclass.num+parch.int, data=et)
 +     set.seed(145)
 +     plotmo(a2, do.par=F, type2="im", degree1=2,
 +            col.response=col.response, pt.cex=.3)
@@ -45,7 +45,7 @@ Loading required package: TeachingDemos
 +            ngrid2=40, persp.theta=NA, persp.ticktype="d", cex.lab=.8, persp.ntick=2)
 + 
 +     # factor x numeric
-+     a3 <- rpart(survived ~ pclass.fac+parch.num, data=et)
++     a3 <- rpart(survived ~ pclass.fac+parch.int, data=et)
 +     set.seed(145)
 +     plotmo(a3, do.par=F, type2="im",
 +            col.response=col.response, pt.cex=.3)
@@ -110,10 +110,10 @@ Loading required package: TeachingDemos
 +            col.response=col.response, pt.cex=.3)
 + }
 > test.fac.with.rpart()
-names(et): survived pclass.fac parch.num parch.fac pclass.num 
- plotmo grid:    pclass.num parch.num
+names(et): survived pclass.fac parch.int parch.fac pclass.num 
+ plotmo grid:    pclass.num parch.int
                           2         0
- plotmo grid:    pclass.fac parch.num
+ plotmo grid:    pclass.fac parch.int
                         3rd         0
 stats::predict(rpart.object, data.frame[3,2], type="vector")
 stats::fitted(object=rpart.object)
@@ -126,20 +126,20 @@ got model response from model.frame(survived~pclass.n...,
 
  plotmo grid:    pclass.fac parch.fac
                         3rd      levz
- plotmo grid:    pclass.num parch.num
+ plotmo grid:    pclass.num parch.int
                           2         0
 Warning: forcing clip=FALSE because center=TRUE (a limitation of the current implementation)
- plotmo grid:    pclass.num parch.num
+ plotmo grid:    pclass.num parch.int
                           2         0
- plotmo grid:    pclass.num parch.num
-                          2         0
-Warning: forcing clip=FALSE because center=TRUE (a limitation of the current implementation)
- plotmo grid:    pclass.num parch.num
-                          2         0
- plotmo grid:    pclass.num parch.num
+ plotmo grid:    pclass.num parch.int
                           2         0
 Warning: forcing clip=FALSE because center=TRUE (a limitation of the current implementation)
- plotmo grid:    pclass.num parch.num
+ plotmo grid:    pclass.num parch.int
+                          2         0
+ plotmo grid:    pclass.num parch.int
+                          2         0
+Warning: forcing clip=FALSE because center=TRUE (a limitation of the current implementation)
+ plotmo grid:    pclass.num parch.int
                           2         0
 > cat("==test plotmo swapxy with factors==\n")
 ==test plotmo swapxy with factors==
@@ -149,7 +149,7 @@ Warning: forcing clip=FALSE because center=TRUE (a limitation of the current imp
 + 
 +     col.response <- as.numeric(et$sex)+2
 +     et$pclass.fac <- et$pclass
-+     et$parch.num <- et$parch
++     et$parch.int <- et$parch
 +     parch.fac <- et$parch
 +     parch.fac[parch.fac > 2] <- 2
 +     # use non alphabetically sorted factor levels
@@ -157,7 +157,7 @@ Warning: forcing clip=FALSE because center=TRUE (a limitation of the current imp
 +     print(et$parch.fac)
 +     et$pclass.num <- as.numeric(et$pclass)
 +     et$pclass <- et$sex <- et$age <- et$sibsp <- et$parch <- NULL
-+     cat("names(et):", names(et), "\n") # survived pclass.fac parch.num parch.fac pclass.num
++     cat("names(et):", names(et), "\n") # survived pclass.fac parch.int parch.fac pclass.num
 + 
 +     old.par <- par(no.readonly=TRUE)
 +     on.exit(par(old.par))
@@ -235,7 +235,7 @@ Warning: forcing clip=FALSE because center=TRUE (a limitation of the current imp
 [145] lev.zero        lev.zero        lev.zero        lev.zero       
 [149] lev.zero        lev.zero        lev.zero        lev.zero       
 Levels: lev.zero lev.one lev.two.or.more
-names(et): survived pclass.fac parch.num parch.fac pclass.num 
+names(et): survived pclass.fac parch.int parch.fac pclass.num 
  plotmo grid:    pclass.fac parch.fac
                         2nd  lev.zero
 > 

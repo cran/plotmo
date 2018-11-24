@@ -98,7 +98,7 @@ plotres(gpe.mod, which=3, info=TRUE, main="gpe.mod residuals")
 set.seed(2018)
 pre.iris <- pre(Species~., data=iris, ntrees=10) # ntrees=10 for faster test
 options(warn=2) # treat warnings as errors
-expect.err(try(plotmo(pre.iris)), "pre::importance(pre.object) failed")
+expect.err(try(plotmo(pre.iris)), "predict.pre returned multiple columns (see above) but nresponse is not specified")
 options(warn=1) # print warnings as they occur
 plotmo(pre.iris, all2=TRUE, nresponse="virginica")
 

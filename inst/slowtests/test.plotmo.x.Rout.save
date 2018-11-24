@@ -96,7 +96,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(earth.form.df.dot, trace = 100))
 > 
 > # Removed this test because this no longer fails, because we get the formula using formula(object)
@@ -142,7 +142,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(earth.form.df, trace = 100))
 > 
 > printf("-- DF has only one column, so will pick up X1 from it and X2 from global environment\n")
@@ -362,7 +362,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(lm.form.df.model.false.with.dot, trace = 100))
 > 
 > printf("-- DF is NULL so will pick up X1 with same values from global environment\n")
@@ -401,7 +401,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(lm.form.df.model.false, trace = 100))
 > 
 > printf("-- sanity check, make sure we are back to normal\n")
@@ -606,7 +606,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: less than three rows
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(lm.form.df.model.false.x.true, trace = 100))
 > 
 > printf("-- test ok with $x trashed but DF ok\n") # although with trace!=100 will get downstream failures in predict.lm, that's ok

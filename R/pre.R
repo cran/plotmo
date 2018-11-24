@@ -22,11 +22,16 @@ order.pre.vars.on.importance <- function(object, x, trace)
         return(NULL)
     }
     stopifnot(is.data.frame(varimps))
-    stopifnot(!is.null(varimps$varname) && !is.null(varimps$imp))
     if(NROW(varimps) == 0) { # based on code in importance function in pre.R
         warning0("importance(pre.object)$varimps is empty")
         return(NULL)
     }
+    stopifnot(!is.null(varimps$varname))
+    # following is needed for multiple response models
+    # we get the combined importance across all responses
+    if(is.null(varimps$imp))
+        varimps$imp <- rowSums(varimps[,-1])
+    stopifnot(!is.null(varimps$imp))
     # discard variables whose importance is less than 1% of max importance
     varname <- varimps[varimps$imp > .01 * varimps$imp[1], ]$varname
     # convert variable names to column indices

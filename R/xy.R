@@ -231,9 +231,8 @@ get.x.or.y <- function(
         try.object.x.or.y, argn, object.x,
         model.frame.x, call.x, argn.x)
 
-    stopf("cannot get the original model %s%s",
-          if(field == "x") "predictors" else "response",
-          if(trace >= 2) "" else " (use trace=2 for details)")
+    stopf("cannot get the original model %s",
+          if(field == "x") "predictors" else "response")
 }
 is.errmsg <- function(x)
 {
@@ -506,7 +505,7 @@ get.x.or.y.from.model.frame <- function(object, field, trace, naked,
         # or "newdata had 50 rows but variables found have 330 rows"
         ibad <- grep("[._[:alnum:]]\\$", colnames(model.frame))
         if(any(ibad)) {
-            warnf("%s: \"$\" in colnames(model.frame) is not allowed, %s",
+            warnf("%s: \"$\" in colnames(model.frame) is not allowed by plotmo, %s",
                   colnames(model.frame)[ibad[1]],
                   "will try to get the data elsewhere")
             return(ret("\"$\" in colnames(model.frame)"))
@@ -810,7 +809,7 @@ formula.as.char.with.check <- function(form, form.name, trace)
     # (The other message kicks in if we get the model.frame from object$model.)
     rhs <- gsub(".*~", "", form)
     if(grepany("[._[:alnum:]]\\$", rhs)) { # check for "ident$"
-        warnf("%s: \"$\" in the formula is not allowed, %s",
+        warnf("%s: \"$\" in the formula is not allowed by plotmo, %s",
               gsub("([+~])", " \\1 ", rhs),
               "will try to get the data elsewhere")
         return(ret.null("%s: \"$\" in formula is not allowed", form.name))

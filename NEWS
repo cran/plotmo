@@ -1,6 +1,18 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.5.1  Nov 23, 2018
+
+Can now plot multinomial models from the "pre" package.
+
+Tweaked linmod.R to better handle models with all-zero residuals,
+and updated the documentation.
+
+Minor changes to internal function calls to prevent warnings when
+options(warnPartialMatchArgs=TRUE).
+
+Added "LazyData: yes" to the DESCRIPTION file.
+
 --- 3.5.0  Aug 19, 2018
 
 The default pegged value of background variables has changed in this

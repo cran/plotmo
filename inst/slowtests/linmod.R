@@ -18,7 +18,7 @@ linmod.default <- function(x = stop("no 'x' argument"),
     fit$call <- match.call()
     if(keep) {
         fit$x <- xmat
-        # save y as a matrix so can use colname to save response name
+        # save y as a one-column matrix, so can use colname to save response name
         colname <- deparse(substitute(y))[1]
         colname <- gsub(" ", "", substr(colname, 1, 100)) # strip spaces, truncate
         fit$y <- as.matrix(y, ncol = 1)
@@ -70,8 +70,9 @@ check.linmod.x <- function(x)
         stop("'x' is empty")
     if(anyNA(x))
         stop("NA in 'x'")
-    # checking just the first column of x suffices because x is a matrix
-    # is.logical allowed because qr etc. treat logical vars as numeric
+    # checking just the first column of x suffices because all columns
+    # of a matrix have the same type
+    # we allow is.logical because qr etc. treat logical vars as numeric
     if(!is.numeric(x[,1]) && !is.logical(x[,1]))
         stop("non-numeric column in 'x'")
     # ensure all columns in x are named (needed for names in vcov etc.)
@@ -109,16 +110,16 @@ do.linmod.fit <- function(x, y)
     # essential processing and sanity checks on x and y are already completed
     # x is a numeric matrix, y is a numeric vector
 
-    qx <- qr(x)                            # QR-decomposition of x
+    qx <- qr(x)                         # QR-decomposition of x
     if(qx$rank < ncol(x))
         stop("'x' is singular (it has ", ncol(x),
-             " columns but its rank is ", qx$rank, ")")
-    coef <- solve.qr(qx, y)                # compute (x'x)^(-1) x'y
-    stopifnot(!anyNA(coef))                # should never happen
-    df.residual <- nrow(x) - ncol(x)       # degrees of freedom
-    stopifnot(df.residual > 0) # should have been caught by singular check above
+             " columns but its rank is ", qx$rank, ")\n  colnames(x): ",
+             paste0(colnames(x), collapse=' '))
+    coef <- solve.qr(qx, y)             # compute (x'x)^(-1) x'y
+    stopifnot(!anyNA(coef))             # NA impossible after rank check above
+    df.residual <- max(0, nrow(x) - ncol(x)) # degrees of freedom
     sigma2 <- sum((y - x %*% coef)^2) / df.residual # variance of residuals
-    vcov <- sigma2 * chol2inv(qx$qr)       # covar mat is sigma^2 * (x'x)^(-1)
+    vcov <- sigma2 * chol2inv(qx$qr)    # covar mat is sigma^2 * (x'x)^(-1)
     fitted.values <- qr.fitted(qx, y)
 
     colnames(vcov) <- rownames(vcov) <- colnames(x)
@@ -200,15 +201,14 @@ process.newdata.formula <- function(object, newdata)
 
     terms <- delete.response(terms)
     # na.action=na.pass because we will catch NAs after (for clearer error msg)
-    newdata <- model.frame(terms, newdata, na.action = na.pass,
-                           xlev = object$xlevels)
-    if(anyNA(newdata))
+    mf <- model.frame(terms, newdata, na.action = na.pass, xlev = object$xlevels)
+    if(anyNA(mf))
         stop("NA in 'newdata'")
-    if(NROW(newdata) != NROW(newdata))    # paranoia, shouldn't be needed
+    if(NROW(mf) != NROW(newdata))    # paranoia, shouldn't be needed
         stop("newdata has ", NROW(newdata),
-             " rows but model.frame returned ", NROW(newdata), " rows")
-    .checkMFClasses(dataClasses, newdata) # check types in newdata match original data
-    model.matrix(terms, newdata)
+             " rows but model.frame returned ", NROW(mf), " rows")
+    .checkMFClasses(dataClasses, mf) # check types in newdata match original data
+    model.matrix(terms, mf)
 }
 do.predict.linmod <- function(object, x)
 {
@@ -223,11 +223,16 @@ summary.linmod <- function(object = stop("no 'object' argument"), ...)
     stop.if.dot.arg.used(...)
     se <- sqrt(diag(object$vcov))
     t.value <- coef(object) / se
+    p.value <-
+        if(object$df.residual == 0) # avoid warning from pt()
+            rep_len(0, length.out=length(t.value))
+        else
+            2 * pt(-abs(t.value), df = object$df.residual)
 
     coefficients <- cbind(Estimate = coef(object),
                           StdErr   = se,
                           t.value  = t.value,
-                          p.value  = 2 * pt(-abs(t.value), df = object$df))
+                          p.value  = p.value)
 
     retval <- list(call         = object$call,
                    coefficients = coefficients)
@@ -247,8 +252,7 @@ print.summary.linmod <- function(x = stop("no 'x' argument"), ...)
 {
     stop.if.dot.arg.used(...)
     print.model.call(x)
-    printCoefmat(x$coefficients, signif.stars = FALSE,
-                 P.value = TRUE, has.Pvalue = TRUE)
+    print(x$coefficients)
     invisible(x)
 }
 print.model.call <- function(x)

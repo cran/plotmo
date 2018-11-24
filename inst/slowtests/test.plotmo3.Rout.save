@@ -437,18 +437,7 @@ Got error as expected from try(plotmo1(rpart.model.vignette, level = 0.9))
 > printf("library(gbm)\n")
 library(gbm)
 > library(gbm)                                            # gbm
-Loading required package: survival
-
-Attaching package: 'survival'
-
-The following object is masked from 'package:rpart':
-
-    solder
-
-Loading required package: lattice
-Loading required package: splines
-Loading required package: parallel
-Loaded gbm 2.1.3
+Loaded gbm 2.1.4
 > set.seed(2016)
 > gbm.model.vignette <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=100)
 > # commented out following because they always take the whole page
@@ -637,7 +626,7 @@ Got error as expected from try(plotmo(lm.mixture.example))
 > 
 > a <- earth(O3~ozone1$doy, data=ozone1)
 > expect.err(try(plotmo(a)), "cannot get the original model predictors")
-Warning: ozone1$doy: "$" in the formula is not allowed, will try to get the data elsewhere
+Warning: ozone1$doy: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -647,12 +636,12 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(a))
 > 
 > a <- earth(O3~ozone1$doy + temp, data=ozone1)
 > expect.err(try(plotmo(a)), "cannot get the original model predictors")
-Warning: ozone1$doy + temp: "$" in the formula is not allowed, will try to get the data elsewhere
+Warning: ozone1$doy + temp: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -662,12 +651,12 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(a))
 > 
 > a <- lm(O3~ozone1$doy, data=ozone1)
 > expect.err(try(plotmo(a)), "cannot get the original model predictors")
-Warning: ozone1$doy: "$" in the formula is not allowed, will try to get the data elsewhere
+Warning: ozone1$doy: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -677,12 +666,12 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(a))
 > 
 > a <- lm(O3~ozone1$doy + temp, data=ozone1)
 > expect.err(try(plotmo(a)), "cannot get the original model predictors")
-Warning: ozone1$doy + temp: "$" in the formula is not allowed, will try to get the data elsewhere
+Warning: ozone1$doy + temp: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -692,7 +681,7 @@ Looked unsuccessfully for the original predictors in the following places:
 
 (3) getCall(object)$x: NULL
 
-Error : cannot get the original model predictors (use trace=2 for details)
+Error : cannot get the original model predictors
 Got error as expected from try(plotmo(a))
 > 
 > #--- test interaction of w1. and non w1 args -------------------------------------

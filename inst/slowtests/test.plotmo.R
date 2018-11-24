@@ -1,7 +1,4 @@
 # test.plotmo.R: regression tests for plotmo
-# Some of these tests are culled from man page examples and modified to try to confuse plotmo.
-# Many of the plots are plotted twice so you can visually check by comparing
-# plots in the same window, they should be substantially the same.
 # Stephen Milborrow, Petaluma Jan 2007
 
 print(R.version.string)
@@ -90,13 +87,13 @@ plotmo(a, do.par=FALSE, degree1=2:3, degree2=4, xlim=c(190,250), ylim=c(11,18), 
 varied.type.data <- data.frame(
     y    = 1:13,
     num  = c(1, 3, 2, 3, 4, 5, 6, 4, 5, 6.5, 3, 6, 5), # 7 unique values (but one is non integral)
-    int  = c(1L, 2L, 2L, 3L, 4L, 6L, 7L, 8L, 6L, 7L, 6L, 7L, 20L), # 8 unique values
-    bool = c(F, F, F, T, F, T, T, T, T, T, T, T, T),
+    int  = c(1L, 1L, 3L, 3L, 4L, 4L, 3L, 5L, 3L, 6L, 7L, 8L, 10L), # 8 unique values
+    bool = c(F, F, F, F, F, T, T, T, T, T, T, T, T),
     date = as.Date(
            c("2018-08-01", "2018-08-02", "2018-08-03",
-             "2018-08-04", "2018-08-05", "2018-08-07",
-             "2018-08-07", "2018-08-08", "2018-08-07",
-             "2018-08-06", "2018-08-08", "2018-08-08", "2018-08-08")),
+             "2018-08-04", "2018-08-05", "2018-08-06",
+             "2018-08-07", "2018-08-08", "2018-08-08",
+             "2018-08-08", "2018-08-10", "2018-08-11", "2018-08-11")),
     ord  = ordered(c("ord3", "ord3", "ord3",
                      "ord1", "ord2", "ord3",
                      "ord1", "ord2", "ord3",
@@ -427,17 +424,19 @@ plotmo(a, caption="plotmo with mixed fac and non-fac degree2 terms and grid.leve
        persp.ticktype="d", persp.nticks=2)
 
 # check detection of illegal grid.levels argument
-expect.err(try(plotmo(a, grid.levels=list(pcla="1", pclass="2"))))
-expect.err(try(plotmo(a, grid.levels=list(pclass="1", pcla="2"))))
-expect.err(try(plotmo(a, grid.levels=list(pcla=1))))
-expect.err(try(plotmo(a, grid.levels=list(pcla=c("ab", "cd")))))
-expect.err(try(plotmo(a, grid.levels=list(pcla=NA))))
-expect.err(try(plotmo(a, grid.levels=list(pcla=Inf))))
-expect.err(try(plotmo(a, grid.levels=list(pcla=9))))
-expect.err(try(plotmo(a, grid.levels=list(age="ab"))))
-expect.err(try(plotmo(a, grid.levels=list(age=NA))))
-expect.err(try(plotmo(a, grid.levels=list(age=Inf))))
-expect.err(try(plotmo(a, grid.lev=list(age=list(1,2)))))
+expect.err(try(plotmo(a, grid.levels=list(pcla="1", pclass="2"))), 'illegal grid.levels argument ("pcla" and "pclass" both match "pclass")')
+expect.err(try(plotmo(a, grid.levels=list(pclass="1", pcla="2"))), 'illegal grid.levels argument ("pclass" and "pcla" both match "pclass")')
+expect.err(try(plotmo(a, grid.levels=list(pcla="nonesuch"))), 'illegal level "nonesuch" for "pclass" in grid.levels (allowed levels are "1st" "2nd" "3rd")')
+expect.err(try(plotmo(a, grid.levels=list(pcla="1sx"))), 'illegal level "1sx" for "pclass" in grid.levels (allowed levels are "1st" "2nd" "3rd")')
+expect.err(try(plotmo(a, grid.levels=list(pcla=1))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
+expect.err(try(plotmo(a, grid.levels=list(pcla=c("ab", "cd")))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
+expect.err(try(plotmo(a, grid.levels=list(pcla=NA))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
+expect.err(try(plotmo(a, grid.levels=list(pcla=Inf))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
+expect.err(try(plotmo(a, grid.levels=list(pcla=9))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
+expect.err(try(plotmo(a, grid.levels=list(age="ab"))), 'the class "character" of "age" in grid.levels does not match its class "numeric" in the input data')
+expect.err(try(plotmo(a, grid.levels=list(age=NA))), 'illegal value for age in grid.levels')
+expect.err(try(plotmo(a, grid.levels=list(age=Inf))), 'illegal value for age in grid.levels')
+expect.err(try(plotmo(a, grid.lev=list(age=list(1,2)))), 'illegal value for age in grid.levels')
 
 # more-or-less repeat above, but with glm models
 a <- earth(survived ~ pclass+age+sibsp, data=etitanic, degree=2, glm=list(family=binomial))
@@ -495,11 +494,11 @@ plotmo(aflip, all1=T, caption="all1=T")
 plotmo(aflip, all1=T, degree1=c(3,1), degree2=NA, caption="all1=T, degree1=c(3,1), degree2=NA")
 
 options(warn=2)
-expect.err(try(plotmo(aflip, no.such.arg=9))) # Warning: predict.earth ignored unrecognized argument "no.such.arg"
-expect.err(try(plotmo(aflip, ycolumn=1)))     # Warning: predict.earth ignored unrecognized argument
-expect.err(try(plotmo(aflip, title="abc")))   # Warning: predict.earth ignored unrecognized argument
-expect.err(try(plotmo(aflip, persp.ticktype="d", persp.ntick=3, tic=3, tick=9))) # predict.earth ignored argument "tic" "tick"
-expect.err(try(plotmo(aflip, persp.ticktype="d", ntick=3, tic=3))) # predict.earth ignored argument "tic"
+expect.err(try(plotmo(aflip, no.such.arg=9)), "(converted from warning) predict.earth ignored argument 'no.such.arg'")
+expect.err(try(plotmo(aflip, ycolumn=1)), "(converted from warning) predict.earth ignored argument 'ycolumn'")
+expect.err(try(plotmo(aflip, title="abc")), "(converted from warning) predict.earth ignored argument 'title'")
+expect.err(try(plotmo(aflip, persp.ticktype="d", persp.ntick=3, tic=3, tick=9)), "(converted from warning) predict.earth ignored argument 'tic'")
+expect.err(try(plotmo(aflip, persp.ticktype="d", ntick=3, tic=3)), "(converted from warning) predict.earth ignored argument 'ntick'")
 options(warn=1)
 # expect.err(try(plotmo(aflip, adj1=8, adj2=9))) # Error : plotmo: illegal argument "adj1"
 # expect.err(try(plotmo(aflip, yc=8, x2=9))) # "ycolumn" is no longer legal, use "nresponse" instead
@@ -508,7 +507,7 @@ options(warn=1)
 # expect.err(try(plotmo(aflip, persp.ticktype="d", ntick=3, tit=3, titl=7))) # Error : "title" is illegal, use "caption" instead ("tit" taken to mean "title")
 # expect.err(try(plotmo(aflip, zlab="abc"))) # "zlab" is illegal, use "ylab" instead
 # expect.err(try(plotmo(aflip, z="abc"))) # "zlab" is illegal, use "ylab" instead ("z" taken to mean "zlab")
-expect.err(try(plotmo(aflip, degree1=c(4,1)))) # out of range value in degree2 (allowed index range is 1:3)
+expect.err(try(plotmo(aflip, degree1=c(4,1))), "'degree1' is out of range, allowed values are 1 to 2")
 # expect.err(try(plotmo(aflip, none.such=TRUE))) # illegal argument "all1"
 # expect.err(try(plotmo(aflip, ntick=3, type2="im"))) # the ntick argument is illegal for type2="image"
 # expect.err(try(plotmo(aflip, breaks=3, type2="persp"))) # the breaks argument is illegal for type2="persp"
@@ -517,8 +516,8 @@ expect.err(try(plotmo(aflip, degree1=c(4,1)))) # out of range value in degree2 (
 # Test error handling when accessing the original data
 
 lm.bad <- lm.fit(as.matrix(ozone1[,-1]), as.matrix(ozone1[,1]))
-expect.err(try(plotmo(lm.bad)))          # 'lm.bad' is a plain list, not an S3 model
-expect.err(try(plotmo(99)))              # '99' is not an S3 model
+expect.err(try(plotmo(lm.bad)), "'lm.bad' is a plain list, not an S3 model")
+expect.err(try(plotmo(99)), "'99' is not an S3 model")
 
 x <- matrix(c(1,3,2,4,5,6,7,8,9,10,
               2,3,4,5,6,7,8,9,8,9), ncol=2)
@@ -532,36 +531,35 @@ foo1 <- function()
 {
     a.foo1 <- lm(y~x1+x2, model=FALSE)
     x1 <- NULL
-    expect.err(try(plotmo(a.foo1))) # plotmo.y.default: cannot get the original model response
+    expect.err(try(plotmo(a.foo1)), "cannot get the original model predictors")
 }
 foo1()
-# TODO this no longer fails, I think data.frame  is finding the global x1, x2, and y
 foo2 <- function()
 {
     a.foo2 <- lm(y~x1+x2, data=df, model=FALSE)
     df <- 99 # note that df <- NULL here will not cause an error msg
     y <- 99  # also needed else model.frame in plotmo will find the global y
-    expect.err(try(plotmo(a.foo2))) # model.frame.default: variable lengths differ (found for 'x1')
+    expect.err(try(plotmo(a.foo2)), "cannot get the original model predictors")
 }
 foo2()
 foo3 <- function()
 {
     a.foo3 <- lm(y~x) # lm() builds an lm model for which predict doesn't work
-    expect.err(try(plotmo(a.foo3))) # predict returned the wrong length (got 10 but expected 8)
+    expect.err(try(plotmo(a.foo3)), "predict returned the wrong length (got 10 but expected 50)")
 }
 foo3()
 foo3a <- function()
 {
     a.foo3a <- lm(y~x) # lm() builds an lm model for which predict doesn't work
     # this tests "ngrid1 <- ngrid1 + 1" in plotmo.R
-    expect.err(try(plotmo(a.foo3a, ngrid1=nrow(x)))) # predict returned the wrong length (got 10 but expected 11)
+    expect.err(try(plotmo(a.foo3a, ngrid1=nrow(x))), "predict returned the wrong length (got 10 but expected 11)")
 }
 foo3a()
 foo4 <- function()
 {
     a.foo4 <- lm(y~x[,1]+x[,2])  # builds an lm model for which predict doesn't work
     # causes 'newdata' had 8 rows but variables found have 10 rows
-    expect.err(try(plotmo(a.foo4))) # Error : predict.lm(xgrid, type="response") returned a response of the wrong length.
+    expect.err(try(plotmo(a.foo4)), "predict returned the wrong length (got 10 but expected 50)")
 }
 foo4()
 foo5 <- function()
@@ -569,7 +567,7 @@ foo5 <- function()
     a.foo5 <- lm(y~x1+x2, model=FALSE)
     x1 <- c(1,2,3)
     # causes Error in model.frame.default: variable lengths differ (found for 'x1')
-    expect.err(try(plotmo(a.foo5))) # plotmo.y.default: cannot get the original model response
+    expect.err(try(plotmo(a.foo5)), "cannot get the original model predictors")
 }
 foo5()
 foo6 <- function()
@@ -587,7 +585,7 @@ foo7 <- function()
     options <- options("warn")
     on.exit(options(warn=options$warn))
     options(warn=2)
-    expect.err(try(plotmo(a.foo7, col.response=3))) # Warning: non-finite values returned by plotmo_y
+    expect.err(try(plotmo(a.foo7, col.response=3)), "non-finite values returned by plotmo_y")
 }
 foo7()
 foo8 <- function()
@@ -595,14 +593,14 @@ foo8 <- function()
     i <- 1
     a.foo8 <- lm(y~x[,i]+x[,2])
     # causes Warning: 'newdata' had 8 rows but variables found have 10 rows
-    expect.err(try(plotmo(a.foo8))) # Error : predict returned the wrong length (got 10 but expected 8)
+    expect.err(try(plotmo(a.foo8)), "predict returned the wrong length (got 10 but expected 50)")
 }
 foo8()
 foo9 <- function()
 {
     my.list <- list(j=2)
     a.foo9 <- lm(y~x[,1]+x[,my.list$j])
-    expect.err(try(plotmo(a.foo9))) # Error: plotmo: names with "$" are not yet supported.
+    expect.err(try(plotmo(a.foo9)), "cannot get the original model predictors")
 }
 foo9()
 foo9a <- function()

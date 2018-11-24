@@ -44,10 +44,15 @@ get.degree1.xframe <- function(xgrid, x, ipred, ngrid1,
             xrange[1] <- xrange[1] - ext
             xrange[2] <- xrange[2] + ext
         }
-        xgrid <- seq(from=xrange[1], to=xrange[2], length=ngrid1)
-        # if(is.integer(x1))
-        #     xgrid <- as.integer(xgrid)
-        xframe[[ipred]] <- xgrid
+        xval <- seq(from=xrange[1], to=xrange[2], length.out=ngrid1)
+        # # following commented out because it causes cliffs to slope more than necessary
+        # # e.g. test.fac.R plotmo(rpart(survived ~ pclass.num+parch.int, data=et))
+        # if(is.integer(x1)) {
+        #     xval <- unique(as.integer(xval))
+        #     if(length(xval) < ngrid1)
+        #         xframe <- xframe[1:length(xval), , drop=FALSE] # shorten xframe
+        # }
+        xframe[[ipred]] <- xval
     }
     xframe
 }
@@ -159,7 +164,7 @@ get.degree2.xframe.aux <- function(xgrid, x, ipred1,
             n1 <- nlevs1
             x1grid <- get.all.levs(x1, u1)
         } else
-            seq(from=xranges[1,ipred1], to=xranges[2,ipred1], length=ngrid2)
+            seq(from=xranges[1,ipred1], to=xranges[2,ipred1], length.out=ngrid2)
     if(is.integer(x1)) {
         x1grid <- unique(as.integer(x1grid))
         n1 <- length(x1grid)

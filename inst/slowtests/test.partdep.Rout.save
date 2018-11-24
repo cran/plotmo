@@ -40,11 +40,7 @@ calculating apartdep for sex:age 0123456790
 > 
 > # compare to gbm with an artifical function of variables with a very strong interaction
 > library(gbm)
-Loading required package: survival
-Loading required package: lattice
-Loading required package: splines
-Loading required package: parallel
-Loaded gbm 2.1.3
+Loaded gbm 2.1.4
 > n <- 250
 > set.seed(2016)
 > x1 <- runif(n)

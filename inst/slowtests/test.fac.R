@@ -15,14 +15,14 @@ test.fac.with.rpart <- function(ngrid2=20)
 
     col.response <- as.numeric(et$sex)+2
     et$pclass.fac <- et$pclass
-    et$parch.num <- et$parch
+    et$parch.int <- et$parch
     parch.fac <- et$parch
     parch.fac[parch.fac >= 3] <- 3
     # use non alphabetically sorted factor levels
     et$parch.fac <- factor(parch.fac, labels=c( "levz", "lev1", "lev2", "levf"))
     et$pclass.num <- as.numeric(et$pclass)
     et$pclass <- et$sex <- et$age <- et$sibsp <- et$parch <- NULL
-    cat("names(et):", names(et), "\n") # survived pclass.fac parch.num parch.fac pclass.num
+    cat("names(et):", names(et), "\n") # survived pclass.fac parch.int parch.fac pclass.num
 
     old.par <- par(no.readonly=TRUE)
     on.exit(par(old.par))
@@ -30,7 +30,7 @@ test.fac.with.rpart <- function(ngrid2=20)
     par(mar = c(2, 2, 3, 0.5), cex=.6)
 
     # numeric x numeric
-    a2 <- rpart(survived ~ pclass.num+parch.num, data=et)
+    a2 <- rpart(survived ~ pclass.num+parch.int, data=et)
     set.seed(145)
     plotmo(a2, do.par=F, type2="im", degree1=2,
            col.response=col.response, pt.cex=.3)
@@ -42,7 +42,7 @@ test.fac.with.rpart <- function(ngrid2=20)
            ngrid2=40, persp.theta=NA, persp.ticktype="d", cex.lab=.8, persp.ntick=2)
 
     # factor x numeric
-    a3 <- rpart(survived ~ pclass.fac+parch.num, data=et)
+    a3 <- rpart(survived ~ pclass.fac+parch.int, data=et)
     set.seed(145)
     plotmo(a3, do.par=F, type2="im",
            col.response=col.response, pt.cex=.3)
@@ -114,7 +114,7 @@ test.swapxy.with.rpart <- function(ngrid2=20)
 
     col.response <- as.numeric(et$sex)+2
     et$pclass.fac <- et$pclass
-    et$parch.num <- et$parch
+    et$parch.int <- et$parch
     parch.fac <- et$parch
     parch.fac[parch.fac > 2] <- 2
     # use non alphabetically sorted factor levels
@@ -122,7 +122,7 @@ test.swapxy.with.rpart <- function(ngrid2=20)
     print(et$parch.fac)
     et$pclass.num <- as.numeric(et$pclass)
     et$pclass <- et$sex <- et$age <- et$sibsp <- et$parch <- NULL
-    cat("names(et):", names(et), "\n") # survived pclass.fac parch.num parch.fac pclass.num
+    cat("names(et):", names(et), "\n") # survived pclass.fac parch.int parch.fac pclass.num
 
     old.par <- par(no.readonly=TRUE)
     on.exit(par(old.par))
