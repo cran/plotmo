@@ -1,23 +1,33 @@
 # partdep.R: functions for partial dependence plots
 
 # get the dataframe of variables we integrate over for partdeps
-get.partdep.x <- function(pmethod, x, y, n.apartdep)
+get.partdep.x <- function(pmethod, x, y, n.apartdep, grid.levels, pred.names)
 {
-    switch(pmethod,
-        "plotmo"   = NA,   # don't need partdep.x
-        "partdep"  = x,    # full x
-        "apartdep" = {     # possible subset of x
-            if(nrow(x) <= n.apartdep)
-                x
-            else {
-                stopifnot(nrow(x) == NROW(y))
-                # order on y with sample_int randomly break ties in y
-                index <- order(as.numeric(y), sample.int(NROW(y)))
-                # select n.apartdep equally spaced rows
-                index <- index[seq.int(1, nrow(x), length.out=n.apartdep)]
-                x[index, , drop=FALSE]
-            }
-        })
+    if(pmethod != "partdep" && pmethod != "apartdep")
+        return(NA)
+
+    partdep.x <-
+        if(pmethod == "partdep" || nrow(x) <= n.apartdep)
+            x
+        else { # apartdep
+            stopifnot(nrow(x) == NROW(y))
+            # order on y with sample_int randomly break ties in y
+            index <- order(as.numeric(y), sample.int(NROW(y)))
+            # select n.apartdep equally spaced rows
+            index <- index[seq.int(1, nrow(x), length.out=n.apartdep)]
+            x[index, , drop=FALSE]
+        }
+
+    if(!is.null(grid.levels)) { # grid.levels argument was specified?
+        check.grid.levels.arg(x, grid.levels, pred.names)
+        for(ipred in seq_len(ncol(x))) {
+            grid.val <- get.fixed.gridval.for.partdep(x[[ipred]], ipred,
+                                                      pred.names[ipred], grid.levels)
+            if(!is.na(grid.val))
+                partdep.x[[ipred]] <- grid.val
+        }
+    }
+    partdep.x
 }
 check.grid.class <- function(x1, xgrid, predname) # paranoia
 {
@@ -37,10 +47,8 @@ degree1.partdep.yhat <- function(object,
     partdep.x, xframe, ipred, pred.names, resp.levs, # internal args
     ...)
 {
-    if(trace >= 0)
-        printf("calculating %s for %s%s",
-               pmethod, pred.names[ipred],
-               if (trace >= 2) "\n" else " ")
+    trace0(trace, "calculating %s for %s%s",
+           pmethod, pred.names[ipred], if (trace >= 2) "\n" else " ")
     xgrid <- xframe[[ipred]] # grid of values for predictor
     nxgrid <- length(xgrid)
     stopifnot(nxgrid >= 1)
@@ -48,12 +56,11 @@ degree1.partdep.yhat <- function(object,
     # For efficiency, predict for all values in xgrid at once.
     # This reduces the number of calls to plotmo_predict, but requires more memory.
     expanded.partdep.x <- partdep.x[rep(1:nrow(partdep.x), times=nxgrid), , drop=FALSE]
-    expanded.partdep.x[[ipred]] <- rep(xgrid, each=nrow(partdep.x)) # gets recyled
+    expanded.partdep.x[[ipred]] <- rep(xgrid, each=nrow(partdep.x)) # gets recycled
     # plotmo_predict always returns a numeric 1 x n matrix
     yhats <- plotmo_predict(object, expanded.partdep.x, nresponse,
                             type, resp.levs, trace, inverse.func, ...)$yhat
-    if(trace >= 0)
-        printf("\n")
+    trace0(trace, "\n")
     colMeans(matrix(yhats, ncol=nxgrid), na.rm=TRUE)
 }
 degree2.partdep.yhat <- function(object,
@@ -62,10 +69,9 @@ degree2.partdep.yhat <- function(object,
     pred.names, resp.levs,
     ...)
 {
-    if(trace >= 0)
-        printf("calculating %s for %s:%s %s",
-               pmethod, pred.names[ipred1], pred.names[ipred2],
-               if(trace >= 0 && trace < 2) "0" else if (trace >= 2) "\n")
+    trace0(trace, "calculating %s for %s:%s %s",
+           pmethod, pred.names[ipred1], pred.names[ipred2],
+           if(trace >= 0 && trace < 2) "0" else if (trace >= 2) "\n")
 
     n1 <- length(x1grid)
     stopifnot(n1 >= 1)
@@ -90,7 +96,7 @@ degree2.partdep.yhat <- function(object,
             pacifier.i <- pacifier.i + n1 / 10
         }
         expanded.partdep.x[[ipred1]] <- x1grid[i] # whole columm all the same value
-        expanded.partdep.x[[ipred2]] <- rep(x2grid, each=nrow(partdep.x)) # gets recyled
+        expanded.partdep.x[[ipred2]] <- rep(x2grid, each=nrow(partdep.x)) # gets recycled
         # plotmo_predict always returns a numeric 1 x n matrix
         yhats <- plotmo_predict(object, expanded.partdep.x, nresponse,
                                 type, resp.levs, trace, inverse.func, ...)$yhat
@@ -99,7 +105,6 @@ degree2.partdep.yhat <- function(object,
         if(trace > 0)
             trace <- 0 # only show the first call to plotmo_predict
     }
-    if(trace >= 0)
-        cat("0\n") # print final 0 for pacifier
+    trace0(trace, "0\n") # print final 0 for pacifier
     matrix(yhat, nrow=n1 * n2, ncol=1)
 }

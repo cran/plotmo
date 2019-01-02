@@ -36,7 +36,7 @@ stopifnot1 <- function(x, y){
     xname <- deparse(substitute(x))
     yname <- deparse(substitute(y))
     if(!all(x == y))
-        stop(sprintf("%s == %s failed\n", xname, yname, call.=FALSE))
+        stop(sprint("%s == %s failed\n", xname, yname, call.=FALSE))
     printf("%s == %s passed\n", xname, yname)
 }
 printf("====== standard earth.formula model with a data frame\n")

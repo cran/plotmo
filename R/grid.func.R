@@ -46,48 +46,72 @@ check.grid.levels.arg <- function(x, grid.levels, pred.names)
         if(!is.list(grid.levels))
             stop0("grid.levels must be a list.  ",
                   "Example: grid.levels=list(sex=\"male\")")
-        for(name in names(grid.levels))
+        for(name in names(grid.levels)) {
+            if(nchar(name) == 0)
+                stop0(
+"All elements of grid.levels must be named\n       You have grid.levels=",
+                      as.char(grid.levels))
             if(!pmatch(name, pred.names, 0))
                 stop0("illegal variable name '", name, "' in grid.levels")
+        }
     }
 }
+# this returns NA if pred.name is not in grid.levels
+
 get.fixed.gridval.from.grid.levels.arg <-function(x, pred.name, grid.levels)
 {
     if(is.null(grid.levels))
         return(NA)
     gridval <- NA
+    names.grid.levels <- names(grid.levels)
     # look for pred.name in the grid.levels list, if found use its value
-    iname <- which(pmatch(names(grid.levels), pred.name, duplicates.ok=TRUE) == 1)
+    iname <- which(pmatch(names.grid.levels, pred.name, duplicates.ok=TRUE) == 1)
+    if(length(iname) == 0) # no match?
+        return(NA)
     if(length(iname) > 1) # more than one match?
         stop0("illegal grid.levels argument (\"",
-              names(grid.levels)[iname[1]], "\" and \"",
-              names(grid.levels)[iname[2]], "\" both match \"",
+              names.grid.levels[iname[1]], "\" and \"",
+              names.grid.levels[iname[2]], "\" both match \"",
               pred.name, "\")")
-    if(length(iname)) { # a name in grid.levels matches pred.name?
-        gridval <- grid.levels[[iname]]
-        if(is.factor(x)) {
-            lev.name <- grid.levels[[iname]]
-            if(!is.character(lev.name) || length(lev.name) != 1 || !nzchar(lev.name))
-                stop0("illegal level for \"", pred.name, "\" in grid.levels ",
-                      "(specify factor levels with a string)")
-            lev.names <- levels(x)
-            ilev <- pmatch(lev.name, lev.names, 0)
-            if(ilev == 0)
-                stop0("illegal level \"", lev.name, "\" for \"",
-                      pred.name, "\" in grid.levels (allowed levels are ",
-                      quotify(lev.names), ")")
-            gridval <- if(is.ordered(x))
-                            ordered(lev.names, levels=lev.names)[ilev]
-                       else
-                            factor(lev.names, levels=lev.names)[ilev]
+    # a name in grid.levels matches pred.name
+    stopifnot(length(iname) == 1)
+    gridval <- grid.levels[[iname]]
+    if(length(gridval) > 1)
+        stop0("length(", pred.name, ") in grid.levels is not 1")
+    if(is.na(gridval))
+        stop0(pred.name, " in grid.levels is NA")
+    if(is.numeric(gridval) && !all(is.finite(gridval)))
+        stop0(pred.name, " in grid.levels is infinite")
+    if(is.factor(x)) {
+        lev.name <- grid.levels[[iname]]
+        if(!is.character(lev.name) || length(lev.name) != 1 || !nzchar(lev.name))
+            stop0("illegal level for \"", pred.name, "\" in grid.levels ",
+                  "(specify factor levels with a string)")
+        lev.names <- levels(x)
+        ilev <- pmatch(lev.name, lev.names, 0)
+        if(ilev == 0)
+            stop0("illegal level \"", lev.name, "\" for \"",
+                  pred.name, "\" in grid.levels (allowed levels are ",
+                  quotify(lev.names), ")")
+        gridval <- if(is.ordered(x))
+                        ordered(lev.names, levels=lev.names)[ilev]
+                   else
+                        factor(lev.names, levels=lev.names)[ilev]
+    }
+    # do type conversions for some common types
+    # (e.g. allow 3 instead of 3L for integer variables)
+    class.gridval <- class(gridval)[1]
+    class.x <- class(x)[1]
+    if(class.gridval != class.x) {
+        if(class.gridval == "numeric" && class.x == "integer")
+            gridval <- as.integer(round(gridval))
+        else if(class.gridval == "integer" && class.x == "numeric")
+            gridval <- as.numeric(gridval)
+        else if(class.x == "logical") {
+            if(!is.logical(gridval) && !is.numeric(gridval))
+                stop0("expected a logical value in grid.levels for ", pred.name)
+            gridval <- gridval > .5
         }
-        if(length(gridval) > 1 || is.na(gridval) ||
-                (is.numeric(gridval)) && !is.finite(gridval))
-            stop0("illegal value for ", pred.name, " in grid.levels")
-        if(class(gridval)[1] != class(x)[1])
-            stop0("the class \"", class(gridval)[1], "\" of \"", pred.name,
-                  "\" in grid.levels does not match its class \"", class(x)[1],
-                  "\" in the input data")
     }
     return(gridval)
 }
@@ -128,23 +152,41 @@ check.fixed.gridval <- function(gridval, gridval.method, x, pred.name)
                  ", so will use the default grid.func for ", pred.name)
         gridval <- default.grid.func(x) # revert to default.grid.func
     }
-    classg <- class(gridval)[1]
-    if(classg != class(x)[1]) {
-        if(inherits(x, "integer"))      # silently fix so e.g. grid.func=mean works
+    # possibly type convert gridval
+    class.gridval <- class(gridval)[1]
+    if(class.gridval != class(x)[1]) {
+        if(inherits(x, "integer"))        # silently fix so e.g. grid.func=mean works
             gridval <- as.integer(round(median(gridval)))
-        else if(inherits(x, "logical")) # silently fix
+        else if(inherits(x, "logical")) { # silently fix if possible
+            if(!is.logical(gridval) && !is.numeric(gridval))
+                stop0("expected a logical value in grid.levels for ", pred.name)
             gridval <- gridval > .5
+        }
         else if(inherits(x, "factor")) {
-            warning0(gridval.method, " returned class \"", classg,
+            warning0(gridval.method, " returned class \"", class.gridval,
                      "\" for ", pred.name,
                      ", so will use the most common value of ", pred.name)
             gridval <- default.grid.func(x)
         } else {
-            warning0(gridval.method, " returned class \"", classg,
+            warning0(gridval.method, " returned class \"", class.gridval,
                      "\" for ", pred.name,
                      ", so will use the default grid.func for ", pred.name)
             gridval <- default.grid.func(x)
         }
     }
+    gridval
+}
+# this retunrs NA if pred.name is not in grid.levels
+
+get.fixed.gridval.for.partdep <- function(x, ipred, pred.name, grid.levels)
+{
+    gridval <- get.fixed.gridval.from.grid.levels.arg(x, pred.name, grid.levels)
+    # common type conversions were already done in get.fixed.gridval.from.grid.levels.arg
+    # check here if that wasn't possible
+    if(!is.na(gridval) && class(gridval)[1] != class(x))
+        stop0("the class \"", class(gridval)[1], "\" of \"", pred.name,
+              "\" in grid.levels does not match its class \"",
+              class(x)[1],
+              "\" in the input data")
     gridval
 }

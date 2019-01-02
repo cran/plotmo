@@ -257,7 +257,7 @@ no pairs
 ylim c(-0.1, 1.1)    clip TRUE
 
 --plot.degree1(draw.plot=TRUE)
-degree1 plot 1 temp
+degree1 plot1 (pmethod "plotmo") variable temp
 newdata[50,1]:
         temp
 1   53.00000
@@ -307,7 +307,7 @@ graphics::plot.default(x=c(53,53.57,54.1...), y=c(0.5505,0.5198...), type="n",
 +     detach("package:gam")
 > library(mgcv)
 Loading required package: nlme
-This is mgcv 1.8-25. For overview type 'help("mgcv-package")'.
+This is mgcv 1.8-26. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test plot.gam, with mgcv::gam(y ~ s(x) + s(x,z)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -575,7 +575,7 @@ no pairs
 ----Figuring out ylim
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
-degree1 plot 1 vh
+degree1 plot1 (pmethod "plotmo") variable vh
 newdata[50,9]:
           vh wind humidity temp    ibh dpg   ibt vis   doy
 1   5320.000    5       64   62 2112.5  24 167.5 120 205.5
@@ -599,14 +599,14 @@ predict after processing with nresponse=1 is [50,1]:
 ...  8.661783
 50  16.216014
 Reducing trace level for subsequent degree1 plots
-degree1 plot 2 wind
-degree1 plot 3 humidity
-degree1 plot 4 temp
-degree1 plot 5 ibh
-degree1 plot 6 dpg
-degree1 plot 7 ibt
-degree1 plot 8 vis
-degree1 plot 9 doy
+degree1 plot2 (pmethod "plotmo") variable wind
+degree1 plot3 (pmethod "plotmo") variable humidity
+degree1 plot4 (pmethod "plotmo") variable temp
+degree1 plot5 (pmethod "plotmo") variable ibh
+degree1 plot6 (pmethod "plotmo") variable dpg
+degree1 plot7 (pmethod "plotmo") variable ibt
+degree1 plot8 (pmethod "plotmo") variable vis
+degree1 plot9 (pmethod "plotmo") variable doy
 --done get.ylim.by.dummy.plots
 
 ylim c(6.671, 20.41)    clip TRUE
@@ -757,7 +757,7 @@ Warning: the level argument may not work correctly on glm objects built with wei
 > if(length(grep("package:gam", search())))
 +     detach("package:gam")
 > library(mgcv)
-This is mgcv 1.8-25. For overview type 'help("mgcv-package")'.
+This is mgcv 1.8-26. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test level=.95, plot.gam, with mgcv::gam(y ~ s(x) + s(x,z1)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -986,7 +986,7 @@ stats::predict(rpart.object, data.frame[3,3], type="prob")
 stats::fitted(object=rpart.object)
 fitted() was unsuccessful, will use predict() instead
 set nresponse=2
-got model response from model.frame(Kyphosis~Age+Numb...,
+got model response from model.frame(Kyphosis~Age+Number+Start,
                                     data=call$data, na.action="na.pass")
 > plotmo(fit1, type="prob", nresp=2, degree1=NA, do.par=F, main="", type2="image",
 +        col.response=ifelse(kyphosis$Kyphosis=="present", "red", "lightblue"),
@@ -1151,7 +1151,7 @@ Warning in randomForest.default(m, y, ...) :
 stats::predict(randomForest.formula.object, data.frame[3,5], type="response")
 stats::fitted(object=randomForest.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(survived~pclass+s...,
+got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=FALSE, ranking variables on IncNodePurity
 
@@ -1170,7 +1170,7 @@ Warning in randomForest.default(m, y, ...) :
 stats::predict(randomForest.formula.object, data.frame[3,5], type="response")
 stats::fitted(object=randomForest.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(survived~pclass+s...,
+got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=TRUE, ranking variables on %IncMSE
 
@@ -1189,7 +1189,7 @@ randomForest built with importance=TRUE, ranking variables on %IncMSE
 stats::predict(randomForest.formula.object, data.frame[3,5], type="prob")
 stats::fitted(object=randomForest.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(survived~pclass+s...,
+got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
 
@@ -1200,7 +1200,7 @@ randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
 stats::predict(randomForest.formula.object, data.frame[3,5], type="prob")
 stats::fitted(object=randomForest.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(survived~pclass+s...,
+got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
 
@@ -1216,7 +1216,7 @@ randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
 stats::predict(randomForest.formula.object, data.frame[3,5], type="prob")
 stats::fitted(object=randomForest.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(survived~pclass+s...,
+got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=TRUE, ranking variables on MeanDecreaseAccuracy
 
@@ -1469,6 +1469,7 @@ Got error as expected from try(plotmo(svm.xy, prob = TRUE, nresponse = "vers", d
 Error : predict.svm: specify either 'decision.values' or 'probability' (not both)
 Got error as expected from try(plotmo(svm.form, decision.values = TRUE, probab = TRUE))
 > plotres(svm.form, predict.prob=TRUE, nresponse="vers", info=TRUE)
+Cannot get training rsq
 > plotres(svm.form, jitter=5, info=TRUE)
 > 
 > source("test.epilog.R")

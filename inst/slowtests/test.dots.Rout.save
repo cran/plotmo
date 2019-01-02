@@ -8,7 +8,7 @@
 +     caller0  <- plotmo:::callers.name(0)  # test.callers.name
 +     caller1  <- plotmo:::callers.name(1)  # caller of test.callers.name
 +     caller99 <- plotmo:::callers.name(99) # sys.call(-n) : not that many frames on the stack
-+     s <- sprintf("0 %s 1 %s 99 %s", caller0, caller1, caller99)
++     s <- sprint("0 %s 1 %s 99 %s", caller0, caller1, caller99)
 +     cat(s, "\n", sep="")
 +     s
 + }

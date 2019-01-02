@@ -226,7 +226,7 @@ plotresids <- function(
 }
 get.plotres.data <- function(object, object.name, which, standardize, delever,
                              level, versus, id.n, labels.id,
-                             trace, npoints, type, nresponse, ...)
+                             trace, npoints, type, nresponse, ..., must.get.rsq)
 {
     # the dot argument FORCEPREDICT is to check compat with old plot.earth
     meta <- plotmo_meta(object, type, nresponse, trace,
@@ -237,12 +237,18 @@ get.plotres.data <- function(object, object.name, which, standardize, delever,
       type      <- meta$type       # always a string (converted from NULL if necessary)
       residtype <- meta$residtype  # ditto
 
-    rsq <- try(plotmo_rsq1(object=object, newdata=NULL,
-                           trace=if(trace == 1) -1 else trace, meta=meta, ...),
-                      silent=trace < 2)
-    if(is.try.err(rsq))
-        rsq <- NA
-
+    # we get rsq only if necessary, because error reporting if we can't get it
+    # is weak (because of nested try blocks, here and in do.call.trace)
+    rsq <- NA
+    if(must.get.rsq) {
+        rsq <- try(plotmo_rsq1(object=object, newdata=NULL,
+                               trace=if(trace == 1) -1 else trace, meta=meta, ...),
+                   silent=trace < 2)
+        if(is.try.err(rsq)) {
+            trace0(trace, "Cannot get training rsq\n")
+            rsq <- NA
+        }
+    }
     # get the residuals and fitted info
     rinfo <- plotmo_rinfo(object=object, type=type, residtype=residtype,
                 nresponse=nresponse,

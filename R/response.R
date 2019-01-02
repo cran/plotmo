@@ -18,6 +18,7 @@ plotmo_rsq1 <- function(object, newdata, trace, meta, ...)
     ynew <- plotmo_response(object=object, newdata=newdata, trace=max(0, trace),
                             nresponse=meta$nresponse, type=meta$type,
                             meta=meta, ...)
+
     trace2(trace, "--plotmo_predict for plotmo_rsq1\n")
     yhat <- plotmo_predict(object=object, newdata=newdata, nresponse=meta$nresponse,
                            type=meta$type, expected.levs=meta$expected.levs,
@@ -102,9 +103,9 @@ response.from.xy.model <- function(object, newdata, trace, resp.name)
         col.name <- gsub(",.*",   "", col.name)  # delete (2nd) comma if any, and all after
         col.name <- gsub("\\]",   "", col.name)  # delete final ] if above gsub didn't do it
         # print a message because we don't always get this right
-        if(trace >= 0)
-            printf("Assuming response %s implies that the response column is %s\n",
-                   resp.name, paste(col.name))
+        trace0(trace,
+               "Assuming response %s implies that the response column is %s\n",
+               resp.name, paste(col.name))
         # the following will do something like eval(3, env)
         col.index <- try.eval(parse(text=col.name), model.env(object), trace=trace, expr.name=col.name)
         if(is.try.err(col.index))

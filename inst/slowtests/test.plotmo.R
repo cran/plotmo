@@ -429,14 +429,16 @@ expect.err(try(plotmo(a, grid.levels=list(pclass="1", pcla="2"))), 'illegal grid
 expect.err(try(plotmo(a, grid.levels=list(pcla="nonesuch"))), 'illegal level "nonesuch" for "pclass" in grid.levels (allowed levels are "1st" "2nd" "3rd")')
 expect.err(try(plotmo(a, grid.levels=list(pcla="1sx"))), 'illegal level "1sx" for "pclass" in grid.levels (allowed levels are "1st" "2nd" "3rd")')
 expect.err(try(plotmo(a, grid.levels=list(pcla=1))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
-expect.err(try(plotmo(a, grid.levels=list(pcla=c("ab", "cd")))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
-expect.err(try(plotmo(a, grid.levels=list(pcla=NA))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
-expect.err(try(plotmo(a, grid.levels=list(pcla=Inf))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
+expect.err(try(plotmo(a, grid.levels=list(pcla=c("ab", "cd")))), "length(pclass) in grid.levels is not 1")
+expect.err(try(plotmo(a, grid.levels=list(pcla=NA))), 'pclass in grid.levels is NA')
+expect.err(try(plotmo(a, grid.levels=list(pcla=Inf))), 'pclass in grid.levels is infinite')
 expect.err(try(plotmo(a, grid.levels=list(pcla=9))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
-expect.err(try(plotmo(a, grid.levels=list(age="ab"))), 'the class "character" of "age" in grid.levels does not match its class "numeric" in the input data')
-expect.err(try(plotmo(a, grid.levels=list(age=NA))), 'illegal value for age in grid.levels')
-expect.err(try(plotmo(a, grid.levels=list(age=Inf))), 'illegal value for age in grid.levels')
-expect.err(try(plotmo(a, grid.lev=list(age=list(1,2)))), 'illegal value for age in grid.levels')
+options(warn=2)
+expect.err(try(plotmo(a, grid.levels=list(age="ab"))), 'grid.levels returned class \"character\" for age, so will use the default grid.func for age')
+options(warn=1)
+expect.err(try(plotmo(a, grid.levels=list(age=NA))), 'age in grid.levels is NA')
+expect.err(try(plotmo(a, grid.levels=list(age=Inf))), 'age in grid.levels is infinite')
+expect.err(try(plotmo(a, grid.lev=list(age=list(1,2)))), 'length(age) in grid.levels is not 1')
 
 # more-or-less repeat above, but with glm models
 a <- earth(survived ~ pclass+age+sibsp, data=etitanic, degree=2, glm=list(family=binomial))
@@ -457,6 +459,33 @@ plotmo(a, do.par=FALSE, type2="image",   degree1=FALSE, grid.levels=list(pclass=
        col.response=as.numeric(etitanic$survived)+2, pt.pch=20)
 plotmo(a, do.par=FALSE, type="earth", type2="image", degree1=FALSE,
        grid.levels=list(pclass="2"))
+
+# grid.levels with partdep
+
+set.seed(2018)
+x1 <- (1:11) + runif(11)
+x2 <- (1:11) + runif(11)
+x3 <- as.integer((1:11) + runif(11))
+x4 <- runif(11) > .5 # logical
+y <- x1 - x2 + x3 + x4
+data <- data.frame(y=y, x1=x1, x2=x2, x3=x3, x4=x4)
+lm.x1.x2.x3 <- lm(y ~ x1 + x2 + x3 + x4 + x1*x2 + x1*x3, data=data)
+cat("summary(lm.x1.x2.x3):\n")
+print(summary(lm.x1.x2.x3))
+par(mfrow = c(5, 6), mar = c(2, 3, 2, 1), mgp = c(1.5, 0.5, 0), cex = 0.6, oma=c(0,0,8,0))
+plotmo(lm.x1.x2.x3, do.par=0, ylim=c(0,16), pt.col=2,
+       caption="row1 default\nrow2 grid.levels=list(x3=15)\nrow3 partdep\nrow4 partdetp grid.levels=list(x3=15)")
+plotmo(lm.x1.x2.x3, do.par=0, ylim=c(0,16), pt.col=2, grid.levels=list(x3=15))
+plotmo(lm.x1.x2.x3, do.par=0, ylim=c(0,16), pt.col=2, pmethod="partdep")
+plotmo(lm.x1.x2.x3, do.par=0, ylim=c(0,16), pt.col=2, pmethod="partdep", grid.levels=list(x3=15))
+
+# check auto type convert in grid.levels
+plotmo(lm.x1.x2.x3, degree1="x1", degree2=0, main="x1 (x2=5L))",  ylim=c(0,16), do.par=0, pmethod="partdep", grid.levels=list(x2=15L)) # integer to numeric
+plotmo(lm.x1.x2.x3, degree1="x1", degree2=0, main="x1 (x3=5))",   ylim=c(0,16), do.par=0, pmethod="partdep", grid.levels=list(x3=15))  # numeric to integer
+plotmo(lm.x1.x2.x3, degree1="x1", degree2=0, main="x1 (x4=1))",   ylim=c(0,16), do.par=0, pmethod="partdep", grid.levels=list(x4=1))   # numeric to logical
+expect.err(try(plotmo(lm.x1.x2.x3, degree1="x1", degree2=0, main="x1 (x4=1))",   ylim=c(0,16), do.par=0, pmethod="partdep", grid.levels=list(x4="x"))), "expected a logical value in grid.levels for x4") # char to logical
+expect.err(try(plotmo(lm.x1.x2.x3, degree1="x2", do.par=0, pmethod="partdep", grid.levels=list(x1="1"))), "the class \"character\" of \"x1\" in grid.levels does not match its class \"numeric\" in the input data")
+par(old.par)
 
 # test vector main
 
@@ -692,7 +721,7 @@ plotmo(earth.intercept.only, do.par=FALSE, degree1=3) # expect warning: 'degree1
 plotmo(earth.intercept.only, do.par=FALSE, degree1=0) # expect warning: plotmo: nothing to plot
 library(rpart)
 rpart.intercept.only <- rpart(y~x)
-plotmo(rpart.intercept.only, do.par=FALSE, main="rpart.plot intercept-only model", trace=0)
+plotmo(rpart.intercept.only, do.par=FALSE, main="rpart.plot intercept-only model")
 plotmo(rpart.intercept.only, do.par=FALSE, degree1=0)
 par(old.par)
 

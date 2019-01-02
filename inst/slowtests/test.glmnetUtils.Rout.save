@@ -107,7 +107,7 @@ stats::predict(cv.glmnet.formula.object, data.frame[3,3], type="response",
                s="lambda.min")
 stats::fitted(object=cv.glmnet.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(age~survived+sibs...,
+got model response from model.frame(age~survived+sibsp+logage,
                                     data=call$data, na.action="na.omit")
 graphics::plot(cv.glmnet.formula.object)
 
@@ -116,7 +116,7 @@ stats::predict(cv.glmnet.formula.object, data.frame[3,3], type="response",
                s="lambda.min")
 stats::fitted(object=cv.glmnet.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(age~survived+sibs...,
+got model response from model.frame(age~survived+sibsp+logage,
                                     data=call$data, na.action="na.omit")
 
  plotmo grid:    survived sibsp  logage

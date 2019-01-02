@@ -296,7 +296,7 @@ graphics::par(mfrow=c(2,2), mgp=c(1.5,0.4,0), tcl=-0.3, font.main=2,
 ----Figuring out ylim
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
-degree1 plot 1 survived
+degree1 plot1 (pmethod "plotmo") variable survived
 newdata[2,3]:
   survived sibsp  logage
 1        0     0 3.06991
@@ -311,8 +311,8 @@ predict after processing with nresponse=1 is [2,1]:
 1 33.06561
 2 30.32483
 Reducing trace level for subsequent degree1 plots
-degree1 plot 2 sibsp
-degree1 plot 3 logage
+degree1 plot2 (pmethod "plotmo") variable sibsp
+degree1 plot3 (pmethod "plotmo") variable logage
 --done get.ylim.by.dummy.plots
 
 ylim c(1.955, 48.25)    clip TRUE
@@ -913,7 +913,6 @@ Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
 Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
 Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
 Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
-Warning in eval(dots[[i]]) : restarting interrupted promise evaluation
 Warning in eval(dots[[i]], envir = env, enclos = env) :
   restarting interrupted promise evaluation
 Error in eval(dots[[idot]], parent.frame(1)) : 
@@ -982,7 +981,7 @@ Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda 
 > earth.mod <- earth(x, yfac, trace=0)
 > 
 > plotres(earth.mod, nresponse=1,
-+         main=sprintf("multiresponse\nnresponse=1   rsq %.2g", earth.mod$rsq.per.response[1]),
++         main=sprint("multiresponse\nnresponse=1   rsq %.2g", earth.mod$rsq.per.response[1]),
 +         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
 +         smooth.col=0, info=TRUE,
 +         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
@@ -991,7 +990,7 @@ Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda 
         -0.01157106 0.1530614 0.04853916 0.02097713
 > 
 > plotres(earth.mod, nresponse=2,
-+         main=sprintf("nresponse=2   rsq %.2g", earth.mod$rsq.per.response[2]),
++         main=sprint("nresponse=2   rsq %.2g", earth.mod$rsq.per.response[2]),
 +         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
 +         smooth.col=0, info=TRUE,
 +         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
@@ -1000,7 +999,7 @@ Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda 
         -0.01157106 0.1530614 0.04853916 0.02097713
 > 
 > plotres(earth.mod, nresponse=3,
-+         main=sprintf("nresponse=3   rsq %.2g", earth.mod$rsq.per.response[3]),
++         main=sprint("nresponse=3   rsq %.2g", earth.mod$rsq.per.response[3]),
 +         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
 +         smooth.col=0, info=TRUE,
 +         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
@@ -1009,7 +1008,7 @@ Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda 
         -0.01157106 0.1530614 0.04853916 0.02097713
 > 
 > plotres(earth.mod, nresponse=4,
-+         main=sprintf("nresponse=4   rsq %.2g", earth.mod$rsq.per.response[4]),
++         main=sprint("nresponse=4   rsq %.2g", earth.mod$rsq.per.response[4]),
 +         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
 +         smooth.col=0, info=TRUE,
 +         do.par=FALSE, trace=0, jitter=7, cex.response=.7)

@@ -1,6 +1,12 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.5.2  Jan 2, 2019
+
+Improved support for models specified with a formula containing an offset term.
+
+The grid.levels argument can now be used with pmethod="partdep".
+
 --- 3.5.1  Nov 23, 2018
 
 Can now plot multinomial models from the "pre" package.

@@ -1,7 +1,7 @@
 @rem test.fac.bat: test factor plotting in plotmo. This also tests swapxy, xflip, and yflip
 @rem Stephen Milborrow, Berea Mar 2011
 
-@"C:\PROGRA~1\R\R-3.5.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.fac.R
+@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.fac.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.fac.Rout:
 @echo.

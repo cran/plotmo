@@ -28,7 +28,7 @@ Loading required package: ggplot2
 plotmo.prolog(object$finalModel) succeeded
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidi...,
+got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
@@ -47,7 +47,7 @@ plotmo.prolog(object$finalModel) succeeded
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidi...,
+got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.81
@@ -187,7 +187,7 @@ training rsq 0.45
 plotmo.prolog(object$finalModel) succeeded
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(survived~pclass+s...,
+got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    pclass  sex age sibsp parch
@@ -198,7 +198,7 @@ plotmo.prolog(object$finalModel) succeeded
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(survived~pclass+s...,
+got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.21
@@ -210,7 +210,7 @@ training rsq 0.21
 plotmo.prolog(object$finalModel) succeeded
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidi...,
+got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
@@ -221,7 +221,7 @@ plotmo.prolog(object$finalModel) succeeded
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidi...,
+got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.83

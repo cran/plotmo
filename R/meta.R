@@ -262,7 +262,7 @@ process.y <- function(y, object, type, nresponse,
     any.non.finites <- FALSE
     # we use apply below because is.finite doesn't work for dataframes
     any.non.finites <- !any.nas &&
-                       any(apply(y, 2, function(y) is.numeric(y) && !is.finite(y)))
+                       any(apply(y, 2, function(x) is.numeric(x) && !all(is.finite(x))))
     if(any.nas) {
         trace2(trace, "\n")
         warning0("NAs returned by ", fname)

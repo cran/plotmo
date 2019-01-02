@@ -23,7 +23,7 @@ plot_gbm <- function(object=stop("no 'object' argument"),
     check.classname(object, "object", c("gbm", "GBMFit"))
     obj <- object
     if((!is.numeric(smooth) && !is.logical(smooth)) ||
-       any(smooth != 0 && smooth != 1))
+       any(smooth != 0 & smooth != 1))
         stop0("smooth should be a four-element vector specifying if train, ",
               "test, CV, and OOB curves are smoothed, e.g. smooth=c(0,0,0,1)")
     smooth <- rep_len(smooth, 4) # recycle smooth if necessary

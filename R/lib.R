@@ -71,6 +71,12 @@ check.boolean <- function(b) # b==0 or b==1 is also ok
             " but it should be FALSE, TRUE, 0, or 1")
     b != 0 # convert to logical
 }
+is.boolean <- function(b) # b==NA or b==0 or b==1
+{
+    length(b) == 1 &&
+    (is.logical(b) || is.numeric(b)) &&
+    (is.na(b) || b == 0 || b == 1)
+}
 check.classname <- function(object, substituted.object, allowed.classnames)
 {
     err.msg <- quotify(allowed.classnames)
@@ -216,7 +222,7 @@ check.vec <- function(object, object.name, expected.len=NA, logical.ok=TRUE, na.
 {
     if(!(NROW(object) == 1 || NCOL(object) == 1))
         stop0(object.name, " is not a vector\n       ",
-              object.name, " has dimensions ", NROW(object), " by ", NCOL(object))
+              "It has dimensions ", NROW(object), " by ", NCOL(object))
     if(!((logical.ok && is.logical(object)) || is.numeric(object)))
         stop0(object.name, " is not numeric")
     if(!is.na(expected.len) && length(object) != expected.len)
@@ -447,8 +453,8 @@ get.weighted.rsq <- function(y, yhat, w=NULL) # NAs will be dropped before calc
         yhat <- yhat[!is.na]
         if(length(y) == 0)
             stop0("length(y) == 0 after deleting NAs in y or yhat")
-        rss <- sum((y - yhat)^2)
-        tss <- sum((y - mean(y))^2)
+        rss <- sos(y - yhat)
+        tss <- sos(y - mean(y))
     } else {
         stopifnot(length(w) == length(yhat))
         is.na <- is.na(y) | is.na(yhat) | is.na(w)
@@ -457,8 +463,8 @@ get.weighted.rsq <- function(y, yhat, w=NULL) # NAs will be dropped before calc
         w    <- w[!is.na]
         if(length(y) == 0)
             stop0("length(y) == 0 after deleting NAs in y or yhat or w")
-        rss <- sum(w * (y - yhat)^2)
-        tss <- sum(w * (y - weighted.mean(y, w))^2)
+        rss <- sos(y - yhat, w)
+        tss <- sos(y - weighted.mean(y, w), w)
     }
     get.rsq(rss, tss)
 }
@@ -865,6 +871,15 @@ sort.unique <- function(x)
 {
     sort(unique(x), na.last=NA) # na.last=NA drops NAs
 }
+sos <- function(x, weights=NULL) # sum of squares
+{
+    if(is.null(weights))
+        sum(as.vector(x^2))
+    else {
+        stopifnot(length(weights) == length(x))
+        sum(weights * as.vector(x^2))
+    }
+}
 stop0 <- function(...)
 {
     stop(..., call.=FALSE)
@@ -886,6 +901,8 @@ stopifnot.string <- function(s, name=short.deparse(substitute(s)),
     if(!is.character(s))
         stop0("'", name, "' is not a character variable (class(",
               name, ") is \"", class(s), "\")")
+    if(length(s) == 0)
+        stop0("'", name, "' is empty (it has no elements)")
     if(length(s) != 1)
         stop0("'", name, "' has more than one element\n       ",
               name, " = c(", paste.trunc("\"", s, "\"", sep=""), ")")
@@ -951,6 +968,12 @@ to.logical <- function(object, len)
     xlogical <- repl(FALSE, len)
     xlogical[object] <- TRUE
     xlogical
+}
+trace0 <- function(trace, fmt, ...)
+{
+    stopifnot(!(is.numeric(trace) && is.logical(trace)))
+    if(trace >= 0)
+        cat(sprint(fmt, ...), sep="")
 }
 trace1 <- function(trace, fmt, ...)
 {

@@ -403,9 +403,10 @@ get.ylim <- function(object,
         }                            #  1    2   3    4  5
         q <- quantile(all.yhat, probs=c(0, .25, .5, .75, 1), names=FALSE)
         ylim <- c(q[1], q[5]) # all the data
+        check.vec(ylim, "automatic ylim", expected.len=2)
         # iqr test to prevent clipping in some pathological cases
         iqr  <- q[4] - q[2]   # middle 50% of the data (inter-quartile range)
-        if(clip && iqr > .05 * (max(y) - min(y))) {
+        if(clip && !is.na(iqr) && iqr > .05 * (max(y) - min(y))) {
             median <- q[3]
             ylim[1] <- max(ylim[1], median - 10 * iqr)
             ylim[2] <- min(ylim[2], median + 10 * iqr)
@@ -416,7 +417,7 @@ get.ylim <- function(object,
             ylim <- range1(ylim, y)
         # binary or ternary reponse?
         # the range(uy) test is needed for binomial models specified using counts
-        else if(length(uy) <= 3 || range(y) == c(0,1))
+        else if(length(uy) <= 3 || all(range(y) == c(0,1)))
             ylim <- range1(ylim, y)
         if(is.specified(nrug)) # space for rug
             ylim[1] <- ylim[1] - .1 * (ylim[2] - ylim[1])
@@ -822,6 +823,8 @@ plot.degree1 <- function( # plot all degree1 graphs
         # by updating xgrid for this predictor (one column gets updated)
         xframe <- get.degree1.xframe(xgrid, x, ipred, ngrid1,
                                      ndiscrete, ux.list, extend)
+        trace2(trace, "degree1 plot%d (pmethod \"%s\") variable %s\n",
+               isingle, pmethod, pred.names[ipred])
         if(pmethod == "partdep" || pmethod == "apartdep") {
             stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
             yhat <- degree1.partdep.yhat(object,
@@ -833,8 +836,6 @@ plot.degree1 <- function( # plot all degree1 graphs
                 level <- 0
             }
         } else { # classic plotmo plot
-            trace2(trace, "degree1 plot %d %s\n",
-                   isingle, pred.names[ipred])
             yhat <- plotmo_predict(object, xframe, nresponse,
                         type, resp.levs, trace2, inverse.func, ...)$yhat
             if(level > 0) # get prediction intervals?
@@ -989,7 +990,7 @@ plot.degree1 <- function( # plot all degree1 graphs
     if(!is.null(partdep.x.global))      # already have partdep.x?
         partdep.x <- partdep.x.global   # yes use it
     else {
-        partdep.x <- get.partdep.x(pmethod, x, y, n.apartdep)
+        partdep.x <- get.partdep.x(pmethod, x, y, n.apartdep, grid.levels, pred.names)
         if(!draw.plot) # save the data, if there is going to be a next time
             assignInMyNamespace("partdep.x.global", partdep.x)
     }
@@ -1300,6 +1301,8 @@ plot.degree2 <- function(  # plot all degree2 graphs
             x1grid <- temp$x1grid # vec of values for the first predictor
             x2grid <- temp$x2grid # vec of values for the second predictor
 
+        trace2(trace, "degree2 plot%d (pmethod \"%s\") variables %s:%s\n",
+               ipair, pmethod, pred.names[ipred1], pred.names[ipred2])
         if(pmethod == "partdep" || pmethod == "apartdep") {
             stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
             yhat <- degree2.partdep.yhat(object,
@@ -1307,8 +1310,6 @@ plot.degree2 <- function(  # plot all degree2 graphs
                         partdep.x, x1grid, ipred1, x2grid, ipred2,
                         pred.names, resp.levs, ...)
         } else { # classic plotmo plot
-            trace2(trace, "degree2 plot %d %s:%s\n",
-                   ipair, pred.names[ipred1], pred.names[ipred2])
             yhat <- plotmo_predict(object, xframe, nresponse,
                         type, resp.levs, trace2, inverse.func, ...)$yhat
         }
@@ -1410,7 +1411,7 @@ plot.degree2 <- function(  # plot all degree2 graphs
     if(!is.null(partdep.x.global))      # already have partdep.x?
         partdep.x <- partdep.x.global   # yes use it
     else {
-        partdep.x <- get.partdep.x(pmethod, x, y, n.apartdep)
+        partdep.x <- get.partdep.x(pmethod, x, y, n.apartdep, grid.levels, pred.names)
         if(!draw.plot) # save the data, if there is going to be a next time
             assignInMyNamespace("partdep.x.global", partdep.x)
     }

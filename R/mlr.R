@@ -108,8 +108,8 @@ plotmo.prolog_learner.model <- function(object, object.name, trace, ...)
                 object$learner.model <- learner.model
             else if(learner.field == "$learner.model$next.model$learner.model")
                 object$learner.model$next.model$learner.model <- learner.model
-        } else if(trace >= 0)
-             printf("plotmo.prolog(object%s) failed, continuing anyway\n",
+        } else
+             trace0(trace, "plotmo.prolog(object%s) failed, continuing anyway\n",
                     learner.field)
         trace2(trace, "Done recursive call in plotmo.prolog for learner.model\n")
     }

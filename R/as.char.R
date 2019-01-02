@@ -209,7 +209,7 @@ print.colnames <- function(x, full=FALSE)
         if(full) # full colnames (up to 1000 characters)
             printf("with colname%s %s\n",
                 if(length(colnames(x)) > 1) "s" else "",
-                paste.trunc(colnames, maxlen=getOption("width")-20))
+                paste.trunc(colnames, maxlen=max(25, getOption("width")-20)))
         else # short version of colnames
             printf.wrap("with colname%s %s\n",
                 if(length(colnames(x)) > 1) "s" else "",

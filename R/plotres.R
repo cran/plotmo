@@ -70,8 +70,10 @@ plotres <- function(object = stop("no 'object' argument"),
         grid.col <- "lightgray"
     check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
     temp <- get.plotres.data(object, object.name, which, standardize, delever,
-                             level, versus, id.n, labels.id,
-                             trace, npoints, type, nresponse, ...)
+                level, versus, id.n, labels.id,
+                trace, npoints, type, nresponse,
+                ...,
+                must.get.rsq=info || trace >= 1) # get rsq only if necessary
 
     nresponse <- temp$nresponse   # col index in the response (converted from NA if necessary)
     resp.name <- temp$resp.name   # used only in automatic caption, may be NULL

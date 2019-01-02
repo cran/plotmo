@@ -63,7 +63,7 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names crim zn indus chas nox age dis rad tax ptratio b medv log...
 na.action(object) is "na.pass"
-stats::model.frame(medv~log.lstat+rm..., data=call$data, na.action="na.pass")
+stats::model.frame(medv~log.lstat+rm.squared+crim+ptrati..., data=call$data, na.action="na.pass")
 model.frame[,-1] is usable and has column names log.lstat rm.squared crim ptratio tax dis rad chas
 plotmo_x returned[506,8]:
     log.lstat rm.squared    crim ptratio tax    dis rad chas
@@ -92,7 +92,7 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names crim zn indus chas nox age dis rad tax ptratio b medv log...
 na.action(object) is "na.pass"
-stats::model.frame(medv~log.lstat+rm..., data=call$data, na.action="na.pass")
+stats::model.frame(medv~log.lstat+rm.squared+crim+ptrati..., data=call$data, na.action="na.pass")
 model.frame[,-1] is usable and has column names log.lstat rm.squared crim ptratio tax dis rad chas
 plotmo_x returned[506,8]:
     log.lstat rm.squared    crim ptratio tax    dis rad chas
@@ -149,7 +149,7 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names crim zn indus chas nox age dis rad tax ptratio b medv log...
 na.action(object) is "na.pass"
-stats::model.frame(medv~log.lstat+rm..., data=call$data, na.action="na.pass")
+stats::model.frame(medv~log.lstat+rm.squared+crim+ptrati..., data=call$data, na.action="na.pass")
 model.frame[,1] is usable and has column name medv
 plotmo_y returned[506,1]:
     medv
@@ -184,9 +184,9 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names crim zn indus chas nox age dis rad tax ptratio b medv log...
 na.action(object) is "na.pass"
-stats::model.frame(medv~log.lstat+rm..., data=call$data, na.action="na.pass")
+stats::model.frame(medv~log.lstat+rm.squared+(crim+ptrat..., data=call$data, na.action="na.pass")
 model.frame[,1] is usable and has column name medv
-got model response from model.frame(medv~log.lstat+rm...,
+got model response from model.frame(medv~log.lstat+rm.squared+(crim+ptrat...,
                                     data=call$data, na.action="na.pass")
 plotmo_y returned[506,1]:
     medv
@@ -229,7 +229,7 @@ graphics::par(mfrow=c(4,4), mgp=c(1.5,0.4,0), tcl=-0.3, font.main=2,
 ----Figuring out ylim
 --get.ylim.by.dummy.plots
 --plot.degree1(draw.plot=FALSE)
-degree1 plot 1 log.lstat
+degree1 plot1 (pmethod "plotmo") variable log.lstat
 newdata[50,8]:
     log.lstat rm.squared    crim ptratio tax     dis rad chas
 1   0.5481214   38.54547 0.25651   19.05 330 3.20745  24   no
@@ -254,11 +254,11 @@ predict after processing with nresponse=1 is [50,1]:
 ... 23.20861
 50  22.43238
 Reducing trace level for subsequent degree1 plots
-degree1 plot 2 rm.squared
-degree1 plot 3 ptratio
-degree1 plot 4 tax
+degree1 plot2 (pmethod "plotmo") variable rm.squared
+degree1 plot3 (pmethod "plotmo") variable ptratio
+degree1 plot4 (pmethod "plotmo") variable tax
 --plot.degree2(draw.plot=FALSE)
-degree2 plot 1 log.lstat:rm.squared
+degree2 plot1 (pmethod "plotmo") variables log.lstat:rm.squared
 newdata[400,8]:
     log.lstat rm.squared    crim ptratio tax     dis rad chas
 1   0.5481214   12.68072 0.25651   19.05 330 3.20745  24   no
@@ -283,11 +283,11 @@ predict after processing with nresponse=1 is [400,1]:
 ...  6.216071
 400 47.635075
 Reducing trace level for subsequent degree2 plots
-degree2 plot 2 log.lstat:ptratio
-degree2 plot 3 log.lstat:tax
-degree2 plot 4 rm.squared:ptratio
-degree2 plot 5 rm.squared:tax
-degree2 plot 6 ptratio:tax
+degree2 plot2 (pmethod "plotmo") variables log.lstat:ptratio
+degree2 plot3 (pmethod "plotmo") variables log.lstat:tax
+degree2 plot4 (pmethod "plotmo") variables rm.squared:ptratio
+degree2 plot5 (pmethod "plotmo") variables rm.squared:tax
+degree2 plot6 (pmethod "plotmo") variables ptratio:tax
 --done get.ylim.by.dummy.plots
 
 ylim c(3.124, 53.64)    clip TRUE
@@ -311,7 +311,7 @@ persp(ptratio:tax) theta 145
 variable importance: log.lstat rm.squared tax ptratio 
 stats::predict(lmtree.object, data.frame[3,8], type="response")
 stats::fitted(object=party_plotmo.object)
-got model response from model.frame(medv~log.lstat+rm...,
+got model response from model.frame(medv~log.lstat+rm.squared+(crim+ptrat...,
                                     data=call$data, na.action="na.pass")
 
  plotmo grid:    log.lstat rm.squared    crim ptratio tax     dis rad chas
@@ -371,7 +371,7 @@ Loading required namespace: vcd
 variable importance: glucose mass age 
 stats::predict(modelparty.object, data.frame[3,3], type="response")
 stats::fitted(object=party_plotmo.object)
-got model response from model.frame(diabetes~glucose+...,
+got model response from model.frame(diabetes~glucose+(mass+age),
                                     data=call$data, na.action="na.pass")
 
  plotmo grid:    glucose mass age

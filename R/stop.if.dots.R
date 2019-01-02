@@ -33,6 +33,7 @@ describe.dot <- function(dots, idot) # utility for dots.used.err
     # the argument that was passed in dots is unnamed
     call <- call.as.char(n=5) # n=5 to describe call to caller of stop.if.dots
     sprint(" unnamed argument\n       The call was %s",
-           paste0(strwrap(call, width=max(40, getOption("width")-20), exdent=25),
+           paste0(strwrap(call,
+                  width=max(40, max(25, getOption("width")-20)), exdent=25),
                   collapse="\n"))
 }

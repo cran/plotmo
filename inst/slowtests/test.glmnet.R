@@ -248,28 +248,28 @@ yfac <- factor(c("a","b","c","d")[y])
 earth.mod <- earth(x, yfac, trace=0)
 
 plotres(earth.mod, nresponse=1,
-        main=sprintf("multiresponse\nnresponse=1   rsq %.2g", earth.mod$rsq.per.response[1]),
+        main=sprint("multiresponse\nnresponse=1   rsq %.2g", earth.mod$rsq.per.response[1]),
         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
         smooth.col=0, info=TRUE,
         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
 plotmo(earth.mod, nresponse=1, do.par=FALSE)
 
 plotres(earth.mod, nresponse=2,
-        main=sprintf("nresponse=2   rsq %.2g", earth.mod$rsq.per.response[2]),
+        main=sprint("nresponse=2   rsq %.2g", earth.mod$rsq.per.response[2]),
         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
         smooth.col=0, info=TRUE,
         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
 plotmo(earth.mod, nresponse=2, do.par=FALSE)
 
 plotres(earth.mod, nresponse=3,
-        main=sprintf("nresponse=3   rsq %.2g", earth.mod$rsq.per.response[3]),
+        main=sprint("nresponse=3   rsq %.2g", earth.mod$rsq.per.response[3]),
         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
         smooth.col=0, info=TRUE,
         do.par=FALSE, trace=0, jitter=7, cex.response=.7)
 plotmo(earth.mod, nresponse=3, do.par=FALSE)
 
 plotres(earth.mod, nresponse=4,
-        main=sprintf("nresponse=4   rsq %.2g", earth.mod$rsq.per.response[4]),
+        main=sprint("nresponse=4   rsq %.2g", earth.mod$rsq.per.response[4]),
         which=3, xlim=c(-.2, 1.2), ylim=c(-1.2, 1.2),
         smooth.col=0, info=TRUE,
         do.par=FALSE, trace=0, jitter=7, cex.response=.7)

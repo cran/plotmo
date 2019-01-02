@@ -626,7 +626,7 @@ get.model.frame <- function(object, field, trace, naked,
 
     model.frame.string <-
         sprint("model.frame(%s, data=%s, na.action=%s)",
-            paste.trunc(strip.space(format(formula)), maxlen=20), data.source,
+            paste.trunc(strip.space(format(formula)), maxlen=40), data.source,
             trunc.deparse(na.action))
 
     trace2(trace, "stats::%s\n", model.frame.string)
@@ -822,6 +822,7 @@ formula.as.char.with.check <- function(form, form.name, trace)
 process.formula <- function(object, form, trace, naked)
 {
     stopifnot(is.character(form))
+    stopifnot(length(form) == 1)
     if(naked) {
         form.old <- form
         form <- naken.formula.string(form)
@@ -912,7 +913,7 @@ naken <- function(s) # e.g. "s(x3,x4,df=4)" becomes "x3+x4"
 
     sub("#BRACKETS#",  brackets$brackets, s) # change #BRACKETS# back to what it was
 }
-replace.brackets <- function(pattern, place.holder, s)
+replace.brackets <- function(pattern, place.holder, s) # utility for naken
 {
     brackets <- ""
     i <- regexpr(pattern, s)

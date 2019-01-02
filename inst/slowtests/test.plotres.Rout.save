@@ -198,21 +198,12 @@ after par: cex=0.83 col.main=#456789 col.axis=black
 > mtext("elm.glm with various type options", outer=TRUE, font=2, line=1, cex=1)
 > plotres(elm.glm, col=survived+2, type="standardize",
 +         which=3, do.par=FALSE, main="type=\"standardize\"\nequivalent to standardize=TRUE")
-
-stats::predict(earth.object, NULL, type="standardize")
-
 > # TODO double standardization, should not be allowed
 > plotres(elm.glm, col=survived+2, standardize=TRUE, type="standardize",
 +         which=3, do.par=FALSE,
 +         main="standard=TRUE, type=\"deviance\"\ndouble standardization")
-
-stats::predict(earth.object, NULL, type="standardize")
-
 > plotres(elm.glm, col=survived+2, type="deviance",
 +         which=3, do.par=FALSE, main="type=\"deviance\"")
-
-stats::predict(earth.object, NULL, type="deviance")
-
 > 
 > printf("======== multiple response earth models\n")
 ======== multiple response earth models
@@ -234,7 +225,7 @@ stats::predict(earth.object, NULL, type="deviance")
 +      which=3, do.par=FALSE, main="pclass response, nresponse=\"first\"")
 stats::residuals(object=earth.object, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(pclass~survived+s...,
+got model response from model.frame(pclass~survived+sex+age+sibsp+logage,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.23
@@ -244,7 +235,7 @@ training rsq 0.23
 +      main="pclass response, nresponse=\"first\"\nFORCEPREDICT=TRUE")
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(pclass~survived+s...,
+got model response from model.frame(pclass~survived+sex+age+sibsp+logage,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.23
@@ -258,9 +249,6 @@ training rsq 0.23
 > plotres(glm, which=3, main="plotres glm survived")
 > # with plotres we can also plot pearson etc. residuals
 > plotres(glm, which=3, type="pearson", main="plotres glm survived\ntype=\"pearson\"")
-
-stats::predict(glm.object, data.frame[88,3], type="pearson")
-
 > 
 > printf("======== rpart\n")
 ======== rpart
