@@ -18,7 +18,6 @@ plotmo_rsq1 <- function(object, newdata, trace, meta, ...)
     ynew <- plotmo_response(object=object, newdata=newdata, trace=max(0, trace),
                             nresponse=meta$nresponse, type=meta$type,
                             meta=meta, ...)
-
     trace2(trace, "--plotmo_predict for plotmo_rsq1\n")
     yhat <- plotmo_predict(object=object, newdata=newdata, nresponse=meta$nresponse,
                            type=meta$type, expected.levs=meta$expected.levs,
@@ -54,16 +53,20 @@ plotmo_response <- function(object, newdata=NULL, trace=0,
                             msg.if.predictions.not.numeric="RSq is not available",
                             ...)
     expected.len <- if(is.null(newdata)) NROW(meta$fitted) else NROW(newdata)
+    y <- NULL
     if(is.null(newdata))
         y <- plotmo_y(object, meta$nresponse, trace,
                       expected.len=expected.len, resp.levs=meta$resp.levs)$y
     else if(length(dim(newdata)) != 2)
         stop0("plotmo_response: newdata must be a matrix or data.frame")
-    else if(is.null(object$terms))
-        y <- response.from.xy.model(object, newdata, trace, meta$resp.name)
-    else # model has terms, presumably it was created with a formula
-        y <- get.x.or.y.from.model.frame(object, field="y", trace, naked=FALSE,
-                                         na.action=na.pass, newdata)$x
+    else {
+        terms <- try(terms(object), silent=TRUE)
+        if(is.try.err(terms) || is.null(terms)) # model doesn't have terms?
+            y <- response.from.xy.model(object, newdata, trace, meta$resp.name)
+        else # model has terms, presumably it was created with a formula
+            y <- get.x.or.y.from.model.frame(object, field="y", trace, naked=FALSE,
+                                             na.action=na.pass, newdata)$x
+    }
     if(!is.good.data(y, "response", trace, check.colnames=FALSE))
         stop0("response with newdata", format.err.field(y, "response", trace))
     y <- cleanup.x.or.y(object, y, "y", trace, check.naked=FALSE)
@@ -72,9 +75,8 @@ plotmo_response <- function(object, newdata=NULL, trace=0,
     y <- convert.glm.response(object, y, trace) # TODO test this and factor responses
     # TODO following will sometimes give the wrong results?
     if(!is.null(meta$nresponse) && meta$nresponse > NCOL(y)) {
-        # if(trace >= 1)
-        #     printf("forcing nresponse=%g to 1 because response has one column\n",
-        #            nresponse)
+        trace2(trace, "plotmo_response: forcing meta$nresponse=%g to 1 because response has one column\n",
+               nresponse)
         meta$nresponse <- 1
     }
     process.y(y, object, meta$type, meta$nresponse, expected.len=expected.len,
@@ -84,7 +86,6 @@ plotmo_response <- function(object, newdata=NULL, trace=0,
 
 response.from.xy.model <- function(object, newdata, trace, resp.name)
 {
-    stopifnot(is.null(object$terms)) # shouldn't be here if model has formula
     if(!is.character(resp.name) || length(resp.name) != 1 || !nzchar(resp.name)) {
         if(trace > 2) {
             printf("\nresp.name:\n")
@@ -103,9 +104,9 @@ response.from.xy.model <- function(object, newdata, trace, resp.name)
         col.name <- gsub(",.*",   "", col.name)  # delete (2nd) comma if any, and all after
         col.name <- gsub("\\]",   "", col.name)  # delete final ] if above gsub didn't do it
         # print a message because we don't always get this right
-        trace0(trace,
-               "Assuming response %s implies that the response column is %s\n",
-               resp.name, paste(col.name))
+        if(trace >= 0)
+            printf("Assuming response %s implies that the response column is %s\n",
+                   resp.name, paste(col.name))
         # the following will do something like eval(3, env)
         col.index <- try.eval(parse(text=col.name), model.env(object), trace=trace, expr.name=col.name)
         if(is.try.err(col.index))

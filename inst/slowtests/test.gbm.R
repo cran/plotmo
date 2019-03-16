@@ -4,7 +4,6 @@ source("test.prolog.R")
 library(gbm)
 library(rpart.plot) # for ptitanic, want data with NAs for testing
 library(plotmo)
-library(earth) # for ozone1
 data(ptitanic)
 
 cat("--- distribution=\"gaussian\", formula interface ----------------------------------\n")

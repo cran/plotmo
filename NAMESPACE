@@ -1,5 +1,6 @@
 importFrom(plotrix, thigmophobe.labels)
 importFrom(TeachingDemos, spread.labs)
+importFrom(Formula, Formula)
 export(plotmo)
 export(plotres)
 export(plot_gbm)

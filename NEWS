@@ -1,6 +1,22 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.5.3 March 16, 2019
+
+Extended plotmo to support earth version 5.0.0, which allows multiple
+responses using the Formula package.  Plotmo now also has partial
+support for other models also created using Formula (as well as those
+that use formula). Added "Depends: Formula" to the DESCRIPTION.
+
+Binomial pair responses are now more uni firmly converted to a
+"fraction true" before plotting.
+
+If nresponse is not specified for multiple response models, plotmo now
+defaults to nresponse=1 with a warning (whereas previous versions of
+plotmo issued an error message).
+
+Updates to the libraries shared with earth.
+
 --- 3.5.2  Jan 2, 2019
 
 Improved support for models specified with a formula containing an offset term.

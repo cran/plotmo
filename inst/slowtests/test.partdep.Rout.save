@@ -2,6 +2,7 @@
 > 
 > source("test.prolog.R")
 > library(plotmo)
+Loading required package: Formula
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(earth)
@@ -40,7 +41,7 @@ calculating apartdep for sex:age 0123456790
 > 
 > # compare to gbm with an artifical function of variables with a very strong interaction
 > library(gbm)
-Loaded gbm 2.1.4
+Loaded gbm 2.1.5
 > n <- 250
 > set.seed(2016)
 > x1 <- runif(n)

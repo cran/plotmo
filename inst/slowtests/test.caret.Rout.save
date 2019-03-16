@@ -4,6 +4,7 @@
 > 
 > source("test.prolog.R")
 > library(plotmo)
+Loading required package: Formula
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(earth)
@@ -82,6 +83,8 @@ GCV 13.71664    RSS 3592.762    GRSq 0.7669974    RSq 0.8139355
 stats::predict(bagEarth.object, data.frame[3,9], type="response")
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict() instead
+assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
+assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
 got model response from model.frame(O3~.,
                                     data=call$data, na.action="na.fail")
 
@@ -94,8 +97,11 @@ residuals() was unsuccessful, will use predict() instead
 stats::predict(bagEarth.object, data.frame[3,9], type="response")
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict() instead
+assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
+assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
 got model response from model.frame(O3~.,
                                     data=call$data, na.action="na.fail")
+assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
 
 training rsq 0.82
 > 
@@ -124,36 +130,38 @@ training rsq 0.98
 > # trace=1 to display "Fixed rank deficient bx by removing 1 term" messages
 > a.bag3 <- bagEarth(survived~., data=etitanic, degree=2, B=3, trace=1)
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY
-weights[1046,1] with no column names
+y[1046,1] with colname subY, and values 1, 1, 0, 0, 0, 0, 1, 1, 1, 0,...
+weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
 After forward pass GRSq 0.454 RSq 0.492
 Fixed rank deficient bx by removing 1 term, 15 terms remain
-Prune method "backward" penalty 3 nprune null: selected 8 of 15 terms, and 5 of 7 preds
+Prune backward penalty 3 nprune null: selected 8 of 15 terms, and 5 of 7 preds
 After pruning pass GRSq 0.467 RSq 0.485
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY
-weights[1046,1] with no column names
+y[1046,1] with colname subY, and values 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,...
+weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
 After forward pass GRSq 0.486 RSq 0.520
 Fixed rank deficient bx by removing 1 term, 14 terms remain
-Prune method "backward" penalty 3 nprune null: selected 11 of 14 terms, and 6 of 7 preds
+Prune backward penalty 3 nprune null: selected 11 of 14 terms, and 6 of 7 preds
 After pruning pass GRSq 0.494 RSq 0.518
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY
-weights[1046,1] with no column names
+y[1046,1] with colname subY, and values 0, 0, 1, 0, 0, 1, 0, 1, 1, 1,...
+weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
 After forward pass GRSq 0.446 RSq 0.490
 Fixed rank deficient bx by removing 1 term, 17 terms remain
-Prune method "backward" penalty 3 nprune null: selected 11 of 17 terms, and 6 of 7 preds
+Prune backward penalty 3 nprune null: selected 11 of 17 terms, and 6 of 7 preds
 After pruning pass GRSq 0.462 RSq 0.487
 > plotmo(a.bag3, clip=F, caption="bagEarth, etitanic", trace=1, SHOWCALL=TRUE)
 stats::predict(bagEarth.object, data.frame[3,7], type="response")
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict() instead
+assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
+assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
 got model response from model.frame(survived~.,
                                     data=call$data, na.action="na.fail")
 
@@ -166,8 +174,11 @@ residuals() was unsuccessful, will use predict() instead
 stats::predict(bagEarth.object, data.frame[3,7], type="response", clip=FALSE)
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict() instead
+assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
+assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
 got model response from model.frame(survived~.,
                                     data=call$data, na.action="na.fail")
+assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
 
 training rsq 0.45
 > 

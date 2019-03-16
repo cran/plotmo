@@ -117,7 +117,7 @@ plotmo_meta <- function(object, type, nresponse, trace,
     if(ncol(yfull) == 1 && nresponse.y > 1) {
         # e.g. lda(survived~., data=etitanic) with predict(..., type="post")
         nresponse.y <- 1
-        trace2(trace,
+        trace1(trace,
             "nresponse=%d but for plotmo_y using nresponse=1 because ncol(y) == 1\n",
             nresponse)
     }
@@ -353,18 +353,20 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
                 colnames <- colnames(y)
             icol <- min(2, NCOL(y))
             if(is.null(colnames))
-                msg1 <- sprint("%s\n       Example: nresponse=%d",
+                msg1 <- sprint("%s\n      Example: nresponse=%d",
                     "Use the nresponse argument to specify a column.",
                     icol)
             else
                 msg1 <- sprint(
-                    "%s\n          Example: nresponse=%s\n          Example: nresponse=%d",
+                    "%s\n         Example: nresponse=%d\n         Example: nresponse=%s",
                     "Use the nresponse argument to specify a column.",
-                    quotify(if(is.na(colnames(y)[icol])) colname(y, 1) else colname(y, icol)),
-                    icol)
-            stopf(
-"%s returned multiple columns (see above) but nresponse is not specified\n       %s",
+                    icol,
+                    quotify(if(is.na(colnames(y)[icol])) colname(y, 1) else colname(y, icol)))
+            printf(
+"%s returned multiple columns (see above) but nresponse is not specified\n    %s\n\n",
                   fname, msg1)
+            warning0("Defaulting to nresponse=1, see above messages");
+            nresponse <- 1
         }
     } else if (is.character(nresponse)) {
         # convert column name to column index

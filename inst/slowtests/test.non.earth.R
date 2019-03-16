@@ -610,8 +610,9 @@ set.seed(3)
 nn <- neuralnet(y~x1+x2, data=data, hidden=3, rep=3)
 print(head(plotmo:::predict.nn(nn, rep="best", trace=TRUE)))
 plotmo(nn, trace=1, col.response=2, all2=TRUE, SHOWCALL=TRUE)
-plotmo(nn, trace=1, col.response=2, predict.rep="best", SHOWCALL=TRUE)
-plotres(nn, trace=1, info=TRUE, SHOWCALL=TRUE)
+# trace=0 below to test hushing of message "assuming "y" in the model.frame is the response, because object$terms is NULL"
+plotmo(nn, trace=0, col.response=2, predict.rep="best", SHOWCALL=TRUE)
+plotres(nn, trace=0, info=TRUE, SHOWCALL=TRUE)
 plotres(nn, trace=1, info=TRUE, predict.rep="best", SHOWCALL=TRUE)
 
 library(nnet)

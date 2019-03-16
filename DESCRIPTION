@@ -1,9 +1,9 @@
 Package: plotmo
-Version: 3.5.2
+Version: 3.5.3
 Title: Plot a Model's Residuals, Response, and Partial Dependence Plots
 Author: Stephen Milborrow
 Maintainer: Stephen Milborrow <milbo@sonic.net>
-Depends: R (>= 3.2.0), plotrix, TeachingDemos
+Depends: R (>= 3.2.0), Formula (>= 1.2-3), plotrix, TeachingDemos
 Description: Plot model surfaces for a wide variety of models
         using partial dependence plots and other techniques.
         Also plot model residuals and other information on the model.
@@ -15,6 +15,6 @@ License: GPL-3
 LazyData: yes
 URL: http://www.milbo.users.sonic.net
 NeedsCompilation: no
-Packaged: 2019-01-02 13:42:37 UTC; milbo
+Packaged: 2019-03-16 18:05:18 UTC; milbo
 Repository: CRAN
-Date/Publication: 2019-01-02 14:30:07 UTC
+Date/Publication: 2019-03-16 18:50:03 UTC

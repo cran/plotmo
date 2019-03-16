@@ -2,6 +2,7 @@
 > 
 > source("test.prolog.R")
 > library(earth)
+Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
 Loading required package: TeachingDemos
@@ -231,7 +232,8 @@ plotmo1(object=mod.earth.tit,level=0.9,type="earth")
 > stopifnot(names(tit.orgpclass) == names(tit))
 > a.tit.orgpclass <- earth(pclass~., degree=2, data=tit.orgpclass)
 > a.tit           <- earth(pclass~., degree=2, data=tit)
-> expect.err(try(plotmo(a.tit)), "predict.earth returned multiple columns")
+> old.warn <- options(warn=2) # treat warnings as errors
+> expect.err(try(plotmo(a.tit)), "Defaulting to nresponse=1, see above messages")
 
 predict.earth[88,3]:
        class2 classthird      first
@@ -241,11 +243,14 @@ predict.earth[88,3]:
 ... 0.2180022  0.5645160 0.21748179
 88  0.2400614  0.6754849 0.08445368
 
-Error : predict.earth returned multiple columns (see above) but nresponse is not specified
-       Use the nresponse argument to specify a column.
-          Example: nresponse="classthird"
-          Example: nresponse=2
+predict.earth returned multiple columns (see above) but nresponse is not specified
+    Use the nresponse argument to specify a column.
+         Example: nresponse=2
+         Example: nresponse="classthird"
+
+Error : (converted from warning) Defaulting to nresponse=1, see above messages
 Got error as expected from try(plotmo(a.tit))
+> options(warn=old.warn$warn)
 > # following two graphs should be identical
 > plotmo1(a.tit.orgpclass, nresponse="1st",   all1=T, col.resp=3, type2="im")
 plotmo1(object=a.tit.orgpclass,nresponse="1st",all1=T,col.resp=3,type2="im")
@@ -267,7 +272,8 @@ plotmo1(object=a.tit,nresponse="class2",all1=T)
 > 
 > tit  <- get.tit()
 > mod.earth.pclass <- earth(pclass~., data=tit, degree=2)
-> expect.err(try(plotmo1(mod.earth.pclass)), "nresponse is not specified")
+> old.warn <- options(warn=2) # treat warnings as errors
+> expect.err(try(plotmo1(mod.earth.pclass)), "Defaulting to nresponse=1, see above messages")
 plotmo1(object=mod.earth.pclass)
 
 predict.earth[88,3]:
@@ -278,11 +284,14 @@ predict.earth[88,3]:
 ... 0.1984114  0.5220475 0.2795411
 88  0.2490258  0.6472095 0.1037648
 
-Error : predict.earth returned multiple columns (see above) but nresponse is not specified
-       Use the nresponse argument to specify a column.
-          Example: nresponse="classthird"
-          Example: nresponse=2
+predict.earth returned multiple columns (see above) but nresponse is not specified
+    Use the nresponse argument to specify a column.
+         Example: nresponse=2
+         Example: nresponse="classthird"
+
+Error : (converted from warning) Defaulting to nresponse=1, see above messages
 Got error as expected from try(plotmo1(mod.earth.pclass))
+> options(warn=old.warn$warn)
 > plotmo1(mod.earth.pclass, nresponse="fi")
 plotmo1(object=mod.earth.pclass,nresponse="fi")
  plotmo grid:    survived  sex age sibsp  logage
@@ -310,7 +319,8 @@ plotmo1(object=mod.earth.pclass,nresponse=1,type="class",grid.levels=list(sex="f
 > 
 > # tit[,1] is pclass
 > mod.earth.tit <- earth(tit[,-1], tit[,1], degree=2)
-> expect.err(try(plotmo1(mod.earth.tit)), "nresponse is not specified")
+> old.warn <- options(warn=2) # treat warnings as errors
+> expect.err(try(plotmo1(mod.earth.tit)), "Defaulting to nresponse=1, see above messages")
 plotmo1(object=mod.earth.tit)
 
 predict.earth[88,3]:
@@ -321,11 +331,14 @@ predict.earth[88,3]:
 ... 0.1984114  0.5220475 0.2795411
 88  0.2490258  0.6472095 0.1037648
 
-Error : predict.earth returned multiple columns (see above) but nresponse is not specified
-       Use the nresponse argument to specify a column.
-          Example: nresponse="classthird"
-          Example: nresponse=2
+predict.earth returned multiple columns (see above) but nresponse is not specified
+    Use the nresponse argument to specify a column.
+         Example: nresponse=2
+         Example: nresponse="classthird"
+
+Error : (converted from warning) Defaulting to nresponse=1, see above messages
 Got error as expected from try(plotmo1(mod.earth.tit))
+> options(warn=old.warn$warn)
 > plotmo1(mod.earth.tit, nresponse="first")
 plotmo1(object=mod.earth.tit,nresponse="first")
  plotmo grid:    survived  sex age sibsp  logage
@@ -437,7 +450,7 @@ Got error as expected from try(plotmo1(rpart.model.vignette, level = 0.9))
 > printf("library(gbm)\n")
 library(gbm)
 > library(gbm)                                            # gbm
-Loaded gbm 2.1.4
+Loaded gbm 2.1.5
 > set.seed(2016)
 > gbm.model.vignette <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=100)
 > # commented out following because they always take the whole page

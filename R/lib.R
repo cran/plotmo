@@ -67,7 +67,7 @@ check.boolean <- function(b) # b==0 or b==1 is also ok
         stop0("the ", short.deparse(substitute(b), "given"),
               " argument is not FALSE, TRUE, 0, or 1")
     if(!(is.logical(b) || is.numeric(b)) || is.na(b) || !(b == 0 || b == 1))
-        stop0(short.deparse(substitute(b), "the argument"), "=", b,
+        stop0(short.deparse(substitute(b), "the argument"), "=", as.char(b),
             " but it should be FALSE, TRUE, 0, or 1")
     b != 0 # convert to logical
 }
@@ -112,7 +112,7 @@ check.integer.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
         check.numeric.scalar(object, min, max, null.ok, na.ok, logical.ok,
                              char.ok.msg=char.ok, object.name=object.name)
         if(!is.null(object) && !is.na(object) && object != floor(object))
-                stop.msg()
+            stop.msg()
     }
     object
 }
@@ -233,6 +233,15 @@ check.vec <- function(object, object.name, expected.len=NA, logical.ok=TRUE, na.
     else
         check(object, object.name, "NA", is.na)
     check(object, object.name, "non-finite value", function(object) {!is.finite(object)})
+}
+cleantry <- function(err) # clean up a try.err (remove "Error: " etc.)
+{
+    stopifnot(is.try.err(err))
+    attributes(err) <- NULL
+    err <- gsub("^[^:]*: *", "", err) # remove "Error: " (actually everything up to the first colon)
+    err <- gsub("\n", " ", err, fixed=TRUE)  # remove newlines
+    err <- gsub("  +", " ", err)             # multiple spaces to single spaces
+    gsub(" $", "", err)                      # remove trailing space
 }
 # returns the column name, if that is not possible then something like x[,1]
 colname <- function(object, i, object.name=trunc.deparse(substitute(object)))
@@ -396,7 +405,7 @@ get.model.env <- function(object, object.name="object", trace=0)
         if(is.null(call))
             printf("object class is \"%s\" with no call\n", class(object)[1])
         else
-            printf.wrap("object call is %s\n", strip.deparse(call))
+            printf.wrap("object call is %s\n", strip.deparse(call), maxlen=80)
         printf("--get.model.env for %s object\n", class(object)[1])
     }
     # following will fail for non-formula models because they have no terms field
@@ -578,7 +587,7 @@ lighten <- function(col, lighten.amount, alpha=1)
     else
         rgb(rgb[1,], rgb[2,], rgb[3,], alpha)
 }
-# returns the expanded arg
+# returns the expanded arg (error msg if arg is not an allowed choice in calling func)
 match.arg1 <- function(arg, argname=deparse(substitute(arg)))
 {
     formal.args <- formals(sys.function(sys.parent()))
@@ -586,10 +595,11 @@ match.arg1 <- function(arg, argname=deparse(substitute(arg)))
     formal.argnames[imatch.choices(arg[1], formal.argnames, argname)]
 }
 # returns a string, choices is a vector of strings
+# error msg if arg is not an allowed choice
 match.choices <- function(arg,
             choices,
             argname=deparse(substitute(arg)),
-            err.msg="",              # error message, "" for automatic
+            err.msg="",              # error message ("" for automatic)
             err.msg.ext="")          # extension to error message
 {
     choices[imatch.choices(arg, choices, argname,
@@ -692,7 +702,7 @@ pastef <- function(s, fmt, ...) # paste the printf style args to s
 {
     paste0(s, sprint(fmt, ...))
 }
-print.first.few.elements.of.vector <- function(x, trace, name=NULL)
+print_first_few_elements_of_vector <- function(x, trace, name=NULL)
 {
     try(cat(" min", min(x), "max", max(x)), silent=TRUE)
     spaces <- "               "
@@ -963,7 +973,7 @@ text.on.white <- function(x, y, label,
     else
         stop0("srt=", srt, " is not allowed (only 0, 90, and -90 are supported)")
 }
-to.logical <- function(object, len)
+to.logical <- function(object, len) # object can be a boolean or numeric vector
 {
     xlogical <- repl(FALSE, len)
     xlogical[object] <- TRUE
@@ -1049,4 +1059,44 @@ warnf <- function(fmt, ...) # args like printf
 warning0 <- function(...)
 {
     warning(..., call.=FALSE)
+}
+# Binomial pairs response: fraction true for each row.
+#
+# This function is used by both earth and plotmo.
+# If you change it here, change it there too.
+#
+# The first column of y is considered to be "true", the second "false".
+#
+# Example y:
+#   survived died
+#      1        1
+#      0        0   # both values zero
+#      3        4
+#
+# becomes:
+#   survived
+#         .5        # 1 / (1 + 1)
+#          0        # special case (both survived and died equal to 0)
+#        .43        # 3 / (3 + 4)
+
+bpairs.yfrac <- function(y, trace)
+{
+    stopifnot(NCOL(y) == 2)
+    both.zero <- (y[,1] == 0) & (y[,2] == 0)
+    y[both.zero, 1] <- 1 # so zero rows will be translated to 0 in next line
+    yfrac <- y[, 1, drop=FALSE] / (y[,1] + y[,2]) # fraction true
+    trace.bpairs.yfrac(yfrac, trace)
+    yfrac
+}
+trace.bpairs.yfrac <- function(yfrac, trace)
+{
+    # based on code in print.earth.fit.args
+    if(trace >= 4)
+        cat("\n")
+    if(trace >= 1 && trace < 7) { # don't print matrices when doing very detailed earth.c tracing
+        tracex <- if(trace >= 5) 4 else 2 # adjust trace for print_summary
+        details <- if(trace >= 4) 2 else if(trace >= 1) -1 else 0
+        print_summary(yfrac, "yfrac", tracex, details=details)
+        if(details > 1) printf("\n")
+    }
 }

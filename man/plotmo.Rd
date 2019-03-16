@@ -81,12 +81,13 @@ Note that the displayed points are jittered by default
 \cr
 Default is \code{0}, display no response points.
 \cr
-This can be a vector, like all such arguments, for example
-\code{pt.col = as.numeric(survived)+2}.
+This can be a vector, like all such arguments -- for example
+\code{pt.col = as.numeric(survived)+2} to color points by their survival class.
 \cr
 You can modify the plotted points with
 \code{pt.pch}, \code{pt.cex}, etc.
 (these get passed via \code{plotmo}'s ``\code{...}'' argument).
+For example, \code{pt.cex = weights} to size points by their weight.
 To label the points, set \code{pt.pch} to a character vector.
 }
 \item{jitter}{
@@ -355,7 +356,10 @@ Default \code{5} (a somewhat arbitrary value).
 Variables with no more than \code{ndiscrete} unique values
 are plotted as quantized in plots (a staircase rather than a curve).\cr
 Factors are always considered discrete.
-Variables with non-integer values are always considered non-discrete.
+Variables with non-integer values are always considered non-discrete.\cr
+Use \code{ndiscrete=0} if you want to plot the response for a variable
+with just a few integer values as a line or a curve, rather than a
+staircase.\cr
 }
 \item{int.only.ok}{
 Plot the model even if it is an intercept-only model (no predictors are

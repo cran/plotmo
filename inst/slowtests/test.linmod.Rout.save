@@ -382,6 +382,7 @@ attr(,"class")
 ==example plots
 > 
 > library(plotmo)
+Loading required package: Formula
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(trees)

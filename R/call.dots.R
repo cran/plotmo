@@ -337,7 +337,7 @@ expand.dotnames <- function(
         }
         match <- charmatch(raw.dotname, formals)
 
-        if(is.na(match)) {
+        if(anyNA(match)) {
             # No match, not necessarily a problem assuming FUNC has a dots formal arg.
             # We will allow FUNC to check for itself later (if someone calls it).
             NULL

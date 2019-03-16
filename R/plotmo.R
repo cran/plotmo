@@ -95,7 +95,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     # get x so we can get the predictor names and ux.list
     x <- plotmo_x(object, trace)
     if(NCOL(x) == 0 || NROW(x) == 0)
-        stop("x is empty")
+        stop("x is empty") # seen with an intercept only model for some model classes (not earth)
     if(special.trace) # special value of trace was used?
         return(invisible(x))
     meta <- plotmo_meta(object, type, nresponse, trace,
@@ -1801,7 +1801,7 @@ my.center <- function(x, trace=FALSE)
         if(trace >= 2) {
             name <- paste0("centered ", trunc.deparse(substitute(x)))
             cat(name, "length ", length(x))
-            print.first.few.elements.of.vector(x, trace, name)
+            print_first_few_elements_of_vector(x, trace, name)
         }
     }
     x

@@ -133,7 +133,9 @@ plotres(classif.rf.with.call$learner.model, type="prob", SHOWCALL=TRUE, jitter=2
 set.seed(2018)
 plotres(rf, type="prob", SHOWCALL=TRUE, jitter=2)
 
-expect.err(try(plotmo(classif.rf.with.call)), "predict.WrappedModel returned multiple columns (see above) but nresponse is not specified")
+old.warn <- options(warn=2) # treat warnings as errors
+expect.err(try(plotmo(classif.rf.with.call)), "Defaulting to nresponse=1, see above messages")
+options(warn=old.warn$warn)
 set.seed(2018) # for repeatable jitter
 plotmo(classif.rf.with.call,               SHOWCALL=TRUE, nresponse="prob.survived", pt.col=2, trace=2)
 set.seed(2018)
@@ -256,8 +258,10 @@ lda <- lda(Species~., data=iris1)
 # expect.err(try(plotres(classif.lda.with.call)), "plotres does not (yet) support type=\"class\" for \"lda\" objects")
 expect.err(try(plotres(classif.lda$learner.model)), "plotres does not (yet) support type=\"class\" for \"lda\" objects")
 
+old.warn <- options(warn=2) # treat warnings as errors
 # expect.err(try(plotres(classif.lda.with.call, type="response")), "predict.lda returned multiple columns (see above) but nresponse is not specified")
-expect.err(try(plotres(classif.lda$learner.model, type="response")), "predict.lda returned multiple columns (see above) but nresponse is not specified")
+expect.err(try(plotres(classif.lda$learner.model, type="response")), "Defaulting to nresponse=1, see above messages")
+options(warn=old.warn$warn)
 
 expect.err(try(plotres(classif.lda.with.call, type="response", nresponse="nonesuch")), "nresponse=\"nonesuch\" is not allowed")
 expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse="nonesuch")), "nresponse=\"nonesuch\" is not allowed")

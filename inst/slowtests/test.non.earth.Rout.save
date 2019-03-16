@@ -3,6 +3,7 @@
 > 
 > source("test.prolog.R")
 > library(plotmo)
+Loading required package: Formula
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(earth)
@@ -103,7 +104,7 @@ formula(object) is response~temp
 naked formula is the same
 formula is valid, now looking for data for the model.frame
 object$model is usable and has column names response temp
-model.frame[,-1] is usable and has column name temp
+x=model.frame[,-1] is usable and has column name temp
 plotmo_x returned[23,1]:
     temp
 1     53
@@ -126,7 +127,7 @@ formula(object) is response~temp
 naked formula is the same
 formula is valid, now looking for data for the model.frame
 object$model is usable and has column names response temp
-model.frame[,-1] is usable and has column name temp
+x=model.frame[,-1] is usable and has column name temp
 plotmo_x returned[23,1]:
     temp
 1     53
@@ -177,9 +178,9 @@ formula(object) is response~temp
 naked formula is the same
 formula is valid, now looking for data for the model.frame
 object$model is usable and has column names response temp
-model.frame[,1] is usable and has column name response
+y=model.frame[,1] is usable and has column name response
 the variable on the left side of the formula is a matrix or data.frame
-the number of dimensions of each variable in y is 2 and y is [23,1] with colname response
+the number of dimensions of each variable in y is 2 and y is [23,1] with colname response, and values c(5, 1, 1, 1, 0, 0, 0, 0, 0, ...
 replacing y with y[[1]]
 y colnames were "response" and now "response[,1]" "response[,2]"
 plotmo_y returned[23,2]:
@@ -211,27 +212,28 @@ get.y.from.model.frame:
 formula(object) is response~temp
 formula is valid, now looking for data for the model.frame
 object$model is usable and has column names response temp
-model.frame[,1] is usable and has column name response
+y=model.frame[,1] is usable and has column name response
 the variable on the left side of the formula is a matrix or data.frame
-the number of dimensions of each variable in y is 2 and y is [23,1] with colname response
+the number of dimensions of each variable in y is 2 and y is [23,1] with colname response, and values c(5, 1, 1, 1, 0, 0, 0, 0, 0, ...
 replacing y with y[[1]]
 y colnames were "response" and now "response[,1]" "response[,2]"
 got model response from object$model
-created column "response.fraction" from two column binomial response
+yfrac[23,1] with colname response[,1], and values 0.8333, 0.1667, 0.1667, 0.166...
+created column "response.yfrac" from two column binomial response
 plotmo_y returned[23,1]:
-    response.fraction
-1           0.8333333
-2           0.1666667
-3           0.1666667
-...         0.1666667
-23          0.0000000
+    response.yfrac
+1        0.8333333
+2        0.1666667
+3        0.1666667
+...      0.1666667
+23       0.0000000
 plotmo_y after processing with nresponse=1 is [23,1]:
-    response.fraction
-1           0.8333333
-2           0.1666667
-3           0.1666667
-...         0.1666667
-23          0.0000000
+    response.yfrac
+1        0.8333333
+2        0.1666667
+3        0.1666667
+...      0.1666667
+23       0.0000000
 got response name "response[,1]" from yfull
 resp.levs is NULL
 
@@ -307,7 +309,7 @@ graphics::plot.default(x=c(53,53.57,54.1...), y=c(0.5505,0.5198...), type="n",
 +     detach("package:gam")
 > library(mgcv)
 Loading required package: nlme
-This is mgcv 1.8-26. For overview type 'help("mgcv-package")'.
+This is mgcv 1.8-27. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test plot.gam, with mgcv::gam(y ~ s(x) + s(x,z)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -416,7 +418,7 @@ ignoring object$x for this mars object
 object call is mars(x=ozone1[, -1], y=ozone1[, 1], degree=2)
 
 get.x.from.model.frame:
-formula(object) did not return a formula
+terms(object) did not return the terms, will look for the formula elsewhere
 no formula in getCall(object)
 
 get.data.from.object.call.field:
@@ -440,7 +442,7 @@ ignoring object$x for this mars object
 object call is mars(x=ozone1[, -1], y=ozone1[, 1], degree=2)
 
 get.x.from.model.frame:
-formula(object) did not return a formula
+terms(object) did not return the terms, will look for the formula elsewhere
 no formula in getCall(object)
 
 get.data.from.object.call.field:
@@ -492,7 +494,7 @@ object$y is NULL (and it has no colnames)
 object call is mars(x=ozone1[, -1], y=ozone1[, 1], degree=2)
 
 get.y.from.model.frame:
-formula(object) did not return a formula
+terms(object) did not return the terms, will look for the formula elsewhere
 no formula in getCall(object)
 
 get.data.from.object.call.field:
@@ -529,7 +531,7 @@ object$y is NULL (and it has no colnames)
 object call is mars(x=ozone1[, -1], y=ozone1[, 1], degree=2)
 
 get.y.from.model.frame:
-formula(object) did not return a formula
+terms(object) did not return the terms, will look for the formula elsewhere
 no formula in getCall(object)
 
 get.data.from.object.call.field:
@@ -757,7 +759,7 @@ Warning: the level argument may not work correctly on glm objects built with wei
 > if(length(grep("package:gam", search())))
 +     detach("package:gam")
 > library(mgcv)
-This is mgcv 1.8-26. For overview type 'help("mgcv-package")'.
+This is mgcv 1.8-27. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test level=.95, plot.gam, with mgcv::gam(y ~ s(x) + s(x,z1)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -986,6 +988,7 @@ stats::predict(rpart.object, data.frame[3,3], type="prob")
 stats::fitted(object=rpart.object)
 fitted() was unsuccessful, will use predict() instead
 set nresponse=2
+nresponse=2 but for plotmo_y using nresponse=1 because ncol(y) == 1
 got model response from model.frame(Kyphosis~Age+Number+Start,
                                     data=call$data, na.action="na.pass")
 > plotmo(fit1, type="prob", nresp=2, degree1=NA, do.par=F, main="", type2="image",
@@ -1200,6 +1203,7 @@ randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
 stats::predict(randomForest.formula.object, data.frame[3,5], type="prob")
 stats::fitted(object=randomForest.formula.object)
 fitted() was unsuccessful, will use predict() instead
+nresponse=2 but for plotmo_y using nresponse=1 because ncol(y) == 1
 got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
                                     data=call$data, na.action="na.fail")
 randomForest built with importance=FALSE, ranking variables on MeanDecreaseGini
@@ -1299,46 +1303,31 @@ Got error as expected from try(plotmo(fda.polyreg$fit, type = "variates", nrespo
 > nn <- neuralnet(y~x1+x2, data=data, hidden=3, rep=3)
 > print(head(plotmo:::predict.nn(nn, rep="best", trace=TRUE)))
 predict.nn: rep = "best" is rep = 2 
-              [,1]
-[1,] 0.46903929790
-[2,] 0.36653551476
-[3,] 0.02542869990
-[4,] 0.10970959373
-[5,] 0.06457524136
-[6,] 0.04182985207
+           [,1]
+[1,] 0.46903930
+[2,] 0.36653551
+[3,] 0.02542870
+[4,] 0.10970959
+[5,] 0.06457524
+[6,] 0.04182985
 > plotmo(nn, trace=1, col.response=2, all2=TRUE, SHOWCALL=TRUE)
 stats::predict(nn.object, data.frame[3,2], trace=TRUE)
 predict.nn: rep = "mean" will take the mean of 3 reps
 stats::fitted(object=nn.object)
 fitted() was unsuccessful, will use predict() instead
+assuming "y" in the model.frame is the response, because terms(object) did not return the terms
+assuming "y" in the model.frame is the response, because terms(object) did not return the terms
 got model response from model.frame(y~x1+x2,
                                     data=object$data, na.action="na.fail")
 
- plotmo grid:    x1            x2
-      0.09128478914 -0.2904530708
+ plotmo grid:    x1         x2
+         0.09128479 -0.2904531
 
-> plotmo(nn, trace=1, col.response=2, predict.rep="best", SHOWCALL=TRUE)
-stats::predict(nn.object, data.frame[3,2], trace=TRUE, rep="best")
-predict.nn: rep = "best" is rep = 2 
-stats::fitted(object=nn.object)
-fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(y~x1+x2,
-                                    data=object$data, na.action="na.fail")
-
- plotmo grid:    x1            x2
-      0.09128478914 -0.2904530708
-
-> plotres(nn, trace=1, info=TRUE, SHOWCALL=TRUE)
-stats::residuals(object=nn.object, type="response")
-residuals() was unsuccessful, will use predict() instead
-stats::predict(nn.object, data.frame[3,2], trace=TRUE)
-predict.nn: rep = "mean" will take the mean of 3 reps
-stats::fitted(object=nn.object)
-fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(y~x1+x2,
-                                    data=object$data, na.action="na.fail")
-
-training rsq 0.99
+> # trace=0 below to test hushing of message "assuming "y" in the model.frame is the response, because object$terms is NULL"
+> plotmo(nn, trace=0, col.response=2, predict.rep="best", SHOWCALL=TRUE)
+ plotmo grid:    x1         x2
+         0.09128479 -0.2904531
+> plotres(nn, trace=0, info=TRUE, SHOWCALL=TRUE)
 > plotres(nn, trace=1, info=TRUE, predict.rep="best", SHOWCALL=TRUE)
 stats::residuals(object=nn.object, type="response")
 residuals() was unsuccessful, will use predict() instead
@@ -1346,8 +1335,11 @@ stats::predict(nn.object, data.frame[3,2], trace=TRUE, rep="best")
 predict.nn: rep = "best" is rep = 2 
 stats::fitted(object=nn.object)
 fitted() was unsuccessful, will use predict() instead
+assuming "y" in the model.frame is the response, because terms(object) did not return the terms
+assuming "y" in the model.frame is the response, because terms(object) did not return the terms
 got model response from model.frame(y~x1+x2,
                                     data=object$data, na.action="na.fail")
+assuming "y" in the model.frame is the response, because terms(object) did not return the terms
 
 training rsq 0.99
 > 
@@ -1469,7 +1461,7 @@ Got error as expected from try(plotmo(svm.xy, prob = TRUE, nresponse = "vers", d
 Error : predict.svm: specify either 'decision.values' or 'probability' (not both)
 Got error as expected from try(plotmo(svm.form, decision.values = TRUE, probab = TRUE))
 > plotres(svm.form, predict.prob=TRUE, nresponse="vers", info=TRUE)
-Cannot get training rsq
+Cannot get training rsq (nresponse is 2 but the number of columns is only 1)
 > plotres(svm.form, jitter=5, info=TRUE)
 > 
 > source("test.epilog.R")

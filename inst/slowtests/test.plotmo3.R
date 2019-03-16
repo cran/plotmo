@@ -127,7 +127,9 @@ tit.orgpclass$parch <- NULL
 stopifnot(names(tit.orgpclass) == names(tit))
 a.tit.orgpclass <- earth(pclass~., degree=2, data=tit.orgpclass)
 a.tit           <- earth(pclass~., degree=2, data=tit)
-expect.err(try(plotmo(a.tit)), "predict.earth returned multiple columns")
+old.warn <- options(warn=2) # treat warnings as errors
+expect.err(try(plotmo(a.tit)), "Defaulting to nresponse=1, see above messages")
+options(warn=old.warn$warn)
 # following two graphs should be identical
 plotmo1(a.tit.orgpclass, nresponse="1st",   all1=T, col.resp=3, type2="im")
 plotmo1(a.tit,           nresponse="first", all1=T, col.resp=3, type2="im")
@@ -137,7 +139,9 @@ plotmo1(a.tit,           nresponse="class2", all1=T)
 
 tit  <- get.tit()
 mod.earth.pclass <- earth(pclass~., data=tit, degree=2)
-expect.err(try(plotmo1(mod.earth.pclass)), "nresponse is not specified")
+old.warn <- options(warn=2) # treat warnings as errors
+expect.err(try(plotmo1(mod.earth.pclass)), "Defaulting to nresponse=1, see above messages")
+options(warn=old.warn$warn)
 plotmo1(mod.earth.pclass, nresponse="fi")
 plotmo1(mod.earth.pclass, nresponse="first")
 plotmo1(mod.earth.pclass, nresponse=3)
@@ -150,7 +154,9 @@ plotmo1(mod.earth.pclass, nresponse=1,
 
 # tit[,1] is pclass
 mod.earth.tit <- earth(tit[,-1], tit[,1], degree=2)
-expect.err(try(plotmo1(mod.earth.tit)), "nresponse is not specified")
+old.warn <- options(warn=2) # treat warnings as errors
+expect.err(try(plotmo1(mod.earth.tit)), "Defaulting to nresponse=1, see above messages")
+options(warn=old.warn$warn)
 plotmo1(mod.earth.tit, nresponse="first")
 plotmo1(mod.earth.tit, type="class")
 

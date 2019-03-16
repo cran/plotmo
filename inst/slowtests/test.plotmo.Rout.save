@@ -7,8 +7,8 @@
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (2018). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 3.0.6.
+  Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
+  Version of 'plot.rpart'. R package version 3.0.6.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -16,7 +16,6 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    year = {2018},
     note = {R package version 3.0.6},
     url = {http://www.milbo.org/rpart-plot},
   }
@@ -25,12 +24,15 @@ ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")'.
 
-Warning message:
-In citation("rpart.plot") :
+Warning messages:
+1: In citation("rpart.plot") :
   no date field in DESCRIPTION file of package 'rpart.plot'
+2: In citation("rpart.plot") :
+  could not determine year for 'rpart.plot' from package DESCRIPTION file
 > 
 > source("test.prolog.R")
 > library(earth)
+Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
 Loading required package: TeachingDemos
@@ -112,7 +114,7 @@ using the environment saved with the earth model: R_GlobalEnv
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
 
 get.x.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -125,7 +127,7 @@ eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
-model.frame[,-1] is usable and has column names vh wind humidity temp ibh dpg ibt vis doy
+x=model.frame[,-1] is usable and has column names vh wind humidity temp ibh dpg ibt vis doy
 plotmo_x returned[330,9]:
       vh wind humidity temp  ibh dpg ibt vis doy
 1   5710    4       28   40 2693 -25  87 250  33
@@ -175,7 +177,7 @@ fitted(object) after processing with nresponse=NULL is [330,1]:
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
 
 get.y.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -188,7 +190,7 @@ eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
-model.frame[,1] is usable and has column name O3
+y=model.frame[,1] is usable and has column name O3
 plotmo_y returned[330,1]:
     O3
 1    3
@@ -212,7 +214,7 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
 
 get.y.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -224,7 +226,7 @@ eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
 stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
-model.frame[,1] is usable and has column name O3
+y=model.frame[,1] is usable and has column name O3
 got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
                                     data=call$data, na.action="na.fail")
 plotmo_y returned[330,1]:
@@ -370,7 +372,7 @@ using the environment saved with the earth model: R_GlobalEnv
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
 
 get.x.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -398,7 +400,7 @@ model.frame returned[330,10]:
 3    5 5760    3       51   54 1450  25 139  60  35
 ...  6 5720    4       69   35 1568  15 121  60  36
 330  1 5550    4       85   39 5000   8  44 100 390
-model.frame[,-1] is usable and has column names vh wind humidity temp ibh dpg ibt vis doy
+x=model.frame[,-1] is usable and has column names vh wind humidity temp ibh dpg ibt vis doy
 plotmo_x returned[330,9]:
       vh wind humidity temp  ibh dpg ibt vis doy
 1   5710    4       28   40 2693 -25  87 250  33
@@ -448,7 +450,7 @@ fitted(object) after processing with nresponse=NULL is [330,1]:
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
 
 get.y.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -476,7 +478,7 @@ model.frame returned[330,10]:
 3    5 5760    3       51   54 1450  25 139  60  35
 ...  6 5720    4       69   35 1568  15 121  60  36
 330  1 5550    4       85   39 5000   8  44 100 390
-model.frame[,1] is usable and has column name O3
+y=model.frame[,1] is usable and has column name O3
 plotmo_y returned[330,1]:
     O3
 1    3
@@ -500,7 +502,7 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, n...
+object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
 
 get.y.from.model.frame:
 formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
@@ -527,7 +529,7 @@ model.frame returned[330,10]:
 3    5 5760    3       51   54 1450  25 139  60  35
 ...  6 5720    4       69   35 1568  15 121  60  36
 330  1 5550    4       85   39 5000   8  44 100 390
-model.frame[,1] is usable and has column name O3
+y=model.frame[,1] is usable and has column name O3
 got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
                                     data=call$data, na.action="na.fail")
 plotmo_y returned[330,1]:
@@ -1017,11 +1019,11 @@ Warning: grid.func returned NA for str, so will use the default grid.func for st
 > 
 > varied.type.earth <- earth(y ~ ., data = varied.type.data, thresh=0, penalty=-1, trace=1)
 x[13,10] with colnames num int boolTRUE date ord.L ord.Q facfac2 facfac3 strstr2...
-y[13,1] with colname y
+y[13,1] with colname y, and values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 No new term increases RSq (perhaps reached numerical limits) at 19 terms, 13 terms used
 After forward pass GRSq 1.000 RSq 1.000
-Prune method "backward" penalty -1 nprune null: selected 13 of 13 terms, and 9 of 10 preds
+Prune backward penalty -1 nprune null: selected 13 of 13 terms, and 9 of 10 preds
 After pruning pass GRSq 1 RSq 1
 > print(summary(varied.type.earth))
 Call: earth(formula=y~., data=varied.type.data, trace=1, thresh=0, penalty=-1)
@@ -1261,7 +1263,7 @@ eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
 stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
-model.frame[,-1] is usable and has column names temp humidity
+x=model.frame[,-1] is usable and has column names temp humidity
 plotmo_x returned[51,2]:
     temp humidity
 150   48       81
@@ -1324,7 +1326,7 @@ eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
 stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
-model.frame[,1] is usable and has column name O3
+y=model.frame[,1] is usable and has column name O3
 plotmo_y returned[51,1]:
     O3
 150  2
@@ -1360,7 +1362,7 @@ eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
 stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
-model.frame[,1] is usable and has column name O3
+y=model.frame[,1] is usable and has column name O3
 got model response from model.frame(O3~temp+humidity,
                                     data=call$data, na.action="na.fail")
 plotmo_y returned[51,1]:
@@ -1470,7 +1472,7 @@ object$x is NULL (and it has no colnames)
 object call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
 
 get.x.from.model.frame:
-formula(object) did not return a formula
+terms(object) did not return the terms, will look for the formula elsewhere
 no formula in getCall(object)
 
 get.data.from.object.call.field:
@@ -1528,7 +1530,7 @@ object$y is NULL (and it has no colnames)
 object call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
 
 get.y.from.model.frame:
-formula(object) did not return a formula
+terms(object) did not return the terms, will look for the formula elsewhere
 no formula in getCall(object)
 
 get.data.from.object.call.field:
@@ -1566,7 +1568,7 @@ object$y is NULL (and it has no colnames)
 object call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
 
 get.y.from.model.frame:
-formula(object) did not return a formula
+terms(object) did not return the terms, will look for the formula elsewhere
 no formula in getCall(object)
 
 get.data.from.object.call.field:
@@ -1771,7 +1773,7 @@ formula(object) is y~x1+x2
 naked formula is the same
 formula is valid, now looking for data for the model.frame
 object$model is usable and has column names y x1 x2
-model.frame[,1] is usable and has column name y
+y=model.frame[,1] is usable and has column name y
 plotmo_y returned[9,1]:
      y
 1    3
@@ -1801,7 +1803,7 @@ get.y.from.model.frame:
 formula(object) is y~x1+x2
 formula is valid, now looking for data for the model.frame
 object$model is usable and has column names y x1 x2
-model.frame[,1] is usable and has column name y
+y=model.frame[,1] is usable and has column name y
 got model response from object$model
 plotmo_y returned[9,1]:
      y
@@ -2285,15 +2287,15 @@ h(age-18)               0.1502007
 h(18-age) * h(sibsp-2) -0.2887477
 h(18-age) * h(sibsp-3)  0.2820357
 
+GLM (family binomial, link logit):
+ nulldev   df       dev   df   devratio     AIC iters converged
+ 1414.62 1045   1212.21 1039      0.143    1226     5         1
+
 Earth selected 7 of 17 terms, and 4 of 4 predictors
 Termination condition: Reached nk 21
 Importance: pclass3rd, age, pclass2nd, sibsp
 Number of terms at each degree of interaction: 1 4 2
 Earth GCV 0.2040487    RSS 206.9554    GRSq 0.1569604    RSq 0.1809888
-
-GLM (family binomial, link logit):
- nulldev   df      dev   df devratio  AIC iters converged
- 1414.62 1045 1212.212 1039    0.143 1226     5         1
 > plotmo(a, ylim=c(0, 1), caption="plotmo glm with mixed fac and non-fac degree2 terms")
  plotmo grid:    pclass age sibsp
                     3rd  28     0

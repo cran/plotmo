@@ -245,7 +245,7 @@ get.plotres.data <- function(object, object.name, which, standardize, delever,
                                trace=if(trace == 1) -1 else trace, meta=meta, ...),
                    silent=trace < 2)
         if(is.try.err(rsq)) {
-            trace0(trace, "Cannot get training rsq\n")
+            trace0(trace, "Cannot get training rsq (%s)\n", cleantry(rsq))
             rsq <- NA
         }
     }

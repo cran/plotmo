@@ -3,14 +3,11 @@
 plotmo.prolog.pre <- function(object, object.name, trace, ...) # invoked when plotmo starts
 {
     # importance is a vector of variable indices, most important vars first
-    importance <- order.pre.vars.on.importance(object)
+    importance <- order.pre.vars.on.importance(object, trace)
     attr(object, "plotmo.importance") <- importance
-    if(trace > 0)
-        cat0("importance: ",
-             paste.trunc(object$predictors[importance], maxlen=120), "\n")
     object
 }
-order.pre.vars.on.importance <- function(object, x, trace)
+order.pre.vars.on.importance <- function(object, trace)
 {
     varimps <- try(pre::importance(object, plot=FALSE)$varimps, silent=TRUE)
     if(is.try.err(varimps)) {
@@ -38,11 +35,14 @@ order.pre.vars.on.importance <- function(object, x, trace)
     allvarnames <- object$x_names
     stopifnot(!is.null(allvarnames) && length(allvarnames) > 0) # paranoia
     importance <- match(varname, allvarnames)
-    if(any(is.na(importance)| importance == 0)) { # sanity check
+    if(any(is.na(importance) | (importance == 0))) { # sanity check
         warning0("could not get variable importances\n  varname=",
-            paste.c(varname), " colnames(x)=", paste.c(colnames(x)))
+            paste.c(varname))
         return(NULL)
     }
+    if(trace > 0)
+        cat0("importance: ",
+             paste.trunc(allvarnames[importance], maxlen=120), "\n")
     importance # return a vector of var indices, most important vars first
 }
 plotmo.singles.pre <- function(object, x, nresponse, trace, all1, ...)

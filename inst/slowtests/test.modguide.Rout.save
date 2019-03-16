@@ -89,6 +89,7 @@ Error in model.frame.default(object, data, xlev = xlev) :
   'data' must be a data.frame, not a matrix or an array
 Got error as expected from try(predict(fit1, newdata = as.matrix(tr[1:3, ])))
 > library(plotmo)
+Loading required package: Formula
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > expect.err(try(plotmo(fit1)), "object 'Volume' not found")

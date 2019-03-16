@@ -6,6 +6,7 @@
 > library(mlr)
 Loading required package: ParamHelpers
 > library(plotmo)
+Loading required package: Formula
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(rpart.plot)
@@ -183,7 +184,8 @@ Error : Discrete value supplied to continuous scale
 > set.seed(2018)
 > plotres(rf, type="prob", SHOWCALL=TRUE, jitter=2)
 > 
-> expect.err(try(plotmo(classif.rf.with.call)), "predict.WrappedModel returned multiple columns (see above) but nresponse is not specified")
+> old.warn <- options(warn=2) # treat warnings as errors
+> expect.err(try(plotmo(classif.rf.with.call)), "Defaulting to nresponse=1, see above messages")
 
 predict.WrappedModel[3,3]:
    prob.notsurvived prob.survived response
@@ -192,18 +194,20 @@ predict.WrappedModel[3,3]:
 22            0.028         0.972 survived
   response is a factor with levels: notsurvived survived
 
-Error : predict.WrappedModel returned multiple columns (see above) but nresponse is not specified
-       Use the nresponse argument to specify a column.
-          Example: nresponse="prob.survived"
-          Example: nresponse=2
+predict.WrappedModel returned multiple columns (see above) but nresponse is not specified
+    Use the nresponse argument to specify a column.
+         Example: nresponse=2
+         Example: nresponse="prob.survived"
+
+Error : (converted from warning) Defaulting to nresponse=1, see above messages
 Got error as expected from try(plotmo(classif.rf.with.call))
+> options(warn=old.warn$warn)
 > set.seed(2018) # for repeatable jitter
 > plotmo(classif.rf.with.call,               SHOWCALL=TRUE, nresponse="prob.survived", pt.col=2, trace=2)
 plotmo trace 2: plotmo(object=classif.rf.with.call, nresponse="prob.survived",
                        pt.col=2, trace=2, SHOWCALL=TRUE)
 object call is train.with.call(learner=lrn.classif.rf, task=task.classif.rf,
-                         subset=train.subset)
---get.model.env for WrappedModel object
+                         ...--get.model.env for WrappedModel object
 assuming the environment of the WrappedModel model is that of plotmo's caller: R_GlobalEnv
 --plotmo_prolog for WrappedModel object 'classif.rf.with.call'
 task$task.desc$id for 'classif.rf.with.call' is "etit"
@@ -640,8 +644,9 @@ Error : plotres does not (yet) support type="class" for "lda" objects
        Try type="response" ?
 Got error as expected from try(plotres(classif.lda$learner.model))
 > 
+> old.warn <- options(warn=2) # treat warnings as errors
 > # expect.err(try(plotres(classif.lda.with.call, type="response")), "predict.lda returned multiple columns (see above) but nresponse is not specified")
-> expect.err(try(plotres(classif.lda$learner.model, type="response")), "predict.lda returned multiple columns (see above) but nresponse is not specified")
+> expect.err(try(plotres(classif.lda$learner.model, type="response")), "Defaulting to nresponse=1, see above messages")
 
 predict.lda[3,2]:
          LD1        LD2
@@ -649,11 +654,14 @@ predict.lda[3,2]:
 70 -1.022992 -1.6827623
 9   6.621824 -1.1293807
 
-Error : predict.lda returned multiple columns (see above) but nresponse is not specified
-       Use the nresponse argument to specify a column.
-          Example: nresponse="LD2"
-          Example: nresponse=2
+predict.lda returned multiple columns (see above) but nresponse is not specified
+    Use the nresponse argument to specify a column.
+         Example: nresponse=2
+         Example: nresponse="LD2"
+
+Error : (converted from warning) Defaulting to nresponse=1, see above messages
 Got error as expected from try(plotres(classif.lda$learner.model, type = "response"))
+> options(warn=old.warn$warn)
 > 
 > expect.err(try(plotres(classif.lda.with.call, type="response", nresponse="nonesuch")), "nresponse=\"nonesuch\" is not allowed")
 Error : nresponse="nonesuch" is not allowed
@@ -746,7 +754,7 @@ calculating partdep for Petal.Width
 > 
 > set.seed(2018)
 > library(gbm)
-Loaded gbm 2.1.4
+Loaded gbm 2.1.5
 > # reference model
 > gbm = gbm(y~., data=data, n.trees=300)
 Distribution not specified, assuming gaussian ...

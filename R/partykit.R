@@ -33,7 +33,16 @@ plotmo.predict.party_plotmo <- function(object, newdata, type, ..., TRACE)
 {
     stopifnot(is.character(object$original.class))
     class(object) <- object$original.class
-    plotmo.predict(object, newdata, type=type,  ..., TRACE=TRACE)
+
+    # suppress warnings:
+    #    Warning: 'newdata' had 2 rows but variables found have 297 rows
+    #    Warning in rval[ix[[i]]] <- preds[[i]] : number of items to replace is not a multiple of replacement length
+    on.exit(options(warn=old.warn))
+    options(warn=-1)
+    old.warn <- getOption("warn")
+
+    predict <- plotmo.predict(object, newdata, type=type,  ..., TRACE=TRACE)
+    predict
 }
 # attach plotmo.importance (a character vector) to the model
 attach.party.plotmo.importance <- function(object, trace)
@@ -160,7 +169,9 @@ check.mob.object <- function(object)
         for(i in 1:length(func))
             printf("%s\n    ", func[i])
         printf("\n")
-        stop0("The formula in the mob fit function is not supported by plotmo (see above)")
+        stop0("The formula in the mob fit function is not supported by plotmo (see above)\n",
+"       This is because predict.mob often fails with newdata and type=\"response\"\n",
+"       e.g. example(mob); predict(pid_tree, newdata=PimaIndiansDiabetes[1:3,], type=\"response\")")
     }
 }
 # cforest objects
