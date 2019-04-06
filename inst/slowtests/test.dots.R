@@ -1,22 +1,6 @@
 # test.dots.R
 
 source("test.prolog.R")
-cat0("=== test callers.name\n")
-
-test.callers.name <- function(x) {
-    caller0  <- plotmo:::callers.name(0)  # test.callers.name
-    caller1  <- plotmo:::callers.name(1)  # caller of test.callers.name
-    caller99 <- plotmo:::callers.name(99) # sys.call(-n) : not that many frames on the stack
-    s <- sprint("0 %s 1 %s 99 %s", caller0, caller1, caller99)
-    cat(s, "\n", sep="")
-    s
-}
-print(plotmo:::callers.name()) # "eval"
-
-stopifnot(test.callers.name() == "0 test.callers.name 1 doTryCatch 99 unknown")
-
-myfunc <- function(func) func()
-stopifnot(myfunc(function(x) test.callers.name(99)) == "0 test.callers.name 1 func 99 unknown")
 
 cat0("=== test dotindex\n")
 
@@ -627,5 +611,20 @@ plot3 <- function(object, ..., TRACE=2)
 }
 plot3(lmfit, type="pearson", main="plot3a") # type goes only to pearson, no prefix needed
 plot3(lmfit, type="pearson", predict.type="response", main="plot3b")
+
+cat0("=== test callers.name\n")
+
+test.callers.name <- function(x) {
+    caller0  <- plotmo:::callers.name(0)  # test.callers.name
+    caller1  <- plotmo:::callers.name(1)  # caller of test.callers.name
+    caller99 <- plotmo:::callers.name(99) # sys.call(-n) : not that many frames on the stack
+    s <- sprint("0 %s 1 %s 99 %s", caller0, caller1, caller99)
+    cat(s, "\n", sep="")
+    s
+}
+print(plotmo:::callers.name()) # "eval"
+myfunc <- function(func) func()
+stopifnot(myfunc(function(x) test.callers.name(99)) == "0 test.callers.name 1 func 99 unknown")
+stopifnot(test.callers.name() == "0 test.callers.name 1 doTryCatch 99 unknown")
 
 source("test.epilog.R")

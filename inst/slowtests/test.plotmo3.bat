@@ -1,6 +1,7 @@
 @rem test.plotmo3.bat: extra tests for plotmo version 3 and higher
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo3.R
+@echo test.plotmo3.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo3.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo3.Rout:
 @echo.
@@ -8,7 +9,7 @@
 @echo test.plotmo3.R
 @exit /B 1
 :good1
-diff test.plotmo3.Rout test.plotmo3.Rout.save
+mks.diff test.plotmo3.Rout test.plotmo3.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.plotmo3.save.ps

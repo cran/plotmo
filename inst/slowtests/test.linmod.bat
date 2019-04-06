@@ -1,6 +1,7 @@
 @rem test.linmod.bat: test example S3 model in linmod.R
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.linmod.R
+@echo test.linmod.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.linmod.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.linmod.Rout:
 @echo.
@@ -8,7 +9,7 @@
 @echo test.linmod.R
 @exit /B 1
 :good1
-diff test.linmod.Rout test.linmod.Rout.save
+mks.diff test.linmod.Rout test.linmod.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.linmod.save.ps

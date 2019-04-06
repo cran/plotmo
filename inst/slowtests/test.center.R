@@ -80,6 +80,8 @@ plot(0, 0, type="n", axes=FALSE, xlab="", ylab="")
 
 #--- row 1
 
+# note that this is an example of a model that gets generated differently
+# with Scale.y=TRUE vs Scale.y=FALSE (although not shown here)
 a4 <- earth(survived~pclassn+age, data=et, degree=2)
 
 set.seed(844)

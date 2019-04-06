@@ -1,6 +1,7 @@
 @rem test.modguide.bat: test model1 and model2 (linmod examples) in modguide.pdf
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.modguide.R
+@echo test.modguide.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.modguide.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.modguide.Rout:
 @echo.
@@ -8,7 +9,7 @@
 @echo test.modguide.R
 @exit /B 1
 :good1
-diff test.modguide.Rout test.modguide.Rout.save
+mks.diff test.modguide.Rout test.modguide.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.modguide.save.ps

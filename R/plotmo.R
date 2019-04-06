@@ -499,7 +499,7 @@ plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
                               trace=trace, all1=all1)
     if(is.character(degree1)) # get all singles, not just those used in the model?
         singles <- seq_len(NCOL(x))
-    if(any(is.na(singles))) {
+    if(!is.null(singles) && any(is.na(singles))) { # !is.null required only for old R
         # Following occurs when plotting
         #   train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
         # because caret converts factor predictors to indicator columns and

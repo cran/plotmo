@@ -38,6 +38,70 @@ check.naken("x[,1] + x[,2] + x[,3] + x[,29] + x[,-14]", "x[,1]+x[,2]+x[,3]+x[,29
 check.naken("x[,c(1,2)] + x[,3] + x[,5:6] + x[,-1]", "x[,c(1,2)]+x[,3]+x[,5:6]+x[,-1]")
 check.naken("log(y) ~ x9 + ns(x2,4) + s(x3,x4,df=4) + x5:sqrt(x6)", "log(y)~x9+x2+x3+x4+x5+x6")
 
+# check check.numeric.scalar
+
+xtest <- NA
+expect.err(try(plotmo:::check.numeric.scalar(xtest)), "'xtest' is NA")
+xtest <- NULL
+expect.err(try(plotmo:::check.numeric.scalar(xtest)), "'xtest' is NULL")
+expect.err(try(plotmo:::check.numeric.scalar(NA)), "argument is NA")
+expect.err(try(plotmo:::check.numeric.scalar(NULL)), "argument is NULL")
+expect.err(try(plotmo:::check.numeric.scalar(try)), "'try' must be numeric (whereas its current class is \"function\")")
+expect.err(try(plotmo:::check.numeric.scalar('try')), "\"try\" must be numeric (whereas its current class is \"character\")")
+expect.err(try(plotmo:::check.numeric.scalar(NULL)), "argument is NULL")
+expect.err(try(plotmo:::check.numeric.scalar(1234, min=2, max=3)), "argument=1234 but it should be between 2 and 3")
+expect.err(try(plotmo:::check.numeric.scalar(0.1234, min=2, max=3)), "argument=0.1234 but it should be between 2 and 3")
+
+expect.err(try(plotmo:::check.numeric.scalar(.1234, min=2, max=3)), "argument=0.1234 but it should be between 2 and 3")
+expect.err(try(plotmo:::check.numeric.scalar(+1234, min=2, max=3)), "argument=1234 but it should be between 2 and 3")
+expect.err(try(plotmo:::check.numeric.scalar(-1234, min=2, max=3)), "argument=-1234 but it should be between 2 and 3")
+expect.err(try(plotmo:::check.numeric.scalar(+.1234, min=2, max=3)), "argument=0.1234 but it should be between 2 and 3")
+expect.err(try(plotmo:::check.numeric.scalar(-.1234, min=2, max=3)), "argument=-0.1234 but it should be between 2 and 3")
+expect.err(try(plotmo:::check.numeric.scalar("", min=0, max=3)), "\"\" must be numeric (whereas its current class is \"character\"")
+
+x.numeric.scalar <- 1234
+expect.err(try(plotmo:::check.numeric.scalar(x.numeric.scalar, min=0, max=3)), "x.numeric.scalar=1234 but it should be between 0 and 3")
+stopifnot(identical(plotmo:::check.numeric.scalar(x.numeric.scalar, min=2, max=1235), 1234))
+stopifnot(identical(plotmo:::check.numeric.scalar(1234, min=2, max=1235), 1234))
+
+# check check.integer.scalar
+
+xtest <- NA
+expect.err(try(plotmo:::check.integer.scalar(xtest)), "'xtest' is NA")
+xtest <- NULL
+expect.err(try(plotmo:::check.integer.scalar(xtest)), "'xtest' is NULL")
+expect.err(try(plotmo:::check.integer.scalar(NA)), "argument is NA")
+expect.err(try(plotmo:::check.integer.scalar(NA, null.ok=TRUE)), "argument is NA")
+expect.err(try(plotmo:::check.integer.scalar(NULL)), "argument is NULL")
+expect.err(try(plotmo:::check.integer.scalar(xtest, na.ok=TRUE)), "'xtest' is NULL")
+expect.err(try(plotmo:::check.integer.scalar("xyz", na.ok=TRUE)), "\"xyz\" is a string but it should be an an integer, or NA, or TRUE or FALSE")
+expect.err(try(plotmo:::check.integer.scalar("TRUE", na.ok=TRUE)), "\"TRUE\" is a string but it should be an an integer, or NA, or TRUE or FALSE")
+stopifnot(identical(plotmo:::check.integer.scalar(TRUE), TRUE))
+stopifnot(identical(plotmo:::check.integer.scalar(NA, na.ok=TRUE), NA))
+x.integer.scalar <- 1234L
+expect.err(try(plotmo:::check.integer.scalar(x.integer.scalar, min=0, max=3)), "x.integer.scalar=1234 but it should be between 0 and 3")
+stopifnot(identical(plotmo:::check.integer.scalar(x.integer.scalar, min=2, max=1235), 1234L))
+stopifnot(identical(plotmo:::check.integer.scalar(1234, min=2, max=1235), 1234))
+stopifnot(identical(plotmo:::check.integer.scalar(x.integer.scalar, min=2, max=1235), 1234L))
+stopifnot(identical(plotmo:::check.integer.scalar(1234, min=2, max=1235), 1234))
+xtest <- 1.234
+expect.err(try(plotmo:::check.integer.scalar(xtest, min=0, max=3)), "xtest=1.234 but it should be an an integer, or TRUE or FALSE")
+
+# check check.vec
+xtest <- "x"
+expect.err(try(plotmo:::check.vec(xtest, "xtest", na.ok=TRUE)), "'xtest' is not numeric")
+xtest <- as.double(NA)
+print(plotmo:::check.vec(xtest, "xtest", na.ok=TRUE))
+xtest <- as.double(1:3)
+print(plotmo:::check.vec(xtest, "xtest", na.ok=TRUE))
+xtest <- c(1,2,3,1/0,5,6,7)
+expect.err(try(plotmo:::check.vec(xtest, "xtest", na.ok=TRUE)), "non-finite value in xtest")
+xtest <- c(1,2,3,NA,5,6,7)
+expect.err(try(plotmo:::check.vec(xtest, "xtest")), "NA in xtest")
+xtest <- c(1,2,3)
+expect.err(try(plotmo:::check.vec(xtest, "xtest", expected.len=2)), "'xtest' has the wrong length 3, expected 2")
+print(plotmo:::check.vec(c(TRUE, FALSE), "c(TRUE, FALSE)"))
+
 plotmo1 <- function(object, ..., trace=0, SHOWCALL=TRUE, caption=NULL) {
     if(is.null(caption))
         caption <- paste(deparse(substitute(object)), collapse=" ")

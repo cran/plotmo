@@ -1,6 +1,7 @@
 @rem test.plotmo.args.bat: test dot and other argument handling in plotmo
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.args.R
+@echo test.plotmo.args.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.args.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.args.Rout:
 @echo.
@@ -8,7 +9,7 @@
 @echo test.plotmo.args.R
 @exit /B 1
 :good1
-diff test.plotmo.args.Rout test.plotmo.args.Rout.save
+mks.diff test.plotmo.args.Rout test.plotmo.args.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.plotmo.args.save.ps

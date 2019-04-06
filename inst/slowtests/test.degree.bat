@@ -1,6 +1,7 @@
 @rem test.degree.bat: test plotmo's degree1 and degree2 args with character arguments
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.degree.R
+@echo test.degree.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.degree.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.degree.Rout:
 @echo.
@@ -8,7 +9,7 @@
 @echo test.degree.R
 @exit /B 1
 :good1
-diff test.degree.Rout test.degree.Rout.save
+mks.diff test.degree.Rout test.degree.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.degree.save.ps

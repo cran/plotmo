@@ -1,7 +1,8 @@
 @rem test.center.bat: test plotmo's center and ndiscrete args
 @rem Stephen Milborrow, Berea Apr 2011
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.center.R
+@echo test.center.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.center.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.center.Rout:
 @echo.
@@ -9,7 +10,7 @@
 @echo test.center.R
 @exit /B 1
 :good1
-diff test.center.Rout test.center.Rout.save
+mks.diff test.center.Rout test.center.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.center.save.ps

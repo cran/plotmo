@@ -1,6 +1,14 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.5.4 Apr 6, 2019
+
+Added a reminder to use keepxy=2 for earth if you want to use
+plot.earth or plotmo on an earth cross-validation submodel.
+
+Plotmo now requires R version at least 3.4.0.
+Minor updates to libraries shared with earth and rpart.plot.
+
 --- 3.5.3 March 16, 2019
 
 Extended plotmo to support earth version 5.0.0, which allows multiple

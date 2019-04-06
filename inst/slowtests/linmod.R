@@ -201,6 +201,8 @@ process.newdata.formula <- function(object, newdata)
 
     terms <- delete.response(terms)
     # na.action=na.pass because we will catch NAs after (for clearer error msg)
+    # xlevels is needed to convert strings to factor levels:
+    # e.g. a<-linmod(Sepal.Length~Species,data=iris);predict(a,newdata=data.frame(Species="setosa"))
     mf <- model.frame(terms, newdata, na.action = na.pass, xlev = object$xlevels)
     if(anyNA(mf))
         stop("NA in 'newdata'")

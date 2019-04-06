@@ -1,6 +1,7 @@
 @rem test.glmnet.bat: glmnet tests for plotmo and plotres
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.glmnet.R
+@echo test.glmnet.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.glmnet.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.glmnet.Rout:
 @echo.
@@ -8,7 +9,7 @@
 @echo test.glmnet.R
 @exit /B 1
 :good1
-diff test.glmnet.Rout test.glmnet.Rout.save
+mks.diff test.glmnet.Rout test.glmnet.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.glmnet.save.ps

@@ -2,13 +2,13 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 3.5.2 (2018-12-20)"
+[1] "R version 3.5.3 (2019-03-11)"
 > print(citation("rpart.plot"))
 
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
-  Version of 'plot.rpart'. R package version 3.0.6.
+  Version of 'plot.rpart'. R package version 3.0.7.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -16,7 +16,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    note = {R package version 3.0.6},
+    note = {R package version 3.0.7},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -1020,8 +1020,8 @@ Warning: grid.func returned NA for str, so will use the default grid.func for st
 > varied.type.earth <- earth(y ~ ., data = varied.type.data, thresh=0, penalty=-1, trace=1)
 x[13,10] with colnames num int boolTRUE date ord.L ord.Q facfac2 facfac3 strstr2...
 y[13,1] with colname y, and values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10...
-Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
-No new term increases RSq (perhaps reached numerical limits) at 19 terms, 13 terms used
+Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18
+Reached maximum RSq 1.0000 at 19 terms, 13 terms used (RSq 1.0000)
 After forward pass GRSq 1.000 RSq 1.000
 Prune backward penalty -1 nprune null: selected 13 of 13 terms, and 9 of 10 preds
 After pruning pass GRSq 1 RSq 1
@@ -1044,7 +1044,7 @@ h(17749-date)   -3.8210526
 h(date-17749)    1.4368421
 
 Selected 13 of 13 terms, and 9 of 10 predictors
-Termination condition: No new term increases RSq at 13 terms
+Termination condition: Reached maximum RSq 1.0000 at 13 terms
 Importance: date, facfac2, facfac3, int, strstr2, boolTRUE, num, ord.L, ...
 Number of terms at each degree of interaction: 1 12 (additive model)
 GCV 0    RSS 0    GRSq 1    RSq 1

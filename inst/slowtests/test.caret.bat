@@ -1,7 +1,8 @@
 @rem test.caret.bat: test plotmo on caret models
 @rem Stephen Milborrow, Shrewsbury Aug 2016
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.caret.R
+@echo test.caret.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.caret.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.caret.Rout:
 @echo.
@@ -9,7 +10,7 @@
 @echo test.caret.R
 @exit /B 1
 :good1
-diff test.caret.Rout test.caret.Rout.save
+mks.diff test.caret.Rout test.caret.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.caret.save.ps

@@ -1205,4 +1205,12 @@ pr(linmod.xy.keep)
 
 par(old.par)
 
+# test xlevels (predict with newdata using a string to represent a factor)
+data(iris)
+linmod.Sepal.Length <- linmod(Sepal.Length~Species,data=iris)
+lm.Sepal.Length     <- lm(Sepal.Length~Species,data=iris)
+predict.linmod <- predict(linmod.Sepal.Length, newdata=data.frame(Species="setosa"))
+predict.lm     <- predict(lm.Sepal.Length,     newdata=data.frame(Species="setosa"))
+stopifnot(all.equal(predict.linmod, predict.lm))
+
 source("test.epilog.R")

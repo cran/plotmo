@@ -231,8 +231,13 @@ get.x.or.y <- function(
         try.object.x.or.y, argn, object.x,
         model.frame.x, call.x, argn.x)
 
-    stopf("cannot get the original model %s",
-          if(field == "x") "predictors" else "response")
+    is.earth.cv.model <- is.null(object.x) &&
+                         !is.null(object$ifold) &&
+                         inherits(object, "earth")
+
+    stopf("cannot get the original model %s%s",
+          if(field == "x") "predictors" else "response",
+          if(is.earth.cv.model) " (use keepxy=2 in the call to earth)" else "")
 }
 is.errmsg <- function(x)
 {

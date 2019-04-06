@@ -1,7 +1,8 @@
 @rem test.non.earth.bat: test plotmo on non-earth models
 @rem Stephen Milborrow, Basley KwaZulu-Natal Mar 2011
 
-@"C:\PROGRA~1\R\R-3.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.non.earth.R
+@echo test.non.earth.bat
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.non.earth.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.non.earth.Rout:
 @echo.
@@ -9,7 +10,7 @@
 @echo test.non.earth.R
 @exit /B 1
 :good1
-diff test.non.earth.Rout test.non.earth.Rout.save
+mks.diff test.non.earth.Rout test.non.earth.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.non.earth.save.ps

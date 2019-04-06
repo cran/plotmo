@@ -134,9 +134,8 @@ y[1046,1] with colname subY, and values 1, 1, 0, 0, 0, 0, 1, 1, 1, 0,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.454 RSq 0.492
-Fixed rank deficient bx by removing 1 term, 15 terms remain
-Prune backward penalty 3 nprune null: selected 8 of 15 terms, and 5 of 7 preds
+After forward pass GRSq 0.456 RSq 0.492
+Prune backward penalty 3 nprune null: selected 8 of 15 terms, and 6 of 7 preds
 After pruning pass GRSq 0.467 RSq 0.485
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
 y[1046,1] with colname subY, and values 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,...
@@ -145,17 +144,16 @@ Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
 After forward pass GRSq 0.486 RSq 0.520
 Fixed rank deficient bx by removing 1 term, 14 terms remain
-Prune backward penalty 3 nprune null: selected 11 of 14 terms, and 6 of 7 preds
-After pruning pass GRSq 0.494 RSq 0.518
+Prune backward penalty 3 nprune null: selected 11 of 14 terms, and 5 of 7 preds
+After pruning pass GRSq 0.495 RSq 0.519
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
 y[1046,1] with colname subY, and values 0, 0, 1, 0, 0, 1, 0, 1, 1, 1,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.446 RSq 0.490
-Fixed rank deficient bx by removing 1 term, 17 terms remain
-Prune backward penalty 3 nprune null: selected 11 of 17 terms, and 6 of 7 preds
-After pruning pass GRSq 0.462 RSq 0.487
+After forward pass GRSq 0.448 RSq 0.487
+Prune backward penalty 3 nprune null: selected 11 of 16 terms, and 7 of 7 preds
+After pruning pass GRSq 0.455 RSq 0.481
 > plotmo(a.bag3, clip=F, caption="bagEarth, etitanic", trace=1, SHOWCALL=TRUE)
 stats::predict(bagEarth.object, data.frame[3,7], type="response")
 stats::fitted(object=bagEarth.object)
