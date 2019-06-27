@@ -22,7 +22,6 @@ plotmo_rsq1 <- function(object, newdata, trace, meta, ...)
     yhat <- plotmo_predict(object=object, newdata=newdata, nresponse=meta$nresponse,
                            type=meta$type, expected.levs=meta$expected.levs,
                            trace=trace, inverse.func=NULL, ...)$yhat
-
     if(ncol(yhat) != 1 || ncol(ynew) != 1 || nrow(yhat) != nrow(ynew)) {
         if(trace > -1) {
             printf("\n")

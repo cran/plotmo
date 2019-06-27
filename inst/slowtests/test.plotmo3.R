@@ -74,8 +74,8 @@ expect.err(try(plotmo:::check.integer.scalar(NA)), "argument is NA")
 expect.err(try(plotmo:::check.integer.scalar(NA, null.ok=TRUE)), "argument is NA")
 expect.err(try(plotmo:::check.integer.scalar(NULL)), "argument is NULL")
 expect.err(try(plotmo:::check.integer.scalar(xtest, na.ok=TRUE)), "'xtest' is NULL")
-expect.err(try(plotmo:::check.integer.scalar("xyz", na.ok=TRUE)), "\"xyz\" is a string but it should be an an integer, or NA, or TRUE or FALSE")
-expect.err(try(plotmo:::check.integer.scalar("TRUE", na.ok=TRUE)), "\"TRUE\" is a string but it should be an an integer, or NA, or TRUE or FALSE")
+expect.err(try(plotmo:::check.integer.scalar("xyz", na.ok=TRUE)), "\"xyz\" is a string but it should be an integer, or NA, or TRUE or FALSE")
+expect.err(try(plotmo:::check.integer.scalar("TRUE", na.ok=TRUE)), "\"TRUE\" is a string but it should be an integer, or NA, or TRUE or FALSE")
 stopifnot(identical(plotmo:::check.integer.scalar(TRUE), TRUE))
 stopifnot(identical(plotmo:::check.integer.scalar(NA, na.ok=TRUE), NA))
 x.integer.scalar <- 1234L
@@ -85,7 +85,7 @@ stopifnot(identical(plotmo:::check.integer.scalar(1234, min=2, max=1235), 1234))
 stopifnot(identical(plotmo:::check.integer.scalar(x.integer.scalar, min=2, max=1235), 1234L))
 stopifnot(identical(plotmo:::check.integer.scalar(1234, min=2, max=1235), 1234))
 xtest <- 1.234
-expect.err(try(plotmo:::check.integer.scalar(xtest, min=0, max=3)), "xtest=1.234 but it should be an an integer, or TRUE or FALSE")
+expect.err(try(plotmo:::check.integer.scalar(xtest, min=0, max=3)), "xtest=1.234 but it should be an integer, or TRUE or FALSE")
 
 # check check.vec
 xtest <- "x"

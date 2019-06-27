@@ -81,7 +81,7 @@ fitted() was unsuccessful, will use predict() instead
 got model response from getCall(object)$y
 graphics::plot(cv.glmnet.object)
 
-training rsq 0.33
+training rsq 0.29
 stats::predict(cv.glmnet.object, matrix[3,3], type="response", s="lambda.min")
 stats::fitted(object=cv.glmnet.object)
 fitted() was unsuccessful, will use predict() instead

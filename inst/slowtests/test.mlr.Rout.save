@@ -649,10 +649,10 @@ Got error as expected from try(plotres(classif.lda$learner.model))
 > expect.err(try(plotres(classif.lda$learner.model, type="response")), "Defaulting to nresponse=1, see above messages")
 
 predict.lda[3,2]:
-         LD1        LD2
-51 -1.480943  0.2427601
-70 -1.022992 -1.6827623
-9   6.621824 -1.1293807
+          LD1        LD2
+15  10.723308  1.2184763
+131 -6.507414 -0.9729798
+140 -5.339014  0.8727408
 
 predict.lda returned multiple columns (see above) but nresponse is not specified
     Use the nresponse argument to specify a column.
@@ -703,13 +703,13 @@ Got error as expected from try(plotres(classif.lda))
 > 
 > plotmo(classif.lda.with.call,     SHOWCALL=TRUE)
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
-                         5.85           3         4.45         1.3
+                            6           3         4.45         1.4
 > plotmo(classif.lda$learner.model, SHOWCALL=TRUE)
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
-                         5.85           3         4.45         1.3
+                            6           3         4.45         1.4
 > plotmo(lda,                       SHOWCALL=TRUE)
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
-                         5.85           3         4.45         1.3
+                            6           3         4.45         1.4
 > 
 > # # TODO plotPartialDependence and plotmo graphs below don't match
 > # pd <- generatePartialDependenceData(classif.lda, task.lda, "Petal.Width", n=c(50, NA)) # TODO generates warnings
@@ -719,20 +719,20 @@ calculating partdep for Petal.Width
 > 
 > plotmo(classif.lda.with.call,     SHOWCALL=TRUE, all2=TRUE, type="response")
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
-                         5.85           3         4.45         1.3
+                            6           3         4.45         1.4
 > plotmo(classif.lda$learner.model, SHOWCALL=TRUE, all2=TRUE, type="class")
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
-                         5.85           3         4.45         1.3
+                            6           3         4.45         1.4
 > plotmo(lda,                       SHOWCALL=TRUE, all2=TRUE, type="class")
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
-                         5.85           3         4.45         1.3
+                            6           3         4.45         1.4
 > 
 > plotmo(classif.lda$learner.model, SHOWCALL=TRUE, all2=TRUE, type="response", nresponse="LD1")
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
-                         5.85           3         4.45         1.3
+                            6           3         4.45         1.4
 > plotmo(lda,                       SHOWCALL=TRUE, all2=TRUE, type="response", nresponse="LD1")
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width
-                         5.85           3         4.45         1.3
+                            6           3         4.45         1.4
 > 
 > cat("==test recursive call to plotmo_prolog for learner.model===============\n")
 ==test recursive call to plotmo_prolog for learner.model===============

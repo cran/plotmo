@@ -95,13 +95,11 @@ check.classname <- function(object, substituted.object, allowed.classnames)
 tweak.name <- function(name, quote=TRUE)
 {
     quoted.name <- quotify(name, quote="'")
-    if(name %in% c("NULL", "NA"))
+    if(name %in% c("NULL", "NA") ||
+           (substr(name[1], 1, 1) %in% c("+", "-")) ||
+           grepl("[0-9]", substr(name[1], 1, 1))) {
         quoted.name <- name <- "argument"
-    else if(substr(name[1], 1, 1) %in% c("+", "-"))
-        quoted.name <- name <- "argument"
-    else if(grepl("[0-9]", substr(name[1], 1, 1)))
-        quoted.name <- name <- "argument"
-
+    }
     if(quote) quoted.name else name
 }
 check.integer.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
@@ -116,7 +114,7 @@ check.integer.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
         s.logical <- if(logical.ok) ", or TRUE or FALSE" else ""
         s.char    <- if(char.ok)    ", or a string"      else ""
         stop0(s,
-              " but it should be an an integer",
+              " but it should be an integer",
               s.null, s.na, s.logical, s.char)
     }
     if(is.character(object)) {

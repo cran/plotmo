@@ -56,27 +56,29 @@ training rsq 0.81
 > 
 > set.seed(2015)
 > bag <- bagEarth(O3~., data=ozone1, degree=2, B=3)
+Warning in model.matrix.default(Terms, m, contrasts) :
+  non-list contrasts argument ignored
 > print(bag$fit)
 $Resample1
-Selected 15 of 20 terms, and 8 of 9 predictors
+Selected 13 of 19 terms, and 7 of 9 predictors
 Termination condition: Reached nk 21
-Importance: temp, humidity, ibt, doy, dpg, vh, ibh, vis, wind-unused
-Number of terms at each degree of interaction: 1 9 5
-GCV 10.62368    RSS 2782.633    GRSq 0.8284277    RSq 0.8629907
+Importance: temp, humidity, ibt, doy, vis, dpg, wind, vh-unused, ...
+Number of terms at each degree of interaction: 1 4 8
+GCV 10.06481    RSS 2726.679    GRSq 0.8269797    RSq 0.8570949
 
 $Resample2
-Selected 17 of 21 terms, and 8 of 9 predictors
-Termination condition: Reached nk 21
-Importance: temp, humidity, dpg, doy, vis, ibt, ibh, vh, wind-unused
-Number of terms at each degree of interaction: 1 8 8
-GCV 13.77306    RSS 3485.877    GRSq 0.7983071    RSq 0.8443696
-
-$Resample3
 Selected 15 of 21 terms, and 7 of 9 predictors
 Termination condition: Reached nk 21
-Importance: temp, humidity, dpg, doy, vh, vis, ibh, wind-unused, ...
-Number of terms at each degree of interaction: 1 8 6
-GCV 13.71664    RSS 3592.762    GRSq 0.7669974    RSq 0.8139355
+Importance: temp, ibh, humidity, doy, vh, dpg, wind, ibt-unused, ...
+Number of terms at each degree of interaction: 1 6 8
+GCV 14.07142    RSS 3685.688    GRSq 0.7976107    RSq 0.8383817
+
+$Resample3
+Selected 16 of 21 terms, and 8 of 9 predictors
+Termination condition: Reached nk 21
+Importance: temp, ibt, humidity, doy, vis, dpg, vh, ibh, wind-unused
+Number of terms at each degree of interaction: 1 7 8
+GCV 12.3789    RSS 3187.464    GRSq 0.8064265    RSq 0.8480394
 
 > # pairs are plotted correctly (I think)
 > plotmo(bag, type="response", trace=1, SHOWCALL=TRUE)
@@ -103,7 +105,7 @@ got model response from model.frame(O3~.,
                                     data=call$data, na.action="na.fail")
 assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
 
-training rsq 0.82
+training rsq 0.83
 > 
 > set.seed(2015)
 > a.bag1 <- bagEarth(trees[,-3], trees[,3], degree=2, B = 3)
@@ -129,31 +131,32 @@ training rsq 0.98
 > # TODO following doesn't work properly, factors are plotted as continuous?
 > # trace=1 to display "Fixed rank deficient bx by removing 1 term" messages
 > a.bag3 <- bagEarth(survived~., data=etitanic, degree=2, B=3, trace=1)
+Warning in model.matrix.default(Terms, m, contrasts) :
+  non-list contrasts argument ignored
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY, and values 1, 1, 0, 0, 0, 0, 1, 1, 1, 0,...
+y[1046,1] with colname subY, and values 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.456 RSq 0.492
-Prune backward penalty 3 nprune null: selected 8 of 15 terms, and 6 of 7 preds
-After pruning pass GRSq 0.467 RSq 0.485
+After forward pass GRSq 0.425 RSq 0.462
+Prune backward penalty 3 nprune null: selected 11 of 15 terms, and 6 of 7 preds
+After pruning pass GRSq 0.434 RSq 0.461
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY, and values 1, 1, 1, 1, 0, 0, 0, 1, 1, 0,...
+y[1046,1] with colname subY, and values 1, 0, 0, 0, 1, 1, 1, 0, 0, 1,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.486 RSq 0.520
-Fixed rank deficient bx by removing 1 term, 14 terms remain
-Prune backward penalty 3 nprune null: selected 11 of 14 terms, and 5 of 7 preds
-After pruning pass GRSq 0.495 RSq 0.519
+After forward pass GRSq 0.383 RSq 0.432
+Prune backward penalty 3 nprune null: selected 7 of 18 terms, and 5 of 7 preds
+After pruning pass GRSq 0.401 RSq 0.418
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY, and values 0, 0, 1, 0, 0, 1, 0, 1, 1, 1,...
+y[1046,1] with colname subY, and values 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.448 RSq 0.487
-Prune backward penalty 3 nprune null: selected 11 of 16 terms, and 7 of 7 preds
-After pruning pass GRSq 0.455 RSq 0.481
+After forward pass GRSq 0.450 RSq 0.488
+Prune backward penalty 3 nprune null: selected 13 of 16 terms, and 5 of 7 preds
+After pruning pass GRSq 0.458 RSq 0.488
 > plotmo(a.bag3, clip=F, caption="bagEarth, etitanic", trace=1, SHOWCALL=TRUE)
 stats::predict(bagEarth.object, data.frame[3,7], type="response")
 stats::fitted(object=bagEarth.object)
@@ -178,7 +181,7 @@ got model response from model.frame(survived~.,
                                     data=call$data, na.action="na.fail")
 assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
 
-training rsq 0.45
+training rsq 0.44
 > 
 > # example by Max Kuhn on stackoverflow
 > set.seed(2015)
@@ -234,5 +237,25 @@ got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.83
+> 
+> cat("=== method=\"svmRadial\" (S4 model wrapped in an S3 model) ===\n")
+=== method="svmRadial" (S4 model wrapped in an S3 model) ===
+> data(trees)
+> set.seed(2019)
+> library(kernlab)
+
+Attaching package: 'kernlab'
+
+The following object is masked from 'package:ggplot2':
+
+    alpha
+
+> mod <- train(Girth~., data=trees, method="svmRadial",
++              trControl=trainControl(method="cv", number=2),
++              tuneLength=2, preProcess = c("center", "scale"))
+> plotres(mod, info=TRUE)
+> plotmo(mod, pt.col=2, all2=TRUE)
+ plotmo grid:    Height Volume
+                     76   24.2
 > 
 > source("test.epilog.R")

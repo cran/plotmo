@@ -387,6 +387,8 @@ Loaded gam 1.16
 > data(airquality)
 > airquality <- na.omit(airquality)   # plotmo doesn't know how to deal with NAs yet
 > a <- gam(Ozone^(1/3) ~ lo(Solar.R) + lo(Wind, Temp), data = airquality)
+Warning in model.matrix.default(mt, mf, contrasts) :
+  non-list contrasts argument ignored
 > plotmo(a, do.par=FALSE, caption=caption, ylim=NA, col.response=3)
  plotmo grid:    Solar.R Wind Temp
                      207  9.7   79
@@ -1359,10 +1361,10 @@ The following object is masked from 'package:mgcv':
 > ir.nn2 <- nnet(species ~ ., data = ird, subset = samp, size = 2, rang = 0.1,
 +                decay = 5e-4, maxit = 20)
 # weights:  19
-initial  value 82.529015 
-iter  10 value 34.571645
-iter  20 value 10.461202
-final  value 10.461202 
+initial  value 82.506969 
+iter  10 value 21.754594
+iter  20 value 8.896424
+final  value 8.896424 
 stopped after 20 iterations
 > plotmo(ir.nn2, nresponse=1, type="class", all2=T, degree2=2:6)
  plotmo grid:    Sepal.L. Sepal.W. Petal.L. Petal.W.

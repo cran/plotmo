@@ -94,7 +94,10 @@ is.predict.prob.aux <- function(object, type, trace)
         type.firstchar == "p") ||
 
     (inherits(object, "C5.0") &&
-         type.firstchar == "p")
+         type.firstchar == "p") ||
+
+    (inherits(object, "cv.glmnet") &&
+         !is.null(object$glmnet.fit$classnames))
 }
 is.predict.prob <- function(object, type, trace)
 {

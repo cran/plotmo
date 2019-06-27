@@ -40,7 +40,7 @@ Got error as expected from try(plotres(gbm.gaussian))
 w1 plot for gbm.gaussian returned (w1.smooth=TRUE):
 > print(w1)
 train  test    CV   OOB 
-   50    14     0    19 
+   50     1     0     1 
 > plot(0, 0) # dummy plot
 > w3 <- plotres(gbm.gaussian, which=3, do.par=FALSE, info=TRUE,
 +         smooth.col=0, col=ptit$sex, # ylim=c(-40,40),
@@ -64,7 +64,7 @@ train  test    CV   OOB
 > w1 <- plotres(gbm.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
 +               w1.smooth=TRUE,
 +               w1.main="predict.n.trees=13 w1.grid.col=1")
-importance: pclass sibsp parch sex survived
+importance: survived pclass parch sibsp sex
 stats::residuals(object=gbm.object, type="response")
 residuals() was unsuccessful, will use predict() instead
 stats::predict(gbm.object, data.frame[3,5], type="response", n.trees=13)
@@ -73,12 +73,12 @@ fitted() was unsuccessful, will use predict() instead
 plot_gbm(gbm.object, main="predict.n.trees=13 w1.grid.col=1", n.trees=13,
          grid.col=1, smooth=TRUE)
 
-training rsq 0.14
+training rsq 0.07
 > cat("second w1 plot for gbm.gaussian returned (w1.smooth=TRUE):\n")
 second w1 plot for gbm.gaussian returned (w1.smooth=TRUE):
 > print(w1)
 train  test    CV   OOB 
-   50    14     0    19 
+   50     1     0     1 
 > plotmo(gbm.gaussian, trace=-1, SHOWCALL=TRUE)
 > # plotmo(gbm.gaussian, trace=-1, all1=TRUE, SHOWCALL=TRUE)
 > # plotmo(gbm.gaussian, trace=-1, all2=TRUE, SHOWCALL=TRUE)
@@ -103,7 +103,7 @@ train  test    CV   OOB
 third w1 plot for gbm.gaussian returned (smooth=TRUE):
 > print(w1)
 train  test    CV   OOB 
-   50    14     0    19 
+   50     1     0     1 
 > par(old.par)
 > 
 > # test xlim and ylim
@@ -125,53 +125,53 @@ train  test    CV   OOB
 > imin <- plot_gbm(gbm.gaussian,                    main="smooth=default")
 > imin.default <- imin
 > cat("smooth=default imin=c(", imin[1], ",", imin[2], ",", imin[3], ",", imin[4], ")\n", sep="")
-smooth=default imin=c(50,22,0,19)
+smooth=default imin=c(50,2,0,1)
 > 
 > imin <- plot_gbm(gbm.gaussian, smooth=c(1,0,0,0), main="smooth=c(1,0,0,0)")
 > cat("smooth=c(1,0,0,0) imin=c(", imin[1], ",", imin[2], ",", imin[3], ",", imin[4], ")\n", sep="")
-smooth=c(1,0,0,0) imin=c(50,22,0,14)
+smooth=c(1,0,0,0) imin=c(50,2,0,6)
 > 
 > imin <- plot_gbm(gbm.gaussian, smooth=c(0,1,0,0), main="smooth=c(0,1,0,0)")
 > cat("smooth=c(0,1,0,0) imin=c(", imin[1], ",", imin[2], ",", imin[3], ",", imin[4], ")\n", sep="")
-smooth=c(0,1,0,0) imin=c(50,14,0,14)
+smooth=c(0,1,0,0) imin=c(50,1,0,6)
 > 
 > imin <- plot_gbm(gbm.gaussian, smooth=c(0,0,1,0), main="smooth=c(0,0,1,0)")
 > cat("smooth=c(0,0,1,0) imin=c(", imin[1], ",", imin[2], ",", imin[3], ",", imin[4], ")\n", sep="")
-smooth=c(0,0,1,0) imin=c(50,22,0,14)
+smooth=c(0,0,1,0) imin=c(50,2,0,6)
 > 
 > imin <- plot_gbm(gbm.gaussian, smooth=c(0,0,0,1), main="smooth=c(0,0,0,1)\nsame as default")
 > cat("smooth=c(0,0,0,1) imin=c(", imin[1], ",", imin[2], ",", imin[3], ",", imin[4], ")\n", sep="")
-smooth=c(0,0,0,1) imin=c(50,22,0,19)
+smooth=c(0,0,0,1) imin=c(50,2,0,1)
 > 
 > imin <- plot_gbm(gbm.gaussian, smooth=c(0,0,0,0), main="smooth=c(0,0,0,0)")
 > cat("smooth=c(0,0,0,0) imin=c(", imin[1], ",", imin[2], ",", imin[3], ",", imin[4], ")\n", sep="")
-smooth=c(0,0,0,0) imin=c(50,22,0,14)
+smooth=c(0,0,0,0) imin=c(50,2,0,6)
 > 
 > imin <- plot_gbm(gbm.gaussian, smooth=c(0,0,1,1), main="smooth=c(0,0,1,1)")
 > cat("smooth=c(0,0,1,1) imin=c(", imin[1], ",", imin[2], ",", imin[3], ",", imin[4], ")\n", sep="")
-smooth=c(0,0,1,1) imin=c(50,22,0,19)
+smooth=c(0,0,1,1) imin=c(50,2,0,1)
 > 
 > imin <- plot_gbm(gbm.gaussian, smooth=1,          main="smooth=1") # gets recycled
 > cat("smooth=1          imin=c(", imin[1], ",", imin[2], ",", imin[3], ",", imin[4], ")\n", sep="")
-smooth=1          imin=c(50,14,0,19)
+smooth=1          imin=c(50,1,0,1)
 > imin.smooth <- imin
 > 
 > imin.noplot <- plot_gbm(gbm.gaussian, col=0) # will not be plotted
 > print(imin.default)
 train  test    CV   OOB 
-   50    22     0    19 
+   50     2     0     1 
 > print(imin.noplot)
 train  test    CV   OOB 
-   50    22     0    19 
+   50     2     0     1 
 > stopifnot(identical(imin.default, imin.noplot))
 > 
 > imin.noplot <- plot_gbm(gbm.gaussian, col=0, smooth=1) # will not be plotted
 > print(imin.smooth)
 train  test    CV   OOB 
-   50    14     0    19 
+   50     1     0     1 
 > print(imin.noplot)
 train  test    CV   OOB 
-   50    14     0    19 
+   50     1     0     1 
 > stopifnot(identical(imin.smooth, imin.noplot))
 > 
 > par(old.par)
@@ -197,7 +197,7 @@ train  test    CV   OOB
 w1 plot for gbm.gaussian.fit returned (w1.smooth=TRUE):
 > print(w1)
 train  test    CV   OOB 
-   50    14     0    19 
+   50     1     0     1 
 > 
 > plot(0, 0) # dummy plot
 > 
@@ -248,7 +248,7 @@ train  test    CV   OOB
 w1 plot for gbm.laplace returned (w1.smooth=TRUE):
 > print(w1)
 train  test    CV   OOB 
-   98    37     0    24 
+   75   100     0     1 
 > 
 > w3 <- plotres(gbm.laplace, which=3, do.par=FALSE, info=TRUE)
 > 
@@ -335,7 +335,7 @@ train  test    CV   OOB
 w1 plot for gbm.bernoulli with cv.folds=3 returned:
 > print(w1)
 train  test    CV   OOB 
-  100    13    58    16 
+  100    24    99    16 
 > 
 > w3 <- plotres(gbm.bernoulli, which=3, predict.n.trees=40,
 +         ylim=c(-.6, 1), xlim=c(.1, .6),
@@ -359,14 +359,14 @@ train  test    CV   OOB
 > old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.bernoulli, do.par=2)
  plotmo grid:    sex age sibsp parch pclass
-                male  30     0     0  third
+                male  27     0     0  third
 > print(summary(gbm.bernoulli)) # will also plot
           var   rel.inf
-age       age 39.960711
-sex       sex 34.273547
-pclass pclass 16.959742
-parch   parch  4.985494
-sibsp   sibsp  3.820507
+age       age 32.307096
+sex       sex 29.921593
+pclass pclass 17.323084
+parch   parch 13.277759
+sibsp   sibsp  7.170468
 > par(old.par)
 > 
 > cat("--- distribution=\"huberized\" ----------------------------------\n")
@@ -393,7 +393,7 @@ Warning: plot_gbm: cannot plot OOB curve (it has some non-finite values)
 w1 plot for gbm.huberized returned (smooth=default):
 > print(w1)
 train  test    CV   OOB 
-  190     0     0     0 
+  169     0     0     0 
 > 
 > # TODO huberized residuals look weird
 > w3 <- plotres(gbm.huberized, which=3, predict.n.trees=40,
@@ -416,11 +416,11 @@ train  test    CV   OOB
 > old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.huberized, do.par=2)
  plotmo grid:    sex age
-                male  30
+                male  28
 > print(summary(gbm.huberized)) # will also plot
-    var rel.inf
-age age 74.6857
-sex sex 25.3143
+    var  rel.inf
+age age 68.12613
+sex sex 31.87387
 > par(old.par)
 > 
 > cat("--- distribution=\"adaboost\" ----------------------------------\n")
@@ -446,7 +446,7 @@ sex sex 25.3143
 w1 plot for gbm.adaboost returned (smooth=default):
 > print(w1)
 train  test    CV   OOB 
-  150    35     0   110 
+  150   150     0   117 
 > 
 > w3 <- plotres(gbm.adaboost, which=3, predict.n.trees=40,
 +         col=ptit$sex, trace=0, do.par=FALSE, smooth.col=0)
@@ -467,12 +467,12 @@ train  test    CV   OOB
 > 
 > old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.adaboost, do.par=2)
- plotmo grid:    sex age
-                male  31
+ plotmo grid:    sex  age
+                male 27.5
 > print(summary(gbm.adaboost)) # will also plot
     var  rel.inf
-sex sex 71.68619
-age age 28.31381
+sex sex 75.09661
+age age 24.90339
 > par(old.par)
 > 
 > # test gbm multinomial model, also test very small number of trees in plot_gbm

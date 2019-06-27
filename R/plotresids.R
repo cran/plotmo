@@ -95,7 +95,8 @@ plotresids <- function(
                                 which, colname.versus1, nversus)
     derived.ylab <- derive.ylab(dota("ylab", DEF=NULL, ...), which, rinfo$name)
     main <- derive.main(main=dota("main", DEF=NULL, ...),
-                        derived.xlab, derived.ylab, level)
+                               derived.xlab, derived.ylab, level,
+                               attr(object, "plotmo.s"))
 
     # allow col.response as an argname for compat with old plotmo
     pt.col <- dota("col.response col.resp", DEF=1, ...)
@@ -611,7 +612,7 @@ derive.ylab <- function(ylab, which, rinfo.name)
         ylab <- sprint("Log Abs %s", ylab)
     ylab
 }
-derive.main <- function(main, xlab, ylab, level) # title of plot
+derive.main <- function(main, xlab, ylab, level, predict.s) # title of plot
 {
     # TODO should really use strwidth for newline calculation
     # The "Fitted" helps with limitations of the formula below
@@ -622,11 +623,23 @@ derive.main <- function(main, xlab, ylab, level) # title of plot
     else if(grepl("Standardized", ylab[1]) || grepl("Delevered", ylab[1]))
         newline <- TRUE
 
-    if(!is.specified(main)) # generate a main only if user didn't specify main
+    if(!is.specified(main)) { # generate a main only if user didn't specify main
         main <- sprint("%s vs%s%s", ylab, if(newline) "\n" else " ", xlab)
+        if(!is.null(predict.s)) {
+            # include the s argument that is used to make the model predictions
+            if(is.character(predict.s)) # "lambda.1se" or "lambda.min"
+                main <- sprint("%s   (s=\"%s\")", main, predict.s)
+            else if(is.numeric(predict.s)) {
+                main <- sprint("%s   (s=%s)", main,
+                                if(predict.s == 0) "0"
+                                else               signif(predict.s,2))
+            } else
+                warning0("predict.s has an unexpected class ",
+                         quotify(class(predict.s)))
+        }
+    }
     if(xlab != "Leverage" && level && !newline) # two newlines is too many
         main <- sprint("%s\n%g%% level shaded", main, 100*(level))
-
     main
 }
 # plot resids of oof meanfit with col.cv (default lightblue)

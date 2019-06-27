@@ -625,6 +625,6 @@ test.callers.name <- function(x) {
 print(plotmo:::callers.name()) # "eval"
 myfunc <- function(func) func()
 stopifnot(myfunc(function(x) test.callers.name(99)) == "0 test.callers.name 1 func 99 unknown")
-stopifnot(test.callers.name() == "0 test.callers.name 1 doTryCatch 99 unknown")
+stopifnot(test.callers.name() == "0 test.callers.name 1 stopifnot 99 unknown")
 
 source("test.epilog.R")

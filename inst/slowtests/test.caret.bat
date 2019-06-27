@@ -2,7 +2,7 @@
 @rem Stephen Milborrow, Shrewsbury Aug 2016
 
 @echo test.caret.bat
-@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.caret.R
+@"C:\PROGRA~1\R\R-3.6.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.caret.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.caret.Rout:
 @echo.

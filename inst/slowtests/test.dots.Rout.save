@@ -17,7 +17,7 @@
 > test.dotindex(1,  "a1", a=10, b=20)
 > test.dotindex(NA, "a",  a1=10, a2=20)
 > expect.err(try(test.dotindex(1, nonesuch, a=10, a=20)), "object 'nonesuch' not found")
-Error in is.character(argname) : object 'nonesuch' not found
+Error : object 'nonesuch' not found
 Got error as expected from try(test.dotindex(1, nonesuch, a = 10, a = 20))
 > expect.err(try(test.dotindex(1, "a1", a=10, a=20)), "argument 'a' for test.dotindex() is duplicated")
 Error : argument 'a' for test.dotindex() is duplicated
@@ -1168,7 +1168,7 @@ graphics::plot.default(x=c(-11,0,11,22,3...), y=c(12,4,-2,-6,-8...),
 > myfunc <- function(func) func()
 > stopifnot(myfunc(function(x) test.callers.name(99)) == "0 test.callers.name 1 func 99 unknown")
 0 test.callers.name 1 func 99 unknown
-> stopifnot(test.callers.name() == "0 test.callers.name 1 doTryCatch 99 unknown")
-0 test.callers.name 1 doTryCatch 99 unknown
+> stopifnot(test.callers.name() == "0 test.callers.name 1 stopifnot 99 unknown")
+0 test.callers.name 1 stopifnot 99 unknown
 > 
 > source("test.epilog.R")

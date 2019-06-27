@@ -9,7 +9,10 @@ check.is.caret.train.object <- function(object)
     class <- class(object)[1]
     stopifnot.string(class)
     mod <- object[["finalModel"]]
-    if(class != "train" || is.null(mod) || !is.list(mod))
+    # S3 models are lists, S4 models aren't lists.
+    # Plotmo support S4 models only if they are wrapped in a caret model.
+    # Example S4 model: kernlab::ksvm created with train(..., method="svmRadial", ...).
+    if(class != "train" || is.null(mod) || (!is.list(mod) && !isS4(mod)))
         stop0("unrecognized \"train\" object ",
               "(was expecting a train object from the caret package)")
 }

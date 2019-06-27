@@ -286,6 +286,8 @@ Loaded gam 1.16
 > data(ozone1)
 > oz <- ozone1[, c("O3", "humidity", "temp", "ibt")]
 > gam.mod <- gam(O3^(1/3) ~ lo(humidity)+lo(ibt,temp), data=oz)
+Warning in model.matrix.default(mt, mf, contrasts) :
+  non-list contrasts argument ignored
 > plotmo(gam.mod, SHOWCALL=TRUE)
  plotmo grid:    humidity   ibt temp
                        64 167.5   62
@@ -294,6 +296,8 @@ Loaded gam 1.16
 > plotres(gam.mod, versus="b:ib", info=TRUE, SHOWCALL=TRUE)
 > 
 > gam.linear.humidity.only <- gam(O3^(1/3) ~ humidity, data=oz)
+Warning in model.matrix.default(mt, mf, contrasts) :
+  non-list contrasts argument ignored
 > plotres(gam.linear.humidity.only, versus="b:", SHOWCALL=TRUE)
 > 
 > library(mda)

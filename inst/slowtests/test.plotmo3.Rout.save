@@ -148,11 +148,11 @@ Got error as expected from try(plotmo:::check.integer.scalar(NULL))
 > expect.err(try(plotmo:::check.integer.scalar(xtest, na.ok=TRUE)), "'xtest' is NULL")
 Error : 'xtest' is NULL
 Got error as expected from try(plotmo:::check.integer.scalar(xtest, na.ok = TRUE))
-> expect.err(try(plotmo:::check.integer.scalar("xyz", na.ok=TRUE)), "\"xyz\" is a string but it should be an an integer, or NA, or TRUE or FALSE")
-Error : "xyz" is a string but it should be an an integer, or NA, or TRUE or FALSE
+> expect.err(try(plotmo:::check.integer.scalar("xyz", na.ok=TRUE)), "\"xyz\" is a string but it should be an integer, or NA, or TRUE or FALSE")
+Error : "xyz" is a string but it should be an integer, or NA, or TRUE or FALSE
 Got error as expected from try(plotmo:::check.integer.scalar("xyz", na.ok = TRUE))
-> expect.err(try(plotmo:::check.integer.scalar("TRUE", na.ok=TRUE)), "\"TRUE\" is a string but it should be an an integer, or NA, or TRUE or FALSE")
-Error : "TRUE" is a string but it should be an an integer, or NA, or TRUE or FALSE
+> expect.err(try(plotmo:::check.integer.scalar("TRUE", na.ok=TRUE)), "\"TRUE\" is a string but it should be an integer, or NA, or TRUE or FALSE")
+Error : "TRUE" is a string but it should be an integer, or NA, or TRUE or FALSE
 Got error as expected from try(plotmo:::check.integer.scalar("TRUE", na.ok = TRUE))
 > stopifnot(identical(plotmo:::check.integer.scalar(TRUE), TRUE))
 > stopifnot(identical(plotmo:::check.integer.scalar(NA, na.ok=TRUE), NA))
@@ -165,8 +165,8 @@ Got error as expected from try(plotmo:::check.integer.scalar(x.integer.scalar, m
 > stopifnot(identical(plotmo:::check.integer.scalar(x.integer.scalar, min=2, max=1235), 1234L))
 > stopifnot(identical(plotmo:::check.integer.scalar(1234, min=2, max=1235), 1234))
 > xtest <- 1.234
-> expect.err(try(plotmo:::check.integer.scalar(xtest, min=0, max=3)), "xtest=1.234 but it should be an an integer, or TRUE or FALSE")
-Error : xtest=1.234 but it should be an an integer, or TRUE or FALSE
+> expect.err(try(plotmo:::check.integer.scalar(xtest, min=0, max=3)), "xtest=1.234 but it should be an integer, or TRUE or FALSE")
+Error : xtest=1.234 but it should be an integer, or TRUE or FALSE
 Got error as expected from try(plotmo:::check.integer.scalar(xtest, min = 0, max = 3))
 > 
 > # check check.vec
@@ -336,6 +336,7 @@ plotmo1(object=mod.earth.sex,level=0.9,type="earth")
 > 
 > # tit[,3] is sex
 > mod.earth.tit <- earth(tit[,-3], tit[,3], degree=2, nfold=3, ncross=3, varmod.method="earth", glm=list(family=binomial))
+Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
 > plotmo1(mod.earth.tit)
 plotmo1(object=mod.earth.tit)
  plotmo grid:    pclass survived age sibsp  logage
@@ -687,9 +688,9 @@ library(ISLR)
 > plotmo1(pcr.fit1, nresponse=10)
 plotmo1(object=pcr.fit1,nresponse=10)
  plotmo grid:    AtBat Hits HmRun Runs RBI Walks Years CAtBat CHits CHmRun
-                   381  103     9   50  46    35     6   1897   491     40
+                   394  102     8   50  44    36     6   1931   510     36
  CRuns CRBI CWalks League Division PutOuts Assists Errors NewLeague
-   247  222    172      N        E     229      46      7         N
+   246  219    172      A        W     211      56      7         A
 > 
 > # set.seed(1)
 > # x <- model.matrix(Salary~.,Hitters)[,-1]

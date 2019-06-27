@@ -1,7 +1,7 @@
 @rem test.plotmo.args.bat: test dot and other argument handling in plotmo
 
 @echo test.plotmo.args.bat
-@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.args.R
+@"C:\PROGRA~1\R\R-3.6.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.args.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.args.Rout:
 @echo.

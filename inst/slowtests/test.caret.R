@@ -64,4 +64,14 @@ a <- train(O3 ~ ., data = ozone1,  method = "earth",
 plotmo(a, trace=1, SHOWCALL=TRUE)
 plotres(a, trace=1, SHOWCALL=TRUE)
 
+cat("=== method=\"svmRadial\" (S4 model wrapped in an S3 model) ===\n")
+data(trees)
+set.seed(2019)
+library(kernlab)
+mod <- train(Girth~., data=trees, method="svmRadial",
+             trControl=trainControl(method="cv", number=2),
+             tuneLength=2, preProcess = c("center", "scale"))
+plotres(mod, info=TRUE)
+plotmo(mod, pt.col=2, all2=TRUE)
+
 source("test.epilog.R")

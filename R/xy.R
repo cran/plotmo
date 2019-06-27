@@ -1173,6 +1173,27 @@ convert.glm.response.factor <- function(object, y, trace)
         trace2(trace,
             "the response is a factor but could not get the family of the \"%s\" model\n",
             class(object)[1])
+        # TODO jun 2019: attempt to handle binomial responses, not used (to maintain backwards compat)
+        # if(NCOL(y) != 1)  # be conservative, warning if not what we expect
+        #     warnf("the response is a factor but could not get the family of the \"%s\" model\n",
+        #         class(object)[1])
+        # else {
+        #     # special handling for binomial case: create indicator column of 0s and 1s
+        #     y1 <- if(!is.null(ncol(y))) y[,1] else y
+        #     levels <- unique(y1)
+        #     if(length(levels) > 2) # be conservative, warning if not what we expect
+        #         warnf("the response is a factor (with %d levels) but could not get the family of the \"%s\" model\n",
+        #               length(levels), class(object)[1])
+        #     else {
+        #         y <- y1 != levels[1]
+        #         y <- data.frame(y)
+        #         # column naming helps us keep track that we did this manipulation of x
+        #         colnames(y) <- if(length(levels) > 1) paste0("is", levels[2])
+        #                                               else paste0("not", levels[1])
+        #         trace2(trace, "generated indicator column \"%s\" from levels %s\n",
+        #                colnames(y)[1], paste.trunc(levels))
+        #     }
+        # }
     } else if(family[["family"]][1] == "binomial" ||
               family[["family"]][1] == "quasibinomial") {
         # e.g. glm(formula=sex~., family=binomial, data=etitanic)
@@ -1185,7 +1206,8 @@ convert.glm.response.factor <- function(object, y, trace)
             y <- data.frame(y)
         }
         # column naming helps us keep track that we did this manipulation of x
-        colnames(y) <- paste0(levels[1], ".indicator")
+        colnames(y) <- if(length(levels) > 1) paste0("is", levels[2])
+                                              else paste0("not", levels[1])
         trace2(trace, "generated indicator column \"%s\" from levels %s\n",
                colnames(y)[1], paste.trunc(levels))
     }

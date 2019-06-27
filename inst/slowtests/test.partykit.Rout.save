@@ -546,7 +546,7 @@ stats::fitted(object=cforest.object)
 got model response from model.frame(dist~speed,
                                     data=object$data, na.action="na.fail")
 
-training rsq 0.57
+training rsq 0.58
 > 
 > data("mammoexp", package = "TH.data")
 > cforest2 <- cforest(ME ~ PB + SYMPT, data = mammoexp, ntree = 5)
