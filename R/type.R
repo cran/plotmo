@@ -41,7 +41,7 @@ plotmo.residtype.default <- function(object, ..., TRACE)
 # It can save a call get.ylim.by.dummy.plots, and also works for objects
 # for which get.ylim.by.dummy.plots doesn't automatically figure out c(0,1)
 
-is.predict.prob.aux <- function(object, type, trace)
+is.yaxis.a.probability.aux <- function(object, type, trace)
 {
     if(inherits(object, "WrappedModel")) { # mlr package
         # will be we be predicting probabilities?
@@ -69,24 +69,16 @@ is.predict.prob.aux <- function(object, type, trace)
 
     # following not strictly necessary for earth models because
     # get.ylim.by.dummy.plots can also figure this out
+    # The "r" below is for "response"
     (inherits(object, "earth") &&
-        !is.null(object$glm.list[[1]]) &&
-        is.character(object$glm.list[[1]]$family$family) &&
-        (object$glm.list[[1]]$family$family == "binomial" ||
-          object$glm.list[[1]]$family$family == "quasibinomial") &&
-        type.firstchar == "r") || # "r" for response
+        is.nomial(object$glm.list[[1]]) && type.firstchar == "r") ||
 
-    (inherits(object, "glm") &&
-        is.character(object$family$family) &&
-        (object$family$family[1] == "binomial" ||
-         object$family$family[1] == "quasibinomial") &&
-        type.firstchar == "r") ||
+    # the "r" below is for "response"
+    (inherits(object, c("glm", "glmnet", "pre")) &&
+        is.nomial(object) && type.firstchar == "r") ||
 
-    (inherits(object, "pre") &&
-        is.character(object$family) &&
-        (object$family[1] == "binomial" ||
-         object$family[1] == "multinomial") &&
-        type.firstchar == "r") || # response
+    (inherits(object, "cv.glmnet") &&
+         !is.null(object$glmnet.fit$classnames)) ||
 
     (inherits(object, "randomForest") &&
         is.character(object$type) &&
@@ -94,19 +86,16 @@ is.predict.prob.aux <- function(object, type, trace)
         type.firstchar == "p") ||
 
     (inherits(object, "C5.0") &&
-         type.firstchar == "p") ||
-
-    (inherits(object, "cv.glmnet") &&
-         !is.null(object$glmnet.fit$classnames))
+         type.firstchar == "p")
 }
-is.predict.prob <- function(object, type, trace)
+is.yaxis.a.probability <- function(object, type, trace)
 {
     # This wrapper exists because we don't want plotmo to completely stop
-    # working if a package changes the model fields.  (This function is
+    # (issue an error) if a package changes the model fields.  (This function is
     # vulnerable to changes because it accessess internal fields in multiple
     # different models.)
 
-    is.prob <- try(is.predict.prob.aux(object, type, trace), silent=trace < 2)
+    is.prob <- try(is.yaxis.a.probability.aux(object, type, trace), silent=trace < 2)
     if(is.try.err(is.prob))
         FALSE
     else

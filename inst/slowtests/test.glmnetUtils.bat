@@ -1,7 +1,7 @@
 @rem test.glmnetUtils.bat: glmnetUtils tests for plotmo and plotres
 
 @echo test.glmnetUtils.bat
-@"C:\PROGRA~1\R\R-3.6.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.glmnetUtils.R
+@"C:\PROGRA~1\R\R-3.6.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.glmnetUtils.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.glmnetUtils.Rout:
 @echo.

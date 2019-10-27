@@ -1165,37 +1165,36 @@ convert.glm.response <- function(object, y, trace)
         y <- possibly.convert.glm.two.column.response(object, y, trace)
     y
 }
+is.nomial <- function(object)
+{
+    is.nomial.string <- function(family) {
+        family[1] == "binomial" ||
+        family[1] == "quasibinomial" ||
+        family[1] == "multinomial"
+    }
+    if(!is.list(object))
+        return(FALSE)
+
+    family <- object$family
+    if(is.character(family)) # glmnet models
+        return(is.nomial.string(family))
+
+    fam <- try(family(object), silent=TRUE)
+    if(inherits(fam, "family")) { # lm, glm, etc models
+        family <- fam$family
+        if(is.character(family))
+            return(is.nomial.string(family))
+    }
+    FALSE
+}
 convert.glm.response.factor <- function(object, y, trace)
 {
-    family <- try(family(object), silent=TRUE)
-    if(is.try.err(family) || is.null(family[["family"]])) {
+    if(!is.nomial(object)) {
         # e.g. rpart(formula=Kyphosis~., data=kyphosis)
         trace2(trace,
             "the response is a factor but could not get the family of the \"%s\" model\n",
             class(object)[1])
-        # TODO jun 2019: attempt to handle binomial responses, not used (to maintain backwards compat)
-        # if(NCOL(y) != 1)  # be conservative, warning if not what we expect
-        #     warnf("the response is a factor but could not get the family of the \"%s\" model\n",
-        #         class(object)[1])
-        # else {
-        #     # special handling for binomial case: create indicator column of 0s and 1s
-        #     y1 <- if(!is.null(ncol(y))) y[,1] else y
-        #     levels <- unique(y1)
-        #     if(length(levels) > 2) # be conservative, warning if not what we expect
-        #         warnf("the response is a factor (with %d levels) but could not get the family of the \"%s\" model\n",
-        #               length(levels), class(object)[1])
-        #     else {
-        #         y <- y1 != levels[1]
-        #         y <- data.frame(y)
-        #         # column naming helps us keep track that we did this manipulation of x
-        #         colnames(y) <- if(length(levels) > 1) paste0("is", levels[2])
-        #                                               else paste0("not", levels[1])
-        #         trace2(trace, "generated indicator column \"%s\" from levels %s\n",
-        #                colnames(y)[1], paste.trunc(levels))
-        #     }
-        # }
-    } else if(family[["family"]][1] == "binomial" ||
-              family[["family"]][1] == "quasibinomial") {
+    } else {
         # e.g. glm(formula=sex~., family=binomial, data=etitanic)
         if(!is.null(dim(y)))  {  # data.frame or matrix
             levels <- levels(y[,1])
@@ -1215,32 +1214,27 @@ convert.glm.response.factor <- function(object, y, trace)
 }
 possibly.convert.glm.two.column.response <- function(object, y, trace)
 {
-    family <- try(family(object), silent=TRUE)
-    if(!is.try.err(family)) {
-        family <- family[["family"]]
-        if(is.null(family))
-            warning0("could not get the family after calling family(object) for ",
-                     quotify(class(object)), " object")
-        else if(family == "binomial" || family == "quasibinomial") {
-            # following are just sanity checks
-            if(!is.numeric(y[,1]) || !is.numeric(y[,2]))
-                warning0("non-numeric two column response for a binomial model")
-            else if(any(y[,1] < 0) || any(y[,2] < 0))
-                warning0("negative values in the two column response ",
-                         "for a binomial model")
-            # example 1 glm(formula=response~temp, family="binomial", data=orings)
-            # example 2 glm(formula=cbind(damage,6-damage)~temp, family="bi...)
-            org.colnames <- colnames(y)
-            y <- bpairs.yfrac(y[,1:2], trace=(trace!=0))
-            y <- data.frame(y)
-            # column naming helps us keep track that we did this manipulation of x
-            if(!is.null(org.colnames)) {
-                colnames(y) <- # gsub deletes things like "[,2]"
-                    paste0(gsub("\\[.*\\]", "", org.colnames[1]), ".yfrac")
-                trace2(trace,
-                      "created column \"%s\" from two column binomial response\n",
-                      colnames(y))
-            }
+    if(is.nomial(object)) {
+        # following are sanity checks
+        # note also that here we treat a two column multinom model as a binom model
+        stopifnot(NCOL(y) == 2)
+        if(!is.numeric(y[,1]) || !is.numeric(y[,2]))
+            warning0("non-numeric two column response for a binomial model")
+        else if(any(y[,1] < 0) || any(y[,2] < 0))
+            warning0("negative values in the two column response ",
+                     "for a binomial model")
+        # example 1 glm(formula=response~temp, family="binomial", data=orings)
+        # example 2 glm(formula=cbind(damage,6-damage)~temp, family="bi...)
+        org.colnames <- colnames(y)
+        y <- bpairs.yfrac(y[,1:2], trace=(trace!=0))
+        y <- data.frame(y)
+        # column naming helps us keep track that we did this manipulation of x
+        if(!is.null(org.colnames)) {
+            colnames(y) <- # gsub deletes things like "[,2]"
+                paste0(gsub("\\[.*\\]", "", org.colnames[1]), ".yfrac")
+            trace2(trace,
+                  "created column \"%s\" from two column binomial response\n",
+                  colnames(y))
         }
     }
     y

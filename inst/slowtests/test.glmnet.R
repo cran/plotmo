@@ -202,14 +202,14 @@ expect.err(try(plotres(glmnet, w1.col=nonesuch)), "cannot evaluate 'col'")
 
 printf("======== glmnet multinomial (multnet)\n")
 old.par <- par(no.readonly=TRUE)
-par(mfrow=c(3,4), mar=c(3,3,3,1))
+par(mfrow=c(4,4), mar=c(3,3,3,1))
 set.seed(2016)
 n <- 200
 p <- 4
 x <- matrix(rnorm(n*p), n, p)
 colnames(x) <- paste("x", 1:ncol(x), sep="")
 
-# "1" is correlated of x[,1], "4" is correlated with x[,2], "2" and "3" not correlated
+# "1" is correlated with x[,1], "4" is correlated with x[,2], "2" and "3" not correlated
 y <- ifelse(x[,1] > 0.5, 1,
      ifelse(x[,2] > 0.0, 4,
      sample(c(2,3), size=nrow(x), replace=TRUE)))
@@ -236,6 +236,9 @@ plotres(multinomial.mod, nresponse=3, w1.main="nresponse=3",
 plotres(multinomial.mod, nresponse=4, w1.main="nresponse=4",
         smooth.col=0, info=TRUE,
         trace=0, which=c(1,3), do.par=FALSE, xlim=c(-.2,1.2), ylim=c(-1.2, 1.2))
+
+plotmo(multinomial.mod, nresponse=1, trace=0, do.par=FALSE, degree1=1:2)
+plotmo(multinomial.mod, nresponse=2, trace=0, do.par=FALSE, degree1=1:2)
 
 par(mgp=c(1.5, .4, 0))
 plot(multinomial.mod, xvar="norm") # compare to plot.glmnet
@@ -281,7 +284,7 @@ par(old.par)
 
 printf("======== binomial model\n")
 
-set.seed(2016)
+set.seed(2019)
 n <- 50
 p <- 4
 x <- matrix(rnorm(n*p), n, p)
@@ -289,16 +292,18 @@ colnames(x) <- paste("x", 1:ncol(x), sep="")
 y <- ifelse(x[,1] + x[,2] + .1 * rnorm(n) > .5, TRUE, FALSE)
 print(cov(x, y))
 y <- factor(y)
-binomial.mod <- glmnet(x, y, family="binomial")
+glmnet.binomial <- glmnet(x, y, family="binomial")
 old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,3), mar=c(3,3,1,1))
-plotres(binomial.mod, info=T, predict.s=.02, which=c(1,3), do.par=FALSE, w1.main="binomial.mod")
-plot(binomial.mod)
+plotres(glmnet.binomial, info=T, predict.s=.02, which=c(1,3), do.par=FALSE, w1.main="glmnet.binomial")
+plot(glmnet.binomial)
 earth.mod <- earth(x, y)
-plotres(earth.mod, info=T, predict.s=.02, which=c(1,3), do.par=FALSE)
+set.seed(2019)
+plotres(earth.mod, info=T, which=c(1,3), do.par=FALSE)
 par(old.par)
 par(mfrow=c(2,4), mar=c(3,3,1,1))
-plotmo(binomial.mod, do.par=FALSE)
+set.seed(2019)
+plotmo(glmnet.binomial, do.par=FALSE)
 plotmo(earth.mod, do.par=FALSE, main="binomial earth.mod")
 par(old.par)
 

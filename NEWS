@@ -1,9 +1,14 @@
 Changes to the plotmo package
 -----------------------------
 
+--- 3.5.6 Oct 26, 2019
+
+The family of a model can now be a string (as well as a "family" object).
+This allows better support of glmnet objects.
+
 --- 3.5.5 June 27, 2019
 
-S4 models wrapped in caret models are now supported 
+S4 models wrapped in caret models are now supported
 e.g. train method="svmRadial" (which creates a kernlab ksvm model).
 
 Modifications for glmnet models:

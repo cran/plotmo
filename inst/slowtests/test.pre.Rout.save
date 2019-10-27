@@ -13,6 +13,9 @@ Loading required package: TeachingDemos
 > rownames(airq) <- NULL
 > airq <- airq[1:50, ] # small set of data for quicker test
 > 
+> coef.glmnet       <- glmnet:::coef.glmnet       # TODO workaround required for glmnet 3.0
+> predict.cv.glmnet <- glmnet:::predict.cv.glmnet
+> 
 > set.seed(2018)
 > pre.mod <- pre(Ozone~., data=airq, ntrees=10) # ntrees=10 for faster test
 > plotres(pre.mod) # variable importance and residual plots

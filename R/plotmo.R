@@ -438,7 +438,7 @@ get.ylim <- function(object,
         ylim <- c(NA, NA)  # won't be used
     else if(is.null(ylim)) # auto ylim
         ylim <-
-            if(is.predict.prob(object, type, trace)) {
+            if(is.yaxis.a.probability(object, type, trace)) {
                 if(is.specified(pt.col))
                     c(-0.1, 1.1) # leave space for possibly jittered points
                 else

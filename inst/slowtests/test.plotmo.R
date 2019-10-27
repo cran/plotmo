@@ -2,7 +2,6 @@
 # Stephen Milborrow, Petaluma Jan 2007
 
 print(R.version.string)
-print(citation("rpart.plot"))
 
 source("test.prolog.R")
 library(earth)

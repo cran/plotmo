@@ -2,33 +2,7 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 3.6.0 (2019-04-26)"
-> print(citation("rpart.plot"))
-
-To cite package 'rpart.plot' in publications use:
-
-  Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
-  Version of 'plot.rpart'. R package version 3.0.8.
-  http://www.milbo.org/rpart-plot
-
-A BibTeX entry for LaTeX users is
-
-  @Manual{,
-    title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
-    author = {Stephen Milborrow},
-    note = {R package version 3.0.8},
-    url = {http://www.milbo.org/rpart-plot},
-  }
-
-ATTENTION: This citation information has been auto-generated from the
-package DESCRIPTION file and may need manual editing, see
-'help("citation")'.
-
-Warning messages:
-1: In citation("rpart.plot") :
-  no date field in DESCRIPTION file of package 'rpart.plot'
-2: In citation("rpart.plot") :
-  could not determine year for 'rpart.plot' from package DESCRIPTION file
+[1] "R version 3.6.1 (2019-07-05)"
 > 
 > source("test.prolog.R")
 > library(earth)

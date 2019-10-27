@@ -8,8 +8,7 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(glmnet)
 Loading required package: Matrix
-Loading required package: foreach
-Loaded glmnet 2.0-18
+Loaded glmnet 3.0
 
 > data(ozone1)
 > data(etitanic)
@@ -96,7 +95,7 @@ got model response from getCall(object)$y
 plotmo1(object=mod.cv.glmnet.xmat,predict.s="lambda.min",trace=2)
 plotmo trace 2: plotmo(object, trace=trace, SHOWCALL=SHOWCALL, caption=caption,
                        ...)
-object class is "cv.glmnet" with no call
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 --get.model.env for cv.glmnet object
 assuming the environment of the cv.glmnet model is that of plotmo's caller: env(..., call, caption, object, SHOWCALL, trace)
 --plotmo_prolog for cv.glmnet object 'object'
@@ -105,7 +104,7 @@ assuming the environment of the cv.glmnet model is that of plotmo's caller: env(
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.x.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -129,7 +128,7 @@ plotmo_predict with NULL newdata (nrows=3), using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.x.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -167,7 +166,7 @@ plotmo_predict with NULL newdata, using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.x.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -207,7 +206,7 @@ got fitted values by calling predict (see above)
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.y.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -217,7 +216,7 @@ get.data.from.object.call.field:
 eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
 getCall(object)$y is usable but without colnames so we will keep on searching
 
-names(call) is "" "x" "y"
+names(call) is "" "x" "y" "nfolds"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
@@ -244,7 +243,7 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.y.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -254,7 +253,7 @@ get.data.from.object.call.field:
 eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
 getCall(object)$y is usable but without colnames so we will keep on searching
 
-names(call) is "" "x" "y"
+names(call) is "" "x" "y" "nfolds"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
@@ -345,7 +344,7 @@ training rsq 0.24
 plotres1(object=mod.cv.glmnet.xmat,predict.s="lambda.1se",trace=2)
 plotres trace 2: plotres(object, trace=trace, SHOWCALL=SHOWCALL,
                          caption=caption, ...)
-object class is "cv.glmnet" with no call
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 --get.model.env for cv.glmnet object
 assuming the environment of the cv.glmnet model is that of plotres's caller: env(..., call, caption, object, SHOWCALL, trace)
 --plotmo_prolog for cv.glmnet object 'object'
@@ -376,7 +375,7 @@ plotmo_predict with NULL newdata (nrows=3), using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.x.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -414,7 +413,7 @@ plotmo_predict with NULL newdata, using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.x.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -454,7 +453,7 @@ got fitted values by calling predict (see above)
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.y.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -464,7 +463,7 @@ get.data.from.object.call.field:
 eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
 getCall(object)$y is usable but without colnames so we will keep on searching
 
-names(call) is "" "x" "y"
+names(call) is "" "x" "y" "nfolds"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
@@ -491,7 +490,7 @@ nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.y.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -501,7 +500,7 @@ get.data.from.object.call.field:
 eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
 getCall(object)$y is usable but without colnames so we will keep on searching
 
-names(call) is "" "x" "y"
+names(call) is "" "x" "y" "nfolds"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
@@ -530,7 +529,7 @@ resp.levs is NULL
 plotmo_response trace 2: plotmo_response(object=object, newdata=newdata,
                          trace=max(0,trace), nresponse=meta$nresponse,
                          type=meta$type, meta=meta, ...)
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 --get.model.env for cv.glmnet object
 using attr(object,".Environment") saved with cv.glmnet model: env(..., call, caption, object, SHOWCALL, trace)
 --plotmo_y with nresponse=1 for cv.glmnet object
@@ -538,7 +537,7 @@ using attr(object,".Environment") saved with cv.glmnet model: env(..., call, cap
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.y.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -548,7 +547,7 @@ get.data.from.object.call.field:
 eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
 getCall(object)$y is usable but without colnames so we will keep on searching
 
-names(call) is "" "x" "y"
+names(call) is "" "x" "y" "nfolds"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
@@ -588,7 +587,7 @@ plotmo_predict with NULL newdata, using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.x.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -644,7 +643,7 @@ plotmo_predict with NULL newdata, using plotmo_x to get the data
 get.object.x:
 object$x is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.x.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -681,7 +680,7 @@ predict after processing with nresponse=1 is [88,1]:
 get.object.y:
 object$y is NULL (and it has no colnames)
 
-object call is glmnet(x=xmat, y=tit[, 4])
+object call is cv.glmnet(x=xmat, y=tit[, 4], nfolds=3)
 
 get.y.from.model.frame:
 terms(object) did not return the terms, will look for the formula elsewhere
@@ -691,7 +690,7 @@ get.data.from.object.call.field:
 eval(getCall(object)$y, env(..., call, caption, object, SHOWCALL, trace))
 getCall(object)$y is usable but without colnames so we will keep on searching
 
-names(call) is "" "x" "y"
+names(call) is "" "x" "y" "nfolds"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
@@ -930,14 +929,14 @@ Got error as expected from try(plotres(glmnet, w1.col = nonesuch))
 > printf("======== glmnet multinomial (multnet)\n")
 ======== glmnet multinomial (multnet)
 > old.par <- par(no.readonly=TRUE)
-> par(mfrow=c(3,4), mar=c(3,3,3,1))
+> par(mfrow=c(4,4), mar=c(3,3,3,1))
 > set.seed(2016)
 > n <- 200
 > p <- 4
 > x <- matrix(rnorm(n*p), n, p)
 > colnames(x) <- paste("x", 1:ncol(x), sep="")
 > 
-> # "1" is correlated of x[,1], "4" is correlated with x[,2], "2" and "3" not correlated
+> # "1" is correlated with x[,1], "4" is correlated with x[,2], "2" and "3" not correlated
 > y <- ifelse(x[,1] > 0.5, 1,
 +      ifelse(x[,2] > 0.0, 4,
 +      sample(c(2,3), size=nrow(x), replace=TRUE)))
@@ -970,6 +969,13 @@ Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda 
 > plotres(multinomial.mod, nresponse=4, w1.main="nresponse=4",
 +         smooth.col=0, info=TRUE,
 +         trace=0, which=c(1,3), do.par=FALSE, xlim=c(-.2,1.2), ylim=c(-1.2, 1.2))
+> 
+> plotmo(multinomial.mod, nresponse=1, trace=0, do.par=FALSE, degree1=1:2)
+ plotmo grid:    x1        x2         x3         x4
+        -0.01157106 0.1530614 0.04853916 0.02097713
+> plotmo(multinomial.mod, nresponse=2, trace=0, do.par=FALSE, degree1=1:2)
+ plotmo grid:    x1        x2         x3         x4
+        -0.01157106 0.1530614 0.04853916 0.02097713
 > 
 > par(mgp=c(1.5, .4, 0))
 > plot(multinomial.mod, xvar="norm") # compare to plot.glmnet
@@ -1045,35 +1051,36 @@ All 0.27743357 49.551022 0.6109269 0.6490472
 > printf("======== binomial model\n")
 ======== binomial model
 > 
-> set.seed(2016)
+> set.seed(2019)
 > n <- 50
 > p <- 4
 > x <- matrix(rnorm(n*p), n, p)
 > colnames(x) <- paste("x", 1:ncol(x), sep="")
 > y <- ifelse(x[,1] + x[,2] + .1 * rnorm(n) > .5, TRUE, FALSE)
 > print(cov(x, y))
-          [,1]
-x1  0.25639394
-x2  0.18124710
-x3 -0.03187243
-x4 -0.02754692
+         [,1]
+x1 0.26996406
+x2 0.19322507
+x3 0.04850061
+x4 0.01568008
 > y <- factor(y)
-> binomial.mod <- glmnet(x, y, family="binomial")
+> glmnet.binomial <- glmnet(x, y, family="binomial")
 > old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,3), mar=c(3,3,1,1))
-> plotres(binomial.mod, info=T, predict.s=.02, which=c(1,3), do.par=FALSE, w1.main="binomial.mod")
-> plot(binomial.mod)
+> plotres(glmnet.binomial, info=T, predict.s=.02, which=c(1,3), do.par=FALSE, w1.main="glmnet.binomial")
+> plot(glmnet.binomial)
 > earth.mod <- earth(x, y)
-> plotres(earth.mod, info=T, predict.s=.02, which=c(1,3), do.par=FALSE)
-Warning: predict.earth ignored argument 's'
+> set.seed(2019)
+> plotres(earth.mod, info=T, which=c(1,3), do.par=FALSE)
 > par(old.par)
 > par(mfrow=c(2,4), mar=c(3,3,1,1))
-> plotmo(binomial.mod, do.par=FALSE)
- plotmo grid:    x1          x2        x3         x4
-         -0.2965405 -0.03311923 0.2416254 0.01017809
+> set.seed(2019)
+> plotmo(glmnet.binomial, do.par=FALSE)
+ plotmo grid:    x1         x2         x3         x4
+         0.05687241 -0.2477018 -0.1266239 -0.2475514
 > plotmo(earth.mod, do.par=FALSE, main="binomial earth.mod")
- plotmo grid:    x1          x2        x3         x4
-         -0.2965405 -0.03311923 0.2416254 0.01017809
+ plotmo grid:    x1         x2         x3         x4
+         0.05687241 -0.2477018 -0.1266239 -0.2475514
 > par(old.par)
 > 
 > printf("======== glmnet family=\"mgaussian\"\n")
