@@ -24,8 +24,7 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call test.center.bat
                         @if %errorlevel% NEQ 0 goto error
-@rem TODO test.emma removed for R version 3.5.2 because it gives: package 'clusterSim' could not be loaded
-@rem @call test.emma.bat
+@call test.emma.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.plotres.bat
                         @if %errorlevel% NEQ 0 goto error

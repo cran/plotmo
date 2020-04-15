@@ -309,7 +309,7 @@ graphics::plot.default(x=c(53,53.57,54.1...), y=c(0.5505,0.5198...), type="n",
 +     detach("package:gam")
 > library(mgcv)
 Loading required package: nlme
-This is mgcv 1.8-29. For overview type 'help("mgcv-package")'.
+This is mgcv 1.8-31. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test plot.gam, with mgcv::gam(y ~ s(x) + s(x,z)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -761,7 +761,7 @@ Warning: the level argument may not work correctly on glm objects built with wei
 > if(length(grep("package:gam", search())))
 +     detach("package:gam")
 > library(mgcv)
-This is mgcv 1.8-29. For overview type 'help("mgcv-package")'.
+This is mgcv 1.8-31. For overview type 'help("mgcv-package")'.
 > set.seed(1)
 > caption <- "test level=.95, plot.gam, with mgcv::gam(y ~ s(x) + s(x,z1)) with response and func (and extra image plot)"
 > dopar(3,2,caption)
@@ -1400,6 +1400,9 @@ The following object is masked from 'package:faraway':
     melanoma
 
 Loading required package: ggplot2
+Registered S3 method overwritten by 'cli':
+  method     from
+  print.tree tree
 
 Attaching package: 'ggplot2'
 

@@ -56,8 +56,6 @@ training rsq 0.81
 > 
 > set.seed(2015)
 > bag <- bagEarth(O3~., data=ozone1, degree=2, B=3)
-Warning in model.matrix.default(Terms, m, contrasts) :
-  non-list contrasts argument ignored
 > print(bag$fit)
 $Resample1
 Selected 13 of 19 terms, and 7 of 9 predictors
@@ -131,8 +129,6 @@ training rsq 0.98
 > # TODO following doesn't work properly, factors are plotted as continuous?
 > # trace=1 to display "Fixed rank deficient bx by removing 1 term" messages
 > a.bag3 <- bagEarth(survived~., data=etitanic, degree=2, B=3, trace=1)
-Warning in model.matrix.default(Terms, m, contrasts) :
-  non-list contrasts argument ignored
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
 y[1046,1] with colname subY, and values 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,...
 weights: no weights (because all weights equal)

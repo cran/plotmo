@@ -5,6 +5,8 @@
 > source("test.prolog.R")
 > library(mlr)
 Loading required package: ParamHelpers
+'mlr' is in maintenance mode since July 2019. Future development
+efforts will go into its successor 'mlr3' (<https://mlr3.mlr-org.com>).
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix

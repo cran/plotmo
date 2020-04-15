@@ -143,7 +143,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     pairs <- plotmo_pairs(object, x, nresponse, trace, all2, degree2)
     npairs <- NROW(pairs)
 
-    temp <- get.pred.names(colnames(x), nsingles + npairs)
+    temp <- get.pred.names(colnames.x=colnames(x), nfigs=nsingles + npairs, ...)
         pred.names      <- temp$pred.names
         abbr.pred.names <- temp$abbr.pred.names
         def.cex.main    <- temp$def.cex.main
@@ -327,7 +327,7 @@ plotmo_prolog <- function(object, object.name, trace, ...)
         my.call <- NULL
     list(object=object, my.call=my.call)
 }
-get.pred.names <- function(colnames.x, nfigs)
+get.pred.names <- function(colnames.x, nfigs, ...)
 {
     # numbers below are somewhat arb
     nrows <- ceiling(sqrt(nfigs)) # nrows in plot grid
@@ -339,9 +339,16 @@ get.pred.names <- function(colnames.x, nfigs)
     else if(nrows >= 5) { minlength <- 8;  def.cex.main <- 1   }
     else if(nrows >= 4) { minlength <- 9;  def.cex.main <- 1.1 }
     stopifnot(!is.null(colnames.x)) # plotmo_x always returns colnames (unless no columns)
+    minlength <- dota("prednames.minlength", DEF=minlength, ...)
+    prednames.abbreviate <- dota("prednames.abbreviate", DEF=TRUE, ...)
+    prednames.abbreviate <- check.boolean(prednames.abbreviate)
+    abbr.pred.names <-
+        if((prednames.abbreviate))
+            abbreviate(strip.space(colnames.x), minlength=minlength, method="both.sides")
+        else
+            colnames.x
     list(pred.names      = colnames.x,
-         abbr.pred.names = abbreviate(strip.space(colnames.x),
-                                      minlength=minlength, method="both.sides"),
+         abbr.pred.names = abbr.pred.names,
          def.cex.main    = def.cex.main)
 }
 # always returns a vector of 2 elems, could be c(-Inf, Inf)

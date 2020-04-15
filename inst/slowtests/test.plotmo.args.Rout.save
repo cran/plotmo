@@ -140,4 +140,24 @@ after par: cex=0.83 col.main=#456789 col.axis=black mar=3331 mfcol=22
  plotmo grid:    survived  sex age sibsp parch
                         0 male  28     0     0
 > 
+> # test "prednames." with a long predictor name
+> data(trees)
+> trees.with.long.predname <- trees
+> trees.with.long.predname$a_quite_long_variable_name <- trees.with.long.predname$Girth
+> trees.with.long.predname$Girth <- NULL
+> mod <- earth(Volume~.,data=trees.with.long.predname)
+> par(mfrow=c(3,2), mar = c(3,3,3,1), mgp = c(1.5,.5,0), oma=c(0,0,4,0))
+> plotmo(mod, do.par=FALSE)
+ plotmo grid:    Height a_quite_long_variable_name
+                     76                       12.9
+> plotmo(mod, do.par=FALSE, prednames.abbreviate=FALSE)
+ plotmo grid:    Height a_quite_long_variable_name
+                     76                       12.9
+> expect.err(try(plotmo(mod, do.par=FALSE, prednames.abbreviate=c(1,2))), "the prednames.abbreviate argument is not FALSE, TRUE, 0, or 1")
+Error : the prednames.abbreviate argument is not FALSE, TRUE, 0, or 1
+Got error as expected from try(plotmo(mod, do.par = FALSE, prednames.abbreviate = c(1, 2)))
+> plotmo(mod, do.par=FALSE, prednames.minlength=3)
+ plotmo grid:    Height a_quite_long_variable_name
+                     76                       12.9
+> 
 > source("test.epilog.R")

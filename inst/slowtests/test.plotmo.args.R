@@ -79,4 +79,16 @@ a20 <- earth(pclass ~ ., data=etitanic, degree=2)
 plotmo(a20, nresponse=1, col=2, col.degree1=3, persp.col="pink", SHOWCALL=1, degree1=1:2, degree2=1:2)
 plotmo(a20, nresponse=1, lty=2, persp.lty=1, SHOWCALL=1, degree1=1:2, degree2=1:2)
 
+# test "prednames." with a long predictor name
+data(trees)
+trees.with.long.predname <- trees
+trees.with.long.predname$a_quite_long_variable_name <- trees.with.long.predname$Girth
+trees.with.long.predname$Girth <- NULL
+mod <- earth(Volume~.,data=trees.with.long.predname)
+par(mfrow=c(3,2), mar = c(3,3,3,1), mgp = c(1.5,.5,0), oma=c(0,0,4,0))
+plotmo(mod, do.par=FALSE)
+plotmo(mod, do.par=FALSE, prednames.abbreviate=FALSE)
+expect.err(try(plotmo(mod, do.par=FALSE, prednames.abbreviate=c(1,2))), "the prednames.abbreviate argument is not FALSE, TRUE, 0, or 1")
+plotmo(mod, do.par=FALSE, prednames.minlength=3)
+
 source("test.epilog.R")

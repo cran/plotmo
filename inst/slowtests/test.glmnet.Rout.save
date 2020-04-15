@@ -8,7 +8,7 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(glmnet)
 Loading required package: Matrix
-Loaded glmnet 3.0
+Loaded glmnet 3.0-2
 
 > data(ozone1)
 > data(etitanic)

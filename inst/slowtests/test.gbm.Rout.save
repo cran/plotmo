@@ -324,6 +324,14 @@ train  test    CV   OOB
 > gbm.bernoulli <- gbm(survived~., data=ptit, train.frac=train.frac,
 +                      distribution="bernoulli",
 +                      n.trees=100, shrinkage=.1, cv.folds=3)
+D:/AltC/Documents/.Rprofile
+D:/AltC/Documents/.Rprofile
+D:/AltC/Documents/.Rprofile
+D:/AltC/Documents/.Rprofile
+D:/AltC/Documents/.Rprofile
+D:/AltC/Documents/.Rprofile
+D:/AltC/Documents/.Rprofile
+D:/AltC/Documents/.Rprofile
 > old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
 > par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in

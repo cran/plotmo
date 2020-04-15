@@ -17,7 +17,7 @@
 > test.dotindex(1,  "a1", a=10, b=20)
 > test.dotindex(NA, "a",  a1=10, a2=20)
 > expect.err(try(test.dotindex(1, nonesuch, a=10, a=20)), "object 'nonesuch' not found")
-Error : object 'nonesuch' not found
+Error in stopifnot(is.character(argname)) : object 'nonesuch' not found
 Got error as expected from try(test.dotindex(1, nonesuch, a = 10, a = 20))
 > expect.err(try(test.dotindex(1, "a1", a=10, a=20)), "argument 'a' for test.dotindex() is duplicated")
 Error : argument 'a' for test.dotindex() is duplicated

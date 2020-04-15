@@ -445,6 +445,10 @@ The prefixes recognized by \code{plotmo} are:\tabular{ll}{
 \code{par.} \tab arguments passed to \code{\link[graphics]{par}}
 (only necessary if a \code{par} argument name clashes
 with a \code{plotmo} argument)
+\cr
+\code{prednames.} \tab Use \code{prednames.abbreviate=FALSE} for
+full predictor names in graph axes.
+\cr
 }
 The \code{cex} argument is relative, so
 specifying \code{cex=1} is the same as not specifying \code{cex}.
