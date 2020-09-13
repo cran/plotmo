@@ -16,15 +16,15 @@ plotmo_rinfo <- function(object, type=NULL, residtype=type, nresponse=1,
     if(!is.na(pmatch(type, "class"))) {
 #         if(inherits(object, "lda") || inherits(object, "qda"))
 #             stopf(
-# "plotres does not support type=\"class\" for \"%s\" objects\n   Note: plotmo extends predict.%s internally:\n%s%s\n",
-#                 class(object)[1],
-#                 class(object)[1],
+# "plotres does not support type=\"class\" for %s objects\n   Note: plotmo extends predict.%s internally:\n%s%s\n",
+#                 class.as.char(object, TRUE),
+#                 class.as.char(object),
 #                 "   'type' can be one of c(\"class\", \"posterior\", \"response\")\n",
 #                 "   This is discussed in the plotmo vignette.")
 #         else
             stopf(
-"plotres does not (yet) support type=\"class\" for \"%s\" objects\n       Try type=\"response\" ?",
-                  class(object)[1])
+"plotres does not (yet) support type=\"class\" for %s objects\n       Try type=\"response\" ?",
+                  class.as.char(object, quotify=TRUE))
     }
 
     # try calling residuals() directly

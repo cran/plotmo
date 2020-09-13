@@ -10,7 +10,8 @@ plotmo_bx <- function(object, trace, msg, versus)
         else
             bx <- object[["bx"]]
         if(is.null(bx) || NCOL(bx) == 0)
-            stopf("versus=\"b:\": no basis matrix for this %s object", class(object)[1])
+            stopf("versus=\"b:\": no basis matrix for this %s object",
+                  class.as.char(object, quotify=TRUE))
         else if(NCOL(bx) == 1) { # intercept only?
             bx <- bx
             icolumns <- 1
@@ -26,7 +27,8 @@ plotmo_bx <- function(object, trace, msg, versus)
               (inherits(object, "gam") && !is.null(object[["additive.predictors"]]))) {
         bx <- model.matrix(object)
         if(is.null(bx) || NCOL(bx) == 0)
-            stopf("versus=\"b:\": model.matrix(object) for this %s object returned NULL", class(object)[1])
+            stopf("versus=\"b:\": model.matrix(object) for this %s object returned NULL",
+                  class.as.char(object, quotify=TRUE))
         else if(NCOL(bx) == 1) { # intercept only?
             bx <- bx
             icolumns <- 1
@@ -35,6 +37,7 @@ plotmo_bx <- function(object, trace, msg, versus)
             icolumns <- check.index(versus, "versus", seq_len(NCOL(bx)), colnames=colnames(bx))
         }
     } else
-        stopf("versus=\"b:\" is not supported for this %s object", class(object)[1])
+        stopf("versus=\"b:\" is not supported for this %s object",
+              class.as.char(object, quotify=TRUE))
     list(bx=bx, icolumns=icolumns)
 }

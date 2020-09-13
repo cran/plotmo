@@ -14,7 +14,7 @@ plotmo_pint <- function(object, newdata, type, level, trace, ipred, inverse.func
 {
     if(!is.specified(level))
         return(NULL)
-    trace2(trace, "plotmo_pint for \"%s\" object\n", class(object)[1])
+    trace2(trace, "plotmo_pint for %s object\n", class.as.char(object))
     stopifnot.string(type)
     # call plotmo.pint.xxx where xxx is object's class
     intervals <- plotmo.pint(object, newdata, type, level, trace)
@@ -44,7 +44,7 @@ plotmo.pint <- function(object, newdata, type, level, trace, ...)
 plotmo.pint.default <- function(object, ...)
 {
     stop0("the level argument is not supported for ",
-          class(object)[1], " objects")
+          class.as.char(object, quotify=TRUE), " objects")
 }
 plotmo.pint.lm <- function(object, newdata, type, level, ...)
 {

@@ -24,7 +24,6 @@ set.seed(2016)
 gbm.gaussian <- gbm(age~., data=ptit, train.frac=train.frac,
                    distribution="gaussian",
                    n.trees=50, shrinkage=.1)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2), mar=c(3,3,4,1))
 w1 <- plotres(gbm.gaussian, which=1, do.par=FALSE, w1.smooth=TRUE,
         w1.main="gbm.gaussian")
@@ -48,7 +47,7 @@ plot(yhat, y - yhat,
 abline(h=0, col="gray")
 stopifnot(all(yhat == w3$x))
 stopifnot(all(y - yhat == w3$y))
-par(old.par)
+par(org.par)
 
 w1 <- plotres(gbm.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
               w1.smooth=TRUE,
@@ -60,16 +59,14 @@ plotmo(gbm.gaussian, trace=-1, SHOWCALL=TRUE)
 # plotmo(gbm.gaussian, trace=-1, all2=TRUE, SHOWCALL=TRUE)
 
 # test color argument
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2), mar=c(3,3,4,1))
 plotres(gbm.gaussian, which=1)
 title("test color argument")
 plotres(gbm.gaussian, which=1, w1.col=c(1,2,3,0))
 plotres(gbm.gaussian, which=1, w1.col=c(1,0,0,4), w1.legend.x=40, w1.legend.y=.3)
 plotres(gbm.gaussian, which=1, w1.col=c(2,3,4,1), w1.legend.x="topright")
-par(old.par)
+par(org.par)
 
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2), mar=c(3,3,4,1))
 plot_gbm(gbm.gaussian)
 title("test plot_gbm")
@@ -77,10 +74,9 @@ w1 <- plot_gbm(gbm.gaussian, col=c(1,2,3,0), grid.col=1, smooth=TRUE,
                main="col=c(1,2,3,0), grid.col=1")
 cat("third w1 plot for gbm.gaussian returned (smooth=TRUE):\n")
 print(w1)
-par(old.par)
+par(org.par)
 
 # test xlim and ylim
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,3), mar=c(3,3,4,1))
 plot_gbm(gbm.gaussian,                  main="test xlim and ylim default")
 plot_gbm(gbm.gaussian, ylim=NULL,       main="ylim=NULL")
@@ -90,10 +86,9 @@ plot_gbm(gbm.gaussian, xlim=c(10, 25),
                        ylim=c(150, 170),  main="xlim=c(10, 25), ylim=c(150, 170)")
 plot_gbm(gbm.gaussian, xlim=c(-10, 40), ylim=c(-10, 300), legend.x=NA,
                                         main="xlim=c(-10, 40), ylim=c(-10, 300)\nlegend.x=NA")
-par(old.par)
+par(org.par)
 
 # test the smooth argument
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(3,3), mar=c(3,3,4,1))
 imin <- plot_gbm(gbm.gaussian,                    main="smooth=default")
 imin.default <- imin
@@ -131,7 +126,7 @@ print(imin.smooth)
 print(imin.noplot)
 stopifnot(identical(imin.smooth, imin.noplot))
 
-par(old.par)
+par(org.par)
 
 cat("--- distribution=\"gaussian\", glm.fit interface ----------------------------------\n")
 
@@ -144,7 +139,6 @@ set.seed(2016)
 gbm.gaussian.fit <- gbm.fit(ptit[,-4], ptit[,4], nTrain=floor(train.frac * nrow(ptit)),
                    distribution="gaussian", verbose=FALSE,
                    n.trees=50, shrinkage=.1)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2), mar=c(3,3,4,1))
 w1 <- plotres(gbm.gaussian.fit, which=1, do.par=FALSE, w1.smooth=TRUE,
         w1.main="gbm.gaussian.fit")
@@ -178,7 +172,7 @@ stopifnot(all(y.fit == y))
 # stopifnot(all(yhat.fit == w3$x))
 # stopifnot(all(y.fit - yhat.fit == w3$y.fit))
 plotmo(gbm.gaussian.fit, trace=-1, SHOWCALL=TRUE)
-par(old.par)
+par(org.par)
 
 cat("--- distribution=\"laplace\" ----------------------------------\n")
 
@@ -191,7 +185,6 @@ set.seed(2016)
 gbm.laplace <- gbm(age~., data=ptit, train.frac=train.frac,
                    distribution="laplace",
                    n.trees=100, shrinkage=.1)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2), mar=c(3,3,4,1))
 w1 <- plotres(gbm.laplace, which=1:2, do.par=FALSE, w1.smooth=TRUE,
         w1.main="gbm.laplace")
@@ -216,7 +209,7 @@ abline(h=0, col="gray")
 stopifnot(all(yhat == w3$x))
 stopifnot(all(y - yhat == w3$y))
 plotmo(gbm.laplace, trace=-1, SHOWCALL=TRUE)
-par(old.par)
+par(org.par)
 
 # # TODO commented out because gives random slightly different results per invocation
 # cat("--- distribution=\"tdist\" ----------------------------------\n")
@@ -230,7 +223,6 @@ par(old.par)
 # gbm.tdist <- gbm(age~., data=ptit, train.frac=train.frac,
 #                    distribution="tdist",
 #                    n.trees=100, shrinkage=.1)
-# old.par <- par(no.readonly=TRUE)
 # par(mfrow=c(2,2), mar=c(3,3,4,1))
 # set.seed(2016)
 # w1 <- plotres(gbm.tdist, which=1:2, do.par=FALSE,
@@ -257,7 +249,7 @@ par(old.par)
 # stopifnot(all(yhat == w3$x))
 # stopifnot(all(y - yhat == w3$y))
 # plotmo(gbm.tdist, trace=-1, SHOWCALL=TRUE)
-# par(old.par)
+# par(org.par)
 
 cat("--- distribution=\"bernoulli\" ----------------------------------\n")
 
@@ -272,7 +264,6 @@ set.seed(2016)
 gbm.bernoulli <- gbm(survived~., data=ptit, train.frac=train.frac,
                      distribution="bernoulli",
                      n.trees=100, shrinkage=.1, cv.folds=3)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2))
 par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
 par(mgp=c(1.5, .4, 0))      # squash axis annotations
@@ -299,12 +290,11 @@ plot(yhat, y - yhat, col=ptit$sex,
 abline(h=0, col="gray")
 stopifnot(all(yhat == w3$x))
 stopifnot(all(y - yhat == w3$y))
-par(old.par)
+par(org.par)
 
-old.par <- par(no.readonly=TRUE)
 plotmo(gbm.bernoulli, do.par=2)
 print(summary(gbm.bernoulli)) # will also plot
-par(old.par)
+par(org.par)
 
 cat("--- distribution=\"huberized\" ----------------------------------\n")
 
@@ -317,7 +307,6 @@ set.seed(2016)
 gbm.huberized <- gbm(survived~., data=ptit, train.frac=train.frac,
                      distribution="huberized",
                      n.trees=200, shrinkage=.1)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2))
 par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
 par(mgp=c(1.5, .4, 0))      # squash axis annotations
@@ -343,12 +332,11 @@ plot(yhat, y - yhat, col=ptit$sex, ylim=c(-2.5, 2.5),
 abline(h=0, col="gray")
 stopifnot(all(yhat == w3$x))
 stopifnot(all(y - yhat == w3$y))
-par(old.par)
+par(org.par)
 
-old.par <- par(no.readonly=TRUE)
 plotmo(gbm.huberized, do.par=2)
 print(summary(gbm.huberized)) # will also plot
-par(old.par)
+par(org.par)
 
 cat("--- distribution=\"adaboost\" ----------------------------------\n")
 
@@ -361,7 +349,6 @@ set.seed(2016)
 gbm.adaboost <- gbm(survived~., data=ptit, train.frac=train.frac,
                      distribution="adaboost",
                      n.trees=150, shrinkage=.01)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2))
 par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
 par(mgp=c(1.5, .4, 0))      # squash axis annotations
@@ -386,12 +373,11 @@ plot(yhat, y - yhat, col=ptit$sex,
 abline(h=0, col="gray")
 stopifnot(all(yhat == w3$x))
 stopifnot(all(y - yhat == w3$y))
-par(old.par)
+par(org.par)
 
-old.par <- par(no.readonly=TRUE)
 plotmo(gbm.adaboost, do.par=2)
 print(summary(gbm.adaboost)) # will also plot
-par(old.par)
+par(org.par)
 
 # test gbm multinomial model, also test very small number of trees in plot_gbm
 
@@ -441,7 +427,6 @@ plot_gbm(gbm.iris)
 #                      shrinkage = 0.1,
 #                      bag_fraction = 0.5,
 #                      num_train = round(.8 * nrow(ptit)))
-# old.par <- par(no.readonly=TRUE)
 # par(mfrow=c(2,2), mar=c(3,3,4,1))
 # set.seed(2016)
 # gbmt.gaussian <- gbmt(age~., data=ptit,
@@ -479,7 +464,7 @@ plot_gbm(gbm.iris)
 # abline(h=0, col="gray")
 # stopifnot(all(yhat == w3$x))
 # stopifnot(all(y - yhat == w3$y))
-# par(old.par)
+# par(org.par)
 #
 # w1 <- plotres(gbmt.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
 #               w1.smooth=TRUE,
@@ -488,7 +473,7 @@ plot_gbm(gbm.iris)
 # print(w1)
 # plotmo(gbmt.gaussian, trace=-1, SHOWCALL=TRUE)
 #
-# par(old.par)
+# par(org.par)
 #
 # cat("--- distribution=\"bernoulli\" ----------------------------------\n")
 #
@@ -510,7 +495,6 @@ plot_gbm(gbm.iris)
 #             train_params = train_params,
 #             cv_folds = 3,
 #             is_verbose = FALSE,  keep_gbm_data=TRUE)
-# old.par <- par(no.readonly=TRUE)
 # par(mfrow=c(2,2))
 # par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
 # par(mgp=c(1.5, .4, 0))      # squash axis annotations
@@ -537,11 +521,10 @@ plot_gbm(gbm.iris)
 # abline(h=0, col="gray")
 # stopifnot(all(yhat == w3$x))
 # stopifnot(all(y - yhat == w3$y))
-# par(old.par)
+# par(org.par)
 #
-# old.par <- par(no.readonly=TRUE)
 # plotmo(gbmt.bernoulli, do.par=2)
 # print(summary(gbmt.bernoulli)) # will also plot
-# par(old.par)
+# par(org.par)
 
 source("test.epilog.R")

@@ -8,121 +8,63 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(ozone1)
 > data(etitanic)
-> 
-> check.naken <- function(s, expected)
-+ {
-+     nude <- plotmo:::naken.formula.string(s)
-+     printf("%-60.60s %-s\n", s, nude)
-+     stopifnot(nude == expected)
-+ }
-> printf("=== checking naken.formula.string\n")
-=== checking naken.formula.string
-> check.naken("y ~ x1 : x2 + x3", "y~x1+x2+x3")
-y ~ x1 : x2 + x3                                             y~x1+x2+x3
-> check.naken("y ~ x1 + x2 - x3", "y~x1+x2+x3")
-y ~ x1 + x2 - x3                                             y~x1+x2+x3
-> check.naken("cbind(damage, 6-damage)~temp", "cbind(damage,6-damage)~temp")
-cbind(damage, 6-damage)~temp                                 cbind(damage,6-damage)~temp
-> check.naken("depIndex~q_4+q_2102+q_2104+q_3105+q_3106", "depIndex~q_4+q_2102+q_2104+q_3105+q_3106")
-depIndex~q_4+q_2102+q_2104+q_3105+q_3106                     depIndex~q_4+q_2102+q_2104+q_3105+q_3106
-> check.naken("doy ~ (vh+wind+humidity)^2", "doy~vh+wind+humidity")
-doy ~ (vh+wind+humidity)^2                                   doy~vh+wind+humidity
-> check.naken("doy ~ s(wind) + s(humidity,wind) + s(vh)", "doy~wind+humidity+vh")
-doy ~ s(wind) + s(humidity,wind) + s(vh)                     doy~wind+humidity+vh
-> check.naken("log(doy) ~ I(vh*wind) + I(humidity*temp)+log(doy)", "log(doy)~vh+wind+humidity+temp+doy")
-log(doy) ~ I(vh*wind) + I(humidity*temp)+log(doy)            log(doy)~vh+wind+humidity+temp+doy
-> check.naken("log(doy)~vh+wind+humidity+I(wind*humidity)+temp+log(ibh)", "log(doy)~vh+wind+humidity+temp+ibh")
-log(doy)~vh+wind+humidity+I(wind*humidity)+temp+log(ibh)     log(doy)~vh+wind+humidity+temp+ibh
-> check.naken("O3 ~ s(humidity)+s(temp)+s(ibt)+s(temp,ibt)", "O3~humidity+temp+ibt")
-O3 ~ s(humidity)+s(temp)+s(ibt)+s(temp,ibt)                  O3~humidity+temp+ibt
-> check.naken("Ozone^(1/3) ~ lo(Solar.R) + lo(Wind, Temp)", "Ozone^(1/3)~Solar.R+Wind+Temp")
-Ozone^(1/3) ~ lo(Solar.R) + lo(Wind, Temp)                   Ozone^(1/3)~Solar.R+Wind+Temp
-> check.naken("Volume~(Girth*Height2)-Height", "Volume~Girth+Height2+Height")
-Volume~(Girth*Height2)-Height                                Volume~Girth+Height2+Height
-> check.naken("y ~ s(x) + s(x,z1)", "y~x+z1")
-y ~ s(x) + s(x,z1)                                           y~x+z1
-> check.naken("y~s(x0,x1,k=12)+s(x2)+s(x3,k=20,fx=20)", "y~x0+x1+x2+x3")
-y~s(x0,x1,k=12)+s(x2)+s(x3,k=20,fx=20)                       y~x0+x1+x2+x3
-> check.naken("y~x[,1]+x[,2]", "y~x[,1]+x[,2]")
-y~x[,1]+x[,2]                                                y~x[,1]+x[,2]
-> check.naken("y~x[,1]+x[,my.list$j]", "y~x[,1]+x[,my.list$j]")
-y~x[,1]+x[,my.list$j]                                        y~x[,1]+x[,my.list$j]
-> check.naken("y~x[,i]+x[,2]", "y~x[,i]+x[,2]")
-y~x[,i]+x[,2]                                                y~x[,i]+x[,2]
-> check.naken("Salary~Hitters[,1]", "Salary~Hitters[,1]")
-Salary~Hitters[,1]                                           Salary~Hitters[,1]
-> check.naken("Salary~Hitters[,-1]", "Salary~Hitters[,-1]")
-Salary~Hitters[,-1]                                          Salary~Hitters[,-1]
-> check.naken("Salary~Hitters[,c(1,2)]", "Salary~Hitters[,c(1,2)]")
-Salary~Hitters[,c(1,2)]                                      Salary~Hitters[,c(1,2)]
-> check.naken("Salary~Hitters[,1:2]", "Salary~Hitters[,1:2]")
-Salary~Hitters[,1:2]                                         Salary~Hitters[,1:2]
-> check.naken("Salary~Hitters[,c(1,2)]", "Salary~Hitters[,c(1,2)]")
-Salary~Hitters[,c(1,2)]                                      Salary~Hitters[,c(1,2)]
-> check.naken("x[,c(1,2)] + x[,3]", "x[,c(1,2)]+x[,3]")
-x[,c(1,2)] + x[,3]                                           x[,c(1,2)]+x[,3]
-> check.naken("x[,1] + x[,2] + x[,3] + x[,29] + x[,-14]", "x[,1]+x[,2]+x[,3]+x[,29]+x[,-14]")
-x[,1] + x[,2] + x[,3] + x[,29] + x[,-14]                     x[,1]+x[,2]+x[,3]+x[,29]+x[,-14]
-> check.naken("x[,c(1,2)] + x[,3] + x[,5:6] + x[,-1]", "x[,c(1,2)]+x[,3]+x[,5:6]+x[,-1]")
-x[,c(1,2)] + x[,3] + x[,5:6] + x[,-1]                        x[,c(1,2)]+x[,3]+x[,5:6]+x[,-1]
-> check.naken("log(y) ~ x9 + ns(x2,4) + s(x3,x4,df=4) + x5:sqrt(x6)", "log(y)~x9+x2+x3+x4+x5+x6")
-log(y) ~ x9 + ns(x2,4) + s(x3,x4,df=4) + x5:sqrt(x6)         log(y)~x9+x2+x3+x4+x5+x6
+> options(warn=1) # print warnings as they occur
 > 
 > # check check.numeric.scalar
 > 
 > xtest <- NA
 > expect.err(try(plotmo:::check.numeric.scalar(xtest)), "'xtest' is NA")
 Error : 'xtest' is NA
-Got error as expected from try(plotmo:::check.numeric.scalar(xtest))
+Got expected error from try(plotmo:::check.numeric.scalar(xtest))
 > xtest <- NULL
 > expect.err(try(plotmo:::check.numeric.scalar(xtest)), "'xtest' is NULL")
 Error : 'xtest' is NULL
-Got error as expected from try(plotmo:::check.numeric.scalar(xtest))
+Got expected error from try(plotmo:::check.numeric.scalar(xtest))
 > expect.err(try(plotmo:::check.numeric.scalar(NA)), "argument is NA")
 Error : argument is NA
-Got error as expected from try(plotmo:::check.numeric.scalar(NA))
+Got expected error from try(plotmo:::check.numeric.scalar(NA))
 > expect.err(try(plotmo:::check.numeric.scalar(NULL)), "argument is NULL")
 Error : argument is NULL
-Got error as expected from try(plotmo:::check.numeric.scalar(NULL))
+Got expected error from try(plotmo:::check.numeric.scalar(NULL))
 > expect.err(try(plotmo:::check.numeric.scalar(try)), "'try' must be numeric (whereas its current class is \"function\")")
 Error : 'try' must be numeric (whereas its current class is "function")
-Got error as expected from try(plotmo:::check.numeric.scalar(try))
+Got expected error from try(plotmo:::check.numeric.scalar(try))
 > expect.err(try(plotmo:::check.numeric.scalar('try')), "\"try\" must be numeric (whereas its current class is \"character\")")
 Error : "try" must be numeric (whereas its current class is "character")
-Got error as expected from try(plotmo:::check.numeric.scalar("try"))
+Got expected error from try(plotmo:::check.numeric.scalar("try"))
 > expect.err(try(plotmo:::check.numeric.scalar(NULL)), "argument is NULL")
 Error : argument is NULL
-Got error as expected from try(plotmo:::check.numeric.scalar(NULL))
+Got expected error from try(plotmo:::check.numeric.scalar(NULL))
 > expect.err(try(plotmo:::check.numeric.scalar(1234, min=2, max=3)), "argument=1234 but it should be between 2 and 3")
 Error : argument=1234 but it should be between 2 and 3
-Got error as expected from try(plotmo:::check.numeric.scalar(1234, min = 2, max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar(1234, min = 2, max = 3))
 > expect.err(try(plotmo:::check.numeric.scalar(0.1234, min=2, max=3)), "argument=0.1234 but it should be between 2 and 3")
 Error : argument=0.1234 but it should be between 2 and 3
-Got error as expected from try(plotmo:::check.numeric.scalar(0.1234, min = 2, max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar(0.1234, min = 2, max = 3))
 > 
 > expect.err(try(plotmo:::check.numeric.scalar(.1234, min=2, max=3)), "argument=0.1234 but it should be between 2 and 3")
 Error : argument=0.1234 but it should be between 2 and 3
-Got error as expected from try(plotmo:::check.numeric.scalar(0.1234, min = 2, max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar(0.1234, min = 2, max = 3))
 > expect.err(try(plotmo:::check.numeric.scalar(+1234, min=2, max=3)), "argument=1234 but it should be between 2 and 3")
 Error : argument=1234 but it should be between 2 and 3
-Got error as expected from try(plotmo:::check.numeric.scalar(+1234, min = 2, max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar(+1234, min = 2, max = 3))
 > expect.err(try(plotmo:::check.numeric.scalar(-1234, min=2, max=3)), "argument=-1234 but it should be between 2 and 3")
 Error : argument=-1234 but it should be between 2 and 3
-Got error as expected from try(plotmo:::check.numeric.scalar(-1234, min = 2, max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar(-1234, min = 2, max = 3))
 > expect.err(try(plotmo:::check.numeric.scalar(+.1234, min=2, max=3)), "argument=0.1234 but it should be between 2 and 3")
 Error : argument=0.1234 but it should be between 2 and 3
-Got error as expected from try(plotmo:::check.numeric.scalar(+0.1234, min = 2, max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar(+0.1234, min = 2, max = 3))
 > expect.err(try(plotmo:::check.numeric.scalar(-.1234, min=2, max=3)), "argument=-0.1234 but it should be between 2 and 3")
 Error : argument=-0.1234 but it should be between 2 and 3
-Got error as expected from try(plotmo:::check.numeric.scalar(-0.1234, min = 2, max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar(-0.1234, min = 2, max = 3))
 > expect.err(try(plotmo:::check.numeric.scalar("", min=0, max=3)), "\"\" must be numeric (whereas its current class is \"character\"")
 Error : "" must be numeric (whereas its current class is "character")
-Got error as expected from try(plotmo:::check.numeric.scalar("", min = 0, max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar("", min = 0, max = 3))
 > 
 > x.numeric.scalar <- 1234
 > expect.err(try(plotmo:::check.numeric.scalar(x.numeric.scalar, min=0, max=3)), "x.numeric.scalar=1234 but it should be between 0 and 3")
 Error : x.numeric.scalar=1234 but it should be between 0 and 3
-Got error as expected from try(plotmo:::check.numeric.scalar(x.numeric.scalar, min = 0,     max = 3))
+Got expected error from try(plotmo:::check.numeric.scalar(x.numeric.scalar, min = 0,     max = 3))
 > stopifnot(identical(plotmo:::check.numeric.scalar(x.numeric.scalar, min=2, max=1235), 1234))
 > stopifnot(identical(plotmo:::check.numeric.scalar(1234, min=2, max=1235), 1234))
 > 
@@ -131,35 +73,35 @@ Got error as expected from try(plotmo:::check.numeric.scalar(x.numeric.scalar, m
 > xtest <- NA
 > expect.err(try(plotmo:::check.integer.scalar(xtest)), "'xtest' is NA")
 Error : 'xtest' is NA
-Got error as expected from try(plotmo:::check.integer.scalar(xtest))
+Got expected error from try(plotmo:::check.integer.scalar(xtest))
 > xtest <- NULL
 > expect.err(try(plotmo:::check.integer.scalar(xtest)), "'xtest' is NULL")
 Error : 'xtest' is NULL
-Got error as expected from try(plotmo:::check.integer.scalar(xtest))
+Got expected error from try(plotmo:::check.integer.scalar(xtest))
 > expect.err(try(plotmo:::check.integer.scalar(NA)), "argument is NA")
 Error : argument is NA
-Got error as expected from try(plotmo:::check.integer.scalar(NA))
+Got expected error from try(plotmo:::check.integer.scalar(NA))
 > expect.err(try(plotmo:::check.integer.scalar(NA, null.ok=TRUE)), "argument is NA")
 Error : argument is NA
-Got error as expected from try(plotmo:::check.integer.scalar(NA, null.ok = TRUE))
+Got expected error from try(plotmo:::check.integer.scalar(NA, null.ok = TRUE))
 > expect.err(try(plotmo:::check.integer.scalar(NULL)), "argument is NULL")
 Error : argument is NULL
-Got error as expected from try(plotmo:::check.integer.scalar(NULL))
+Got expected error from try(plotmo:::check.integer.scalar(NULL))
 > expect.err(try(plotmo:::check.integer.scalar(xtest, na.ok=TRUE)), "'xtest' is NULL")
 Error : 'xtest' is NULL
-Got error as expected from try(plotmo:::check.integer.scalar(xtest, na.ok = TRUE))
+Got expected error from try(plotmo:::check.integer.scalar(xtest, na.ok = TRUE))
 > expect.err(try(plotmo:::check.integer.scalar("xyz", na.ok=TRUE)), "\"xyz\" is a string but it should be an integer, or NA, or TRUE or FALSE")
 Error : "xyz" is a string but it should be an integer, or NA, or TRUE or FALSE
-Got error as expected from try(plotmo:::check.integer.scalar("xyz", na.ok = TRUE))
+Got expected error from try(plotmo:::check.integer.scalar("xyz", na.ok = TRUE))
 > expect.err(try(plotmo:::check.integer.scalar("TRUE", na.ok=TRUE)), "\"TRUE\" is a string but it should be an integer, or NA, or TRUE or FALSE")
 Error : "TRUE" is a string but it should be an integer, or NA, or TRUE or FALSE
-Got error as expected from try(plotmo:::check.integer.scalar("TRUE", na.ok = TRUE))
+Got expected error from try(plotmo:::check.integer.scalar("TRUE", na.ok = TRUE))
 > stopifnot(identical(plotmo:::check.integer.scalar(TRUE), TRUE))
 > stopifnot(identical(plotmo:::check.integer.scalar(NA, na.ok=TRUE), NA))
 > x.integer.scalar <- 1234L
 > expect.err(try(plotmo:::check.integer.scalar(x.integer.scalar, min=0, max=3)), "x.integer.scalar=1234 but it should be between 0 and 3")
 Error : x.integer.scalar=1234 but it should be between 0 and 3
-Got error as expected from try(plotmo:::check.integer.scalar(x.integer.scalar, min = 0,     max = 3))
+Got expected error from try(plotmo:::check.integer.scalar(x.integer.scalar, min = 0,     max = 3))
 > stopifnot(identical(plotmo:::check.integer.scalar(x.integer.scalar, min=2, max=1235), 1234L))
 > stopifnot(identical(plotmo:::check.integer.scalar(1234, min=2, max=1235), 1234))
 > stopifnot(identical(plotmo:::check.integer.scalar(x.integer.scalar, min=2, max=1235), 1234L))
@@ -167,13 +109,13 @@ Got error as expected from try(plotmo:::check.integer.scalar(x.integer.scalar, m
 > xtest <- 1.234
 > expect.err(try(plotmo:::check.integer.scalar(xtest, min=0, max=3)), "xtest=1.234 but it should be an integer, or TRUE or FALSE")
 Error : xtest=1.234 but it should be an integer, or TRUE or FALSE
-Got error as expected from try(plotmo:::check.integer.scalar(xtest, min = 0, max = 3))
+Got expected error from try(plotmo:::check.integer.scalar(xtest, min = 0, max = 3))
 > 
 > # check check.vec
 > xtest <- "x"
 > expect.err(try(plotmo:::check.vec(xtest, "xtest", na.ok=TRUE)), "'xtest' is not numeric")
 Error : 'xtest' is not numeric
-Got error as expected from try(plotmo:::check.vec(xtest, "xtest", na.ok = TRUE))
+Got expected error from try(plotmo:::check.vec(xtest, "xtest", na.ok = TRUE))
 > xtest <- as.double(NA)
 > print(plotmo:::check.vec(xtest, "xtest", na.ok=TRUE))
 NULL
@@ -184,16 +126,16 @@ NULL
 > expect.err(try(plotmo:::check.vec(xtest, "xtest", na.ok=TRUE)), "non-finite value in xtest")
 Error : non-finite value in xtest
        xtest[4] is Inf
-Got error as expected from try(plotmo:::check.vec(xtest, "xtest", na.ok = TRUE))
+Got expected error from try(plotmo:::check.vec(xtest, "xtest", na.ok = TRUE))
 > xtest <- c(1,2,3,NA,5,6,7)
 > expect.err(try(plotmo:::check.vec(xtest, "xtest")), "NA in xtest")
 Error : NA in xtest
        xtest[4] is NA
-Got error as expected from try(plotmo:::check.vec(xtest, "xtest"))
+Got expected error from try(plotmo:::check.vec(xtest, "xtest"))
 > xtest <- c(1,2,3)
 > expect.err(try(plotmo:::check.vec(xtest, "xtest", expected.len=2)), "'xtest' has the wrong length 3, expected 2")
 Error : 'xtest' has the wrong length 3, expected 2
-Got error as expected from try(plotmo:::check.vec(xtest, "xtest", expected.len = 2))
+Got expected error from try(plotmo:::check.vec(xtest, "xtest", expected.len = 2))
 > print(plotmo:::check.vec(c(TRUE, FALSE), "c(TRUE, FALSE)"))
 NULL
 > 
@@ -269,7 +211,26 @@ plotmo1(object=mod.earth.age,level=0.9,degree2=0)
              classthird        0 male     0 3.06991
 > 
 > # tit[,4] is age
-> mod.earth.tit <- earth(tit[,-4], tit[,4], degree=2, nfold=3, ncross=3, varmod.method="lm")
+> mod.earth.tit <- earth(tit[,-4], tit[,4], degree=2, nfold=3, ncross=3, trace=.5, varmod.method="lm")
+Model with pmethod="backward": GRSq 0.335 RSq 0.512 nterms 6
+CV fold  1.1  CVRSq -0.069   n.oof 58 34%   n.infold.nz 58 100%   n.oof.nz 30 100%
+CV fold  1.2  CVRSq  0.148   n.oof 59 33%   n.infold.nz 59 100%   n.oof.nz 29 100%
+CV fold  1.3  CVRSq  0.384   n.oof 59 33%   n.infold.nz 59 100%   n.oof.nz 29 100%
+CV fold  2.1  CVRSq  0.248   n.oof 58 34%   n.infold.nz 58 100%   n.oof.nz 30 100%
+CV fold  2.2  CVRSq -0.033   n.oof 59 33%   n.infold.nz 59 100%   n.oof.nz 29 100%
+CV fold  2.3  CVRSq  0.120   n.oof 59 33%   n.infold.nz 59 100%   n.oof.nz 29 100%
+CV fold  3.1  CVRSq  0.028   n.oof 58 34%   n.infold.nz 58 100%   n.oof.nz 30 100%
+CV fold  3.2  CVRSq  0.071   n.oof 59 33%   n.infold.nz 59 100%   n.oof.nz 29 100%
+CV fold  3.3  CVRSq  0.214   n.oof 59 33%   n.infold.nz 59 100%   n.oof.nz 29 100%
+CV all        CVRSq  0.123                  n.infold.nz 88 100%
+
+
+varmod method="lm" rmethod="hc12" lambda=1 exponent=1 conv=1 clamp=0.1 minspan=-3:
+     iter weight.ratio coefchange% (Intercept) tit[, 4]
+        1          1.1        0.00          12   0.0113
+        2          1.1        2.31          12   0.0072
+        3          1.1        0.85          12   0.0087
+
 > plotmo1(mod.earth.tit)
 plotmo1(object=mod.earth.tit)
  plotmo grid:    pclass survived  sex sibsp  logage
@@ -295,7 +256,7 @@ plotmo1(object=a.earth.sex,type="class")
 > expect.err(try(plotmo1(a.earth.sex, level=.9, degree2=0, type="class")), "predicted values are strings")
 plotmo1(object=a.earth.sex,level=0.9,degree2=0,type="class")
 Error : the level argument is not allowed when the predicted values are strings
-Got error as expected from try(plotmo1(a.earth.sex, level = 0.9, degree2 = 0, type = "class"))
+Got expected error from try(plotmo1(a.earth.sex, level = 0.9, degree2 = 0, type = "class"))
 > 
 > # tit[,3] is sex
 > mod.earth.tit <- earth(tit[,-3], tit[,3], degree=2, nfold=3, ncross=3, varmod.method="lm")
@@ -314,7 +275,7 @@ plotmo1(object=mod.earth.tit,type="class")
 > expect.err(try(plotmo1(mod.earth.tit, level=.9, degree2=0, type="class")), "predicted values are strings")
 plotmo1(object=mod.earth.tit,level=0.9,degree2=0,type="class")
 Error : the level argument is not allowed when the predicted values are strings
-Got error as expected from try(plotmo1(mod.earth.tit, level = 0.9, degree2 = 0, type = "class"))
+Got expected error from try(plotmo1(mod.earth.tit, level = 0.9, degree2 = 0, type = "class"))
 > 
 > mod.earth.sex <- earth(sex~., data=tit, degree=2, nfold=3, ncross=3, varmod.method="earth", glm=list(family=binomial))
 > plotmo1(mod.earth.sex)
@@ -362,7 +323,7 @@ plotmo1(object=mod.earth.tit,level=0.9,type="earth")
 > stopifnot(names(tit.orgpclass) == names(tit))
 > a.tit.orgpclass <- earth(pclass~., degree=2, data=tit.orgpclass)
 > a.tit           <- earth(pclass~., degree=2, data=tit)
-> old.warn <- options(warn=2) # treat warnings as errors
+> options(warn=2) # treat warnings as errors
 > expect.err(try(plotmo(a.tit)), "Defaulting to nresponse=1, see above messages")
 
 predict.earth[88,3]:
@@ -379,8 +340,8 @@ predict.earth returned multiple columns (see above) but nresponse is not specifi
          Example: nresponse="classthird"
 
 Error : (converted from warning) Defaulting to nresponse=1, see above messages
-Got error as expected from try(plotmo(a.tit))
-> options(warn=old.warn$warn)
+Got expected error from try(plotmo(a.tit))
+> options(warn=1)
 > # following two graphs should be identical
 > plotmo1(a.tit.orgpclass, nresponse="1st",   all1=T, col.resp=3, type2="im")
 plotmo1(object=a.tit.orgpclass,nresponse="1st",all1=T,col.resp=3,type2="im")
@@ -402,7 +363,7 @@ plotmo1(object=a.tit,nresponse="class2",all1=T)
 > 
 > tit  <- get.tit()
 > mod.earth.pclass <- earth(pclass~., data=tit, degree=2)
-> old.warn <- options(warn=2) # treat warnings as errors
+> options(warn=2) # treat warnings as errors
 > expect.err(try(plotmo1(mod.earth.pclass)), "Defaulting to nresponse=1, see above messages")
 plotmo1(object=mod.earth.pclass)
 
@@ -420,8 +381,8 @@ predict.earth returned multiple columns (see above) but nresponse is not specifi
          Example: nresponse="classthird"
 
 Error : (converted from warning) Defaulting to nresponse=1, see above messages
-Got error as expected from try(plotmo1(mod.earth.pclass))
-> options(warn=old.warn$warn)
+Got expected error from try(plotmo1(mod.earth.pclass))
+> options(warn=1)
 > plotmo1(mod.earth.pclass, nresponse="fi")
 plotmo1(object=mod.earth.pclass,nresponse="fi")
  plotmo grid:    survived  sex age sibsp  logage
@@ -449,7 +410,7 @@ plotmo1(object=mod.earth.pclass,nresponse=1,type="class",grid.levels=list(sex="f
 > 
 > # tit[,1] is pclass
 > mod.earth.tit <- earth(tit[,-1], tit[,1], degree=2)
-> old.warn <- options(warn=2) # treat warnings as errors
+> options(warn=2) # treat warnings as errors
 > expect.err(try(plotmo1(mod.earth.tit)), "Defaulting to nresponse=1, see above messages")
 plotmo1(object=mod.earth.tit)
 
@@ -467,8 +428,8 @@ predict.earth returned multiple columns (see above) but nresponse is not specifi
          Example: nresponse="classthird"
 
 Error : (converted from warning) Defaulting to nresponse=1, see above messages
-Got error as expected from try(plotmo1(mod.earth.tit))
-> options(warn=old.warn$warn)
+Got expected error from try(plotmo1(mod.earth.tit))
+> options(warn=1)
 > plotmo1(mod.earth.tit, nresponse="first")
 plotmo1(object=mod.earth.tit,nresponse="first")
  plotmo grid:    survived  sex age sibsp  logage
@@ -531,7 +492,7 @@ plotmo1(object=lm.model.vignette,level=0.9)
 library(mda)
 > library(mda)
 Loading required package: class
-Loaded mda 0.4-10
+Loaded mda 0.5-2
 
 > mars.model.vignette1 <- mars(oz[,-1], oz[,1], degree=2)
 > plotmo1(mars.model.vignette1)
@@ -565,10 +526,10 @@ library(rpart)
 plotmo1(object=rpart.model.vignette,all2=TRUE)
  plotmo grid:    humidity temp   ibt
                        64   62 167.5
-> expect.err(try(plotmo1(rpart.model.vignette, level=.9)), "not supported for rpart objects")
+> expect.err(try(plotmo1(rpart.model.vignette, level=.9)), "the level argument is not supported for \"rpart\" objects")
 plotmo1(object=rpart.model.vignette,level=0.9)
-Error : the level argument is not supported for rpart objects
-Got error as expected from try(plotmo1(rpart.model.vignette, level = 0.9))
+Error : the level argument is not supported for "rpart" objects
+Got expected error from try(plotmo1(rpart.model.vignette, level = 0.9))
 > 
 > # commented out because is slow and already tested in test.non.earth.R
 > # printf("library(randomForest)\n")
@@ -580,7 +541,7 @@ Got error as expected from try(plotmo1(rpart.model.vignette, level = 0.9))
 > printf("library(gbm)\n")
 library(gbm)
 > library(gbm)                                            # gbm
-Loaded gbm 2.1.5
+Loaded gbm 2.1.8
 > set.seed(2016)
 > gbm.model.vignette <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=100)
 > # commented out following because they always take the whole page
@@ -746,30 +707,52 @@ Warning: the level argument may not work correctly on glm objects built with wei
 > # test "the variable on the right side of the formula is a matrix or data.frame"
 > # TODO would like to solve this problem
 > 
-> old.warn <- options("warn")
 > options(warn=2)
-> 
 > data(gasoline, package="pls")
 > earth.octane <- earth(octane ~ NIR, data=gasoline)
+> print(summary(earth.octane)) # ok
+Call: earth(formula=octane~NIR, data=gasoline)
+
+                         coefficients
+(Intercept)                 87.818970
+h(NIR1016 nm- -0.050322)  -307.631441
+h(NIR1036 nm- -0.060936)    83.025904
+h(NIR1054 nm- -0.059068)   254.542458
+h(NIR1134 nm-0.028475)      34.069219
+h(0.484052-NIR1194 nm)     -45.522897
+h(NIR1194 nm-0.484052)      50.623858
+h(0.25499-NIR1208 nm)       81.506833
+h(NIR1208 nm-0.25499)      -92.719551
+h(NIR1686 nm-1.25012)       -7.936903
+h(1.27324-NIR1690 nm)        3.531658
+
+Selected 11 of 12 terms, and 8 of 401 predictors
+Termination condition: RSq changed by less than 0.001 at 12 terms
+Importance: NIR1208 nm, NIR1194 nm, NIR1134 nm, NIR1690 nm, NIR1016 nm, ...
+Number of terms at each degree of interaction: 1 10 (additive model)
+GCV 0.05120795    RSS 1.298122    GRSq 0.9784914    RSq 0.990602
+> plotres(earth.octane) # ok
 > expect.err(try(plotmo(earth.octane)), "the variable on the right side of the formula is a matrix or data.frame")
 Error : (converted from warning) the variable on the right side of the formula is a matrix or data.frame
-Got error as expected from try(plotmo(earth.octane))
+         plotmo often cannot process such variables
+Got expected error from try(plotmo(earth.octane))
+> options(warn=1)
 > 
-> library(ElemStatLearn)
-> x <- mixture.example$x
-> g <- mixture.example$y
-> lm.mixture.example <- lm(g ~ x)
-> expect.err(try(plotmo(lm.mixture.example)), "the variable on the right side of the formula is a matrix or data.frame")
-Error : (converted from warning) the variable on the right side of the formula is a matrix or data.frame
-Got error as expected from try(plotmo(lm.mixture.example))
-> 
-> options(warn=old.warn$warn)
+> # TODO May 2020 'ElemStatLearn' is not available (for R version 4.0.0)
+> # library(ElemStatLearn)
+> # x <- mixture.example$x
+> # g <- mixture.example$y
+> # lm.mixture.example <- lm(g ~ x)
+> # options(warn=2)
+> # expect.err(try(plotmo(lm.mixture.example)), "the variable on the right side of the formula is a matrix or data.frame")
+> # options(warn=1)
 > 
 > # test variable names with $ are not supported
 > 
 > a <- earth(O3~ozone1$doy, data=ozone1)
 > expect.err(try(plotmo(a)), "cannot get the original model predictors")
-Warning: ozone1$doy: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
+Warning: "$" in the formula is not supported by plotmo, will try to get the data elsewhere
+         formula: ozone1$doy
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -780,11 +763,12 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a))
+Got expected error from try(plotmo(a))
 > 
 > a <- earth(O3~ozone1$doy + temp, data=ozone1)
 > expect.err(try(plotmo(a)), "cannot get the original model predictors")
-Warning: ozone1$doy + temp: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
+Warning: "$" in the formula is not supported by plotmo, will try to get the data elsewhere
+         formula: ozone1$doy + temp
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -795,11 +779,12 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a))
+Got expected error from try(plotmo(a))
 > 
 > a <- lm(O3~ozone1$doy, data=ozone1)
 > expect.err(try(plotmo(a)), "cannot get the original model predictors")
-Warning: ozone1$doy: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
+Warning: "$" in the formula is not supported by plotmo, will try to get the data elsewhere
+         formula: ozone1$doy
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -810,11 +795,12 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a))
+Got expected error from try(plotmo(a))
 > 
 > a <- lm(O3~ozone1$doy + temp, data=ozone1)
 > expect.err(try(plotmo(a)), "cannot get the original model predictors")
-Warning: ozone1$doy + temp: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
+Warning: "$" in the formula is not supported by plotmo, will try to get the data elsewhere
+         formula: ozone1$doy + temp
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -825,11 +811,10 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a))
+Got expected error from try(plotmo(a))
 > 
 > #--- test interaction of w1. and non w1 args -------------------------------------
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(4,3), mar=c(3, 3, 4, 1), mgp=c(2, 0.6, 0))
 > 
 > mod78 <- earth(Volume ~ ., data = trees)
@@ -845,9 +830,8 @@ Got error as expected from try(plotmo(a))
 +         w1.ylim=c(-.5, .8), w1.xlim=c(-2, 7), col=2:3, do.par=FALSE,
 +         ylim=c(-10,10), xlim=c(-30, 100),
 +         w1.main=c("w1.ylim=c(-.5, .8) w1.xlim=c(-2, 7)\nylim=c(-10,10), xlim=c(-30, 100)"))
+> par(org.par)
 > 
-> par(old.par)
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,4), mar=c(3, 3, 3, 1), mgp=c(2, 0.6, 0))
 > 
 > # which=1, earth model
@@ -887,6 +871,24 @@ Got error as expected from try(plotmo(a))
 +         col=2:3, w1.ylim=c(.3,.98), ylim=c(-10,10), w1.xlim=c(-2, 7), xlim=c(-90,90),
 +         main="w1.ylim=c(.3,.98) ylim=c(-10,10)\nw1.xlim=c(-2, 7), xlim=c(-90,90)")
 > 
-> par(old.par)
+> par(org.par)
+> 
+> nullarg <- NULL
+> expect.err(try(plotmo(nullarg)),   "argument 'nullarg' is NULL")
+Error : argument 'nullarg' is NULL
+Got expected error from try(plotmo(nullarg))
+> expect.err(try(plotmo(NULL)),      "argument 'NULL' is NULL")
+Error : argument 'NULL' is NULL
+Got expected error from try(plotmo(NULL))
+> expect.err(try(plotmo(0)),         "'0' is not an S3 model")
+Error : '0' is not an S3 model
+Got expected error from try(plotmo(0))
+> expect.err(try(plotmo(list(1,2))), "'list(1, 2)' is a plain list, not an S3 model")
+Error : 'list(1, 2)' is a plain list, not an S3 model
+Got expected error from try(plotmo(list(1, 2)))
+> expect.err(try(plotmo(list(1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0))),
++                "object is a plain list, not an S3 model")
+Error : object is a plain list, not an S3 model
+Got expected error from try(plotmo(list(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6,     7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7,     8, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8,     0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0,     1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1,     2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2,     3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3,     4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4,     5, 6, 7, 8, 0)))
 > 
 > source("test.epilog.R")

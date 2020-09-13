@@ -48,7 +48,7 @@ degree1.partdep.yhat <- function(object,
     ...)
 {
     trace0(trace, "calculating %s for %s%s",
-           pmethod, pred.names[ipred], if (trace >= 2) "\n" else " ")
+           pmethod, pred.names[ipred], if(trace >= 2) "\n" else " ")
     xgrid <- xframe[[ipred]] # grid of values for predictor
     nxgrid <- length(xgrid)
     stopifnot(nxgrid >= 1)
@@ -71,7 +71,7 @@ degree2.partdep.yhat <- function(object,
 {
     trace0(trace, "calculating %s for %s:%s %s",
            pmethod, pred.names[ipred1], pred.names[ipred2],
-           if(trace >= 0 && trace < 2) "0" else if (trace >= 2) "\n")
+           if(trace >= 0 && trace < 2) "0" else if(trace >= 2) "\n")
 
     n1 <- length(x1grid)
     stopifnot(n1 >= 1)

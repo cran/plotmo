@@ -25,7 +25,7 @@ plotmo.prolog.train <- function(object, object.name, trace, ...)
                       silent=trace < 2)
     is.err <- is.try.err(finalModel)
     trace1(trace, "plotmo.prolog(object$finalModel) %s\n",
-           if(is.err) "failed, continuing anyway" else "succeeded")
+           if(is.err) "failed, continuing anyway" else "succeeded (caret model)")
     if(!is.err)
         object$finalModel <- finalModel
     object
@@ -33,9 +33,8 @@ plotmo.prolog.train <- function(object, object.name, trace, ...)
 plotmo.singles.train <- function(object, x, nresponse, trace, all1, ...)
 {
     check.is.caret.train.object(object)
-    singles <-
-        try(plotmo.singles(object$finalModel, x, nresponse, trace, all1, ...),
-            silent=trace < 2)
+    singles <- try(plotmo.singles(object$finalModel, x, nresponse, trace, all1, ...),
+                   silent=trace < 2)
     is.err <- is.try.err(singles)
     trace2(trace, "plotmo.singles(object$finalModel) %s\n",
            if(is.err) "failed" else "succeeded")
@@ -47,9 +46,8 @@ plotmo.singles.train <- function(object, x, nresponse, trace, all1, ...)
 plotmo.pairs.train <- function(object, x, nresponse, trace, all2, ...)
 {
     check.is.caret.train.object(object)
-    pairs <-
-        try(plotmo.pairs(object$finalModel, x, nresponse, trace, all2, ...),
-            silent=trace < 2)
+    pairs <- try(plotmo.pairs(object$finalModel, x, nresponse, trace, all2, ...),
+                 silent=trace < 2)
     is.err <- is.try.err(pairs)
     trace2(trace, "plotmo.pairs(object$finalModel) %s\n",
            if(is.err) "failed" else "succeeded")

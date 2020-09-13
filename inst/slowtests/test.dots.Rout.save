@@ -18,13 +18,13 @@
 > test.dotindex(NA, "a",  a1=10, a2=20)
 > expect.err(try(test.dotindex(1, nonesuch, a=10, a=20)), "object 'nonesuch' not found")
 Error in stopifnot(is.character(argname)) : object 'nonesuch' not found
-Got error as expected from try(test.dotindex(1, nonesuch, a = 10, a = 20))
+Got expected error from try(test.dotindex(1, nonesuch, a = 10, a = 20))
 > expect.err(try(test.dotindex(1, "a1", a=10, a=20)), "argument 'a' for test.dotindex() is duplicated")
 Error : argument 'a' for test.dotindex() is duplicated
-Got error as expected from try(test.dotindex(1, "a1", a = 10, a = 20))
+Got expected error from try(test.dotindex(1, "a1", a = 10, a = 20))
 > expect.err(try(test.dotindex(1, "aa1", a=10, aa=20)), "arguments 'a' and 'aa' both match 'aa1' in test.dotindex")
 Error : arguments 'a' and 'aa' both match 'aa1' in test.dotindex
-Got error as expected from try(test.dotindex(1, "aa1", a = 10, aa = 20))
+Got expected error from try(test.dotindex(1, "aa1", a = 10, aa = 20))
 > stopifnot(is.na(plotmo:::dotindex("a", EX=1, a1=10, a2=20)))
 > stopifnot(plotmo:::dotindex("a2", EX=1, a1=10, a2=20) == 2)
 > 
@@ -57,25 +57,25 @@ Got error as expected from try(test.dotindex(1, "aa1", a = 10, aa = 20))
 > test.dota(NA, "a", a1=10, a2=20)
 > expect.err(try(test.dota(1, "a1", a=10, a=20)), "argument 'a' for test.dota() is duplicated")
 Error : argument 'a' for test.dota() is duplicated
-Got error as expected from try(test.dota(1, "a1", a = 10, a = 20))
+Got expected error from try(test.dota(1, "a1", a = 10, a = 20))
 > expect.err(try(test.dota(1, 99, a=10, a=20)), "is.character(argname) is not TRUE")
 Error in process.argname(ARGNAME) : is.character(argname) is not TRUE
-Got error as expected from try(test.dota(1, 99, a = 10, a = 20))
+Got expected error from try(test.dota(1, 99, a = 10, a = 20))
 > expect.err(try(test.dota(1, test.dota, a=10, a=20)), "is.character(argname) is not TRUE")
 Error in process.argname(ARGNAME) : is.character(argname) is not TRUE
-Got error as expected from try(test.dota(1, test.dota, a = 10, a = 20))
+Got expected error from try(test.dota(1, test.dota, a = 10, a = 20))
 > expect.err(try(test.dota(1, "", a=10, a=20)), "empty string in ARGNAME")
 Error : empty string in ARGNAME
-Got error as expected from try(test.dota(1, "", a = 10, a = 20))
+Got expected error from try(test.dota(1, "", a = 10, a = 20))
 > expect.err(try(test.dota(1, "x^x", a=10, a=20)), "illegal character \"^\" in ARGNAME")
 Error : illegal character "^" in ARGNAME = "x^x"
-Got error as expected from try(test.dota(1, "x^x", a = 10, a = 20))
+Got expected error from try(test.dota(1, "x^x", a = 10, a = 20))
 > 
 > test.dota(10, "abc", EX=T, abc=10)
 > test.dota(NA, "a",   EX=T, a1=10, a2=20)
 > expect.err(try(test.dota(1, "a1", a1=10, a1=20)), "argument 'a1' for test.dota() is duplicated")
 Error : argument 'a1' for test.dota() is duplicated
-Got error as expected from try(test.dota(1, "a1", a1 = 10, a1 = 20))
+Got expected error from try(test.dota(1, "a1", a1 = 10, a1 = 20))
 > 
 > stopifnot(is.na(plotmo:::dota("a", EX=1, a1=1, a2=2)))
 > stopifnot(plotmo:::dota("a2", EX=1, a1=10, a2=20, a3=30) == 20)
@@ -98,13 +98,13 @@ Got error as expected from try(test.dota(1, "a1", a1 = 10, a1 = 20))
 > test.dota(NA, "a", EX=T, aa=1, ab=2)
 > expect.err(try(test.dota(2, "a", EX=T, aa=1, a=2, a=3)), "argument 'a' for test.dota() is duplicated")
 Error : argument 'a' for test.dota() is duplicated
-Got error as expected from try(test.dota(2, "a", EX = T, aa = 1, a = 2, a = 3))
+Got expected error from try(test.dota(2, "a", EX = T, aa = 1, a = 2, a = 3))
 > 
 > expect.err(try(test.dota(2, "a", EX=T, a=none.such)), "cannot evaluate 'a'")
 Error in eval(dots[[idot]], parent.frame(1)) : 
   object 'none.such' not found
 Error : cannot evaluate 'a'
-Got error as expected from try(test.dota(2, "a", EX = T, a = none.such))
+Got expected error from try(test.dota(2, "a", EX = T, a = none.such))
 > 
 > # multiple argnames
 > test.dota(2,  c("a", "b"), a=2, c=3)
@@ -115,10 +115,10 @@ Got error as expected from try(test.dota(2, "a", EX = T, a = none.such))
 > test.dota(NA, c("a", "b"), c=3)
 > expect.err(try(test.dota(1, c("b", "aa1"), a=10, aa=20)), "arguments 'a' and 'aa' both match 'aa1' in test.dota")
 Error : arguments 'a' and 'aa' both match 'aa1' in test.dota
-Got error as expected from try(test.dota(1, c("b", "aa1"), a = 10, aa = 20))
+Got expected error from try(test.dota(1, c("b", "aa1"), a = 10, aa = 20))
 > expect.err(try(test.dota(1, c("x", ""), a=10, b=20)), "empty string in ARGNAME")
 Error : empty string in ARGNAME
-Got error as expected from try(test.dota(1, c("x", ""), a = 10, b = 20))
+Got expected error from try(test.dota(1, c("x", ""), a = 10, b = 20))
 > stopifnot(plotmo:::dota(c("x", "a2", "y"), EX=1, a1=10, a2=20, a3=30) == 20)
 > 
 > test.dota(NA, c("a", "b"), aa=2, cc=3, EX=T)
@@ -156,10 +156,10 @@ Got error as expected from try(test.dota(1, c("x", ""), a = 10, b = 20))
 > test.is.dot(FALSE, "a",  EX=0, a1=10, a2=20)
 > expect.err(try(test.is.dot(TRUE, "a1", EX=0, a=10, a=20)), "argument 'a' for test.is.dot() is duplicated")
 Error : argument 'a' for test.is.dot() is duplicated
-Got error as expected from try(test.is.dot(TRUE, "a1", EX = 0, a = 10, a = 20))
+Got expected error from try(test.is.dot(TRUE, "a1", EX = 0, a = 10, a = 20))
 > expect.err(try(test.is.dot(TRUE, "a", EX=0, a=10, a=20)), "argument 'a' for test.is.dot() is duplicated")
 Error : argument 'a' for test.is.dot() is duplicated
-Got error as expected from try(test.is.dot(TRUE, "a", EX = 0, a = 10, a = 20))
+Got expected error from try(test.is.dot(TRUE, "a", EX = 0, a = 10, a = 20))
 > stopifnot(plotmo:::is.dot("a",  EX=1, a1=10, a2=20, a3=30) == FALSE)
 > stopifnot(plotmo:::is.dot("x",  EX=1, a1=10, a2=20, a3=30) == FALSE)
 > stopifnot(plotmo:::is.dot("a3", EX=1, a1=10, a2=20, a3=30) == TRUE)
@@ -171,7 +171,7 @@ Got error as expected from try(test.is.dot(TRUE, "a", EX = 0, a = 10, a = 20))
 > test.is.dot(FALSE, EX=0, c("a1", "b1"), c=3)
 > expect.err(try(test.is.dot(FALSE, c("aa1", "b"), EX=0, a=10, aa=20)), "arguments 'a' and 'aa' both match 'aa1' in test.is.dot")
 Error : arguments 'a' and 'aa' both match 'aa1' in test.is.dot
-Got error as expected from try(test.is.dot(FALSE, c("aa1", "b"), EX = 0, a = 10, aa = 20))
+Got expected error from try(test.is.dot(FALSE, c("aa1", "b"), EX = 0, a = 10, aa = 20))
 > stopifnot(plotmo:::is.dot(c("x", "a", "y"), EX=1, a1=10, a2=20, a3=30) == FALSE)
 > stopifnot(plotmo:::is.dot(c("x", "a2", "y"), EX=1, a1=10, a2=20, a3=30) == TRUE)
 > 
@@ -192,16 +192,16 @@ Got error as expected from try(test.is.dot(FALSE, c("aa1", "b"), EX = 0, a = 10,
 > 
 > expect.err(try(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=NULL)), "\"FORMALS\" specified in DROP, but FUNC is NULL")
 Error : "FORMALS" specified in DROP, but FUNC is NULL
-Got error as expected from try(plotmo:::expand.drop("FORMALS", prefix = "prefix.", func = NULL))
+Got expected error from try(plotmo:::expand.drop("FORMALS", prefix = "prefix.", func = NULL))
 > 
 > expect.err(try(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=base::c)), "\"FORMALS\" specified but formals(FUNC) returned no formal arguments")
 Error : "FORMALS" specified but formals(FUNC) returned no formal arguments
-Got error as expected from try(plotmo:::expand.drop("FORMALS", prefix = "prefix.", func = base::c))
+Got expected error from try(plotmo:::expand.drop("FORMALS", prefix = "prefix.", func = base::c))
 > 
 > foo99 <- function(...) NULL
 > expect.err(try(plotmo:::expand.drop("FORMALS", prefix="prefix.", func=foo99)), "\"FORMALS\" specified but formals(FUNC) returned only \"...\"")
 Error : "FORMALS" specified but formals(FUNC) returned only "..."
-Got error as expected from try(plotmo:::expand.drop("FORMALS", prefix = "prefix.", func = foo99))
+Got expected error from try(plotmo:::expand.drop("FORMALS", prefix = "prefix.", func = foo99))
 > 
 > stopifnot(plotmo:::expand.drop("a,FORMALS", prefix="prefix.", func=base::nchar) == ">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^a")
 > 
@@ -209,7 +209,7 @@ Got error as expected from try(plotmo:::expand.drop("FORMALS", prefix = "prefix.
 > 
 > expect.err(try(plotmo:::expand.drop("", prefix="prefix.", func=base::nchar)), "DROP is an empty string")
 Error : DROP is an empty string
-Got error as expected from try(plotmo:::expand.drop("", prefix = "prefix.", func = base::nchar))
+Got expected error from try(plotmo:::expand.drop("", prefix = "prefix.", func = base::nchar))
 > 
 > stopifnot(plotmo:::expand.drop("a", prefix="lines.", func=base::nchar) == ">PREFIX|>EXPLICIT|^a")
 > 
@@ -239,7 +239,7 @@ Got error as expected from try(plotmo:::expand.drop("", prefix = "prefix.", func
 + ">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PAR_ARGS|^adj$|^ann$|^ask$|^bg$|^bty$|^cex$|^cex\\.axis$|^cex\\.lab$|^cex\\.main$|^cex\\.sub$|^col\\.axis$|^col\\.lab$|^col\\.main$|^col\\.sub$|^crt$|^err$|^family$|^fg$|^fig$|^fin$|^font$|^font\\.axis$|^font\\.lab$|^font\\.main$|^font\\.sub$|^lab$|^las$|^lend$|^lheight$|^ljoin$|^lmitre$|^lty$|^mai$|^mar$|^mex$|^mfcol$|^mfg$|^mfrow$|^mgp$|^mkh$|^new$|^oma$|^omd$|^omi$|^pch$|^pin$|^plt$|^ps$|^pty$|^srt$|^tck$|^tcl$|^usr$|^xaxp$|^xaxs$|^xaxt$|^xlog$|^xpd$|^yaxp$|^yaxs$|^yaxt$|^ylbias$|^ylog$")
 > 
 > stopifnot(plotmo:::expand.drop("abc,FORMALS,PLOTMO.ARGS", prefix="lines.", func=base::nchar) ==
-+ ">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PLOTMO_ARGS|^caption\\.|^cex\\.|^col\\.|^contour\\.|^cum\\.|^degree1\\.|^degree2\\.|^density\\.|^filled\\.contour\\.|^font\\.|^func\\.|^grid\\.|^heatmap\\.|^image\\.|^jitter\\.|^legend\\.|^label\\.|^level\\.|^line\\.|^lines\\.|^lty\\.|^lty\\.|^lwd\\.|^main\\.|^mtext\\.|^nresiduals|^par\\.|^pch\\.|^persp\\.|^plot\\.|^plotmath\\.|^qq\\.|^qqline\\.|^pt\\.|^response\\.|^rug\\.|^smooth\\.|^text\\.|^title\\.|^vfont\\.")
++ ">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PLOTMO_ARGS|^caption\\.|^cex\\.|^col\\.|^contour\\.|^cum\\.|^degree1\\.|^degree2\\.|^density\\.|^filled\\.contour\\.|^font\\.|^func\\.|^grid\\.|^heatmap\\.|^image\\.|^jitter\\.|^legend\\.|^label\\.|^level\\.|^line\\.|^lines\\.|^lty\\.|^lty\\.|^lwd\\.|^main\\.|^mtext\\.|^nresiduals|^par\\.|^pch\\.|^persp\\.|^plot\\.|^plotmath\\.|^prednames\\.|^qq\\.|^qqline\\.|^pt\\.|^response\\.|^rug\\.|^smooth\\.|^text\\.|^title\\.|^vfont\\.")
 > 
 > test.deprefix <- function(expected, ..., FNAME="test.deprefix", KEEP=NULL)
 + {
@@ -354,7 +354,7 @@ return dotnames      anon1 anon2  a
 +                 a=3, predict.a=4)),
 +                 "argument 'force.anon' for test.deprefix() is duplicated")
 Error : argument 'force.anon' for test.deprefix() is duplicated
-Got error as expected from try(test.deprefix(expected = list(10, 20, a = 4), KEEP = NULL,     DROP = "w1.,persp.,xlab.", PREFIX = "predict.", force.anon = 10,     force.anon = 20, a = 3, predict.a = 4))
+Got expected error from try(test.deprefix(expected = list(10, 20, a = 4), KEEP = NULL,     DROP = "w1.,persp.,xlab.", PREFIX = "predict.", force.anon = 10,     force.anon = 20, a = 3, predict.a = 4))
 > 
 > expect.err(try(test.deprefix(expected=list(10, 20, a=4),
 +                 KEEP=NULL, DROP="w1.,persp.,xlab.",
@@ -363,7 +363,7 @@ Got error as expected from try(test.deprefix(expected = list(10, 20, a = 4), KEE
 +                 a=3, predict.a=4)),
 +                 "argument 'force.anon' for foobar() is duplicated")
 Error : argument 'force.anon' for foobar() is duplicated
-Got error as expected from try(test.deprefix(expected = list(10, 20, a = 4), KEEP = NULL,     DROP = "w1.,persp.,xlab.", PREFIX = "predict.", FNAME = "foobar",     force.anon = 10, force.anon = 20, a = 3, predict.a = 4))
+Got expected error from try(test.deprefix(expected = list(10, 20, a = 4), KEEP = NULL,     DROP = "w1.,persp.,xlab.", PREFIX = "predict.", FNAME = "foobar",     force.anon = 10, force.anon = 20, a = 3, predict.a = 4))
 > 
 > test.deprefix(expected=list(10, 20, a=4),
 +                 KEEP=NULL, DROP="w1.,persp.,xlab.",
@@ -391,7 +391,7 @@ Got error as expected from try(test.deprefix(expected = list(10, 20, a = 4), KEE
 > 
 > expect.err(try(test.deprefix(expected=NULL, KEEP=NULL, PREFIX="predict.", DROP="w1\\.")), "illegal character \"\\\" in DROP = \"w1\\.\"")
 Error : illegal character "\" in DROP = "w1\."
-Got error as expected from try(test.deprefix(expected = NULL, KEEP = NULL, PREFIX = "predict.",     DROP = "w1\\."))
+Got expected error from try(test.deprefix(expected = NULL, KEEP = NULL, PREFIX = "predict.",     DROP = "w1\\."))
 > 
 > test.deprefix(expected=list(b="predict.b", d="def.d", a="a", c="predict.c", w1.xl="xlab2", e="predict.e"),
 +     PREFIX="predict.", DROP="w1.xlab$",
@@ -437,7 +437,7 @@ Got error as expected from try(test.deprefix(expected = NULL, KEEP = NULL, PREFI
 +     "persp.", graphics:::persp.default, "persp.default", x=9, persp.l=3)),
 +     "'l' matches both the 'ltheta' and 'lphi' arguments of persp.default()")
 Error : 'l' matches both the 'ltheta' and 'lphi' arguments of persp.default()
-Got error as expected from try(test.expand.dotnames(expected = NULL, "persp.", graphics:::persp.default,     "persp.default", x = 9, persp.l = 3))
+Got expected error from try(test.expand.dotnames(expected = NULL, "persp.", graphics:::persp.default,     "persp.default", x = 9, persp.l = 3))
 > 
 > test.expand.dotnames(expected=list(x=9, plot.foo=3, plot.xlim=c(1,2)),
 +     "plot.", graphics:::plot.default, "plot.default", x=9, plot.foo=3, plot.xlim=c(1,2))
@@ -449,7 +449,7 @@ Got error as expected from try(test.expand.dotnames(expected = NULL, "persp.", g
 +     "plot.", graphics:::plot.default, "plot.default", x=9, plot.foo=3, plot.xl=c(1,2))),
 +     "'xl' matches both the 'xlim' and 'xlab' arguments of plot.default()")
 Error : 'xl' matches both the 'xlim' and 'xlab' arguments of plot.default()
-Got error as expected from try(test.expand.dotnames(expected = NULL, "plot.", graphics:::plot.default,     "plot.default", x = 9, plot.foo = 3, plot.xl = c(1, 2)))
+Got expected error from try(test.expand.dotnames(expected = NULL, "plot.", graphics:::plot.default,     "plot.default", x = 9, plot.foo = 3, plot.xl = c(1, 2)))
 > 
 > foo3 <- function(aaa=1, aa=2, bb=3, bba=4, cca=5, ccb=6, def=7)
 +     cat0("foo3: aaa=", aaa, " aa=", aa, ", bb=", bb, " bba=", bba,
@@ -480,7 +480,7 @@ Got error as expected from try(test.expand.dotnames(expected = NULL, "plot.", gr
 +     "persp.", graphics:::persp, "persp", FORMALS=formals, x=9, persp.l=3)),
 +     "'l' matches both the 'ltheta' and 'lphi' arguments of persp()")
 Error : 'l' matches both the 'ltheta' and 'lphi' arguments of persp()
-Got error as expected from try(test.expand.dotnames(expected = NULL, "persp.", graphics:::persp,     "persp", FORMALS = formals, x = 9, persp.l = 3))
+Got expected error from try(test.expand.dotnames(expected = NULL, "persp.", graphics:::persp,     "persp", FORMALS = formals, x = 9, persp.l = 3))
 > 
 > # done formals tests
 > 
@@ -494,7 +494,7 @@ Got error as expected from try(test.expand.dotnames(expected = NULL, "persp.", g
 +     "plot.", graphics:::plot.default, "plot.default", x=9, plot.foo=3, plot.xl=c(1,2))),
 +     "'xl' matches both the 'xlim' and 'xlab' arguments of plot.default()")
 Error : 'xl' matches both the 'xlim' and 'xlab' arguments of plot.default()
-Got error as expected from try(test.expand.dotnames(expected = NULL, "plot.", graphics:::plot.default,     "plot.default", x = 9, plot.foo = 3, plot.xl = c(1, 2)))
+Got expected error from try(test.expand.dotnames(expected = NULL, "plot.", graphics:::plot.default,     "plot.default", x = 9, plot.foo = 3, plot.xl = c(1, 2)))
 > 
 > test.expand.dotnames(expected=list(foo3.aa=99),
 +     "foo3.", foo3, "foo3", foo3.aa=99)
@@ -506,7 +506,7 @@ Error : Unnamed arguments are not allowed here
           FORMALS=FORMALS, SCALAR=SCALAR, CALLARGS=function.object,
           CALLER=caller, foo3.aa=99)
 
-Got error as expected from try(plotmo:::call.plot(foo3, "foo3.", foo3.aa = 99))
+Got expected error from try(plotmo:::call.plot(foo3, "foo3.", foo3.aa = 99))
 > expect.err(try(plotmo:::call.plot(foo3, foo, foo3.aa=99)),
 + "Unnamed arguments are not allowed here\n       The argument's value is function.object")
 Error : Unnamed arguments are not allowed here
@@ -516,7 +516,7 @@ Error : Unnamed arguments are not allowed here
           FORMALS=FORMALS, SCALAR=SCALAR, CALLARGS=function.object,
           CALLER=caller, foo3.aa=99)
 
-Got error as expected from try(plotmo:::call.plot(foo3, foo, foo3.aa = 99))
+Got expected error from try(plotmo:::call.plot(foo3, foo, foo3.aa = 99))
 > expect.err(try(plotmo:::call.plot(foo3, NULL, foo3.aa=99)), "Unnamed arguments are not allowed here\n       The argument's value is NULL")
 Error : Unnamed arguments are not allowed here
        The argument's value is NULL
@@ -525,7 +525,7 @@ Error : Unnamed arguments are not allowed here
           FORMALS=FORMALS, SCALAR=SCALAR, CALLARGS=function.object,
           CALLER=caller, foo3.aa=99)
 
-Got error as expected from try(plotmo:::call.plot(foo3, NULL, foo3.aa = 99))
+Got expected error from try(plotmo:::call.plot(foo3, NULL, foo3.aa = 99))
 > expect.err(try(plotmo:::call.plot(foo3, stop("stop was called"), foo3.aa=99)), "Unnamed arguments are not allowed here (argument ..1 is unnamed)")
 Error : Unnamed arguments are not allowed here (argument ..1 is unnamed)
        plotmo:::call.plot via try called call.dots(FUNC=foo3, PREFIX=PREFIX, ...,
@@ -533,7 +533,7 @@ Error : Unnamed arguments are not allowed here (argument ..1 is unnamed)
           FORMALS=FORMALS, SCALAR=SCALAR, CALLARGS=function.object,
           CALLER=caller, foo3.aa=99)
 
-Got error as expected from try(plotmo:::call.plot(foo3, stop("stop was called"), foo3.aa = 99))
+Got expected error from try(plotmo:::call.plot(foo3, stop("stop was called"), foo3.aa = 99))
 > expect.err(try(plotmo:::call.plot(foo3, cat("side effect\n"), foo3.aa=99)), "Unnamed arguments are not allowed here\n       The argument's value is NULL")
 side effect
 Error : Unnamed arguments are not allowed here
@@ -543,7 +543,7 @@ Error : Unnamed arguments are not allowed here
           FORMALS=FORMALS, SCALAR=SCALAR, CALLARGS=function.object,
           CALLER=caller, foo3.aa=99)
 
-Got error as expected from try(plotmo:::call.plot(foo3, cat("side effect\n"), foo3.aa = 99))
+Got expected error from try(plotmo:::call.plot(foo3, cat("side effect\n"), foo3.aa = 99))
 > expect.err(try(plotmo:::call.plot(foo3, nonesuch1=1, nonesuch2, foo3.aa=99)), "Unnamed arguments are not allowed here (argument ..2 is unnamed)")
 Error : Unnamed arguments are not allowed here (argument ..2 is unnamed)
        plotmo:::call.plot via try called call.dots(FUNC=foo3, PREFIX=PREFIX, ...,
@@ -551,7 +551,7 @@ Error : Unnamed arguments are not allowed here (argument ..2 is unnamed)
           FORMALS=FORMALS, SCALAR=SCALAR, CALLARGS=function.object,
           CALLER=caller, nonesuch1=1, foo3.aa=99)
 
-Got error as expected from try(plotmo:::call.plot(foo3, nonesuch1 = 1, nonesuch2, foo3.aa = 99))
+Got expected error from try(plotmo:::call.plot(foo3, nonesuch1 = 1, nonesuch2, foo3.aa = 99))
 > plotmo:::call.plot(foo3, PREFIX="foo3.", foo3.aa=99)
 foo3: aaa=1 aa=99, bb=3 bba=4 cca=5 ccb=6 def=7
 > 
@@ -564,19 +564,19 @@ foo3: aaa=99 aa=2, bb=3 bba=4 cca=5 ccb=6 def=7
 +     "foo3.", foo3, "foo3", foo3.aa=88, foo3.aa=99)),
 +     "'foo3.aa' for foo3() is duplicated")
 Error : argument 'foo3.aa' for foo3() is duplicated
-Got error as expected from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     foo3, "foo3", foo3.aa = 88, foo3.aa = 99))
+Got expected error from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     foo3, "foo3", foo3.aa = 88, foo3.aa = 99))
 > 
 > expect.err(try(test.expand.dotnames(expected=list(foo3.aaa=99),
 +     "foo3.", foo3, "foo3", foo3.a=88, foo3.aa=99)),
 +     "'a' matches both the 'aaa' and 'aa' arguments of foo3()")
 Error : 'a' matches both the 'aaa' and 'aa' arguments of foo3()
-Got error as expected from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     foo3, "foo3", foo3.a = 88, foo3.aa = 99))
+Got expected error from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     foo3, "foo3", foo3.a = 88, foo3.aa = 99))
 > 
 > expect.err(try(test.expand.dotnames(expected=list(foo3.aaa=99),
 +     "foo3.", foo3, "foo3", foo3.aaa=88, foo3.aaa=99)),
 +     "'foo3.aaa' for foo3() is duplicated")
 Error : argument 'foo3.aaa' for foo3() is duplicated
-Got error as expected from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     foo3, "foo3", foo3.aaa = 88, foo3.aaa = 99))
+Got expected error from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     foo3, "foo3", foo3.aaa = 88, foo3.aaa = 99))
 > 
 > test.expand.dotnames(expected=list(foo3.bbb=88, foo3.bba=99),
 +      "foo3.", foo3, "foo3", foo3.bbb=88, foo3.bba=99)
@@ -587,7 +587,7 @@ foo3(bbb=88, bba=99)
 
 Error in (function (aaa = 1, aa = 2, bb = 3, bba = 4, cca = 5, ccb = 6,  : 
   unused argument (bbb = 88)
-Got error as expected from try(plotmo:::call.plot(foo3, foo3.bbb = 88, foo3.bba = 99))
+Got expected error from try(plotmo:::call.plot(foo3, foo3.bbb = 88, foo3.bba = 99))
 > 
 > # same as above but with TRACE (so don't use try in call.dots)
 > expect.err(try(plotmo:::call.plot(foo3, foo3.bbb=88, foo3.bba=99, TRACE=T)),
@@ -595,7 +595,7 @@ Got error as expected from try(plotmo:::call.plot(foo3, foo3.bbb = 88, foo3.bba 
 foo3(bbb=88, bba=99)
 Error in (function (aaa = 1, aa = 2, bb = 3, bba = 4, cca = 5, ccb = 6,  : 
   unused argument (bbb = 88)
-Got error as expected from try(plotmo:::call.plot(foo3, foo3.bbb = 88, foo3.bba = 99, TRACE = T))
+Got expected error from try(plotmo:::call.plot(foo3, foo3.bbb = 88, foo3.bba = 99, TRACE = T))
 > 
 > test.expand.dotnames(expected=list(foo3.bb=88),
 +      "foo3.", foo3, "foo3", foo3.bb=88)
@@ -618,20 +618,20 @@ foo3: aaa=99 aa=2, bb=3 bba=4 cca=5 ccb=6 def=7
 +     "foo3.", NULL, "foo3", foo3.aa=88, foo3.aa=99)),
 +     "argument 'foo3.aa' for foo3() is duplicated")
 Error : argument 'foo3.aa' for foo3() is duplicated
-Got error as expected from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     NULL, "foo3", foo3.aa = 88, foo3.aa = 99))
+Got expected error from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     NULL, "foo3", foo3.aa = 88, foo3.aa = 99))
 > 
 > test.expand.dotnames(expected=list(foo3.a=88, foo3.aa=99),
 +      "foo3.", NULL, "foo3", foo3.a=88, foo3.aa=99)
 > expect.err(try(plotmo:::call.plot(foo3, foo3.a=88, foo3.aa=99)),
 +      "'a' matches both the 'aaa' and 'aa' arguments of foo3()")
 Error : 'a' matches both the 'aaa' and 'aa' arguments of foo3()
-Got error as expected from try(plotmo:::call.plot(foo3, foo3.a = 88, foo3.aa = 99))
+Got expected error from try(plotmo:::call.plot(foo3, foo3.a = 88, foo3.aa = 99))
 > 
 > expect.err(try(test.expand.dotnames(expected=list(foo3.aaa=99),
 +      "foo3.", NULL, "foo3", foo3.aaa=88, foo3.aaa=99)),
 +      "argument 'foo3.aaa' for foo3() is duplicated")
 Error : argument 'foo3.aaa' for foo3() is duplicated
-Got error as expected from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     NULL, "foo3", foo3.aaa = 88, foo3.aaa = 99))
+Got expected error from try(test.expand.dotnames(expected = list(foo3.aaa = 99), "foo3.",     NULL, "foo3", foo3.aaa = 88, foo3.aaa = 99))
 > 
 > test.expand.dotnames(expected=list(foo3.bbb=88, foo3.bba=99),
 +       "foo3.", NULL, "foo3", foo3.bbb=88, foo3.bba=99)
@@ -642,7 +642,7 @@ foo3(bbb=88, bba=99)
 
 Error in (function (aaa = 1, aa = 2, bb = 3, bba = 4, cca = 5, ccb = 6,  : 
   unused argument (bbb = 88)
-Got error as expected from try(plotmo:::call.plot(foo3, PREFIX = "foo3.", foo3.bbb = 88,     foo3.bba = 99))
+Got expected error from try(plotmo:::call.plot(foo3, PREFIX = "foo3.", foo3.bbb = 88,     foo3.bba = 99))
 > 
 > test.expand.dotnames(expected=list(foo3.bb=88),
 +       "foo3.", NULL, "foo3", foo3.bb=88)
@@ -658,14 +658,14 @@ foo3(bbx=88)
 
 Error in (function (aaa = 1, aa = 2, bb = 3, bba = 4, cca = 5, ccb = 6,  : 
   unused argument (bbx = 88)
-Got error as expected from try(plotmo:::call.plot(foo3, foo3.bbx = 88))
+Got expected error from try(plotmo:::call.plot(foo3, foo3.bbx = 88))
 > 
 > test.expand.dotnames(expected=list(foo3.cc=77),
 +       "foo3.", NULL, "foo3", foo3.cc=77)
 > expect.err(try(plotmo:::call.plot(foo3, foo3.cc=77)),
 +       "'cc' matches both the 'cca' and 'ccb' arguments of foo3()")
 Error : 'cc' matches both the 'cca' and 'ccb' arguments of foo3()
-Got error as expected from try(plotmo:::call.plot(foo3, foo3.cc = 77))
+Got expected error from try(plotmo:::call.plot(foo3, foo3.cc = 77))
 > 
 > # following two directly compare FUNC=NULL to FUNC=foo3
 > test.expand.dotnames(expected=list(foo3.cc=77),
@@ -674,7 +674,7 @@ Got error as expected from try(plotmo:::call.plot(foo3, foo3.cc = 77))
 +            "foo3.", FUNC=foo3, "foo3", foo3.cc=77)),
 +            "'cc' matches both the 'cca' and 'ccb' arguments of foo3()")
 Error : 'cc' matches both the 'cca' and 'ccb' arguments of foo3()
-Got error as expected from try(test.expand.dotnames(expected = NULL, "foo3.", FUNC = foo3,     "foo3", foo3.cc = 77))
+Got expected error from try(test.expand.dotnames(expected = NULL, "foo3.", FUNC = foo3,     "foo3", foo3.cc = 77))
 > 
 > test.expand.dotnames(expected=list(), "foo3.", foo3, "foo3", d=88, de=99)
 > 
@@ -687,7 +687,7 @@ Error : Unnamed arguments are not allowed here
           FORMALS=FORMALS, SCALAR=SCALAR, CALLARGS=function.object,
           CALLER=caller, x=c(1,2,3), y=c(1,2,3))
 
-Got error as expected from try(plotmo:::call.plot(graphics::plot, x = 1:3, y = 1:3, 99))
+Got expected error from try(plotmo:::call.plot(graphics::plot, x = 1:3, y = 1:3, 99))
 > 
 > # test TRACE
 > print(plotmo:::deprefix(FUNC=nchar, PREFIX="foo3.", TRACE=TRUE, FNAME="nchar", allowN=1, b=2, foo3.c=3))
@@ -742,7 +742,7 @@ $c
 > expect.err(try(plotmo:::call.plot(foo3, foo3.d=88, foo3.de=99)),
 +         "'foo3.d' and 'foo3.de' both match the 'def' argument of foo3()")
 Error : 'foo3.d' and 'foo3.de' both match the 'def' argument of foo3()
-Got error as expected from try(plotmo:::call.plot(foo3, foo3.d = 88, foo3.de = 99))
+Got expected error from try(plotmo:::call.plot(foo3, foo3.d = 88, foo3.de = 99))
 > 
 > cat0("=== test stop.if.dots\n")
 === test stop.if.dots
@@ -751,111 +751,111 @@ Got error as expected from try(plotmo:::call.plot(foo3, foo3.d = 88, foo3.de = 9
 > foo3(1) # ok
 > expect.err(try(foo3(10, y=2)), "foo3: unrecognized argument 'y'")
 Error : foo3: unrecognized argument 'y'
-Got error as expected from try(foo3(10, y = 2))
+Got expected error from try(foo3(10, y = 2))
 > expect.err(try(foo3(10, 99)), "foo3: unrecognized unnamed argument\n       The call was foo3(x=10, 99)")
 Error : foo3: unrecognized unnamed argument
        The call was foo3(x=10, 99)
-Got error as expected from try(foo3(10, 99))
+Got expected error from try(foo3(10, 99))
 > expect.err(try(foo3(10, y=plot)), "foo3: unrecognized argument 'y'")
 Error : foo3: unrecognized argument 'y'
-Got error as expected from try(foo3(10, y = plot))
+Got expected error from try(foo3(10, y = plot))
 > expect.err(try(foo3(10, plot)),
 + "foo3: unrecognized unnamed argument\n       The call was foo3(x=10, plot)")
 Error : foo3: unrecognized unnamed argument
        The call was foo3(x=10, plot)
-Got error as expected from try(foo3(10, plot))
+Got expected error from try(foo3(10, plot))
 > 
 > expect.err(try(foo3(20, c(1,2,3), plot)),
 + "foo3: unrecognized unnamed argument\n       The call was foo3(x=20, c(1,2,3), plot)")
 Error : foo3: unrecognized unnamed argument
        The call was foo3(x=20, c(1,2,3), plot)
-Got error as expected from try(foo3(20, c(1, 2, 3), plot))
+Got expected error from try(foo3(20, c(1, 2, 3), plot))
 > 
 > expect.err(try(foo3(20, c(1,2,3,4,5,6,7,8,9,10,11,12), plot)),
 + "foo3: unrecognized unnamed argument\n       The call was foo3(x=20, c(1,2,3,4,5,6,7,8,9,10,11,12), plot)")
 Error : foo3: unrecognized unnamed argument
        The call was foo3(x=20, c(1,2,3,4,5,6,7,8,9,10,11,12), plot)
-Got error as expected from try(foo3(20, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), plot))
+Got expected error from try(foo3(20, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), plot))
 > 
 > # test that we don't crash because we eval the argument
 > expect.err(try(foo3(20, y=stop("stop was called"))), "foo3: unrecognized argument 'y'")
 Error : foo3: unrecognized argument 'y'
-Got error as expected from try(foo3(20, y = stop("stop was called")))
+Got expected error from try(foo3(20, y = stop("stop was called")))
 > expect.err(try(foo3(20, stop("stop was called"))), "foo3: unrecognized unnamed argument")
 Error : foo3: unrecognized unnamed argument
        The call was foo3(x=20, stop("stopwascalled"))
-Got error as expected from try(foo3(20, stop("stop was called")))
+Got expected error from try(foo3(20, stop("stop was called")))
 > expect.err(try(foo3(20, cat("side effect\n"))),
 + "foo3: unrecognized unnamed argument\n       The call was foo3(x=20, cat(")
 Error : foo3: unrecognized unnamed argument
        The call was foo3(x=20, cat("sideeffect\n"))
-Got error as expected from try(foo3(20, cat("side effect\n")))
+Got expected error from try(foo3(20, cat("side effect\n")))
 > foo2 <- function(...)  plotmo:::stop.if.dots(...)
 > foo2() # ok
 > expect.err(try(foo2(y=2)), "foo2: unrecognized argument 'y'")
 Error : foo2: unrecognized argument 'y'
-Got error as expected from try(foo2(y = 2))
+Got expected error from try(foo2(y = 2))
 > expect.err(try(foo2(2)), "foo2: unrecognized unnamed argument\n       The call was foo2(2)")
 Error : foo2: unrecognized unnamed argument
        The call was foo2(2)
-Got error as expected from try(foo2(2))
+Got expected error from try(foo2(2))
 > expect.err(try(foo2(y=plot)), "foo2: unrecognized argument 'y'")
 Error : foo2: unrecognized argument 'y'
-Got error as expected from try(foo2(y = plot))
+Got expected error from try(foo2(y = plot))
 > expect.err(try(foo2(plot)),
 + "foo2: unrecognized unnamed argument\n       The call was foo2(plot)")
 Error : foo2: unrecognized unnamed argument
        The call was foo2(plot)
-Got error as expected from try(foo2(plot))
+Got expected error from try(foo2(plot))
 > 
 > foo2a <- function(funcarg, ...) funcarg(...)
 > expect.err(try(foo2a(function(x=1, ...) plotmo:::stop.if.dots(...), x=1, y=2)), "funcarg: unrecognized argument 'y'")
 Error : funcarg: unrecognized argument 'y'
-Got error as expected from try(foo2a(function(x = 1, ...) plotmo:::stop.if.dots(...), x = 1,     y = 2))
+Got expected error from try(foo2a(function(x = 1, ...) plotmo:::stop.if.dots(...), x = 1,     y = 2))
 > 
 > cat0("=== test warn.if.dots\n")
 === test warn.if.dots
 > 
-> old.warn <- options("warn")
 > options(warn=2) # treat warnings as errors
 > 
 > foo3 <- function(x=1, ...)  plotmo:::warn.if.dots(...)
 > foo3(1) # ok
 > expect.err(try(foo3(1, y=2)), "foo3 ignored argument 'y'")
 Error : (converted from warning) foo3 ignored argument 'y'
-Got error as expected from try(foo3(1, y = 2))
+Got expected error from try(foo3(1, y = 2))
 > expect.err(try(foo3(1, 2)), "foo3 ignored unnamed argument\n       The call was foo3(x=1, 2)")
 Error : (converted from warning) foo3 ignored unnamed argument
        The call was foo3(x=1, 2)
-Got error as expected from try(foo3(1, 2))
+Got expected error from try(foo3(1, 2))
 > expect.err(try(foo3(1, y=plot)), "foo3 ignored argument 'y'")
 Error : (converted from warning) foo3 ignored argument 'y'
-Got error as expected from try(foo3(1, y = plot))
+Got expected error from try(foo3(1, y = plot))
 > # TODO would like to improve this error messsage
 > expect.err(try(foo3(1, plot)),
 + "(converted from warning) foo3 ignored unnamed argument\n       The call was foo3(x=1, plot)")
 Error : (converted from warning) foo3 ignored unnamed argument
        The call was foo3(x=1, plot)
-Got error as expected from try(foo3(1, plot))
+Got expected error from try(foo3(1, plot))
 > foo4 <- function(...)  plotmo:::warn.if.dots(...)
 > foo4() # ok
 > expect.err(try(foo4(y=2)), "foo4 ignored argument 'y'")
 Error : (converted from warning) foo4 ignored argument 'y'
-Got error as expected from try(foo4(y = 2))
+Got expected error from try(foo4(y = 2))
 > expect.err(try(foo4(2)), "foo4 ignored unnamed argument\n       The call was foo4(2)")
 Error : (converted from warning) foo4 ignored unnamed argument
        The call was foo4(2)
-Got error as expected from try(foo4(2))
+Got expected error from try(foo4(2))
 > expect.err(try(foo4(y=plot)), "foo4 ignored argument 'y'")
 Error : (converted from warning) foo4 ignored argument 'y'
-Got error as expected from try(foo4(y = plot))
+Got expected error from try(foo4(y = plot))
 > expect.err(try(foo4(plot)),
 + "(converted from warning) foo4 ignored unnamed argument\n       The call was foo4(plot)")
 Error : (converted from warning) foo4 ignored unnamed argument
        The call was foo4(plot)
-Got error as expected from try(foo4(plot))
+Got expected error from try(foo4(plot))
 > 
-> options(warn=old.warn$warn)
+> options(warn=1)
+> 
 > foo3(1, nonesuch=12, nonesuch2=12, 999) # expect three warnings
 Warning: foo3 ignored argument 'nonesuch'
 Warning: foo3 ignored argument 'nonesuch2'
@@ -891,7 +891,7 @@ Warning: foo3 ignored unnamed argument
 > 
 > expect.err(try(plot1(lmfit, type="pearson")), "'arg' should be one of \"response\", \"terms\"")
 Error in match.arg(type) : 'arg' should be one of "response", "terms"
-Got error as expected from try(plot1(lmfit, type = "pearson"))
+Got expected error from try(plot1(lmfit, type = "pearson"))
 > 
 > # plot2: use prefixed args
 > 

@@ -23,6 +23,7 @@ get.tit <- function() # abbreviated titanic data
 }
 plotmores <- function(object, ..., trace=0, SHOWCALL=TRUE, title.extra="", ncol=2) {
     old.par <- par(no.readonly=TRUE)
+    on.exit(par(old.par))
     par(mfrow=c(2,ncol))
     caption <- paste(deparse(substitute(object)), collapse=" ")
     call <- match.call(expand.dots=TRUE)
@@ -34,7 +35,6 @@ plotmores <- function(object, ..., trace=0, SHOWCALL=TRUE, title.extra="", ncol=
     plotres(object, trace=trace, SHOWCALL=SHOWCALL, do.par=FALSE, which=c(1,3), ...)
     title(paste("\n", call), outer=TRUE)
     plotmo(object, trace=trace, SHOWCALL=SHOWCALL, do.par=FALSE, ...)
-    par(old.par)
 }
 tit <- get.tit()
 set.seed(2015)
@@ -81,6 +81,7 @@ binomial.mod <- glmnet(xx, yy, family="binomial")
 plotmores(binomial.mod, ncol=3)
 binomial.mod.form <- glmnet(yy~., data=dataxy, family="binomial", use.model.frame=TRUE)
 plotmores(binomial.mod.form, ncol=3)
+par(org.par)
 
 printf("======== glmnet family=\"mgaussian\"\n")
 set.seed(2015)
@@ -99,6 +100,7 @@ plot(x=predict(glmnet.mgaussian, newx=xx, s=0)[,1,1],
      pch=20, xlab="Fitted", ylab="Residuals",
      main="Manually calculated residuals, nresponse=1, s=0")
 abline(h=0, col="gray")
+par(org.par)
 
 # # TODO is glmnet mgaussian supported with a formula interface?
 # dataxy <- data.frame(ymultresp, xx)
@@ -106,7 +108,6 @@ abline(h=0, col="gray")
 # glmnet.mgaussian.form <- glmnet(xx, ymultresp, family="mgaussian")
 # plotres(glmnet.mgaussian.form, nresponse=1, SHOWCALL=TRUE, which=c(1:3), do.par=2, info=1)
 
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,3), mar=c(3,3,3,.5), oma=c(0,0,3,0), mgp=c(1.5,0.4,0), tcl=-0.3)
 
 data(trees)
@@ -119,11 +120,11 @@ data.x50 <- data.frame(trees$Volume, x50)
 colnames(data.x50) <- c("Volume",  "Girth", "Height", "Girth12345678901234567890")
 mod.with.long.name.form <- glmnet(Volume~., data=data.x50, use.model.frame=TRUE)
 plotmores(mod.with.long.name.form, ncol=3)
+par(org.par)
 
 #-- make sure that we can work with all families
 
 set.seed(2016)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(3,3), mar=c(3,3,3,1))
 n <- 100
 p <- 4
@@ -138,6 +139,7 @@ for(family in c("gaussian","binomial","poisson")) {
     mod.form <- glmnet(g2~., data.xg2, family=family, use.model.frame=TRUE)
     plotmores(mod.form, xvar="lambda", ncol=3, title.extra=title.extra)
 }
+par(org.par)
 # cox
 library(plotmo)
 n <- 100
@@ -154,6 +156,7 @@ tcens <- rbinom(n=n, prob=.3, size=1)# censoring indicator
 yy <- cbind(time=ty, status=1-tcens) # yy=Surv(ty,1-tcens) with library(survival)
 glmnet.cox <- glmnet(x=x7, y=yy, family="cox")
 plotmores(glmnet.cox, ncol=3, degree1=1:4)
+par(org.par)
 # TODO formula interface not tested for cox models
 
 source("test.epilog.R")

@@ -6,6 +6,7 @@ Loading required package: Formula
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(earth)
+> options(warn=1) # print warnings as they occur
 > data(ozone1)
 > data(etitanic)
 > get.tit <- function()
@@ -54,9 +55,9 @@ Loading required package: TeachingDemos
 -- test basic use of DF
 > rv <- plotmo(earth.form.df.dot, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.dot, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -68,9 +69,9 @@ rv == X passed
 > X1 <- "rubbish"
 > rv <- plotmo(earth.form.df.dot, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.dot, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -84,9 +85,9 @@ rv == X passed
 > # invalid 'envir' argument of type 'character'
 > expect.err(try(plotmo(earth.form.df.dot, trace=100)), "cannot get the original model predictors")
 plotmo trace 100: plotmo(object=earth.form.df.dot, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.dot'
 
 Looked unsuccessfully for the original predictors in the following places:
@@ -98,7 +99,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(earth.form.df.dot, trace = 100))
+Got expected error from try(plotmo(earth.form.df.dot, trace = 100))
 > 
 > # Removed this test because this no longer fails, because we get the formula using formula(object)
 > # printf("-- DF is NULL so will get '.' in formula and no 'data' argument\n")
@@ -115,9 +116,9 @@ Got error as expected from try(plotmo(earth.form.df.dot, trace = 100))
 > DF <- NULL
 > rv <- plotmo(earth.form.df, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~X1+X2, data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df'
 > stopifnot1(rv, X)
 rv == X passed
@@ -130,9 +131,9 @@ rv == X passed
 > # variable lengths differ (found for 'X1')
 > expect.err(try(plotmo(earth.form.df, trace=100)), "cannot get the original model predictors")
 plotmo trace 100: plotmo(object=earth.form.df, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~X1+X2, data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df'
 
 Looked unsuccessfully for the original predictors in the following places:
@@ -144,7 +145,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(earth.form.df, trace = 100))
+Got expected error from try(plotmo(earth.form.df, trace = 100))
 > 
 > printf("-- DF has only one column, so will pick up X1 from it and X2 from global environment\n")
 -- DF has only one column, so will pick up X1 from it and X2 from global environment
@@ -155,9 +156,9 @@ Got error as expected from try(plotmo(earth.form.df, trace = 100))
 > X2[1] <- 98
 > rv <- plotmo(earth.form.df, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~X1+X2, data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df'
 > stopifnot1(rv[1,1], 99)
 rv[1, 1] == 99 passed
@@ -170,9 +171,9 @@ rv[1, 2] == 98 passed
 > earth.form.df <- earth(Y~X1+X2, data=DF)
 > rv <- plotmo(earth.form.df, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~X1+X2, data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df'
 > stopifnot1(rv, X)
 rv == X passed
@@ -184,9 +185,9 @@ rv == X passed
 > DF[1,2] <- 99
 > rv <- plotmo(earth.form.df, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~X1+X2, data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df'
 > stopifnot1(rv[1,1], 99)
 rv[1, 1] == 99 passed
@@ -198,9 +199,9 @@ rv[1, 1] == 99 passed
 > DF <- data.frame(X2=X2, X1=X1)
 > rv <- plotmo(earth.form.df, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~X1+X2, data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df'
 > stopifnot1(rv, X)
 rv == X passed
@@ -214,9 +215,9 @@ rv == X passed
 -- test basic use of DF
 > rv <- plotmo(earth.form.df.keepxy, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.keepxy, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF, keepxy=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.keepxy'
 > stopifnot1(rv, X)
 rv == X passed
@@ -227,9 +228,9 @@ rv == X passed
 > X1 <- "rubbish"
 > rv <- plotmo(earth.form.df.keepxy, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.keepxy, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF, keepxy=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.keepxy'
 > stopifnot1(rv, X)
 rv == X passed
@@ -239,9 +240,9 @@ rv == X passed
 > DF <- "rubbish"
 > rv <- plotmo(earth.form.df.keepxy, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.keepxy, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF, keepxy=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.keepxy'
 > stopifnot1(rv, X)
 rv == X passed
@@ -253,9 +254,9 @@ rv == X passed
 > DF <- NULL
 > rv <- plotmo(earth.form.df.keepxy, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.keepxy, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF, keepxy=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.keepxy'
 > stopifnot1(rv, X)
 rv == X passed
@@ -266,9 +267,9 @@ rv == X passed
 > X1 <- "rubbish"
 > rv <- plotmo(earth.form.df.keepxy, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.keepxy, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF, keepxy=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.keepxy'
 > stopifnot1(rv, X)
 rv == X passed
@@ -279,9 +280,9 @@ rv == X passed
 > earth.form.df.keepxy <- earth(Y~., data=DF, keepxy=TRUE)
 > rv <- plotmo(earth.form.df.keepxy, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.keepxy, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF, keepxy=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.keepxy'
 > stopifnot1(rv, X)
 rv == X passed
@@ -293,9 +294,9 @@ rv == X passed
 > DF[1,2] <- 99
 > rv <- plotmo(earth.form.df.keepxy, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.keepxy, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF, keepxy=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.keepxy'
 > stopifnot1(rv, X)
 rv == X passed
@@ -307,9 +308,9 @@ rv == X passed
 > DF <- data.frame(X2=X2, X1=X1)
 > rv <- plotmo(earth.form.df.keepxy, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df.keepxy, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~., data=DF, keepxy=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df.keepxy'
 > stopifnot1(rv, X)
 rv == X passed
@@ -323,9 +324,9 @@ rv == X passed
 -- test basic use of DF
 > rv <- plotmo(lm.form.df.model.false.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.model.false.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF, model=FALSE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -337,9 +338,9 @@ rv == X passed
 > X1 <- "rubbish"
 > rv <- plotmo(lm.form.df.model.false.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.model.false.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF, model=FALSE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -350,9 +351,9 @@ rv == X passed
 > # invalid 'envir' argument of type 'character'
 > expect.err(try(plotmo(lm.form.df.model.false.with.dot, trace=100)), "cannot get the original model predictors")
 plotmo trace 100: plotmo(object=lm.form.df.model.false.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF, model=FALSE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false.with.dot'
 
 Looked unsuccessfully for the original predictors in the following places:
@@ -364,7 +365,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(lm.form.df.model.false.with.dot, trace = 100))
+Got expected error from try(plotmo(lm.form.df.model.false.with.dot, trace = 100))
 > 
 > printf("-- DF is NULL so will pick up X1 with same values from global environment\n")
 -- DF is NULL so will pick up X1 with same values from global environment
@@ -373,9 +374,9 @@ Got error as expected from try(plotmo(lm.form.df.model.false.with.dot, trace = 1
 > DF <- NULL
 > rv <- plotmo(earth.form.df, trace=100)
 plotmo trace 100: plotmo(object=earth.form.df, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=Y~X1+X2, data=DF)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.form.df'
 > stopifnot1(rv, X)
 rv == X passed
@@ -389,9 +390,9 @@ rv == X passed
 > # variable lengths differ (found for 'X1')
 > expect.err(try(plotmo(lm.form.df.model.false, trace=100)), "cannot get the original model predictors")
 plotmo trace 100: plotmo(object=lm.form.df.model.false, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~X1+X2, data=DF, model=FALSE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false'
 
 Looked unsuccessfully for the original predictors in the following places:
@@ -403,7 +404,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(lm.form.df.model.false, trace = 100))
+Got expected error from try(plotmo(lm.form.df.model.false, trace = 100))
 > 
 > printf("-- sanity check, make sure we are back to normal\n")
 -- sanity check, make sure we are back to normal
@@ -411,9 +412,9 @@ Got error as expected from try(plotmo(lm.form.df.model.false, trace = 100))
 > lm.form.df.model.false <- lm(Y~X1+X2, data=DF, model=FALSE)
 > rv <- plotmo(lm.form.df.model.false, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.model.false, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~X1+X2, data=DF, model=FALSE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false'
 > stopifnot1(rv, X)
 rv == X passed
@@ -425,9 +426,9 @@ rv == X passed
 > DF[1,2] <- 99
 > rv <- plotmo(lm.form.df.model.false, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.model.false, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~X1+X2, data=DF, model=FALSE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false'
 > stopifnot1(rv[1,1], 99)
 rv[1, 1] == 99 passed
@@ -439,9 +440,9 @@ rv[1, 1] == 99 passed
 > DF <- data.frame(X2=X2, X1=X1)
 > rv <- plotmo(lm.form.df.model.false, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.model.false, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~X1+X2, data=DF, model=FALSE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false'
 > stopifnot1(rv, X)
 rv == X passed
@@ -455,9 +456,9 @@ rv == X passed
 -- test basic use of DF
 > rv <- plotmo(lm.form.df.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -469,9 +470,9 @@ rv == X passed
 > X1 <- "rubbish"
 > rv <- plotmo(lm.form.df.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -481,9 +482,9 @@ rv == X passed
 > DF <- "rubbish"
 > rv <- plotmo(lm.form.df.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -495,9 +496,9 @@ rv == X passed
 > DF <- NULL
 > rv <- plotmo(lm.form.df.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -508,9 +509,9 @@ rv == X passed
 > X1 <- "rubbish"
 > rv <- plotmo(lm.form.df.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -521,9 +522,9 @@ rv == X passed
 > lm.form.df.with.dot <- lm(Y~., data=DF)
 > rv <- plotmo(lm.form.df.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -535,9 +536,9 @@ rv == X passed
 > DF[1,2] <- 99
 > rv <- plotmo(lm.form.df.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -549,9 +550,9 @@ rv == X passed
 > DF <- data.frame(X2=X2, X1=X1)
 > rv <- plotmo(lm.form.df.with.dot, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.with.dot, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.with.dot'
 > stopifnot1(rv, X)
 rv == X passed
@@ -565,9 +566,9 @@ rv == X passed
 -- test basic use of DF
 > rv <- plotmo(lm.form.df.model.false.x.true, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.model.false.x.true, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF, model=FALSE, x=TRUE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false.x.true'
 > stopifnot1(rv, X)
 rv == X passed
@@ -577,9 +578,9 @@ rv == X passed
 > DF <- "rubbish"
 > rv <- plotmo(lm.form.df.model.false.x.true, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.model.false.x.true, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF, model=FALSE, x=TRUE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false.x.true'
 > stopifnot1(rv, X)
 rv == X passed
@@ -593,9 +594,9 @@ rv == X passed
 > lm.form.df.model.false.x.true[["x"]] <- "nonesuch"
 > expect.err(try(plotmo(lm.form.df.model.false.x.true, trace=100)), "cannot get the original model predictors")
 plotmo trace 100: plotmo(object=lm.form.df.model.false.x.true, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF, model=FALSE, x=TRUE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false.x.true'
 Warning: object$x may be corrupt
 
@@ -608,7 +609,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: less than three rows
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(lm.form.df.model.false.x.true, trace = 100))
+Got expected error from try(plotmo(lm.form.df.model.false.x.true, trace = 100))
 > 
 > printf("-- test ok with $x trashed but DF ok\n") # although with trace!=100 will get downstream failures in predict.lm, that's ok
 -- test ok with $x trashed but DF ok
@@ -617,9 +618,9 @@ Got error as expected from try(plotmo(lm.form.df.model.false.x.true, trace = 100
 > # Warning: object$x may be corrupt
 > rv <- plotmo(lm.form.df.model.false.x.true, trace=100)
 plotmo trace 100: plotmo(object=lm.form.df.model.false.x.true, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF, model=FALSE, x=TRUE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false.x.true'
 Warning: object$x may be corrupt
 > stopifnot1(rv, X)
@@ -627,19 +628,19 @@ rv == X passed
 > 
 > printf("-- test \"warning: object$x may be corrupt\", same as above but set options(warn=2)\n")
 -- test "warning: object$x may be corrupt", same as above but set options(warn=2)
-> old.warn <- options(warn=2)
+> options(warn=2)
 > get.data()
 > lm.form.df.model.false.x.true[["x"]] <- "nonesuch"
 > # Warning: object$x may be corrupt
 > expect.err(try(plotmo(lm.form.df.model.false.x.true, trace=100)), "x may be corrupt")
 plotmo trace 100: plotmo(object=lm.form.df.model.false.x.true, trace=100)
+--get.model.env for object with class lm
 object call is lm(formula=Y~., data=DF, model=FALSE, x=TRUE)
---get.model.env for lm object
-using the environment saved with the lm model: R_GlobalEnv
+using the environment saved in $terms of the lm model: R_GlobalEnv
 --plotmo_prolog for lm object 'lm.form.df.model.false.x.true'
 Error : (converted from warning) object$x may be corrupt
-Got error as expected from try(plotmo(lm.form.df.model.false.x.true, trace = 100))
-> options(warn=old.warn[[1]])
+Got expected error from try(plotmo(lm.form.df.model.false.x.true, trace = 100))
+> options(warn=1)
 > stopifnot1(rv, X)
 rv == X passed
 > 
@@ -654,18 +655,18 @@ rv == X passed
 > x.earth.survived.vs.pclass <- plotmo(earth.survived.vs.pclass, trace=100, linpreds=TRUE)
 plotmo trace 100: plotmo(object=earth.survived.vs.pclass, trace=100,
                          linpreds=TRUE)
+--get.model.env for object with class earth
 object call is earth(formula=survived~pclass, data=tit1, linpreds=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.survived.vs.pclass'
 > stopifnot(is.factor(x.earth.survived.vs.pclass[[1]]))
 > 
 > earth.survived.vs.char.pclass <- earth(survived~char.pclass, data=tit1)
 > x.earth.survived.vs.char.pclass <- plotmo(earth.survived.vs.char.pclass, trace=100)
 plotmo trace 100: plotmo(object=earth.survived.vs.char.pclass, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=survived~char.pclass, data=tit1)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'earth.survived.vs.char.pclass'
 > stopifnot(is.factor(x.earth.survived.vs.char.pclass[[1]]))
 > 
@@ -675,18 +676,18 @@ using the environment saved with the earth model: R_GlobalEnv
 > x.lm.survived.vs.pclass <- plotmo(lm.survived.vs.pclass, trace=100, linpreds=TRUE)
 plotmo trace 100: plotmo(object=lm.survived.vs.pclass, trace=100,
                          linpreds=TRUE)
+--get.model.env for object with class earth
 object call is earth(formula=survived~pclass, data=tit1, linpreds=TRUE)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'lm.survived.vs.pclass'
 > stopifnot(is.factor(x.lm.survived.vs.pclass[[1]]))
 > 
 > lm.survived.vs.char.pclass <- earth(survived~char.pclass, data=tit1)
 > x.lm.survived.vs.char.pclass <- plotmo(lm.survived.vs.char.pclass, trace=100)
 plotmo trace 100: plotmo(object=lm.survived.vs.char.pclass, trace=100)
+--get.model.env for object with class earth
 object call is earth(formula=survived~char.pclass, data=tit1)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'lm.survived.vs.char.pclass'
 > stopifnot(is.factor(x.lm.survived.vs.char.pclass[[1]]))
 > 

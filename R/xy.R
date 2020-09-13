@@ -21,7 +21,7 @@
 
 plotmo_x <- function(object, trace, stringsAsFactors=TRUE)
 {
-    trace2(trace, "--plotmo_x for %s object\n", class(object)[1])
+    trace2(trace, "--plotmo_x for %s object\n", class.as.char(object))
 
     x <- plotmo.x(object, trace)
 
@@ -46,7 +46,7 @@ plotmo_x <- function(object, trace, stringsAsFactors=TRUE)
             trace2(trace, "to yield x[%d,%d]\n", NROW(x), NCOL(x))
         }
     }
-    colnames(x) <- gen.colnames(x, "x", "x", trace, xname="x")
+    colnames(x) <- gen.colnames(x, "x", "x", trace)
     print_summary(x, "plotmo_x returned", trace)
     x
 }
@@ -76,8 +76,8 @@ plotmo_y <- function(object, nresponse=NULL, trace=0,
 {
     trace2(trace, "--plotmo_y with nresponse=%s for %s object\n",
            if(is.null(nresponse)) "NULL" else format(nresponse),
-           class(object)[1])
-    y <- plotmo.y(object, trace, naked=is.null(nresponse), expected.len, nresponse)
+           class.as.char(object))
+    y <- plotmo.y(object, trace, naked=FALSE, expected.len, nresponse)
     do.subset <- TRUE
     # plotmo.y.default returns list(field, do.subset), so handle that
     if(is.list(y) && !is.data.frame(y) && !is.null(y$do.subset)) {
@@ -124,7 +124,7 @@ get.x.or.y <- function(
     try.object.x.or.y=TRUE, # FALSE if object[[field]] should be ignored
     argn=0,                 # if nonzero, consider argument nbr argn of the model call
     nrows.argn=NULL,        # expected NROWS of argument argn
-    naked)                  # TRUE for columns like "x3" not "ns(x3,4)"
+    naked=TRUE)             # TRUE to return colnames like "x3" not "ns(x3,4)"
 {
     ret.good.field <- function(x, do.subset=TRUE, source)
     {
@@ -145,7 +145,7 @@ get.x.or.y <- function(
 
     # try using object$x (where x is actually x or y throughout this file)
 
-    object.x <- get.object.x.or.y(object, field, trace, try.object.x.or.y, naked)
+    object.x <- get.object.x.or.y.field(object, field, trace, try.object.x.or.y, naked)
     # object.x is object$x or NULL or an err msg
     if(is.good.data(object.x))
         return(ret.good.field(object.x, FALSE, sprint("object$%s", field)))
@@ -158,14 +158,18 @@ get.x.or.y <- function(
 
     temp <- get.x.or.y.from.model.frame(object, field, trace, naked)
         model.frame.x <- temp$x
-        do.subset     <- temp$do.subset
+        do.subset     <- temp$do.subset # TRUE when newdata is NULL
         source        <- temp$source
 
     # model.frame.x is now x or y or NULL or an err msg
     if(is.good.data(model.frame.x)) {
-        model.frame.x <-
-            cleanup.x.or.y(object, model.frame.x, field, trace,
-                           check.naked=naked && field != "y")
+        formula.as.char <- paste.collapse(format(temp$formula))
+        if(naked && grepl("\`", formula.as.char)) { # exception for hinge funcs etc
+            trace2(trace, "setting check.naked=FALSE because backtick in formula\n")
+            naked <- FALSE
+        }
+        model.frame.x <- cleanup.x.or.y(object, model.frame.x, field, trace,
+                                        check.naked=naked && field != "y")
         if(!is.errmsg(model.frame.x))
             return(ret.good.field(model.frame.x, do.subset, source))
     }
@@ -262,7 +266,7 @@ trace.data <- function(good, has.colnames,
         if(good && has.colnames) {
             sprint(" and has column name%s %s",
                    if(length(colnames(x)) == 1) "" else "s",
-                   paste.trunc(colnames(x)))
+                   paste.trunc(colnames(x), maxlen=100))
         } else if(good)
             sprint(" but without colnames %s",
                    if(check.colnames) "so we will keep on searching"
@@ -343,11 +347,20 @@ format.err.field <- function(x, xname, trace=0)
 # Return x (or y) or NULL or an error message.
 #
 # The approach taken in all helper routines for get.x.or.y
-# (such as get.object.x.or.y) is that we issue trace messages
+# (such as get.object.x.or.y.field) is that we issue trace messages
 # here in the helper routine, and the caller silently checks
 # the returned value for good data.
+#
+# For a model with a formula, the standard  path is to apply the
+# naked formula to the data using model.frame().
+# Example with argument field="x":
+#
+#   formula(object)    resp~num + sqrt(num) + bool + ord:num + fac
+#   naked formula      resp~num + bool + ord + fac
+#   data colnames      resp bool ord fac str num nx int date
+#   returned colnames  num bool ord fac
 
-get.object.x.or.y <- function( # get object$x or object$y
+get.object.x.or.y.field <- function( # get object$x or object$y
     object,                 # the model
     field,                  # "x" or "y"
     trace,
@@ -358,7 +371,7 @@ get.object.x.or.y <- function( # get object$x or object$y
     x <- NULL
     xname <- sprint("object$%s", field) # for tracing
     if(!try.object.x.or.y) # e.g. we must ignore object$x for mda::mars models
-        trace2(trace, "ignoring %s for this %s object\n", xname, class(object)[1])
+        trace2(trace, "ignoring %s for this %s object\n", xname, class.as.char(object))
     else {
         # note we use object[["x"]] rather than object$x to prevent partial
         # matching (but the error messages use object$x for readability)
@@ -484,7 +497,7 @@ get.argn.from.call.aux <- function(argn, object, field, trace, nrows.argn)
     list(x=x, argn=argn)
 }
 # If object has a formula, use that formula to get x or y (field is "x" or "y").
-# Returns list(x, do.subset, source) where x may be an err msg and source
+# Returns list(x, do.subset, form.as.char, source) where x may be an err msg and source
 # is a string describing where we got the data from (only used if no err msg).
 
 get.x.or.y.from.model.frame <- function(object, field, trace, naked,
@@ -492,34 +505,31 @@ get.x.or.y.from.model.frame <- function(object, field, trace, naked,
 {
     ret <- function(...)  # ... is an err msg in printf form
     {
-        err.msg <- sprint(...)
-        trace2(trace, "%s\n", err.msg)
-        list(x=err.msg, do.subset=FALSE, source="model frame")
+        errmsg <- sprint(...)
+        trace2(trace, "%s\n", errmsg)
+        list(x=errmsg, do.subset=FALSE, formula=NULL, source="model frame")
     }
     #--- get.x.or.y.from.model.frame starts here
     stopifnot(field == "x" || field == "y")
     trace2(trace, "\nget.%s.from.model.frame:\n", field)
-    temp <- get.model.frame(object, field, trace, naked, na.action, newdata)
-    if(!is.good.data(temp$x))
-        return(temp)
-    model.frame <- temp$x
-    do.subset   <- temp$do.subset
-    source      <- temp$source
-    isFormula   <- temp$isFormula
+    mf <- get.model.frame(object, field, trace, naked, na.action, newdata)
+    if(!is.good.data(mf$x))
+        return(mf)
+    model.frame <- mf$x
     if(field == "x") {
         # Check if any vars have $ in their name, this confuses predict() later.
         # They cause "Error in model.frame.default: variable lengths differ"
         # or "newdata had 50 rows but variables found have 330 rows"
         ibad <- grep("[._[:alnum:]]\\$", colnames(model.frame))
         if(any(ibad)) {
-            warnf("%s: \"$\" in colnames(model.frame) is not allowed by plotmo, %s",
+            warnf("%s: \"$\" in colnames(model.frame) is not supported by plotmo, %s",
                   colnames(model.frame)[ibad[1]],
                   "will try to get the data elsewhere")
             return(ret("\"$\" in colnames(model.frame)"))
         }
     }
     # got the model.frame, now get the column index(s) of the response in the model.frame
-    iresponse.col <- get.iresponse.col(object, model.frame, isFormula,
+    iresponse.col <- get.iresponse.col(object, model.frame, mf$isFormula,
                             trace=if(field=="y") trace else 0) # reduce number of msgs
     if(field == "x") {
         # drop the response column(s)
@@ -533,7 +543,7 @@ get.x.or.y.from.model.frame <- function(object, field, trace, naked,
         if(!is.good.data(x, sprint("y=model.frame[,%s]", paste.c(iresponse.col)), trace))
             return(ret("invalid model.frame[,iresponse]"))
     }
-    list(x=x, do.subset=do.subset, source=source)
+    list(x=x, do.subset=mf$do.subset, formula=mf$formula, source=mf$source)
 }
 # The following is derived from stats::model.frame.default but tries to
 # also handle models that didn't save the terms etc. in a standard way.
@@ -542,22 +552,26 @@ get.x.or.y.from.model.frame <- function(object, field, trace, naked,
 # We will use the given na.action.  But if na.action="auto" then get
 # na.action from the model itself, and do a little special handling.
 #
-# Returns list(x, do.subset, source) where x may be an err msg and source
-# is a string describing where we got the data from (only used if no err msg).
+# Returns list(x, do.subste, formula, source, isFormula)
+#   where x may be an err msg
+#   source s a string describing where we got the data from (only used if no err msg)
 
 get.model.frame <- function(object, field, trace, naked,
-                                       na.action="auto", newdata=NULL)
+                            na.action="auto", newdata=NULL)
 {
-    ret <- function(x, do.subset=FALSE, isFormula=FALSE, source="model frame")
+    ret <- function(x, do.subset=FALSE, formula=NULL,
+                    source="model frame", isFormula=FALSE)
     {
-        list(x=x, do.subset=do.subset, isFormula=isFormula, source=source)
+        list(x=x, do.subset=do.subset, formula=formula,
+             source=source, isFormula=isFormula)
     }
     #--- get.model.frame starts here
     # get.model.formula returns a Formula or formula with an environment, or an error string
-    formula <- get.model.formula(object, trace, naked)
+    modform <- get.model.formula(object, trace, naked)
+    formula <- modform$formula
     if(is.errmsg(formula))
         return(ret(formula)) # return errmsg
-    isFormula <- inherits(formula, "Formula")
+    isFormula <- inherits(formula, "Formula") # Formula vs formula
     trace2(trace, "formula is valid, now looking for data for the model.frame\n")
     if(!is.null(newdata)) {
         if(!is.good.data(newdata, "newdata", trace))
@@ -574,11 +588,11 @@ get.model.frame <- function(object, field, trace, naked,
             x <- x[, which(colnames(x) != "(weights)"), drop=FALSE]
             if(trace >= 3)
                 print_summary(x, "model.frame", trace)
-            # Note that we call check.naked even when the naked=FALSE.  Not
-            # essential, but gives more consistency so we select the same object$x,
+            # Note that we call check.naked even when the naked=FALSE.
+            # Not essential, but gives more consistency so we select the same object$x,
             # getCall(object), or etc. regardless of whether naked is set or clear.
             if(is.null(check.naked(x, "object$model", trace))) # good object$model?
-                return(ret(x, FALSE, isFormula, "object$model"))
+                return(ret(x, FALSE, formula, "object$model", isFormula))
         }
         temp <- get.data.for.model.frame(object, trace)
             data        <- temp$data
@@ -607,9 +621,9 @@ get.model.frame <- function(object, field, trace, naked,
         trace2(trace, "na.action(object) is %s\n", as.char(na.action))
     }
     if(!is.function(na.action) && !is.character(na.action)) {
-        err.msg <- sprint("bad na.action: %s", as.char(na.action))
-        trace2(trace, "%s\n", err.msg)
-        return(ret(err.msg))
+        errmsg <- sprint("bad na.action: %s", as.char(na.action))
+        trace2(trace, "%s\n", errmsg)
+        return(ret(errmsg))
     }
     if(trace >= 3) {
         printf("model.env is %s\n", environment.as.char(model.env(object)))
@@ -620,31 +634,27 @@ get.model.frame <- function(object, field, trace, naked,
         else if(is.null(data))   "NULL"
         else                     data.source
 
-    model.frame.string <-
-        sprint("model.frame(%s, data=%s, na.action=%s)",
-            paste.trunc(strip.space(format(formula)), maxlen=40), data.source,
-            trunc.deparse(na.action))
+    mfcall.as.char <- sprint("model.frame(%s, data=%s, na.action=%s)",
+                             paste.trunc(modform$form.as.char, maxlen=40),
+                             data.source, trunc.deparse(na.action))
 
-    trace2(trace, "stats::%s\n", model.frame.string)
+    trace2(trace, "stats::%s\n", mfcall.as.char)
 
     x <- try(do.call(stats::model.frame, # calls model.frame.default
                      args=list(formula=formula, data=data, na.action=na.action)),
             silent=trace < 2)
 
-    # if(trace < 2 && trace.call.global >= 1 && field == "y" &&
-    #         is.good.data(x, xname=field, trace=0))
-    #     printf("%s\n", model.frame.string)
-
     if(trace >= 3)
         print_summary(x, "model.frame returned", trace)
-    ret(x, if(is.null(newdata)) TRUE else FALSE, isFormula, model.frame.string)
+
+    ret(x, if(is.null(newdata)) TRUE else FALSE, formula, mfcall.as.char, isFormula)
 }
 get.data.for.model.frame <- function(object, trace)
 {
-    ret <- function(err.msg, data=NULL, source="model frame")
+    ret <- function(errmsg, data=NULL, source="model frame")
     {
-        if(!is.null(err.msg))
-            trace2(trace, "%s\n", err.msg)
+        if(!is.null(errmsg))
+            trace2(trace, "%s\n", errmsg)
         list(data=data, source=source)
     }
     # try object$data e.g. earth models with formula and keepxy=T
@@ -797,9 +807,9 @@ get.model.formula <- function(object, trace, naked)
 {
     ret <- function(...)      # ... is an err msg in printf form
     {
-        s <- sprint(...)
-        trace2(trace, "%s\n", s)
-        s
+        errmsg <- sprint(...)
+        trace2(trace, "%s\n", errmsg)
+        list(formula=errmsg, form.as.char="formula")
     }
     #--- get.model.formula starts here
     # try getting the formula from the terms field (object used formula)
@@ -809,10 +819,10 @@ get.model.formula <- function(object, trace, naked)
     else if(is.try.err(terms))
         trace2(trace, "terms(object) did not return the terms, will look for the formula elsewhere\n")
     else { # object has a valid terms field
-        # TODO ask Formula package people to extend
+        # TODO Sep 2020 ask Formula package people to extend
         # (currently only earth supports attr(terms, "Formula") and "Response"
         form <- attr(terms, "Formula")
-        isFormula <- !is.null(form)
+        isFormula <- !is.null(form) # "Formula" vs "formula"
         if(isFormula) {
             trace1(trace, "object created with Formula (not formula): using attr(terms, \"Formula\")\n")
             form <- formula.as.char.with.check(form, "attr(terms, \"Formula\")", trace)
@@ -825,8 +835,8 @@ get.model.formula <- function(object, trace, naked)
         # if there was a $ in the form.as.char there is no point in looking at the call
         # formula, so to avoid issuing the same warning twice, we return
         # immediately here
-        if(grepl("\"$\"", form$err.msg, fixed=TRUE))
-            return(ret(form$err.msg))
+        if(grepl("\"$\"", form$errmsg, fixed=TRUE))
+            return(ret(form$errmsg))
     }
     # try getting the formula from getCall(object)
     call <- object[["call"]]
@@ -847,7 +857,7 @@ get.model.formula <- function(object, trace, naked)
     form <- eval(call[[iform]], model.env(object))
     form <- formula.as.char.with.check(form, form.name, trace)
     if(is.null(form$form.as.char))
-        return(ret(form$err.msg))
+        return(ret(form$errmsg))
     # TODO More classes could be added to the following assignment to isFormula
     # (and remember we can only get here if object doesn't have a terms field,
     # and I believe the objects below do in fact have a terms field)
@@ -860,9 +870,9 @@ formula.as.char.with.check <- function(form, form.name, trace)
 {
     ret.null <- function(...) # ... is an err msg in printf form
     {
-        err.msg <- sprint(...)
-        trace2(trace, "%s\n", err.msg)
-        list(formula=NULL, err.msg=err.msg)
+        errmsg <- sprint(...)
+        trace2(trace, "%s\n", errmsg)
+        list(form.as.char=NULL, errmsg=errmsg)
     }
     if(is.try.err(form))
         return(ret.null("%s did not return a formula", form.name))
@@ -872,23 +882,23 @@ formula.as.char.with.check <- function(form, form.name, trace)
             !(is.character(form) && length(form) == 1))
         return(ret.null("%s is not a formula or Formula (its class is \"%s\")",
                form.name, class(form)[1]))
-    form.as.char <- strip.space(paste.collapse(format(form)))
+    form.as.char <- paste.collapse(format(form))
     trace2(trace, "%s is %s\n", form.name, paste.trunc(form.as.char))
     if(!grepl("[^ \t]+.*~", form.as.char))
         return(ret.null("%s has no response",  form.name))
     # Check if any vars have $ in their name, this confuses predict() later.
-    # TODO following comments are no longer accurate?
+    # TODO Following comments are no longer accurate?
     # We do this check in get.x.or.y.from.model.frame but pre-emptively also here
     # (where we have the formula) for a slightly more informative error message.
     # (The other message kicks in if we get the model.frame from object$model.)
-    rhs <- gsub(".*~", "", form.as.char)
+    rhs <- gsub(".*~ *", "", form.as.char)
     if(grepany("[._[:alnum:]]\\$", rhs)) { # check for "ident$"
-        warnf("%s: \"$\" in the formula is not allowed by plotmo, %s",
-              gsub("([+~])", " \\1 ", rhs),
-              "will try to get the data elsewhere")
+        warnf("\"$\" in the formula is not supported by plotmo, %s\n         formula: %s",
+              "will try to get the data elsewhere",
+              rhs)
         return(ret.null("%s: \"$\" in formula is not allowed", form.name))
     }
-    list(form.as.char=form.as.char, err.msg=NULL)
+    list(form.as.char=form.as.char, errmsg=NULL)
 }
 # Return a formula with an environment.  Also process naked.
 # TODO this includes Height in Volume~Girth-Height, it shouldn't
@@ -897,14 +907,8 @@ process.formula <- function(object, form.as.char, isFormula, trace, naked)
 {
     stopifnot(is.character(form.as.char))
     stopifnot(length(form.as.char) == 1)
-    if(naked) {
-        old.form.as.char <- form.as.char
-        form.as.char <- naken.formula.string(form.as.char)
-        trace2(trace, if(form.as.char == old.form.as.char)
-                        "naked formula is the same\n" # e.g. O3~vh+wind
-                      else
-                        "naked formula is %s\n", form.as.char)
-    }
+    if(naked)
+        form.as.char <- naken.formula.string(form.as.char, trace)
     form <- try(formula(form.as.char, env=model.env(object)), silent=TRUE)
     if(isFormula && !is.try.err(form))
         form <- try(Formula::Formula(form))
@@ -918,107 +922,59 @@ process.formula <- function(object, form.as.char, isFormula, trace, naked)
         trace2(trace, "%s\n", form)
         form <- sprint("Error : %s", form)
     }
-    form
+    list(formula=form, form.as.char=form.as.char)
 }
 # Given a formula (as string), return a string with the "naked" predictors.
+# This is used for getting the data to pass to predict.
 #
-# Example: log(y) ~ x9 + ns(x2,4) + s(x3,x4,df=4) + x5:sqrt(x6)
-# becomes: log(y) ~ x9 + x2 + x3 + x4 + x5 + x6   (but with no spaces)
+# Example: log(y) ~ x9+ns(x2,4) + s(x3,x4,df=4) + x5:sqrt(x6)
+# becomes: log(y) ~ x9 + x2 + x3 + x4 + x5 + x6
 # which will later result in a model.matrix with columns x9 x2 x3 x4 x5 x6.
 #
 # Note that we don't naken the response (so for
 # example in the above log(y) remains unchanged).
 #
 # This routine is not infallible but works for the commonly used formulas.
-# It's a hack that should be replaced with something that uses the parse tree.
-#
-# TODO this sometimes returns a string with "++" in it
+# It's a hack that relies on regular expressions.
 
-naken.formula.string <- function(form.as.char)
+naken.formula.string <- function(form.as.char, trace)
 {
     stopifnot(is.character(form.as.char))
-
-    form.as.char <- strip.space(paste.collapse(form.as.char))
-    args <- gsub(".*~", "", form.as.char)         # extract everything after ~
-    args <- naken(args)
-
-    response <- ""
+    form.as.char <- paste.collapse(form.as.char)
+    old.form.as.char <- form.as.char
+    naked <- gsub(".*~", "", form.as.char)          # extract everything after ~
+    naked <- naken.collapse(naked, warn.if.minus=TRUE)
     if(grepl("~", form.as.char)) {
-        response <- gsub("~.*", "", form.as.char) # extract up to the ~
+        response <- gsub("~.*", "", form.as.char)   # extract up to the ~
+        response <- gsub("^ +| +$", "", response)   # trim leading and trailing spaces
         if(nchar(response))
-            response <- paste0(strip.space(response), "~")
+            response <- paste0(response, " ~")
+        naked <- paste.collapse(response, naked)
     }
-    strip.space(paste.collapse(response, args))
-}
-naken <- function(s) # e.g. "s(x3,x4,df=4)" becomes "x3+x4"
-{
-    s <- paste.collapse(strip.space(s))
-
-    # We don't want to mess with anything in [square brackets].
-    # So we replace the bracketed expression with "#BRACKETS#",
-    # and then replace that back again at the end.
-    # Needed for e.g. lm(trees[,3]~trees[,1:2])
-
-    brackets <- replace.brackets("\\[.*\\]", "#BRACKETS#", s)
-    s <- brackets$s
-
-    s <- gsub("[-*/:]", "+", s)                 # replace - / * : with +
-
-    # next two gsubs allow us to retain "x=x1" but drop "df=99" from "bs(x=x1, df=99)"
-
-    s <- gsub("\\(._$[[:alnum:]]+=", "(", s)    # replace "(ident=" with "("
-    s <- gsub("[._$[:alnum:]]+=[^,)]+", "", s)  # delete "ident=any"
-
-    # replace ",ident" with ")+f(ident", thus "s(x0,x1)" becomes "s(x0)f(x1)"
-
-    s <- gsub(",([._$[:alpha:]])", ")+f(\\1", s)
-
-    if(grepl("[._$[:alnum:]]*[(]", s)) {
-        s <- gsub("[._$[:alnum:]]*[(]", "", s)  # replace ident(
-        s <- gsub("[,)][^+-]*", "", s)          # remove remaining ",arg1,arg2)"
-    }
-    # s is now something like x1+x2, split it on "+" for further processing
-
-    s <- strsplit(s, "+", fixed=TRUE)[[1]]
-    s <- unique(s) # remove duplicates
-    # remove numbers e.g. sin(x1*x2/12) is nakened to x1+x1+12, we don't want the 12
-    is.num <- sapply(s, function(x) grepl("^([0-9]|\\.[0-9])", x))
-    # but keep the intercept if there is one
-    which1 <- which(s == "1")
-    is.num[which1] <- FALSE
-    s <- paste0(s[!is.num], collapse="+")
-
-    sub("#BRACKETS#",  brackets$brackets, s) # change #BRACKETS# back to what it was
-}
-replace.brackets <- function(pattern, place.holder, s) # utility for naken
-{
-    brackets <- ""
-    i <- regexpr(pattern, s)
-    if(i > 0) {
-        last <- i + attr(i,"match.length") - 1
-        stopifnot(last > i)
-        brackets <- substr(s, i, last)          # remember the bracketed expression
-        s <- paste0(substr(s, 1, i-1), place.holder, substring(s, last+1))
-                                                # replace [.*] with #BRACKETS#
-    }
-    return(list(s=s, brackets=brackets))
+    trace2(trace,
+           if(strip.space(naked) == strip.space(old.form.as.char))
+               "naked formula is the same\n" # e.g. O3~vh+wind
+           else
+               "naked formula is %s\n", naked)
+    naked
 }
 is.naked <- function(colnames) # returns a logical vector
 {
     naked <- logical(length(colnames))
     for(i in seq_len(length(colnames))) {
         colname <- strip.space(colnames[i])
-        naked[i] <- colname == naken(colname)
+        naked[i] <- colname == naken.collapse(colname)
     }
     naked
 }
 # Return an err msg if colnames(x) is not "naked".
 # Return NULL if everything is ok.
 #
-# Example:
+# Example: in lm(Volume~poly(Height, degree=3), data=trees, x=T),
 #   object$x, object$data, and object$model have
 #   colnames like "poly(Height, degree = 3)1"
-#   for lm(Volume~poly(Height, degree=3), data=trees, x=T)
+#   where plotmo (actually model.frame.default) gives "Error: object 'x1' not found"
+#   unless we preempt that obscure error message here.
 
 check.naked <- function(x, xname, trace)
 {
@@ -1087,14 +1043,16 @@ handle.nonvector.vars <- function(object, x, field, trace)
 {
     if(!is.data.frame(x))
         return(x)
+
     ndims.of.each.var <- sapply(x, function(x) NCOL(x))
     if(all(ndims.of.each.var == 1)) {
         # we are ok: NCOL is 1 for all variables (even though some
         # may not be vectors i.e. they could be single column mats)
         return(x)
     }
-    msg <- sprint(
-        "%s variable on the %s side of the formula is a matrix or data.frame",
+    format <- paste0("%s variable on the %s side of the formula is a matrix or data.frame\n",
+                     "         plotmo often cannot process such variables")
+    msg <- sprint(format,
         if(ncol(x) == 1) "the" else "a",
         if(field == "x") "right" else "left")
 
@@ -1192,8 +1150,8 @@ convert.glm.response.factor <- function(object, y, trace)
     if(!is.nomial(object)) {
         # e.g. rpart(formula=Kyphosis~., data=kyphosis)
         trace2(trace,
-            "the response is a factor but could not get the family of the \"%s\" model\n",
-            class(object)[1])
+            "the response is a factor but could not get the family of the %s model\n",
+            class.as.char(object))
     } else {
         # e.g. glm(formula=sex~., family=binomial, data=etitanic)
         if(!is.null(dim(y)))  {  # data.frame or matrix

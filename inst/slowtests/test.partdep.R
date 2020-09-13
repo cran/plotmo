@@ -18,6 +18,7 @@ set.seed(2016)
 plotmo(mod, pmethod="apartdep", ylim=c(0,1), do.par=0,
        type2="image", pt.col=ifelse(etitanic$survived, "green", "red"),
        degree1=0, degree2=1:3)
+par(org.par)
 
 # compare to gbm with an artifical function of variables with a very strong interaction
 library(gbm)
@@ -34,7 +35,6 @@ mod <- gbm(y~., data=data, n.trees=n.trees, shrinkage=.1,
            distribution="gaussian", interact=5)
 plotmo(mod, degree1=0, persp.ticktype="detailed",
        caption="variables with a strong interaction")
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,4), mar=c(2,3,2,1), mgp=c(1.5, 0.5, 0), oma=c(0,0,6,0))
 library(viridis);
 image.col <- viridis(100)
@@ -57,7 +57,7 @@ plot(mod, i.var=3, n.trees=n.trees, ylim=ylim, continuous.resolution=ngrid1)
 plot(mod, i.var=c(1,3), n.trees=n.trees, continuous.resolution=ngrid2,
      col.regions=image.col, colorkey=FALSE,
      main="gbm plot x1:x3\ncompare to plotmo partdep on previous page")
-par(old.par)
+par(org.par)
 
 #--- compare to gbm and randomForest with a simple regression function
 
@@ -75,7 +75,6 @@ data$y <- x1 > -.1 # y depends only on x1 (-.1 hand-tuned to create interesting 
 set.seed(2016)
 # Expect Warning: The response has five or fewer unique values.  Are you sure you want to do regression?
 mod <- randomForest(y~., data=data, ntree=3)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,2), mar=c(2.5,3,2,1), mgp=c(1.3,0.4,0), oma=c(0,0,7,0))
 set.seed(2016) # for consistent jitter of response sites
 plotmo(mod, degree1=0, ngrid2=100, do.par=0, clip=FALSE,
@@ -97,7 +96,7 @@ partialPlot(mod, pred.data=data, x.var="x1", n.pt=ngrid1,
             which.class="True")
 partialPlot(mod, pred.data=data, x.var="x2", n.pt=ngrid1,
             which.class="True")
-par(old.par)
+par(org.par)
 
 # gbm, simple regression function
 library(gbm)
@@ -107,7 +106,6 @@ set.seed(2016)
 mod <- gbm(y~., data=data, n.trees=n.trees,
            shrinkage=.1, interaction.depth=4,
            distribution="gaussian")
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,2), mar=c(2.5,3,2,1), mgp=c(1.3,0.4,0), oma=c(0,0,7,0))
 set.seed(2016) # for consistent jitter of response sites
 plotmo(mod, degree1=0, ngrid2=100, do.par=0, clip=FALSE,
@@ -127,7 +125,7 @@ plotmo(mod, pmethod="partdep",  do.par=0, all1=TRUE, degree2=0,
        ngrid1=ngrid1, type="response")
 plot(mod, i.var=1, n.trees=n.trees, continuous.resolution=ngrid1)
 plot(mod, i.var=2, n.trees=n.trees, continuous.resolution=ngrid1)
-par(old.par)
+par(org.par)
 
 #--- compare to gbm and randomForest with simple binomial (two class) data
 
@@ -148,7 +146,6 @@ data$y <- factor(as.character(x1 > .4),
                  labels=c("False", "True"))
 set.seed(2016)
 mod <- randomForest(y~., data=data, ntree=3)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,2), mar=c(2.5,3,2,1), mgp=c(1.3,0.4,0), oma=c(0,0,7,0))
 set.seed(2016) # for consistent jitter of response sites
 plotmo(mod, degree1=0, ngrid2=100, do.par=0, clip=FALSE,
@@ -171,7 +168,7 @@ partialPlot(mod, pred.data=data, x.var="x1", n.pt=ngrid1,
             which.class="True", ylim=c(-16,16))
 partialPlot(mod, pred.data=data, x.var="x2", n.pt=ngrid1,
             which.class="True", ylim=c(-16,16))
-par(old.par)
+par(org.par)
 
 # gbm, simple binomial (two-class) data
 library(gbm)
@@ -180,7 +177,6 @@ data$y <- x1 > .6 # y depends only on x1
 set.seed(2016)
 mod <- gbm(y~., data=data, n.trees=n.trees, shrinkage=.1, interact=4,
            distribution="bernoulli")
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,2), mar=c(2.5,3,2,1), mgp=c(1.3,0.4,0), oma=c(0,0,7,0))
 set.seed(2016) # for consistent jitter of response sites
 plotmo(mod, degree1=0, ngrid2=100, do.par=0, clip=FALSE,
@@ -200,6 +196,6 @@ plotmo(mod, pmethod="partdep",  do.par=0, all1=TRUE, degree2=0,
        ngrid1=ngrid1, type="link")
 plot(mod, i.var=1, n.trees=n.trees, continuous.resolution=ngrid1)
 plot(mod, i.var=2, n.trees=n.trees, continuous.resolution=ngrid1)
-par(old.par)
+par(org.par)
 
 source("test.epilog.R")

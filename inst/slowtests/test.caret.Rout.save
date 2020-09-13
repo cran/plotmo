@@ -22,14 +22,15 @@ Loading required package: ggplot2
 +     par(mgp = c(1.6, 0.6, 0))
 +     par(cex = 0.7)
 + }
+> set.seed(2010)
 > caret.earth.mod <- train(O3~., data=ozone1, method="earth",
 +                          tuneGrid=data.frame(degree=2, nprune=10))
 > # SHOWCALL is just a testing thing, so we can see who created the plot on the plot itself
 > plotmo(caret.earth.mod, trace=1, SHOWCALL=TRUE)
-plotmo.prolog(object$finalModel) succeeded
+plotmo.prolog(object$finalModel) succeeded (caret model)
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
@@ -44,11 +45,11 @@ got model response from object$y
                5760    5       64   62 2112.5  24 167.5 120 205.5
 
 > plotres(caret.earth.mod, trace=1, SHOWCALL=TRUE)
-plotmo.prolog(object$finalModel) succeeded
+plotmo.prolog(object$finalModel) succeeded (caret model)
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.81
@@ -85,7 +86,7 @@ stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict() instead
 assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
 assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
-got model response from model.frame(O3~.,
+got model response from model.frame(O3 ~ .,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
@@ -99,7 +100,7 @@ stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict() instead
 assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
 assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
-got model response from model.frame(O3~.,
+got model response from model.frame(O3 ~ .,
                                     data=call$data, na.action="na.fail")
 assuming "O3" in the model.frame is the response, because terms(object) did not return the terms
 
@@ -126,40 +127,41 @@ got model response from getCall(object)$y
 
 training rsq 0.98
 > 
-> # TODO following doesn't work properly, factors are plotted as continuous?
 > # trace=1 to display "Fixed rank deficient bx by removing 1 term" messages
+> set.seed(2015)
 > a.bag3 <- bagEarth(survived~., data=etitanic, degree=2, B=3, trace=1)
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY, and values 0, 0, 0, 1, 1, 1, 1, 0, 0, 0,...
+y[1046,1] with colname subY, and values 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.425 RSq 0.462
-Prune backward penalty 3 nprune null: selected 11 of 15 terms, and 6 of 7 preds
-After pruning pass GRSq 0.434 RSq 0.461
+After forward pass GRSq 0.435 RSq 0.472
+Prune backward penalty 3 nprune null: selected 10 of 15 terms, and 6 of 7 preds
+After pruning pass GRSq 0.444 RSq 0.468
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY, and values 1, 0, 0, 0, 1, 1, 1, 0, 0, 1,...
+y[1046,1] with colname subY, and values 0, 0, 1, 1, 1, 0, 0, 0, 1, 1,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.383 RSq 0.432
-Prune backward penalty 3 nprune null: selected 7 of 18 terms, and 5 of 7 preds
-After pruning pass GRSq 0.401 RSq 0.418
+After forward pass GRSq 0.385 RSq 0.434
+Prune backward penalty 3 nprune null: selected 12 of 18 terms, and 6 of 7 preds
+After pruning pass GRSq 0.402 RSq 0.433
 x[1046,7] with colnames pclass1st pclass2nd pclass3rd sexmale age sibsp parch
-y[1046,1] with colname subY, and values 1, 0, 1, 1, 1, 1, 0, 0, 0, 0,...
+y[1046,1] with colname subY, and values 1, 1, 0, 1, 1, 1, 0, 1, 0, 0,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.450 RSq 0.488
-Prune backward penalty 3 nprune null: selected 13 of 16 terms, and 5 of 7 preds
-After pruning pass GRSq 0.458 RSq 0.488
+After forward pass GRSq 0.448 RSq 0.487
+Fixed rank deficient bx by removing 1 term, 15 terms remain
+Prune backward penalty 3 nprune null: selected 13 of 15 terms, and 6 of 7 preds
+After pruning pass GRSq 0.456 RSq 0.487
 > plotmo(a.bag3, clip=F, caption="bagEarth, etitanic", trace=1, SHOWCALL=TRUE)
 stats::predict(bagEarth.object, data.frame[3,7], type="response")
 stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict() instead
 assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
 assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
-got model response from model.frame(survived~.,
+got model response from model.frame(survived ~ .,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    pclass1st pclass2nd pclass3rd sexmale age sibsp parch
@@ -173,63 +175,134 @@ stats::fitted(object=bagEarth.object)
 fitted() was unsuccessful, will use predict() instead
 assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
 assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
-got model response from model.frame(survived~.,
+got model response from model.frame(survived ~ .,
                                     data=call$data, na.action="na.fail")
 assuming "survived" in the model.frame is the response, because terms(object) did not return the terms
 
 training rsq 0.44
 > 
-> # example by Max Kuhn on stackoverflow
-> set.seed(2015)
+> # following based on example by Max Kuhn on stackoverflow
 > etit <- etitanic
 > etit$survived <- factor(ifelse(etit$survived == 1, "yes", "no"),
 +                        levels = c("yes", "no"))
-> # TODO pairs are not automatically plotted
+> set.seed(2015)
 > caret.earth.mod2 <- train(survived ~ .,
 +             data = etit,
 +             method = "earth",
 +             tuneGrid = data.frame(degree = 2, nprune = 9),
 +             trControl = trainControl(method = "none",
 +                                      classProbs = TRUE))
+> # Following gives expected warning (because factors in caret-earth model)
+> #  Warning: Cannot determine which variables to plot (use all1=TRUE?)
 > plotmo(caret.earth.mod2, trace=1, SHOWCALL=TRUE)
-plotmo.prolog(object$finalModel) succeeded
+plotmo.prolog(object$finalModel) succeeded (caret model)
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
+got model response from model.frame(survived ~ pclass + sex + age + sibsp...,
                                     data=call$data, na.action="na.fail")
+Warning: Cannot determine which variables to plot (use all1=TRUE?)
+             ncol(x) 5 < nrow(modvars) 6
+             colnames(x)=c(pclass,sex,age,sibsp,parch)
+             rownames(modvars)=c(pclass2nd,pclass3rd,sexmale,age,sibsp,parch)
+
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd male  28     0     0
+
+> # changed Sep 2020: following with all2=2 generates the same plot as above (because with warning, above defaults to all2=TRUE)
+> plotmo(caret.earth.mod2, trace=1, all2=TRUE, SHOWCALL=TRUE, caption="caret.earth.mod2: all2=2")
+plotmo.prolog(object$finalModel) succeeded (caret model)
+stats::predict(train.object, data.frame[3,5], type="raw")
+stats::fitted(object=train.object)
+got model response from model.frame(survived ~ pclass + sex + age + sibsp...,
+                                    data=call$data, na.action="na.fail")
+Warning: Cannot determine which variables to plot (use all1=TRUE?)
+             ncol(x) 5 < nrow(modvars) 6
+             colnames(x)=c(pclass,sex,age,sibsp,parch)
+             rownames(modvars)=c(pclass2nd,pclass3rd,sexmale,age,sibsp,parch)
 
  plotmo grid:    pclass  sex age sibsp parch
                     3rd male  28     0     0
 
 > plotres(caret.earth.mod2, trace=1, SHOWCALL=TRUE)
-plotmo.prolog(object$finalModel) succeeded
+plotmo.prolog(object$finalModel) succeeded (caret model)
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,5], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(survived~pclass+sex+age+sibsp+parch,
+got model response from model.frame(survived ~ pclass + sex + age + sibsp...,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.21
 > 
+> # Sep 2020: test with a logical variable (check that get.earth.vars.for.plotmo strips "sexTRUE" to "sex")
+> # following should be exactly the same model as caret.earth.mod2 except for the variable naming for sex
+> etit.bool <- etitanic
+> etit.bool$survived <- factor(ifelse(etit.bool$survived == 1, "yes", "no"),
++                                 levels = c("yes", "no"))
+> etit.bool$sex <- etit.bool$sex == "male" # to bool
+> set.seed(2015) # same random seed as above (may not be necessary)
+> caret.earth.boolfac <- train(survived ~ .,
++             data = etit.bool,
++             method = "earth",
++             tuneGrid = data.frame(degree = 2, nprune = 9),
++             trControl = trainControl(method = "none",
++                                      classProbs = TRUE))
+> print(summary(caret.earth.boolfac))
+Call: earth(x=matrix[1046,6], y=factor.object, keepxy=TRUE,
+            glm=list(family=function.object, maxit=100), degree=2, nprune=9)
+
+GLM coefficients
+                               no
+(Intercept)            -2.9135260
+pclass3rd               5.0300560
+sexTRUE                 3.1856245
+h(age-32)               0.0375715
+pclass2nd * sexTRUE     1.7680945
+pclass3rd * sexTRUE    -1.2226954
+pclass3rd * h(4-sibsp) -0.6186527
+sexTRUE * h(16-age)    -0.2418140
+
+GLM (family binomial, link logit):
+ nulldev   df       dev   df   devratio     AIC iters converged
+ 1414.62 1045   892.794 1038      0.369   908.8     5         1
+
+Earth selected 8 of 17 terms, and 5 of 6 predictors (nprune=9)
+Termination condition: Reached nk 21
+Importance: sexTRUE, pclass3rd, pclass2nd, age, sibsp, parch-unused
+Number of terms at each degree of interaction: 1 3 4
+Earth GCV 0.1404529    RSS 141.7629    GRSq 0.4197106    RSq 0.4389834
+> 
+> plotmo(caret.earth.boolfac, trace=0, SHOWCALL=TRUE) # Warning: Cannot determine which variables to plot (use all1=TRUE?)
+Warning: Cannot determine which variables to plot (use all1=TRUE?)
+             ncol(x) 5 < nrow(modvars) 6
+             colnames(x)=c(pclass,sex,age,sibsp,parch)
+             rownames(modvars)=c(pclass2nd,pclass3rd,sexTRUE,age,sibsp,parch)
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd TRUE  28     0     0
+> # changed Sep 2020: following with all1=TRUE, all2=TRUE generates the same plot as above
+> plotmo(caret.earth.boolfac, trace=0, all1=TRUE, all2=TRUE, SHOWCALL=TRUE, caption="caret.earth.mod2: all1=T, all2=T")
+ plotmo grid:    pclass  sex age sibsp parch
+                    3rd TRUE  28     0     0
+> 
 > data(ozone1)
+> set.seed(2020)
 > a <- train(O3 ~ ., data = ozone1,  method = "earth",
 +             tuneGrid = data.frame(degree = 2, nprune = 14))
 > plotmo(a, trace=1, SHOWCALL=TRUE)
-plotmo.prolog(object$finalModel) succeeded
+plotmo.prolog(object$finalModel) succeeded (caret model)
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
 
 > plotres(a, trace=1, SHOWCALL=TRUE)
-plotmo.prolog(object$finalModel) succeeded
+plotmo.prolog(object$finalModel) succeeded (caret model)
 residuals() was unsuccessful, will use predict() instead
 stats::predict(train.object, data.frame[3,9], type="raw")
 stats::fitted(object=train.object)
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 
 training rsq 0.83
@@ -250,8 +323,10 @@ The following object is masked from 'package:ggplot2':
 +              trControl=trainControl(method="cv", number=2),
 +              tuneLength=2, preProcess = c("center", "scale"))
 > plotres(mod, info=TRUE)
-> plotmo(mod, pt.col=2, all2=TRUE)
- plotmo grid:    Height Volume
-                     76   24.2
+> set.seed(2020)
+> plotmo(mod, pt.col=2, all2=TRUE, pmethod="partdep")
+calculating partdep for Height 
+calculating partdep for Volume 
+calculating partdep for Height:Volume 01234567890
 > 
 > source("test.epilog.R")

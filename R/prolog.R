@@ -4,7 +4,8 @@
 plotmo.prolog <- function(object, object.name, trace, ...)
 {
     trace2(trace, "--plotmo_prolog for %s object %s\n",
-           class(object)[1], object.name)
+           class.as.char(object), object.name)
+
     UseMethod("plotmo.prolog")
 }
 plotmo.prolog.default <- function(object, object.name, ...)

@@ -12,6 +12,12 @@ plotmo.predict.bruto <- function(object, newdata, type, ..., TRACE) # mda packag
     # TODO fails: predict.bruto returned a response of the wrong length
     plotmo.predict.defaultm(object, newdata, type=type, ..., TRACE=TRACE)
 }
+plotmo.type.clm <- function(object, ..., TRACE) "prob" # ordinal package
+
+plotmo.predict.clm <- function(object, newdata, type, ..., TRACE) # ordinal package
+{
+    as.data.frame(plotmo.predict.default(object, newdata, type=type, ..., TRACE=TRACE))
+}
 plotmo.type.lars <- function(object, ..., TRACE) "fit"
 
 plotmo.predict.lars <- function(object, newdata, type, ..., TRACE) # lars package
@@ -182,7 +188,7 @@ plotmo.predict.biglm <- function(object, newdata, type, ..., TRACE) # biglm pack
     # predict.biglm: newdata must include the response even though it isn't needed
     # The following extracts the response from the formula, converts it to a
     # string, then "nakens" it (converts e.g. "log(Volume)" to plain "Volume").
-    resp.name <- naken(format(formula(object)[[2]]))
+    resp.name <- naken.collapse(format(formula(object)[[2]]))
     if(TRACE >= 1)
         printf("plotmo.predict.biglm: adding dummy response \"%s\" to newdata\n",
                resp.name)
@@ -236,6 +242,21 @@ plotmo.predict.svm <- function(object, newdata, type, ..., TRACE) # package e107
         probabilities
     else
         predict
+}
+plotmo.prolog.model_fit <- function(object, object.name, trace, ...) # parsnip package
+{
+    # sanity check: that it is indeed a parnsip model
+    if(!is.list(object[["spec"]]) || !is.list(object[["fit"]]))
+        stop0("unrecognized \"model_fit\" object (was expecting a parsnip model)")
+
+    # USE.SUBMODEL is an undocumented plotmo dots argument, default is TRUE
+    # TODO this is supposed to be temporary solution
+    use.submodel <- dota("USE.SUBMODEL", DEF=TRUE, ...)
+
+    if(is.specified(use.submodel))
+        object$fit
+    else
+        object
 }
 # TODO Following commented out because polyreg is not supported by plotmo
 # So with this commented out we support plotmo(fda.object)

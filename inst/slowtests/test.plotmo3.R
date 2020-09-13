@@ -4,39 +4,7 @@ source("test.prolog.R")
 library(earth)
 data(ozone1)
 data(etitanic)
-
-check.naken <- function(s, expected)
-{
-    nude <- plotmo:::naken.formula.string(s)
-    printf("%-60.60s %-s\n", s, nude)
-    stopifnot(nude == expected)
-}
-printf("=== checking naken.formula.string\n")
-check.naken("y ~ x1 : x2 + x3", "y~x1+x2+x3")
-check.naken("y ~ x1 + x2 - x3", "y~x1+x2+x3")
-check.naken("cbind(damage, 6-damage)~temp", "cbind(damage,6-damage)~temp")
-check.naken("depIndex~q_4+q_2102+q_2104+q_3105+q_3106", "depIndex~q_4+q_2102+q_2104+q_3105+q_3106")
-check.naken("doy ~ (vh+wind+humidity)^2", "doy~vh+wind+humidity")
-check.naken("doy ~ s(wind) + s(humidity,wind) + s(vh)", "doy~wind+humidity+vh")
-check.naken("log(doy) ~ I(vh*wind) + I(humidity*temp)+log(doy)", "log(doy)~vh+wind+humidity+temp+doy")
-check.naken("log(doy)~vh+wind+humidity+I(wind*humidity)+temp+log(ibh)", "log(doy)~vh+wind+humidity+temp+ibh")
-check.naken("O3 ~ s(humidity)+s(temp)+s(ibt)+s(temp,ibt)", "O3~humidity+temp+ibt")
-check.naken("Ozone^(1/3) ~ lo(Solar.R) + lo(Wind, Temp)", "Ozone^(1/3)~Solar.R+Wind+Temp")
-check.naken("Volume~(Girth*Height2)-Height", "Volume~Girth+Height2+Height")
-check.naken("y ~ s(x) + s(x,z1)", "y~x+z1")
-check.naken("y~s(x0,x1,k=12)+s(x2)+s(x3,k=20,fx=20)", "y~x0+x1+x2+x3")
-check.naken("y~x[,1]+x[,2]", "y~x[,1]+x[,2]")
-check.naken("y~x[,1]+x[,my.list$j]", "y~x[,1]+x[,my.list$j]")
-check.naken("y~x[,i]+x[,2]", "y~x[,i]+x[,2]")
-check.naken("Salary~Hitters[,1]", "Salary~Hitters[,1]")
-check.naken("Salary~Hitters[,-1]", "Salary~Hitters[,-1]")
-check.naken("Salary~Hitters[,c(1,2)]", "Salary~Hitters[,c(1,2)]")
-check.naken("Salary~Hitters[,1:2]", "Salary~Hitters[,1:2]")
-check.naken("Salary~Hitters[,c(1,2)]", "Salary~Hitters[,c(1,2)]")
-check.naken("x[,c(1,2)] + x[,3]", "x[,c(1,2)]+x[,3]")
-check.naken("x[,1] + x[,2] + x[,3] + x[,29] + x[,-14]", "x[,1]+x[,2]+x[,3]+x[,29]+x[,-14]")
-check.naken("x[,c(1,2)] + x[,3] + x[,5:6] + x[,-1]", "x[,c(1,2)]+x[,3]+x[,5:6]+x[,-1]")
-check.naken("log(y) ~ x9 + ns(x2,4) + s(x3,x4,df=4) + x5:sqrt(x6)", "log(y)~x9+x2+x3+x4+x5+x6")
+options(warn=1) # print warnings as they occur
 
 # check check.numeric.scalar
 
@@ -153,7 +121,7 @@ plotmo1(mod.earth.age)
 plotmo1(mod.earth.age, level=.9, degree2=0)
 
 # tit[,4] is age
-mod.earth.tit <- earth(tit[,-4], tit[,4], degree=2, nfold=3, ncross=3, varmod.method="lm")
+mod.earth.tit <- earth(tit[,-4], tit[,4], degree=2, nfold=3, ncross=3, trace=.5, varmod.method="lm")
 plotmo1(mod.earth.tit)
 plotmo1(mod.earth.tit, level=.9, degree2=0)
 
@@ -191,9 +159,9 @@ tit.orgpclass$parch <- NULL
 stopifnot(names(tit.orgpclass) == names(tit))
 a.tit.orgpclass <- earth(pclass~., degree=2, data=tit.orgpclass)
 a.tit           <- earth(pclass~., degree=2, data=tit)
-old.warn <- options(warn=2) # treat warnings as errors
+options(warn=2) # treat warnings as errors
 expect.err(try(plotmo(a.tit)), "Defaulting to nresponse=1, see above messages")
-options(warn=old.warn$warn)
+options(warn=1)
 # following two graphs should be identical
 plotmo1(a.tit.orgpclass, nresponse="1st",   all1=T, col.resp=3, type2="im")
 plotmo1(a.tit,           nresponse="first", all1=T, col.resp=3, type2="im")
@@ -203,9 +171,9 @@ plotmo1(a.tit,           nresponse="class2", all1=T)
 
 tit  <- get.tit()
 mod.earth.pclass <- earth(pclass~., data=tit, degree=2)
-old.warn <- options(warn=2) # treat warnings as errors
+options(warn=2) # treat warnings as errors
 expect.err(try(plotmo1(mod.earth.pclass)), "Defaulting to nresponse=1, see above messages")
-options(warn=old.warn$warn)
+options(warn=1)
 plotmo1(mod.earth.pclass, nresponse="fi")
 plotmo1(mod.earth.pclass, nresponse="first")
 plotmo1(mod.earth.pclass, nresponse=3)
@@ -218,9 +186,9 @@ plotmo1(mod.earth.pclass, nresponse=1,
 
 # tit[,1] is pclass
 mod.earth.tit <- earth(tit[,-1], tit[,1], degree=2)
-old.warn <- options(warn=2) # treat warnings as errors
+options(warn=2) # treat warnings as errors
 expect.err(try(plotmo1(mod.earth.tit)), "Defaulting to nresponse=1, see above messages")
-options(warn=old.warn$warn)
+options(warn=1)
 plotmo1(mod.earth.tit, nresponse="first")
 plotmo1(mod.earth.tit, type="class")
 
@@ -264,7 +232,7 @@ printf("library(rpart)\n")
 library(rpart)                                          # rpart
 rpart.model.vignette <- rpart(O3 ~ ., data=oz)
 plotmo1(rpart.model.vignette, all2=TRUE)
-expect.err(try(plotmo1(rpart.model.vignette, level=.9)), "not supported for rpart objects")
+expect.err(try(plotmo1(rpart.model.vignette, level=.9)), "the level argument is not supported for \"rpart\" objects")
 
 # commented out because is slow and already tested in test.non.earth.R
 # printf("library(randomForest)\n")
@@ -401,20 +369,22 @@ plotmo(a)
 # test "the variable on the right side of the formula is a matrix or data.frame"
 # TODO would like to solve this problem
 
-old.warn <- options("warn")
 options(warn=2)
-
 data(gasoline, package="pls")
 earth.octane <- earth(octane ~ NIR, data=gasoline)
+print(summary(earth.octane)) # ok
+plotres(earth.octane) # ok
 expect.err(try(plotmo(earth.octane)), "the variable on the right side of the formula is a matrix or data.frame")
+options(warn=1)
 
-library(ElemStatLearn)
-x <- mixture.example$x
-g <- mixture.example$y
-lm.mixture.example <- lm(g ~ x)
-expect.err(try(plotmo(lm.mixture.example)), "the variable on the right side of the formula is a matrix or data.frame")
-
-options(warn=old.warn$warn)
+# TODO May 2020 'ElemStatLearn' is not available (for R version 4.0.0)
+# library(ElemStatLearn)
+# x <- mixture.example$x
+# g <- mixture.example$y
+# lm.mixture.example <- lm(g ~ x)
+# options(warn=2)
+# expect.err(try(plotmo(lm.mixture.example)), "the variable on the right side of the formula is a matrix or data.frame")
+# options(warn=1)
 
 # test variable names with $ are not supported
 
@@ -432,7 +402,6 @@ expect.err(try(plotmo(a)), "cannot get the original model predictors")
 
 #--- test interaction of w1. and non w1 args -------------------------------------
 
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,3), mar=c(3, 3, 4, 1), mgp=c(2, 0.6, 0))
 
 mod78 <- earth(Volume ~ ., data = trees)
@@ -448,9 +417,8 @@ plotres(mod78, cex.main=.7,
         w1.ylim=c(-.5, .8), w1.xlim=c(-2, 7), col=2:3, do.par=FALSE,
         ylim=c(-10,10), xlim=c(-30, 100),
         w1.main=c("w1.ylim=c(-.5, .8) w1.xlim=c(-2, 7)\nylim=c(-10,10), xlim=c(-30, 100)"))
+par(org.par)
 
-par(old.par)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(3,4), mar=c(3, 3, 3, 1), mgp=c(2, 0.6, 0))
 
 # which=1, earth model
@@ -490,6 +458,14 @@ plotres(mod78, which=3, cex.main=1,
         col=2:3, w1.ylim=c(.3,.98), ylim=c(-10,10), w1.xlim=c(-2, 7), xlim=c(-90,90),
         main="w1.ylim=c(.3,.98) ylim=c(-10,10)\nw1.xlim=c(-2, 7), xlim=c(-90,90)")
 
-par(old.par)
+par(org.par)
+
+nullarg <- NULL
+expect.err(try(plotmo(nullarg)),   "argument 'nullarg' is NULL")
+expect.err(try(plotmo(NULL)),      "argument 'NULL' is NULL")
+expect.err(try(plotmo(0)),         "'0' is not an S3 model")
+expect.err(try(plotmo(list(1,2))), "'list(1, 2)' is a plain list, not an S3 model")
+expect.err(try(plotmo(list(1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0,1,2,3,4,5,6,7,8,0))),
+               "object is a plain list, not an S3 model")
 
 source("test.epilog.R")

@@ -7,26 +7,26 @@ Loading required package: plotmo
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(ozone1)
+> options(warn=1) # print warnings as they occur
 > 
-> old.warn <- options("warn")
 > options(warn=2) # treat warnings as errors
 > lm.mod <- lm(O3~wind, data=ozone1)
 > 
 > expect.err(try(plotmo(lm.mod, se=2, leve=.95)), "plotmo's 'se' argument is deprecated, please use 'level' instead")
 Error : plotmo's 'se' argument is deprecated, please use 'level' instead
-Got error as expected from try(plotmo(lm.mod, se = 2, leve = 0.95))
+Got expected error from try(plotmo(lm.mod, se = 2, leve = 0.95))
 > 
 > expect.err(try(plotmo(lm.mod, se=T)), "plotmo's 'se' argument is deprecated, please use 'level=.95' instead")
 Error : (converted from warning) plotmo's 'se' argument is deprecated, please use 'level=.95' instead
-Got error as expected from try(plotmo(lm.mod, se = T))
+Got expected error from try(plotmo(lm.mod, se = T))
 > 
 > expect.err(try(plotmo(lm.mod, se=.8)), "plotmo's 'se' argument is deprecated, please use 'level=.95' instead")
 Error : plotmo's 'se' argument is deprecated, please use 'level=.95' instead
-Got error as expected from try(plotmo(lm.mod, se = 0.8))
+Got expected error from try(plotmo(lm.mod, se = 0.8))
 > 
 > expect.err(try(plotmo(lm.mod, level=2)), "level=2 is out of range, try level=.95")
 Error : level=2 is out of range, try level=.95
-Got error as expected from try(plotmo(lm.mod, level = 2))
+Got expected error from try(plotmo(lm.mod, level = 2))
 > 
 > oz2 <- ozone1[1:40,]
 > set.seed(2015)
@@ -35,9 +35,9 @@ Got error as expected from try(plotmo(lm.mod, level = 2))
 > expect.err(try(plotmo(a, lw=2, trace=1, thresh=.9, SHOWCALL=TRUE)), "predict.earth ignored argument 'lw'")
 stats::predict(earth.object, NULL, type="response", lw=2, thresh=0.9)
 Error : (converted from warning) predict.earth ignored argument 'lw'
-Got error as expected from try(plotmo(a, lw = 2, trace = 1, thresh = 0.9, SHOWCALL = TRUE))
+Got expected error from try(plotmo(a, lw = 2, trace = 1, thresh = 0.9, SHOWCALL = TRUE))
 > 
-> options(warn=old.warn$warn)
+> options(warn=1)
 > 
 > # test col.response and friends
 > plotmo(a, col.response=2, pch.response=c(1, 2, 20), type2="co", SHOWCALL=TRUE) # pch.response tests back compat
@@ -51,6 +51,7 @@ Got error as expected from try(plotmo(a, lw = 2, trace = 1, thresh = 0.9, SHOWCA
                  53.5    4
 > plotmo(a, pt.col=c(1,2,3), pt.pch=paste(1:nrow(oz2)), pt.cex=.8, type2="co", degree1=0, do.par=F)
 Warning: plotmo: nothing to plot
+> par(org.par)
 > plotmo(a, col=2, SHOWCALL=TRUE) # will cause red response points
  plotmo grid:    temp wind
                  53.5    4
@@ -117,7 +118,7 @@ before par: cex=0.83 col.main=#456789 col.axis=black mar=3331 mfcol=22
                  53.5    4
 > plotmo(a, do.par=FALSE, degree1=1, degree2=1, persp.ticktype="d",
 +           main="do.par=FALSE persp.ticktype=\"d\"")
-Warning: 'degree2' specified but no degree2 plots
+Warning: 'degree2' specified but no degree2 plots (maybe use all2=TRUE?)
  plotmo grid:    temp wind
                  53.5    4
 > # all of these should have been restored
@@ -155,7 +156,7 @@ after par: cex=0.83 col.main=#456789 col.axis=black mar=3331 mfcol=22
                      76                       12.9
 > expect.err(try(plotmo(mod, do.par=FALSE, prednames.abbreviate=c(1,2))), "the prednames.abbreviate argument is not FALSE, TRUE, 0, or 1")
 Error : the prednames.abbreviate argument is not FALSE, TRUE, 0, or 1
-Got error as expected from try(plotmo(mod, do.par = FALSE, prednames.abbreviate = c(1, 2)))
+Got expected error from try(plotmo(mod, do.par = FALSE, prednames.abbreviate = c(1, 2)))
 > plotmo(mod, do.par=FALSE, prednames.minlength=3)
  plotmo grid:    Height a_quite_long_variable_name
                      76                       12.9

@@ -4,6 +4,7 @@ source("test.prolog.R")
 library(pre)
 library(plotmo)
 library(earth) # for ozone1
+options(warn=1) # print warnings as they occur
 data(airquality)
 airq <- airquality[complete.cases(airquality), (c("Ozone", "Wind", "Temp"))]
 # prevent confusion caused by integer rownames which don't match row numbers
@@ -29,7 +30,6 @@ plotmo(pre.mod) # plot model surface with background variables held at their med
 
 # compare singleplot and plotmo
 
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2)) # 4 plots per page
 
 singleplot(pre.mod, varname="Temp", main="Temp\n(singleplot)")
@@ -52,11 +52,10 @@ plotmo(pre.mod,
        main="penalty.par.val=lambda.min\n(plotmo partdep)",
        predict.penalty.par.val="lambda.min") # use "predict." to pass it on to predict.pre
 
-par(old.par)
+par(org.par)
 
 # compare pairplot and plotmo
 
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,3)) # 6 plots per page
 
 pairplot(pre.mod, c("Temp", "Wind"), main="pairplot")
@@ -81,7 +80,7 @@ plotmo(pre.mod, type2="contour",
 plotmo(pre.mod, type2="image",
        degree1=0, degree2="Temp", do.par=FALSE)
 
-par(old.par)
+par(org.par)
 
 # test gpe models
 

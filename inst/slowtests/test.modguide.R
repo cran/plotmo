@@ -1,6 +1,7 @@
 # test.modguide.bat: test model1 and model2 (linmod examples) in modguide.pdf
 
 source("test.prolog.R")
+options(warn=1) # print warnings as they occur
 almost.equal <- function(x, y, max=1e-8)
 {
     stopifnot(max >= 0 && max < .01)

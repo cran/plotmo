@@ -57,7 +57,7 @@ attach.party.plotmo.importance <- function(object, trace)
         varnames <- names(sort(varimp, decreasing=TRUE))
     varnames.original <- varnames
     for(i in seq_along(varnames))
-        varnames[i] <- naken(varnames[i]) # e.g. log(lstat) becomes lstat
+        varnames[i] <- naken.collapse(varnames[i]) # e.g. log(lstat) becomes lstat
     if(trace >= 1)
         cat("variable importance:", varnames, "\n")
     attr(object, "plotmo.importance") <- varnames

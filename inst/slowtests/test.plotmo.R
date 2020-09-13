@@ -5,7 +5,7 @@ print(R.version.string)
 
 source("test.prolog.R")
 library(earth)
-data(ozone1)
+options(warn=1) # print warnings as they occur
 data(etitanic)
 make.space.for.caption <- function(caption="CAPTION")
 {
@@ -113,9 +113,9 @@ set.seed(2018)
 plotres(varied.type.lm, info=TRUE)
 plotmo(varied.type.lm, pmethod="apartdep", all2=TRUE, ticktype="d", col.response="red", caption="varied.type.lm\npmethod=\"apartdep\" default grid func")
 plotmo(varied.type.lm, all2=TRUE, ticktype="d", col.response="red", caption="varied.type.lm\ndefault grid func")
-plotmo(varied.type.lm, all2=TRUE, ndiscrete=1, caption="varied.type.lm\nndiscrete=1")
-plotmo(varied.type.lm, all2=TRUE, ndiscrete=2, caption="varied.type.lm\nndiscrete=2")
-plotmo(varied.type.lm, all2=TRUE, ndiscrete=100, caption="varied.type.lm\nndiscrete=100")
+plotmo(varied.type.lm, all2=TRUE, ndiscre=1, caption="varied.type.lm\nndiscrete=1")
+plotmo(varied.type.lm, all2=TRUE, ndiscr=2, caption="varied.type.lm\nndiscrete=2")
+plotmo(varied.type.lm, all2=TRUE, ndis=100, caption="varied.type.lm\nndiscrete=100")
 cat("grid.func=median:\n")
 plotmo(varied.type.lm, all2=TRUE, grid.func=median, caption="varied.type.lm\ngrid.func=median")
 cat("grid.func=quantile:\n")
@@ -196,7 +196,7 @@ func1 <- function()
            col.response=3, pt.pch=20)
 
     func2 <- function() {
-        a.func <- earth(O3~temp+humidity, data=oz10, degree=2)
+        a.func <- earth(O3 ~ temp +   humidity, data=oz10, degree=2)
         plotmo(a.func, do.par=FALSE, main="a.func oz10",
                degree1=1, all2=1, degree2=1, type2="im",
                col.response=3, pt.pch=20)
@@ -210,7 +210,7 @@ func1 <- function()
         dopar(4,4,caption)
 
         oz <- .1 * oz.org
-        a.func <- earth(O3~temp+humidity, data=oz, degree=2)
+        a.func <- earth(O3~temp+ humidity , data=oz, degree=2)
         plotmo(a.func, do.par=FALSE, main="a.func oz.1",
                degree1=1, all2=1, degree2=1, type2="im",
                col.response=3, pt.pch=20)
@@ -484,7 +484,7 @@ plotmo(lm.x1.x2.x3, degree1="x1", degree2=0, main="x1 (x3=5))",   ylim=c(0,16), 
 plotmo(lm.x1.x2.x3, degree1="x1", degree2=0, main="x1 (x4=1))",   ylim=c(0,16), do.par=0, pmethod="partdep", grid.levels=list(x4=1))   # numeric to logical
 expect.err(try(plotmo(lm.x1.x2.x3, degree1="x1", degree2=0, main="x1 (x4=1))",   ylim=c(0,16), do.par=0, pmethod="partdep", grid.levels=list(x4="x"))), "expected a logical value in grid.levels for x4") # char to logical
 expect.err(try(plotmo(lm.x1.x2.x3, degree1="x2", do.par=0, pmethod="partdep", grid.levels=list(x1="1"))), "the class \"character\" of \"x1\" in grid.levels does not match its class \"numeric\" in the input data")
-par(old.par)
+par(org.par)
 
 # test vector main
 
@@ -616,14 +616,20 @@ foo7 <- function()
     expect.err(try(plotmo(a.foo7, col.response=3)), "non-finite values returned by plotmo_y")
 }
 foo7()
+options(warn=1)
 foo8 <- function()
 {
     i <- 1
     a.foo8 <- lm(y~x[,i]+x[,2])
-    # causes Warning: 'newdata' had 8 rows but variables found have 10 rows
+    options <- options("warn")
+    on.exit(options(warn=options$warn))
+    options(warn=2)
+    expect.err(try(plotmo(a.foo8)), "Cannot determine which variables to plot in degree2 plots (use all2=TRUE?)")
+    options(warn=options$warn)
     expect.err(try(plotmo(a.foo8)), "predict returned the wrong length (got 10 but expected 50)")
 }
 foo8()
+options(warn=1)
 foo9 <- function()
 {
     my.list <- list(j=2)
@@ -635,8 +641,6 @@ foo9a <- function()
 {
     df <- data.frame(y=y, x1=x[,1], x2=x[,2])
     a.foo9a <- lm(y~x1+x2, data=df)
-    old.par <- par(no.readonly=TRUE)
-    on.exit(par(old.par))
     par(mfrow = c(2, 2), oma=c(0,0,4,0))
     set.seed(2018)
     plotmo(a.foo9a, col.resp=2, do.par=FALSE,
@@ -647,11 +651,10 @@ foo9a <- function()
     plotmo(a.foo9b, col.resp=2, do.par=FALSE)
 }
 foo9a()
+par(org.par)
 
 foo20.func <- function()
 {
-    old.par <- par(no.readonly=TRUE)
-    on.exit(par(old.par))
     par(mfrow = c(2, 2), oma=c(0,0,4,0))
     foo20 <- lm(y~x1+x2)
     set.seed(2018)
@@ -661,6 +664,7 @@ foo20.func <- function()
     plotmo(foo20, degree1=1:2, col.resp=2, do.par=FALSE)
 }
 foo20.func()
+par(org.par)
 
 set.seed(1235)
 tit <- etitanic
@@ -707,7 +711,6 @@ plotmo(a, extend=.5, pt.col=2, SHOWCALL=TRUE,
 
 # intercept only models
 
-old.par <- par(no.readonly=TRUE)
 dopar(2, 2, caption = "intercept-only models")
 set.seed(1)
 x <- 1:10
@@ -722,11 +725,10 @@ library(rpart)
 rpart.intercept.only <- rpart(y~x)
 plotmo(rpart.intercept.only, do.par=FALSE, main="rpart.plot intercept-only model")
 plotmo(rpart.intercept.only, do.par=FALSE, degree1=0)
-par(old.par)
+par(org.par)
 
 # nrug argument
 
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(3,3), mar=c(3,3,3,1), mgp=c(1.5, 0.5, 0))
 mod.nrug <- earth(survived~age, data=etitanic)
 set.seed(2016)
@@ -737,7 +739,7 @@ plotmo(mod.nrug, do.par=0, nrug=5,  rug.col=2, rug.lwd=2, main="nrug=5, rug.col=
 plotmo(mod.nrug, do.par=0, nrug="density", main="nrug=\"density\"")
 plotmo(mod.nrug, do.par=0, nrug="density", density.col=2, density.lwd=2, main="nrug=\"density\"\ndensity.col=2, density.lwd=2")
 plotmo(mod.nrug, do.par=0, nrug="density", density.adj=.2, density.col=1, main="nrug=\"density\"\ndensity.adj=.2, density.col=1")
-par(old.par)
+par(org.par)
 
 # a <- earth(ozone1[,3]~ozone1[,1]+ozone1[,2]+ozone1[,4]+ozone1[,5]+ozone1[,6], data=ozone1)
 # # TODO fails: actual.nrows=330 expected.nrows=50 fitted.nrows=330

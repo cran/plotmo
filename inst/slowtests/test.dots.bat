@@ -1,7 +1,7 @@
 @rem test.dots.R:  test handling of dots arguments
 
 @echo test.dots.bat
-@"C:\PROGRA~1\R\R-3.6.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.dots.R
+@"C:\PROGRA~1\R\R-4.0.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.dots.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.dots.Rout:
 @echo.

@@ -7,7 +7,7 @@ plotmo_type <- function(object, trace, fname="plotmo", type, ...)
     else {
         stopifnot.string(type)
         if(pmatch(type, "terms", nomatch=0))
-            stop0("type=\"terms\" is not allowed by ", fname)
+            stop0("type=\"terms\" is not supported by ", fname)
     }
     type
 }
@@ -96,7 +96,7 @@ plotmo_meta <- function(object, type, nresponse, trace,
     nresponse.org <- nresponse
 
     nresponse <- plotmo_nresponse(yhat, object, nresponse, trace,
-                    sprint("predict.%s", class(object)[1]), type)
+                    sprint("predict.%s", class.as.char(object)), type)
     stopifnot(!is.na(nresponse))
     trace2(trace,
         "nresponse=%g%s ncol(fitted) %d ncol(predict) %d ncol(y) %s\n",
@@ -165,9 +165,11 @@ get.resp.name.from.metadata <- function(nresponse, trace,
         resp.name <- NULL
         trace2(trace, "response name is NULL because is.factor(yhat[,1])\n")
     } else if(!is.null(colnames(yhat)) && nresponse <= length(colnames(yhat))) {
+        # e.g. earth model
         resp.name <- colnames(yhat)[nresponse]
         trace2(trace, "got response name \"%s\" from yhat\n", resp.name)
     } else if(!is.null(yfull) && !is.null(colnames(yfull))) {
+        # e.g. lm model
         resp.name <- colnames(yfull)[nresponse.y]
         trace2(trace, "got response name \"%s\" from yfull\n", resp.name)
     } else if(nresponse < length(colnames(fitted))) {
@@ -368,7 +370,7 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
             warning0("Defaulting to nresponse=1, see above messages");
             nresponse <- 1
         }
-    } else if (is.character(nresponse)) {
+    } else if(is.character(nresponse)) {
         # convert column name to column index
         stopifnot.string(nresponse)
         if(is.vector(y))
@@ -381,7 +383,7 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
             stop0("nresponse=\"", nresponse,
                   "\" cannot be used because the predicted response has no column names")
         # TODO investigate [1] e.g. for plotmo(a1h.update2, nresponse="numd")
-        nresponse <- imatch.choices(nresponse, colnames, err.msg.has.index=TRUE)[1]
+        nresponse <- imatch.choices(nresponse, colnames, errmsg.has.index=TRUE)[1]
     }
     check.integer.scalar(nresponse, min=1, na.ok=TRUE, logical.ok=FALSE, char.ok=TRUE)
     # note that msg is inhibited for trace<0, see trace1 in plotmo_rinfo
@@ -393,7 +395,7 @@ plotmo_nresponse <- function(y, object, nresponse, trace, fname, type="response"
         print_summary(y, fname, trace=2)
         cat("\n")
         check.index(nresponse, "nresponse", y,
-                is.col.index=TRUE, allow.negatives=FALSE, treat.NA.as.one=TRUE)
+                is.col.index=1, allow.negatives=FALSE, treat.NA.as.one=TRUE)
     }
     if(trace >= 2 && (is.na(nresponse.org) || nresponse.org != nresponse))
         cat0("converted nresponse=",

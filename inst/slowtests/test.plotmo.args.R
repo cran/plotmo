@@ -3,8 +3,8 @@
 source("test.prolog.R")
 library(earth)
 data(ozone1)
+options(warn=1) # print warnings as they occur
 
-old.warn <- options("warn")
 options(warn=2) # treat warnings as errors
 lm.mod <- lm(O3~wind, data=ozone1)
 
@@ -22,13 +22,14 @@ a <- earth(O3~temp+wind, dat=oz2, deg=2, nk=21, ncr=3, nfo=3, varmod.me="lm")
 
 expect.err(try(plotmo(a, lw=2, trace=1, thresh=.9, SHOWCALL=TRUE)), "predict.earth ignored argument 'lw'")
 
-options(warn=old.warn$warn)
+options(warn=1)
 
 # test col.response and friends
 plotmo(a, col.response=2, pch.response=c(1, 2, 20), type2="co", SHOWCALL=TRUE) # pch.response tests back compat
 plotmo(a, pt.col=c(1,2,3), pt.pch=c(1, 2, 20), type2="im", SHOWCALL=TRUE)
 plotmo(a, pt.col=c(1,2,3), pt.pch=paste(1:nrow(oz2)), pt.cex=.8, type2="im", do.par=2, SHOWCALL=TRUE)
 plotmo(a, pt.col=c(1,2,3), pt.pch=paste(1:nrow(oz2)), pt.cex=.8, type2="co", degree1=0, do.par=F)
+par(org.par)
 plotmo(a, col=2, SHOWCALL=TRUE) # will cause red response points
 plotmo(a, pt.col=4, col=3, persp.col="pink", SHOWCALL=TRUE) # col now goes to lines
 

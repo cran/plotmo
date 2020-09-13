@@ -189,7 +189,7 @@ stopifnot(plotmo:::expand.drop("abc,FORMALS,PAR.ARGS", prefix="lines.", func=bas
 ">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PAR_ARGS|^adj$|^ann$|^ask$|^bg$|^bty$|^cex$|^cex\\.axis$|^cex\\.lab$|^cex\\.main$|^cex\\.sub$|^col\\.axis$|^col\\.lab$|^col\\.main$|^col\\.sub$|^crt$|^err$|^family$|^fg$|^fig$|^fin$|^font$|^font\\.axis$|^font\\.lab$|^font\\.main$|^font\\.sub$|^lab$|^las$|^lend$|^lheight$|^ljoin$|^lmitre$|^lty$|^mai$|^mar$|^mex$|^mfcol$|^mfg$|^mfrow$|^mgp$|^mkh$|^new$|^oma$|^omd$|^omi$|^pch$|^pin$|^plt$|^ps$|^pty$|^srt$|^tck$|^tcl$|^usr$|^xaxp$|^xaxs$|^xaxt$|^xlog$|^xpd$|^yaxp$|^yaxs$|^yaxt$|^ylbias$|^ylog$")
 
 stopifnot(plotmo:::expand.drop("abc,FORMALS,PLOTMO.ARGS", prefix="lines.", func=base::nchar) ==
-">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PLOTMO_ARGS|^caption\\.|^cex\\.|^col\\.|^contour\\.|^cum\\.|^degree1\\.|^degree2\\.|^density\\.|^filled\\.contour\\.|^font\\.|^func\\.|^grid\\.|^heatmap\\.|^image\\.|^jitter\\.|^legend\\.|^label\\.|^level\\.|^line\\.|^lines\\.|^lty\\.|^lty\\.|^lwd\\.|^main\\.|^mtext\\.|^nresiduals|^par\\.|^pch\\.|^persp\\.|^plot\\.|^plotmath\\.|^qq\\.|^qqline\\.|^pt\\.|^response\\.|^rug\\.|^smooth\\.|^text\\.|^title\\.|^vfont\\.")
+">FORMALS|^x|^type|^allowNA|^keepNA|>PREFIX|>EXPLICIT|^abc|>PLOTMO_ARGS|^caption\\.|^cex\\.|^col\\.|^contour\\.|^cum\\.|^degree1\\.|^degree2\\.|^density\\.|^filled\\.contour\\.|^font\\.|^func\\.|^grid\\.|^heatmap\\.|^image\\.|^jitter\\.|^legend\\.|^label\\.|^level\\.|^line\\.|^lines\\.|^lty\\.|^lty\\.|^lwd\\.|^main\\.|^mtext\\.|^nresiduals|^par\\.|^pch\\.|^persp\\.|^plot\\.|^plotmath\\.|^prednames\\.|^qq\\.|^qqline\\.|^pt\\.|^response\\.|^rug\\.|^smooth\\.|^text\\.|^title\\.|^vfont\\.")
 
 test.deprefix <- function(expected, ..., FNAME="test.deprefix", KEEP=NULL)
 {
@@ -520,7 +520,6 @@ expect.err(try(foo2a(function(x=1, ...) plotmo:::stop.if.dots(...), x=1, y=2)), 
 
 cat0("=== test warn.if.dots\n")
 
-old.warn <- options("warn")
 options(warn=2) # treat warnings as errors
 
 foo3 <- function(x=1, ...)  plotmo:::warn.if.dots(...)
@@ -539,7 +538,8 @@ expect.err(try(foo4(y=plot)), "foo4 ignored argument 'y'")
 expect.err(try(foo4(plot)),
 "(converted from warning) foo4 ignored unnamed argument\n       The call was foo4(plot)")
 
-options(warn=old.warn$warn)
+options(warn=1)
+
 foo3(1, nonesuch=12, nonesuch2=12, 999) # expect three warnings
 
 cat0("=== test using sample functions that invoke call.dots\n")

@@ -46,12 +46,12 @@ got model response from object$y
 > plotmo(regr.earth$learner.model, trace=1, SHOWCALL=TRUE)
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(Volume~Girth,
+got model response from model.frame(Volume ~ Girth,
                                     data=call$data, na.action="na.fail")
 > plotmo(earth, trace=1, SHOWCALL=TRUE)
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(Volume~Girth,
+got model response from model.frame(Volume ~ Girth,
                                     data=call$data, na.action="na.fail")
 > 
 > # compare partial dependence plots from mlr and plotmo packages
@@ -68,12 +68,12 @@ Warning in grid.Call.graphics(C_points, x$x, x$y, x$pch, x$size) :
 > cat("==test error handling if original data is messed up===========================\n")
 ==test error handling if original data is messed up===========================
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(4,2), mar=c(1.5,2.5,4,1), oma=c(0,0,0,0))
 > colnames(trees1) <- c("nonesuch", "Volume")
 > plotmo(regr.earth$learner.model, do.par=0, degree1=1, degree2=0, main='colnames(trees1) <- c("nonesuch", "Volume")')
 > plotmo(regr.earth.with.call, do.par=0, degree1=1, degree2=0)
-> expect.err(try(plotmo(earth, do.par=0, degree1=1, degree2=0)), "cannot get the original model predictors")
+> par(org.par)
+> expect.err(try(plotmo(earth, degree1=1, degree2=0)), "cannot get the original model predictors")
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -84,8 +84,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(earth, do.par = 0, degree1 = 1, degree2 = 0))
-> par(old.par)
+Got expected error from try(plotmo(earth, degree1 = 1, degree2 = 0))
 > 
 > cat("==regression model with randomForest (binary response)============================\n")
 ==regression model with randomForest (binary response)============================
@@ -186,7 +185,7 @@ Error : Discrete value supplied to continuous scale
 > set.seed(2018)
 > plotres(rf, type="prob", SHOWCALL=TRUE, jitter=2)
 > 
-> old.warn <- options(warn=2) # treat warnings as errors
+> options(warn=2) # treat warnings as errors
 > expect.err(try(plotmo(classif.rf.with.call)), "Defaulting to nresponse=1, see above messages")
 
 predict.WrappedModel[3,3]:
@@ -202,14 +201,15 @@ predict.WrappedModel returned multiple columns (see above) but nresponse is not 
          Example: nresponse="prob.survived"
 
 Error : (converted from warning) Defaulting to nresponse=1, see above messages
-Got error as expected from try(plotmo(classif.rf.with.call))
-> options(warn=old.warn$warn)
+Got expected error from try(plotmo(classif.rf.with.call))
+> options(warn=1)
 > set.seed(2018) # for repeatable jitter
 > plotmo(classif.rf.with.call,               SHOWCALL=TRUE, nresponse="prob.survived", pt.col=2, trace=2)
 plotmo trace 2: plotmo(object=classif.rf.with.call, nresponse="prob.survived",
                        pt.col=2, trace=2, SHOWCALL=TRUE)
+--get.model.env for object with class WrappedModel
 object call is train.with.call(learner=lrn.classif.rf, task=task.classif.rf,
-                         ...--get.model.env for WrappedModel object
+                         subset=train.subset)
 assuming the environment of the WrappedModel model is that of plotmo's caller: R_GlobalEnv
 --plotmo_prolog for WrappedModel object 'classif.rf.with.call'
 task$task.desc$id for 'classif.rf.with.call' is "etit"
@@ -322,7 +322,7 @@ nresponse=2 but for plotmo_y using nresponse=1 because ncol(y) == 1
 get.object.y:
 object$y is usable and has column name survived
 got model response from object$y
-the response is a factor but could not get the family of the "WrappedModel" model
+the response is a factor but could not get the family of the WrappedModel model
 plotmo_y returned[166,1]:
         survived
 5    notsurvived
@@ -644,9 +644,9 @@ Warning in grid.Call.graphics(C_segments, x$x0, x$y0, x$x1, x$y1, x$arrow) :
 > expect.err(try(plotres(classif.lda$learner.model)), "plotres does not (yet) support type=\"class\" for \"lda\" objects")
 Error : plotres does not (yet) support type="class" for "lda" objects
        Try type="response" ?
-Got error as expected from try(plotres(classif.lda$learner.model))
+Got expected error from try(plotres(classif.lda$learner.model))
 > 
-> old.warn <- options(warn=2) # treat warnings as errors
+> options(warn=2) # treat warnings as errors
 > # expect.err(try(plotres(classif.lda.with.call, type="response")), "predict.lda returned multiple columns (see above) but nresponse is not specified")
 > expect.err(try(plotres(classif.lda$learner.model, type="response")), "Defaulting to nresponse=1, see above messages")
 
@@ -662,41 +662,41 @@ predict.lda returned multiple columns (see above) but nresponse is not specified
          Example: nresponse="LD2"
 
 Error : (converted from warning) Defaulting to nresponse=1, see above messages
-Got error as expected from try(plotres(classif.lda$learner.model, type = "response"))
-> options(warn=old.warn$warn)
+Got expected error from try(plotres(classif.lda$learner.model, type = "response"))
+> options(warn=1)
 > 
 > expect.err(try(plotres(classif.lda.with.call, type="response", nresponse="nonesuch")), "nresponse=\"nonesuch\" is not allowed")
 Error : nresponse="nonesuch" is not allowed
        Only an integer index or "response" is allowed
-Got error as expected from try(plotres(classif.lda.with.call, type = "response", nresponse = "nonesuch"))
+Got expected error from try(plotres(classif.lda.with.call, type = "response", nresponse = "nonesuch"))
 > expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse="nonesuch")), "nresponse=\"nonesuch\" is not allowed")
 Error : nresponse="nonesuch" is not allowed
 Choose an integer index or one of: "LD1" "LD2"
-Got error as expected from try(plotres(classif.lda$learner.model, type = "response", nresponse = "nonesuch"))
+Got expected error from try(plotres(classif.lda$learner.model, type = "response", nresponse = "nonesuch"))
 > 
 > expect.err(try(plotres(classif.lda.with.call, type="response", nresponse=0)), "nresponse=0 but it should be at least 1")
 Error : nresponse=0 but it should be at least 1
-Got error as expected from try(plotres(classif.lda.with.call, type = "response", nresponse = 0))
+Got expected error from try(plotres(classif.lda.with.call, type = "response", nresponse = 0))
 > expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse=0)), "nresponse=0 but it should be at least 1")
 Error : nresponse=0 but it should be at least 1
-Got error as expected from try(plotres(classif.lda$learner.model, type = "response", nresponse = 0))
+Got expected error from try(plotres(classif.lda$learner.model, type = "response", nresponse = 0))
 > 
 > expect.err(try(plotres(classif.lda.with.call, type="response", nresponse=99)), "nresponse is 99 but the number of columns is only 1")
 Error : nresponse is 99 but the number of columns is only 1
-Got error as expected from try(plotres(classif.lda.with.call, type = "response", nresponse = 99))
+Got expected error from try(plotres(classif.lda.with.call, type = "response", nresponse = 99))
 > expect.err(try(plotres(classif.lda$learner.model, type="response", nresponse=99)), "nresponse is 99 but the number of columns is only 2")
 Error : nresponse is 99 but the number of columns is only 2
-Got error as expected from try(plotres(classif.lda$learner.model, type = "response", nresponse = 99))
+Got expected error from try(plotres(classif.lda$learner.model, type = "response", nresponse = 99))
 > 
 > expect.err(try(plotmo(classif.lda)), "getCall(classif.lda) failed")
 Error : getCall(classif.lda) failed.
        Possible  workaround: call plotmo like this: plotmo(classif.lda$learner.model, ...)
-Got error as expected from try(plotmo(classif.lda))
+Got expected error from try(plotmo(classif.lda))
 > 
 > expect.err(try(plotres(classif.lda)), "getCall(classif.lda) failed")
 Error : getCall(classif.lda) failed.
        Possible  workaround: call plotres like this: plotres(classif.lda$learner.model, ...)
-Got error as expected from try(plotres(classif.lda))
+Got expected error from try(plotres(classif.lda))
 > 
 > # TODO residuals don't match
 > plotres(classif.lda.with.call,     SHOWCALL=TRUE, type="response")
@@ -756,7 +756,7 @@ calculating partdep for Petal.Width
 > 
 > set.seed(2018)
 > library(gbm)
-Loaded gbm 2.1.5
+Loaded gbm 2.1.8
 > # reference model
 > gbm = gbm(y~., data=data, n.trees=300)
 Distribution not specified, assuming gaussian ...

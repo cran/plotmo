@@ -119,7 +119,7 @@ names(et): survived pclass.fac parch.int parch.fac pclass.num
 stats::predict(rpart.object, data.frame[3,2], type="vector")
 stats::fitted(object=rpart.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(survived~pclass.num+parch.fac,
+got model response from model.frame(survived ~ pclass.num + parch.fac,
                                     data=call$data, na.action="na.pass")
 
  plotmo grid:    pclass.num parch.fac

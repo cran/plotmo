@@ -7,19 +7,19 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(earth)
 > data(ozone1)
+> options(warn=1) # print warnings as they occur
 > 
 > a <- earth(O3~., data=ozone1, degree=2)
 > expect.err(try(plotmo(a, persp.s=99)), "'s' matches both the 'sub' and 'scale' arguments of persp()")
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
 Error : 's' matches both the 'sub' and 'scale' arguments of persp()
-Got error as expected from try(plotmo(a, persp.s = 99))
+Got expected error from try(plotmo(a, persp.s = 99))
 > 
 > # Commented out because we now silently drop partial plot args like cex.l
 > # expect.err(try(plotmo(a, cex.l=.8, cex.la=.9)), "arguments 'cex.l' and 'cex.la' both match 'cex.lab' in draw.plot.degree1")
 > # expect.err(try(plotmo(a, persp.shad=1, persp.sh=2)), "'persp.shad' and 'persp.sh' both match the 'shade' argument of persp()")
 > 
-> old.warn <- options("warn")
 > options(warn=2) # treat warnings as errors
 > 
 > # Commented out because we now silently drop partial plot args like cex.l
@@ -33,14 +33,14 @@ Got error as expected from try(plotmo(a, persp.s = 99))
 stats::predict(earth.object, NULL, type="response", nonesuch=0.8)
 
 Error : (converted from warning) predict.earth ignored argument 'nonesuch'
-Got error as expected from try(plotmo(a, nonesuch = 0.8))
-> 
+Got expected error from try(plotmo(a, nonesuch = 0.8))
 > expect.err(try(plotmo(a, lw=2)), "predict.earth ignored argument 'lw'")
 
 stats::predict(earth.object, NULL, type="response", lw=2)
 
 Error : (converted from warning) predict.earth ignored argument 'lw'
-Got error as expected from try(plotmo(a, lw = 2))
+Got expected error from try(plotmo(a, lw = 2))
+> options(warn=1)
 > 
 > # test main, xlab, ylab, etc. arguments with recycling
 > a <- earth(O3~., data=ozone1, degree=2)
@@ -54,7 +54,7 @@ Got error as expected from try(plotmo(a, lw = 2))
 > plotmo(a, trace=1, do.par=FALSE, degree1=1, degree2=1, caption="top: standard\nbottom: lwd=2 thresh=.9") # no errors or warnings
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
@@ -63,13 +63,11 @@ got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
 > plotmo(a, lwd=2, trace=1, thresh=.9, do.par=FALSE, degree1=1, degree2=1) # no errors or warnings
 stats::predict(earth.object, NULL, type="response", thresh=0.9)
 stats::fitted(object=earth.object)
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
                5760    5       64   62 2112.5  24 167.5 120 205.5
 
-> 
-> options(warn=old.warn$warn)
 > 
 > source("test.epilog.R")

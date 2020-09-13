@@ -1,7 +1,7 @@
 # type.R: plotmo functions for getting the default type arg for predict() and residuals()
 #         this is used when plotmo's argument "type" is NULL (the default)
 
-# get the type for predict()
+# get the default type for predict()
 plotmo.type <- function(object, ..., TRACE)
 {
     UseMethod("plotmo.type")

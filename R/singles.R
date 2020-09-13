@@ -6,6 +6,10 @@
 # returned vector and remove duplicates.  The default method simply
 # returns the indices of all predictors.  The object specific methods
 # typically return only the predictors actually used in the model.
+#
+# Note on the x argument:
+#   If the formula is     resp ~ num + sqrt(num) + bool + ord:num + fac
+#   then colnames(x) is   num bool ord fac
 
 plotmo.singles <- function(object, x, nresponse, trace, all1, ...)
 {
@@ -53,35 +57,39 @@ plotmo.pairs.default <- function(object, x, nresponse, trace, all2, ...)
     formula <- try(formula(object), silent=trace < 2)
     if(is.try.err(formula) || is.null(formula))
         trace2(trace,
-               "formula(object) failed for \"%s\" object in plotmo.pairs.default\n",
-               class(object)[1])
+               "formula(object) failed for %s object in plotmo.pairs.default\n",
+               class.as.char(object))
     else {
-        trace2(trace, "formula(object) returned %s\n", strip.space(format(formula)))
+        trace2(trace, "formula(object) returned %s\n",
+               paste.trunc(format(formula), maxlen=100))
         # Note that formula() returns a formula with "." expanded.
         # After as.character: [1] is "~", [2] is lhs, and [3] is rhs
-        form <- as.character(formula(object))[3] # rhs of formula
-        if(grepl("\\-", form)) { # "-" in formula?
-            # formula() gives "(Girth + Height)-Height" for Volume~.-Height
-            form <- sub("\\-.*", "", form)    # delete "-" and all after
-            form <- gsub("\\(|\\)", "", form) # delete ( and )
-        }
-        formula.vars <- unlist(strsplit(form, "+", fixed=TRUE))
-        formula.vars <- strip.space(formula.vars)
+        rhs <- as.character(formula(object))[3] # rhs of formula
+
+        # Sep 2020: removed code below because a `var` may have a "-" in its name
+        # if(grepl("\\-", rhs)) { # "-" in formula?
+        #     # formula() gives "(Girth + Height)-Height" for Volume~.-Height
+        #     rhs <- sub("\\-.*", "", rhs)    # delete "-" and all after
+        #     rhs <- gsub("\\(|\\)", "", rhs) # delete ( and )
+        # }
+
+        formula.vars <- unlist(strsplit(rhs, "+", fixed=TRUE))
+        formula.vars <- gsub("^ +| +$", "", formula.vars) # trim leading and trailing spaces
         trace2(trace, "formula.vars %s\n", quotify.trunc(formula.vars))
     }
     term.labels <- NULL
     terms <- try(terms(object), silent=trace < 2)
     if(is.try.err(terms) || is.null(terms))
         trace2(trace,
-               "terms(object) failed for \"%s\" object in plotmo.pairs.default\n",
-               class(object)[1])
+               "terms(object) failed for %s object in plotmo.pairs.default\n",
+               class.as.char(object))
     else {
         term.labels <- attr(terms, "term.labels")
         if(is.null(term.labels))
             trace2(trace,
                    "attr(terms,\"term.labels\") is NULL in plotmo.pairs.default\n")
         else
-            trace2(trace, "term.labels %s\n", quotify.trunc(term.labels))
+            trace2(trace, "term.labels %s\n", quotify.trunc(term.labels, maxlen=100))
     }
     if(is.null(formula.vars) && is.null(term.labels))
         return(NULL)
@@ -131,16 +139,22 @@ form.pairs <- function(varnames) # return a two column matrix, each row is a pai
 # It works by extracting substrings in each term.label that looks like a
 # predictor pair.  The following combos of x1 and x2 for example are
 # considered pairs: x1*x2, x1:x2, s(x1,x2), and similar.
-#
-# TODO this would probably be done best by processing the parse tree
 
 plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace, ...)
 {
     trace2(trace, "plotmo.pairs.from.term.labels\n")
-    trace2(trace, "term.labels: %s\n", quotify.trunc(term.labels), "\n")
-    trace2(trace, "pred.names:  %s\n", quotify.trunc(pred.names), "\n")
+    trace2(trace, "term.labels: %s\n", quotify.trunc(term.labels, maxlen=100), "\n")
+    trace2(trace, "pred.names:  %s\n", quotify.trunc(pred.names, maxlen=100), "\n")
     pairs <- matrix(0, nrow=0, ncol=2)          # no pairs initially
     for(i in 1:length(term.labels)) {
+        untouchable <- get.untouchable.for.naken(term.labels[i])
+        if(NROW(untouchable$replacements)) {
+            # weird variable name (backquoted in formula handling) e.g. `sexmale*h(16-age)`
+            # the gregexpr below won't work because of spaces etc. in the variable name
+            warnf("Cannot determine which variables to plot in degree2 plots (use all2=TRUE?)\n         Confused by variable name %s",
+                  quotify.trunc(term.labels[i])[1])
+            return(pairs)
+        }
         s <- strip.space(term.labels[i])
         s <- gsub("[+*/,]", ":", s)             # replace + * / , with :
         s <- gsub("=[^,)]+", "", s)             # delete "=any"

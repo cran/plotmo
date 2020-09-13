@@ -47,7 +47,6 @@ plotmo1(mod.glmnet.xmat)
 plotres1(mod.glmnet.xmat)
 
 # compare to plot.glmnet
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,2), mar=c(3,6,3.5,6)) # extra side margins for more square plots
 plot_glmnet(mod.glmnet.xmat, main="mod.glmnet.xmat\ncompare to plot.glmnet")
 plot(0,0)
@@ -57,7 +56,7 @@ plot_glmnet(mod.glmnet.xmat, xvar="lambda")
 plot(mod.glmnet.xmat, xvar="lambda")
 plot_glmnet(mod.glmnet.xmat, xvar="dev")
 plot(mod.glmnet.xmat, xvar="dev")
-par(old.par)
+par(org.par)
 
 set.seed(2015)
 mod.cv.glmnet.xmat <- cv.glmnet(xmat, tit[,4], nfolds=3)
@@ -82,7 +81,6 @@ mod <- glmnet(x,y)
 plotmo1(mod)
 
 # test w1.label
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,3))
 par(cex=1)
 par(mar=c(3,3,3,1))
@@ -91,10 +89,9 @@ plotres(mod, which=1, w1.label=5,    w1.main="w1.label=5")
 plotres(mod, which=1, w1.label=0,    w1.main="w1.label=0")
 plotres(mod, which=1, w1.label=TRUE, w1.main="w1.label=TRUE")
 plotres(mod, which=1, w1.label=100,  w1.main="w1.label=100")
-par(old.par)
+par(org.par)
 
 # test w1 and non w1 args passed
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,2), mar=c(4,4,4,4), cex=1)
 
 plot_glmnet(mod, w1.col=3:4, w1.xvar="norm",
@@ -107,8 +104,7 @@ plot_glmnet(mod, col=3:4, w1.col=1:2,
             w1.xvar="norm", xvar="lambda",
             main="plot_glmnet\ncol=3:4 w1.col=1:2\nw1.xvar=\"norm\", xvar=\"lambda\"")
 
-par(old.par)
-old.par <- par(no.readonly=TRUE)
+par(org.par)
 par(mfrow=c(3,2), mar=c(3,4,4,4), cex=1)
 
 plotres(mod, which=c(1,3), do.par=FALSE, w1.col=3:4, w1.xvar="norm",
@@ -120,7 +116,7 @@ plotres(mod, which=c(1,3), do.par=FALSE, col=3:4, xvar="norm",
 plotres(mod, which=c(1,3), do.par=FALSE, col=3:4, w1.col=1:2,
         w1.main="plotres\ncol=3:4 w1.col=1:2")
 
-par(old.par)
+par(org.par)
 
 # glmnet with sparse matrices
 set.seed(2015)
@@ -145,8 +141,8 @@ plotmo1(mod.glmnet.sx, all2=TRUE) # will give warning: too many predictors to pl
 plotmo1(mod.glmnet.sx, all2=2, caption="all2=2") # test all2=2
 plotmo1(mod.glmnet.sx, all2=2, degree2=1:3, caption="all2=2 degree2=1:3")
 plotres(mod.glmnet.sx)
+par(org.par)
 
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,4), mar=c(3,3,3,1), mgp=c(1.5,0.5,0), oma=c(0,0,2.5,0))
 y <- trees$Volume
 x <- as.matrix(data.frame(Girth=trees$Girth, Height=trees$Height))
@@ -160,7 +156,7 @@ plotres(glmnet, do.par=FALSE, which=c(1,3), w1.xvar="norm",
         caption="glmnet with various options", SHOWCALL=TRUE)
 plotres(glmnet, trace=1, do.par=FALSE, which=c(1,3), SHOWCALL=TRUE)
 plotres(glmnet, trace=1, do.par=FALSE, which=c(1,3), predict.s=5, SHOWCALL=TRUE)
-par(old.par)
+par(org.par)
 
 printf("======== glmnet additional tests\n")
 set.seed(2015)
@@ -171,7 +167,6 @@ y <- rowSums(x[,1:3]^3)
 glmnet <- glmnet(x,y)
 plotres(glmnet, SHOWCALL=TRUE, caption="glmnet: y <- rowSums(x[,1:3]^3)")
 plotres(glmnet, SHOWCALL=TRUE, w1.xvar="norm")
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(1,1))
 omar <- par("mar")
 ocex.axis <- par("cex.axis")
@@ -180,7 +175,7 @@ plotres(glmnet, SHOWCALL=TRUE, which=1)
 stopifnot(par("mar") == omar)
 stopifnot(par("cex.axis") == ocex.axis)
 stopifnot(par("cex.lab") == ocex.lab)
-par(old.par)
+par(org.par)
 
 # test some args for plot_glmnet
 plotres(glmnet, predict.s=.05, SHOWCALL=TRUE, trace=0, col.main=2,
@@ -192,16 +187,14 @@ plot_glmnet(glmnet, trace=0, col.main=2, main="test some args for plot_glmnet2",
         xlab="my xlab", ylab="my ylab",
         col=4:1, ylim=c(-2,4)) # TODO xlim=c(-5,3))
 
-old.par <- par(no.readonly=TRUE)
 plotres(glmnet, predict.s=.05, SHOWCALL=TRUE, which=c(1,3), grid.col="gray", do.par=2)
 plotres(glmnet, predict.s=.05, SHOWCALL=TRUE, which=c(1,3), w1.s.col=0, do.par=0)
-par(old.par)
+par(org.par)
 
 # TODO the following issues a stream of warnings: restarting interrupted promise evaluation
 expect.err(try(plotres(glmnet, w1.col=nonesuch)), "cannot evaluate 'col'")
 
 printf("======== glmnet multinomial (multnet)\n")
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,4), mar=c(3,3,3,1))
 set.seed(2016)
 n <- 200
@@ -242,10 +235,9 @@ plotmo(multinomial.mod, nresponse=2, trace=0, do.par=FALSE, degree1=1:2)
 
 par(mgp=c(1.5, .4, 0))
 plot(multinomial.mod, xvar="norm") # compare to plot.glmnet
-par(old.par)
+par(org.par)
 
 # compare to earth
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(4,3), mar=c(3,3,1,1))
 yfac <- factor(c("a","b","c","d")[y])
 earth.mod <- earth(x, yfac, trace=0)
@@ -280,7 +272,7 @@ plotmo(earth.mod, nresponse=4, do.par=FALSE)
 
 print(summary(earth.mod))
 
-par(old.par)
+par(org.par)
 
 printf("======== binomial model\n")
 
@@ -293,19 +285,18 @@ y <- ifelse(x[,1] + x[,2] + .1 * rnorm(n) > .5, TRUE, FALSE)
 print(cov(x, y))
 y <- factor(y)
 glmnet.binomial <- glmnet(x, y, family="binomial")
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,3), mar=c(3,3,1,1))
 plotres(glmnet.binomial, info=T, predict.s=.02, which=c(1,3), do.par=FALSE, w1.main="glmnet.binomial")
 plot(glmnet.binomial)
 earth.mod <- earth(x, y)
 set.seed(2019)
 plotres(earth.mod, info=T, which=c(1,3), do.par=FALSE)
-par(old.par)
+par(org.par)
 par(mfrow=c(2,4), mar=c(3,3,1,1))
 set.seed(2019)
 plotmo(glmnet.binomial, do.par=FALSE)
 plotmo(earth.mod, do.par=FALSE, main="binomial earth.mod")
-par(old.par)
+par(org.par)
 
 printf("======== glmnet family=\"mgaussian\"\n")
 set.seed(2015)
@@ -324,6 +315,7 @@ plot(x=predict(glmnet.mgaussian, newx=x, s=0)[,1,1],
      pch=20, xlab="Fitted", ylab="Residuals",
      main="Manually calculated residuals, nresponse=1, s=0")
 abline(h=0, col="gray")
+par(org.par)
 plotres(glmnet.mgaussian, nresponse=2, SHOWCALL=TRUE, which=c(1:3), do.par=2, info=1)
 # manually calculate the residuals
 plot(x=predict(glmnet.mgaussian, newx=x, s=0)[,2,1],
@@ -331,10 +323,10 @@ plot(x=predict(glmnet.mgaussian, newx=x, s=0)[,2,1],
      pch=20, xlab="Fitted", ylab="Residuals",
      main="Manually calculated residuals, nresponse=2, s=0")
 abline(h=0, col="gray")
+par(org.par)
 plotmo(glmnet.mgaussian, nresponse=1, SHOWCALL=TRUE)
 plotmo(glmnet.mgaussian, nresponse=2, SHOWCALL=TRUE)
 
-old.par <- par(no.readonly=TRUE)
 graphics::par(mfrow=c(2,2), mgp=c(1.5,0.4,0), tcl=-0.3, cex.main=1,
               font.main=1, mar=c(4,3,1.2,0.8), oma=c(0,0,4,0), cex=0.83)
 
@@ -355,8 +347,7 @@ abline(h=0, col="gray")
 
 plotres(glmnet.mgaussian, predict.s=.05, nresponse=3, info=TRUE, SHOWCALL=TRUE) # essentially random
 
-par(old.par)
-old.par <- par(no.readonly=TRUE)
+par(org.par)
 par(mfrow=c(2,3), mar=c(3,3,3,.5), oma=c(0,0,3,0), mgp=c(1.5,0.4,0), tcl=-0.3)
 
 data(trees)
@@ -383,8 +374,7 @@ plotmo(mod.with.inactive.var, do.par=FALSE, pt.col=2)
 # single active variable
 x70 <- cbind(trees[,1,drop=F], 0)
 a <- glmnet(data.matrix(x70), data.matrix(trees$Volume))
-par(old.par)
-old.par <- par(no.readonly=TRUE)
+par(org.par)
 par(mfrow=c(2,2), mar=c(3,3,2,4))
 plotres(a, which=1, predict.s=1, caption="single active variable")
 plotres(a, which=1, w1.xvar="norm")
@@ -395,8 +385,7 @@ plotres(a, which=1, w1.xvar="dev")
 
 #--- glmnet model, which=1 ---
 
-par(old.par)
-old.par <- par(no.readonly=TRUE)
+par(org.par)
 par(mfrow=c(4,3), mar=c(3, 3, 4, 1), mgp=c(2, 0.6, 0))
 
 plotres(mod.glmnet.xmat, which=1,
@@ -439,8 +428,7 @@ plotres(mod.glmnet.xmat, which=c(1,3,4), cex.main=1.2,
 #         qq.ylim=c(-100,100),
 #         main="w1.ylim=c(-7,7) ylim=c(-20,20)\nqq.xlim=c(-7,5) qq.ylim=c(-100,100)")
 
-par(old.par)
-old.par <- par(no.readonly=TRUE)
+par(org.par)
 par(mfrow=c(3,3), mar=c(3, 3, 4, 1), mgp=c(2, 0.6, 0))
 
 plotres(mod.glmnet.xmat, which=c(1,3,4), do.par=FALSE, #  w1.main="which=c(1,3,4)",
@@ -462,12 +450,11 @@ plotres(mod.glmnet.xmat, which=c(1,3,4), w1.cex.main=1, do.par=FALSE, # w1.main=
         col=3:4,
         w1.main="which=c(1,3,4) xlim=c(9,-9), w1.xlim=c(6,-6)\nylim=c(-60,60), w1.ylim=c(-5,5)) w1.col=1:2, col=3:4")
 
-par(old.par)
+par(org.par)
 
 #-- make sure that we can work with all families
 
 set.seed(2016)
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(3,3), mar=c(3,3,3,1))
 n <- 100
 p <- 4
@@ -498,10 +485,9 @@ plot(glmnet.cox)
 title("glmnet.cox", line=2)
 plot_glmnet(glmnet.cox, xvar="norm")
 plotres(glmnet.cox, which=3, do.par=FALSE)
-par(old.par)
+par(org.par)
 
 # test col argument
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2,3), mar=c(3,3,5,1), cex=1)
 mod <- glmnet(as.matrix(mtcars[-1]), mtcars[,1])
 plot_glmnet(mod, main="plot_glmnet  default")
@@ -510,6 +496,6 @@ g <- "gray"
 plot_glmnet(mod, col=c("black","red","green",g,g,g,g,g,"steelblue","darkorange"), main="col=c('black','red','green',g,g,g,g,g,'steelblue','darkorange')")
 plot_glmnet(mod, col=c("black","red","green",0,0,0,0,0,"steelblue","darkorange"), main="col=c('black','red','green',0,0,0,0,0,'steelblue','darkorange')")
 plot_glmnet(mod, col=c("black","red", 0), main="col=c('black','red', 0)") # test recycling, including 0
-par(old.par)
+par(org.par)
 
 source("test.epilog.R")

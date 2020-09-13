@@ -37,7 +37,7 @@ order.pre.vars.on.importance <- function(object, trace)
     importance <- match(varname, allvarnames)
     if(any(is.na(importance) | (importance == 0))) { # sanity check
         warning0("could not get variable importances\n  varname=",
-            paste.c(varname))
+            paste.c(varname, maxlen=30))
         return(NULL)
     }
     if(trace > 0)

@@ -27,6 +27,7 @@ Loading required package: TeachingDemos
 + }
 > plotmores <- function(object, ..., trace=0, SHOWCALL=TRUE, title.extra="", ncol=2) {
 +     old.par <- par(no.readonly=TRUE)
++     on.exit(par(old.par))
 +     par(mfrow=c(2,ncol))
 +     caption <- paste(deparse(substitute(object)), collapse=" ")
 +     call <- match.call(expand.dots=TRUE)
@@ -38,7 +39,6 @@ Loading required package: TeachingDemos
 +     plotres(object, trace=trace, SHOWCALL=SHOWCALL, do.par=FALSE, which=c(1,3), ...)
 +     title(paste("\n", call), outer=TRUE)
 +     plotmo(object, trace=trace, SHOWCALL=SHOWCALL, do.par=FALSE, ...)
-+     par(old.par)
 + }
 > tit <- get.tit()
 > set.seed(2015)
@@ -59,7 +59,7 @@ plotmores(object=mod.glmnet.xmat, predict.s=2.5)
 > mod.glmnet.agedata <- glmnet(age~., data=agedata)
 > expect.err(try(plotres(mod.glmnet.agedata)), "for this plot, glmnet.formula must be called with use.model.frame=TRUE")
 Error : for this plot, glmnet.formula must be called with use.model.frame=TRUE
-Got error as expected from try(plotres(mod.glmnet.agedata))
+Got expected error from try(plotres(mod.glmnet.agedata))
 > mod.glmnet.agedata <- glmnet(age~., data=agedata, use.model.frame=TRUE)
 > plotmores(mod.glmnet.agedata, predict.s=2.5)
 plotmores(object=mod.glmnet.agedata, predict.s=2.5)
@@ -95,7 +95,7 @@ got model response from getCall(object)$y
 > mod.cv.glmnet.agedata <- cv.glmnet(age~., data=agedata)
 > expect.err(try(plotres(mod.cv.glmnet.agedata)), "for this plot, cv.glmnet.formula must be called with use.model.frame=TRUE")
 Error : for this plot, cv.glmnet.formula must be called with use.model.frame=TRUE
-Got error as expected from try(plotres(mod.cv.glmnet.agedata))
+Got expected error from try(plotres(mod.cv.glmnet.agedata))
 > set.seed(2015)
 > mod.cv.glmnet.agedata <- cv.glmnet(age~., data=agedata, use.model.frame=TRUE)
 > cat("==Test lambda.min\n")
@@ -108,7 +108,7 @@ stats::predict(cv.glmnet.formula.object, data.frame[3,3], type="response",
                s="lambda.min")
 stats::fitted(object=cv.glmnet.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(age~survived+sibsp+logage,
+got model response from model.frame(age ~ survived + sibsp + logage,
                                     data=call$data, na.action="na.omit")
 graphics::plot(cv.glmnet.formula.object)
 
@@ -117,7 +117,7 @@ stats::predict(cv.glmnet.formula.object, data.frame[3,3], type="response",
                s="lambda.min")
 stats::fitted(object=cv.glmnet.formula.object)
 fitted() was unsuccessful, will use predict() instead
-got model response from model.frame(age~survived+sibsp+logage,
+got model response from model.frame(age ~ survived + sibsp + logage,
                                     data=call$data, na.action="na.omit")
 
  plotmo grid:    survived sibsp  logage
@@ -151,6 +151,7 @@ plotmores(object=binomial.mod, ncol=3)
 plotmores(object=binomial.mod.form, ncol=3)
  plotmo grid:    x1          x2        x3         x4
          -0.2965405 -0.03311923 0.2416254 0.01017809
+> par(org.par)
 > 
 > printf("======== glmnet family=\"mgaussian\"\n")
 ======== glmnet family="mgaussian"
@@ -170,6 +171,7 @@ plotmores(object=binomial.mod.form, ncol=3)
 +      pch=20, xlab="Fitted", ylab="Residuals",
 +      main="Manually calculated residuals, nresponse=1, s=0")
 > abline(h=0, col="gray")
+> par(org.par)
 > 
 > # # TODO is glmnet mgaussian supported with a formula interface?
 > # dataxy <- data.frame(ymultresp, xx)
@@ -177,7 +179,6 @@ plotmores(object=binomial.mod.form, ncol=3)
 > # glmnet.mgaussian.form <- glmnet(xx, ymultresp, family="mgaussian")
 > # plotres(glmnet.mgaussian.form, nresponse=1, SHOWCALL=TRUE, which=c(1:3), do.par=2, info=1)
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,3), mar=c(3,3,3,.5), oma=c(0,0,3,0), mgp=c(1.5,0.4,0), tcl=-0.3)
 > 
 > data(trees)
@@ -196,11 +197,11 @@ plotmores(object=mod.with.long.name, ncol=3)
 plotmores(object=mod.with.long.name.form, ncol=3)
  plotmo grid:    Girth Height Girth12345678901234567890
                   12.9     76               0.004544606
+> par(org.par)
 > 
 > #-- make sure that we can work with all families
 > 
 > set.seed(2016)
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,3), mar=c(3,3,3,1))
 > n <- 100
 > p <- 4
@@ -233,6 +234,7 @@ poisson : plotmores(object=mod, xvar="lambda", title.extra=title.extra, ncol=3)
 formula poisson : plotmores(object=mod.form, xvar="lambda", title.extra=title.extra, ncol=3)
  plotmo grid:    X1        X2         X3        X4
          -0.2662071 0.1805768 0.03613807 0.2422419
+> par(org.par)
 > # cox
 > library(plotmo)
 > n <- 100
@@ -256,6 +258,7 @@ plotmores(object=glmnet.cox, degree1=1:4, ncol=3)
  -0.0799275 0.08172409 -0.107284 0.2036831 0.08643651 -0.0435986 0.1664937
           x14        x15       x16       x17        x18        x19         x20
  -0.003946797 -0.1313896 0.1714765 0.2209166 -0.2018331 -0.1230542 -0.04088624
+> par(org.par)
 > # TODO formula interface not tested for cox models
 > 
 > source("test.epilog.R")

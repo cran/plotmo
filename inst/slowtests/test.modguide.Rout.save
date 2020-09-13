@@ -1,6 +1,7 @@
 > # test.modguide.bat: test model1 and model2 (linmod examples) in modguide.pdf
 > 
 > source("test.prolog.R")
+> options(warn=1) # print warnings as they occur
 > almost.equal <- function(x, y, max=1e-8)
 + {
 +     stopifnot(max >= 0 && max < .01)
@@ -83,11 +84,11 @@
 > fit1 <- linmod(Volume~., data=tr)
 > expect.err(try(predict(fit1, newdata=data.frame(Girth=10, Height=80))), "object 'Volume' not found")
 Error in eval(predvars, data, env) : object 'Volume' not found
-Got error as expected from try(predict(fit1, newdata = data.frame(Girth = 10, Height = 80)))
+Got expected error from try(predict(fit1, newdata = data.frame(Girth = 10, Height = 80)))
 > expect.err(try(predict(fit1, newdata=as.matrix(tr[1:3,]))), "'data' must be a data.frame, not a matrix or an array")
 Error in model.frame.default(object, data, xlev = xlev) : 
   'data' must be a data.frame, not a matrix or an array
-Got error as expected from try(predict(fit1, newdata = as.matrix(tr[1:3, ])))
+Got expected error from try(predict(fit1, newdata = as.matrix(tr[1:3, ])))
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
@@ -97,28 +98,28 @@ Loading required package: TeachingDemos
 stats::predict(linmod.object, data.frame[3,2], type="response")
 
 Error in eval(predvars, data, env) : object 'Volume' not found
-Got error as expected from try(plotmo(fit1))
+Got expected error from try(plotmo(fit1))
 > fit2 <- linmod(cbind(1, tr[,1:2]), tr[,3])
 > stopifnot(coef(fit1) == coef(fit2))
 > # following fail because newdata is a data.frame not a matrix
 > expect.err(try(predict(fit2, newdata=tr[,1:2])), "requires numeric/complex matrix/vector arguments")
 Error in x %*% coef(object) : 
   requires numeric/complex matrix/vector arguments
-Got error as expected from try(predict(fit2, newdata = tr[, 1:2]))
+Got expected error from try(predict(fit2, newdata = tr[, 1:2]))
 > expect.err(try(predict(fit2, newdata=data.frame(Girth=10, Height=80))), "requires numeric/complex matrix/vector arguments")
 Error in x %*% coef(object) : 
   requires numeric/complex matrix/vector arguments
-Got error as expected from try(predict(fit2, newdata = data.frame(Girth = 10, Height = 80)))
+Got expected error from try(predict(fit2, newdata = data.frame(Girth = 10, Height = 80)))
 > expect.err(try(predict(fit2, newdata=as.matrix(data.frame(Girth=10, Height=80)))), "non-conformable arguments")
 Error in x %*% coef(object) : non-conformable arguments
-Got error as expected from try(predict(fit2, newdata = as.matrix(data.frame(Girth = 10,     Height = 80))))
+Got expected error from try(predict(fit2, newdata = as.matrix(data.frame(Girth = 10,     Height = 80))))
 > expect.err(try(plotmo(fit2)), "requires numeric/complex matrix/vector arguments")
 
 stats::predict(linmod.object, data.frame[3,3], type="response")
 
 Error in x %*% coef(object) : 
   requires numeric/complex matrix/vector arguments
-Got error as expected from try(plotmo(fit2))
+Got expected error from try(plotmo(fit2))
 > 
 > cat("==a plotmo method function can deal with the issues\n")
 ==a plotmo method function can deal with the issues
@@ -253,11 +254,11 @@ check fit2.mat vs lm.tr
 > expect.err(try(linmod(y~x)), "invalid type (list) for variable 'x'")
 Error in model.frame.default(formula = formula, data = data) : 
   invalid type (list) for variable 'x'
-Got error as expected from try(linmod(y ~ x))
+Got expected error from try(linmod(y ~ x))
 > expect.err(try(lm(y~x)), "invalid type (list) for variable 'x'")
 Error in model.frame.default(formula = y ~ x, drop.unused.levels = TRUE) : 
   invalid type (list) for variable 'x'
-Got error as expected from try(lm(y ~ x))
+Got expected error from try(lm(y ~ x))
 > 
 > fit3.mat <- linmod(as.matrix(x), as.matrix(y))
 > check.lm(fit3.mat, lm.tr, newdata=trees[3:5,1:2])
@@ -371,27 +372,27 @@ check fit9.form vs lm9
 > expect.err(try(linmod(tit[,c(1,3,4,5,6)], tit[,"survived"])), "NAs introduced by coercion")
 Error in storage.mode(x) <- "double" : 
   (converted from warning) NAs introduced by coercion
-Got error as expected from try(linmod(tit[, c(1, 3, 4, 5, 6)], tit[, "survived"]))
+Got expected error from try(linmod(tit[, c(1, 3, 4, 5, 6)], tit[, "survived"]))
 > options(warn=1) # print warnings as they occur
 > expect.err(try(linmod(tit[,c(1,3,4,5,6)], tit[,"survived"])), "NA/NaN/Inf in foreign function call (arg 1)")
 Warning in storage.mode(x) <- "double" : NAs introduced by coercion
 Error in qr.default(x) : NA/NaN/Inf in foreign function call (arg 1)
-Got error as expected from try(linmod(tit[, c(1, 3, 4, 5, 6)], tit[, "survived"]))
+Got expected error from try(linmod(tit[, c(1, 3, 4, 5, 6)], tit[, "survived"]))
 > 
 > options(warn=2) # treat warnings as errors
 > expect.err(try(lm(pclass~., data=tit)), "using type = \"numeric\" with a factor response will be ignored")
 Error in model.response(mf, "numeric") : 
   (converted from warning) using type = "numeric" with a factor response will be ignored
-Got error as expected from try(lm(pclass ~ ., data = tit))
+Got expected error from try(lm(pclass ~ ., data = tit))
 > # minimal version
 > expect.err(try(linmod(pclass~., data=tit)), "(converted from warning) NAs introduced by coercion")
 Error in storage.mode(y) <- "double" : 
   (converted from warning) NAs introduced by coercion
-Got error as expected from try(linmod(pclass ~ ., data = tit))
+Got expected error from try(linmod(pclass ~ ., data = tit))
 > expect.err(try(linmod(tit$pclass, tit$survived)), "(converted from warning) NAs introduced by coercion")
 Error in storage.mode(x) <- "double" : 
   (converted from warning) NAs introduced by coercion
-Got error as expected from try(linmod(tit$pclass, tit$survived))
+Got expected error from try(linmod(tit$pclass, tit$survived))
 > # # production version
 > # expect.err(try(linmod(pclass~., data=tit)), "'y' is not numeric or logical")
 > options(warn=1)
@@ -417,7 +418,7 @@ check fit10a.form vs lm10a
 > 
 > expect.err(try(linmod(paste(1:10), 1:10)), "requires numeric/complex matrix/vector arguments")
 Error in x %*% coef : requires numeric/complex matrix/vector arguments
-Got error as expected from try(linmod(paste(1:10), 1:10))
+Got expected error from try(linmod(paste(1:10), 1:10))
 > 
 > lm11 <- lm(as.numeric(pclass)~., data=tit)
 > fit11.form <- linmod(as.numeric(pclass)~., data=tit)
@@ -447,7 +448,7 @@ check fit31.form vs lm31
 > expect.err(try(linmod(string~., df.with.string)), "non-numeric argument to binary operator")
 Warning in storage.mode(y) <- "double" : NAs introduced by coercion
 Error in y - x %*% coef : non-numeric argument to binary operator
-Got error as expected from try(linmod(string ~ ., df.with.string))
+Got expected error from try(linmod(string ~ ., df.with.string))
 > # production version
 > # expect.err(try(linmod(string~., df.with.string)), "'y' is not numeric or logical")
 > 
@@ -456,13 +457,13 @@ Got error as expected from try(linmod(string ~ ., df.with.string))
 > expect.err(try(linmod(df.with.string, vec)), "NAs introduced by coercion")
 Error in storage.mode(x) <- "double" : 
   (converted from warning) NAs introduced by coercion
-Got error as expected from try(linmod(df.with.string, vec))
+Got expected error from try(linmod(df.with.string, vec))
 > options(warn=1)
 > # minimal version
 > expect.err(try(linmod(df.with.string, vec)), "NA/NaN/Inf in foreign function call (arg 1)")
 Warning in storage.mode(x) <- "double" : NAs introduced by coercion
 Error in qr.default(x) : NA/NaN/Inf in foreign function call (arg 1)
-Got error as expected from try(linmod(df.with.string, vec))
+Got expected error from try(linmod(df.with.string, vec))
 > # production version
 > # expect.err(try(linmod(df.with.string, vec)), "NA in 'x'")
 > 
@@ -470,13 +471,13 @@ Got error as expected from try(linmod(df.with.string, vec))
 > expect.err(try(linmod(df.with.string, vec)), "NAs introduced by coercion")
 Error in storage.mode(x) <- "double" : 
   (converted from warning) NAs introduced by coercion
-Got error as expected from try(linmod(df.with.string, vec))
+Got expected error from try(linmod(df.with.string, vec))
 > options(warn=1)
 > # minimal version
 > expect.err(try(linmod(df.with.string, vec)), "NA/NaN/Inf in foreign function call (arg 1)")
 Warning in storage.mode(x) <- "double" : NAs introduced by coercion
 Error in qr.default(x) : NA/NaN/Inf in foreign function call (arg 1)
-Got error as expected from try(linmod(df.with.string, vec))
+Got expected error from try(linmod(df.with.string, vec))
 > # production version
 > # expect.err(try(linmod(df.with.string, vec)), "NA in 'x'")
 > 
@@ -491,14 +492,14 @@ Got error as expected from try(linmod(df.with.string, vec))
 > # minimal version
 > expect.err(try(linmod(y2~x2)), "'size' cannot exceed nrow(x) = 2")
 Error in chol2inv(qx$qr) : 'size' cannot exceed nrow(x) = 2
-Got error as expected from try(linmod(y2 ~ x2))
+Got expected error from try(linmod(y2 ~ x2))
 > 
 > x3 <- matrix(1:10, ncol=2)
 > y3 <- c(1,2,9,4,5)
 > # production version will give a better error message
 > expect.err(try(linmod(y3~x3)), "singular matrix 'a' in 'solve'")
 Error in solve.qr(qx, y) : singular matrix 'a' in 'solve'
-Got error as expected from try(linmod(y3 ~ x3))
+Got expected error from try(linmod(y3 ~ x3))
 > 
 > cat("==nrow(x) does not match length(y)\n")
 ==nrow(x) does not match length(y)
@@ -508,13 +509,13 @@ Got error as expected from try(linmod(y3 ~ x3))
 > y4 <- c(1,2,9,4)
 > expect.err(try(linmod(x4, y4)), "singular matrix 'a' in 'solve'")
 Error in solve.qr(qx, y) : singular matrix 'a' in 'solve'
-Got error as expected from try(linmod(x4, y4))
+Got expected error from try(linmod(x4, y4))
 > 
 > x5 <- matrix(1:10, ncol=2)
 > y5 <- c(1,2,9,4,5,9)
 > expect.err(try(linmod(x5, y5)), "singular matrix 'a' in 'solve'")
 Error in solve.qr(qx, y) : singular matrix 'a' in 'solve'
-Got error as expected from try(linmod(x5, y5))
+Got expected error from try(linmod(x5, y5))
 > 
 > cat("==y has multiple columns\n")
 ==y has multiple columns
@@ -523,7 +524,7 @@ Got error as expected from try(linmod(x5, y5))
 > y2 <- cbind(c(1,2,3,4,9), vec^2)
 > expect.err(try(linmod(vec, y2)), "'qr' and 'y' must have the same number of rows")
 Error in qr.coef(a, b) : 'qr' and 'y' must have the same number of rows
-Got error as expected from try(linmod(vec, y2))
+Got expected error from try(linmod(vec, y2))
 > # following does not issue any error message, it should
 > # expect.err(try(linmod(y2~vec)), "error message")
 > 

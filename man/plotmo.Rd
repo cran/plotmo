@@ -483,8 +483,8 @@ Please see the \href{../doc/plotmo-notes.pdf}{plotmo vignette}
 if (require(rpart)) {
     data(kyphosis)
     rpart.model <- rpart(Kyphosis~., data=kyphosis)
-    # pass type="prob" to plotmo's internal calls to predict.rpart, and select
-    # the column named "present" from the matrix returned by predict.rpart
+    # pass type="prob" to plotmo's internal calls to predict.rpart, and
+    # select the column named "present" from the matrix returned by predict.rpart
     plotmo(rpart.model, type="prob", nresponse="present")
 }
 if (require(earth)) {

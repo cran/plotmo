@@ -1,5 +1,5 @@
-[![version](http://www.r-pkg.org/badges/version/plotmo)](https://cran.r-project.org/package=plotmo)
-[![downloads](http://cranlogs.r-pkg.org/badges/plotmo)](https://cran.r-project.org/package=plotmo)
+[![version](https://www.r-pkg.org/badges/version/plotmo)](https://cran.r-project.org/package=plotmo)
+[![downloads](https://cranlogs.r-pkg.org/badges/plotmo)](https://cran.r-project.org/package=plotmo)
 
 ## The plotmo package: Plotting model surfaces
 

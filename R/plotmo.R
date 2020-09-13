@@ -49,13 +49,21 @@ plotmo <- function(object = stop("no 'object' argument"),
     object.name <- quote.deparse(substitute(object))
     object # make sure object exists
     trace <- as.numeric(check.integer.scalar(trace, logical.ok=TRUE))
+
+    use.submodel <- dota("USE.SUBMODEL", DEF=TRUE, ...) # undoc arg (for parsnip models)
+    use.submodel <- is.specified(use.submodel)
+
     # Associate the model environment with the object.
     # (This is instead of passing it as an argument to plotmo's data access
     # functions.  It saves a few hundred references to model.env in the code.)
-    attr(object, ".Environment") <- get.model.env(object, object.name, trace)
-    temp <- plotmo_prolog(object, object.name, trace, ...)
-        object  <- temp$object
-        my.call <- temp$my.call
+    object.env <- get.model.env(object, object.name, trace, use.submodel)
+
+    ret <- plotmo_prolog(object, object.name, trace, ...)
+        object  <- ret$object # the original object or a submodel (parsnip)
+        my.call <- ret$my.call
+
+    attr(object, ".Environment") <- object.env
+
     # We will later make two passes through the plots if we need to
     # automatically determine ylim (see get.ylim.by.dummy.plots).
     # The trace2 variable is used for disabling tracing on the second pass.
@@ -153,7 +161,7 @@ plotmo <- function(object = stop("no 'object' argument"),
         # is this an intercept only model? (which causes nsingles == 0 && npairs == 0)
         # if so, we plot it anyway (unless degree1=0)
         trace2(trace, "\n----plotmo_singles for %s object, all1=FALSE %s \n",
-               class(object)[1], "(determine if is.int.only)")
+               class.as.char(object), "(determine if is.int.only)")
         sing <- plotmo.singles(object=object, x=x, nresponse=nresponse,
                                trace=trace, all1=FALSE) # note that all1=FALSE
         is.int.only <- length(sing) == 0
@@ -501,7 +509,7 @@ do.degree2.auto.par <- function(type2, nfigs, simple.ticktype)
 }
 plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
 {
-    trace2(trace, "\n----plotmo_singles for %s object\n", class(object)[1])
+    trace2(trace, "\n----plotmo_singles for %s object\n", class.as.char(object))
     singles <- plotmo.singles(object=object, x=x, nresponse=nresponse,
                               trace=trace, all1=all1)
     if(is.character(degree1)) # get all singles, not just those used in the model?
@@ -522,7 +530,7 @@ plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
                                allow.empty=TRUE, is.degree.spec=TRUE)
         singles <- singles[degree1]
     } else if(is.degree.specified(degree1) && degree1[1] != 0 && trace >= 0)
-        warning0("'degree1' specified but no degree1 plots")
+        warning0("'degree1' specified but no degree1 plots (maybe use all1=TRUE?)")
     if(trace >= 2) {
         if(length(singles))
             cat("singles:", paste0(singles, " ", colnames(x)[singles], collapse=", "), "\n")
@@ -533,7 +541,7 @@ plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
 }
 plotmo_pairs <- function(object, x, nresponse, trace, all2, degree2)
 {
-    trace2(trace, "\n----plotmo_pairs for %s object\n", class(object)[1])
+    trace2(trace, "\n----plotmo_pairs for %s object\n", class.as.char(object))
     pairs <- NULL
     if(is.character(degree2) && length(degree2) == 2) {
         # degree2 is a two element character vector
@@ -563,8 +571,8 @@ plotmo_pairs <- function(object, x, nresponse, trace, all2, degree2)
             i <- check.index(degree2, "degree2", pairs, colnames=colnames(x),
                              allow.empty=TRUE, is.degree.spec=TRUE)
             pairs <- pairs[i, , drop=FALSE] # length(i) will be 0 if check.index not ok
-        } else if (is.degree.specified(degree2) && degree2[1] != 0 && trace >= 0)
-            warning0("'degree2' specified but no degree2 plots")
+        } else if(is.degree.specified(degree2) && degree2[1] != 0 && trace >= 0)
+            warning0("'degree2' specified but no degree2 plots (maybe use all2=TRUE?)")
     }
     if(trace >= 2) {
         if(NROW(pairs)) {
@@ -650,11 +658,11 @@ get.level <- function(level, ...)
         level <- .95
         warning0(
             "plotmo's 'se' argument is deprecated, please use 'level=.95' instead")
-    } else if (se < 0 || se > 5) # 5 is arb
+    } else if(se < 0 || se > 5) # 5 is arb
         stop0("plotmo's 'se' argument is deprecated, please use 'level=.95' instead")
-    else if (se > 0 && se < 1)   # e.g. se=.95
+    else if(se > 0 && se < 1)   # e.g. se=.95
         stop0("plotmo's 'se' argument is deprecated, please use 'level=.95' instead")
-    else if (se > 0) {
+    else if(se > 0) {
         level <- 1 - 2 * (1 - pnorm(se)) # se=2 becomes level=.954
         warning0(sprint(
             "plotmo's 'se' argument is deprecated, please use 'level=%.2f' instead",
@@ -844,7 +852,7 @@ plot.degree1 <- function( # plot all degree1 graphs
             }
         } else { # classic plotmo plot
             yhat <- plotmo_predict(object, xframe, nresponse,
-                        type, resp.levs, trace2, inverse.func, ...)$yhat
+                                   type, resp.levs, trace2, inverse.func, ...)$yhat
             if(level > 0) # get prediction intervals?
                 intervals <- plotmo_pint(object, xframe, type, level, trace2,
                                          ipred, inverse.func)
@@ -1304,7 +1312,7 @@ plot.degree2 <- function(  # plot all degree2 graphs
 
         temp <- get.degree2.xframe(xgrid, x, ipred1, ipred2,
                                    ngrid2, xranges, ux.list, ndiscrete)
-            xframe <- temp$xframe  # data frame of medians
+            xframe <- temp$xframe # data frame of medians
             x1grid <- temp$x1grid # vec of values for the first predictor
             x2grid <- temp$x2grid # vec of values for the second predictor
 
@@ -1397,7 +1405,7 @@ plot.degree2 <- function(  # plot all degree2 graphs
             opar=par("mar", "mgp")
             on.exit(par(mar=opar$mar, mgp=opar$mgp))
             do.degree2.auto.par(type2, nfigs, simple.ticktype)
-        } else if (nsingles && type2 == "persp") {
+        } else if(nsingles && type2 == "persp") {
             # persp needs smaller margins than degree1 plots
             # the nsingles check above prevents us from modifying margins
             # if the user is simply plotting one or more degree2 plots

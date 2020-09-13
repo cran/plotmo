@@ -3,7 +3,7 @@
 > source("test.prolog.R")
 > source("linmod.R")         # linear model code (http://www.milbo.org/doc/linmod.R)
 > source("linmod.methods.R") # additional method functions for linmod
-> options(warn=2) # treat warnings as errors
+> options(warn=1) # print warnings as they occur
 > 
 > almost.equal <- function(x, y, max=1e-8)
 + {
@@ -103,12 +103,14 @@ check linmod.form.Volume.tr vs lm.Volume.tr
 > # character new data (instead of numeric)
 > newdata.allchar <- as.data.frame(matrix("blank", ncol=3, nrow=3))
 > colnames(newdata.allchar) <- colnames(trees)
-> expect.err(try(predict(lm.Volume.tr, newdata=newdata.allchar)), "variables 'Girth', 'Height' were specified with different types from the fit")
+> expect.err(try(predict(lm.Volume.tr, newdata=newdata.allchar)),
++                "variables 'Girth', 'Height' were specified with different types from the fit")
 Error : variables 'Girth', 'Height' were specified with different types from the fit
-Got error as expected from try(predict(lm.Volume.tr, newdata = newdata.allchar))
-> expect.err(try(predict(linmod.form.Volume.tr, newdata=newdata.allchar)), "variables 'Girth', 'Height' were specified with different types from the fit")
+Got expected error from try(predict(lm.Volume.tr, newdata = newdata.allchar))
+> expect.err(try(predict(linmod.form.Volume.tr, newdata=newdata.allchar)),
++               "variables 'Girth', 'Height' were specified with different types from the fit")
 Error : variables 'Girth', 'Height' were specified with different types from the fit
-Got error as expected from try(predict(linmod.form.Volume.tr, newdata = newdata.allchar))
+Got expected error from try(predict(linmod.form.Volume.tr, newdata = newdata.allchar))
 > 
 > linmod.xy.Volume.tr <- linmod(tr[,1:2], tr[,3,drop=FALSE])                         # x=data.frame y=data.frame
 > cat0("==print(summary(linmod.xy.Volume.tr))\n")
@@ -292,27 +294,30 @@ check linmod1a.xy vs lma.tr
 > stopifnot(almost.equal(predict(linmod.form.Volume.tr, newdata=data.frame(Girth=10, Height=80, extra=99)),
 +                        predict(lm.Volume.tr,          newdata=data.frame(Girth=10, Height=80, extra=99))))
 > # check that extra fields in predict newdata are not ok with x,y models
-> expect.err(try(predict(linmod.xy.Volume.tr, newdata=data.frame(Girth=10, Height=80, extra=99))), "ncol(newdata) is 3 but should be 2")
+> expect.err(try(predict(linmod.xy.Volume.tr, newdata=data.frame(Girth=10, Height=80, extra=99))),
++               "ncol(newdata) is 3 but should be 2")
 Error in predict.linmod(linmod.xy.Volume.tr, newdata = data.frame(Girth = 10,  : 
   ncol(newdata) is 3 but should be 2
-Got error as expected from try(predict(linmod.xy.Volume.tr, newdata = data.frame(Girth = 10,     Height = 80, extra = 99)))
+Got expected error from try(predict(linmod.xy.Volume.tr, newdata = data.frame(Girth = 10,     Height = 80, extra = 99)))
 > 
 > # missing variables in newdata
-> expect.err(try(predict(linmod.form.Volume.tr, newdata=data.frame(Girth=10))), "variable 'Height' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'Height' is missing from newdata
-Got error as expected from try(predict(linmod.form.Volume.tr, newdata = data.frame(Girth = 10)))
-> expect.err(try(predict(linmod.form.Volume.tr, newdata=c(8.3, 70))),           "variable 'Girth' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'Girth' is missing from newdata
-Got error as expected from try(predict(linmod.form.Volume.tr, newdata = c(8.3, 70)))
-> expect.err(try(predict(lm.Volume.tr,          newdata=data.frame(Girth=10))), "object 'Height' not found")
+> expect.err(try(predict(linmod.form.Volume.tr, newdata=data.frame(Girth=10))),
++                "object 'Height' not found")
 Error in eval(predvars, data, env) : object 'Height' not found
-Got error as expected from try(predict(lm.Volume.tr, newdata = data.frame(Girth = 10)))
-> expect.err(try(predict(linmod.xy.Volume.tr,            newdata=data.frame(Girth=10))), "ncol(newdata) is 1 but should be 2")
+Got expected error from try(predict(linmod.form.Volume.tr, newdata = data.frame(Girth = 10)))
+> expect.err(try(predict(linmod.form.Volume.tr, newdata=c(8.3, 70))),
++                "object 'Girth' not found")
+Error in eval(predvars, data, env) : object 'Girth' not found
+Got expected error from try(predict(linmod.form.Volume.tr, newdata = c(8.3, 70)))
+> expect.err(try(predict(lm.Volume.tr,          newdata=data.frame(Girth=10))),
++                "object 'Height' not found")
+Error in eval(predvars, data, env) : object 'Height' not found
+Got expected error from try(predict(lm.Volume.tr, newdata = data.frame(Girth = 10)))
+> expect.err(try(predict(linmod.xy.Volume.tr,            newdata=data.frame(Girth=10))),
++                "ncol(newdata) is 1 but should be 2")
 Error in predict.linmod(linmod.xy.Volume.tr, newdata = data.frame(Girth = 10)) : 
   ncol(newdata) is 1 but should be 2
-Got error as expected from try(predict(linmod.xy.Volume.tr, newdata = data.frame(Girth = 10)))
+Got expected error from try(predict(linmod.xy.Volume.tr, newdata = data.frame(Girth = 10)))
 > 
 > # check that rownames got propagated
 > stopifnot(names(linmod.form.Volume.tr$residuals)[1] == "tree1")
@@ -469,7 +474,7 @@ Height        0.3392512 0.1301512  2.606594 1.449097e-02
 [5,]  10.7     81
 [6,]  10.8     83
 > stopifnot(dim(linmod.xy.keep$x) == c(nrow(trees), 2))
-> stopifnot(class(linmod.xy.keep$x) == "matrix")
+> stopifnot(class(linmod.xy.keep$x)[1] == "matrix")
 > print(head(linmod.xy.keep$y))
      trees[,3]
 [1,]      10.3
@@ -479,7 +484,7 @@ Height        0.3392512 0.1301512  2.606594 1.449097e-02
 [5,]      18.8
 [6,]      19.7
 > stopifnot(dim(linmod.xy.keep$y) == c(nrow(trees), 1))
-> stopifnot(class(linmod.xy.keep$y) == "matrix")
+> stopifnot(class(linmod.xy.keep$y)[1] == "matrix")
 > linmod.xy.keep$call <- NULL # trick to force use of x and y in plotmo
 > plotmo(linmod.xy.keep, pt.col=3)
  plotmo grid:    Girth Height
@@ -530,7 +535,7 @@ V1            0.5318092  0.1597269  3.329491 0.003730259
 [5,]   81
 [6,]   83
 > stopifnot(dim(linmod.vecx.xy.keep$x) == c(n, 1))
-> stopifnot(class(linmod.vecx.xy.keep$x) == "matrix")
+> stopifnot(class(linmod.vecx.xy.keep$x)[1] == "matrix")
 > print(head(linmod.vecx.xy.keep$y))
      trees[1:n,3]
 [1,]         10.3
@@ -540,7 +545,7 @@ V1            0.5318092  0.1597269  3.329491 0.003730259
 [5,]         18.8
 [6,]         19.7
 > stopifnot(dim(linmod.vecx.xy.keep$y) == c(n, 1))
-> stopifnot(class(linmod.vecx.xy.keep$y) == "matrix")
+> stopifnot(class(linmod.vecx.xy.keep$y)[1] == "matrix")
 > linmod.vecx.xy.keep$call <- NULL # trick to force use of x and y in plotmo
 > plotmo(linmod.vecx.xy.keep, pt.col=3)
 > plotres(linmod.vecx.xy.keep)
@@ -549,8 +554,8 @@ V1            0.5318092  0.1597269  3.329491 0.003730259
 +          check.coef.names=FALSE, check.casenames=FALSE)
 check linmod.vecx.form.keep vs linmod.vecx.xy.keep
 > 
-> cat0("==test model building with different numeric args\n")
-==test model building with different numeric args
+> cat0("==test model building with assorted numeric args\n")
+==test model building with assorted numeric args
 > 
 > x <- tr[,1:2]
 > y <- tr[,3]
@@ -564,11 +569,11 @@ check linmod2.xy vs lm.Volume.tr
 > expect.err(try(linmod(y~x)), "invalid type (list) for variable 'x'")
 Error in model.frame.default(formula = formula, data = data, na.action = na.pass) : 
   invalid type (list) for variable 'x'
-Got error as expected from try(linmod(y ~ x))
+Got expected error from try(linmod(y ~ x))
 > expect.err(try(lm(y~x)),     "invalid type (list) for variable 'x'")
 Error in model.frame.default(formula = y ~ x, drop.unused.levels = TRUE) : 
   invalid type (list) for variable 'x'
-Got error as expected from try(lm(y ~ x))
+Got expected error from try(lm(y ~ x))
 > 
 > linmod3.xy <- linmod(as.matrix(x), as.matrix(y))
 > check.lm(linmod3.xy, lm.Volume.tr, newdata=newdata.2col)
@@ -583,7 +588,7 @@ check linmod4.form vs lm4
 > 
 > xm <- as.matrix(x)
 > cat0("class(xm)=", class(xm), " class(y)=", class(y), "\n") # class(xm)=matrix class(y)=numeric
-class(xm)=matrix class(y)=numeric
+class(xm)=matrixarray class(y)=numeric
 > linmod5.form <- linmod(y ~ xm)
 > lm5 <- lm(y ~ xm)
 > check.lm(linmod5.form, lm5, check.newdata=FALSE)
@@ -622,28 +627,55 @@ check linmod6.xy vs linmod.y1.x1
 > expect.err(try(predict(lm1,    newdata=trees[3:5,1,drop=FALSE])),
 +            "'newdata' had 3 rows but variables found have 31 rows")
 Error : (converted from warning) 'newdata' had 3 rows but variables found have 31 rows
-Got error as expected from try(predict(lm1, newdata = trees[3:5, 1, drop = FALSE]))
+Got expected error from try(predict(lm1, newdata = trees[3:5, 1, drop = FALSE]))
 > expect.err(try(predict(lm1,    newdata=trees[3:5,1,drop=TRUE])),
 +            "numeric 'envir' arg not of length one")
 Error in eval(predvars, data, env) : 
   numeric 'envir' arg not of length one
-Got error as expected from try(predict(lm1, newdata = trees[3:5, 1, drop = TRUE]))
+Got expected error from try(predict(lm1, newdata = trees[3:5, 1, drop = TRUE]))
 > 
-> # following checks that predict.linmod gives better error messages than predict.lm
+> # following checks messages when missing variables in newdata
+> 
+> options(warn=2) # treat warnings as errors to check that we get a warning in stats::model.frame
 > expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=FALSE])),
-+            "variable 'x1' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'x1' is missing from newdata
-Got error as expected from try(predict(linmod.y1.x1, newdata = trees[3:5, 1, drop = FALSE]))
++            "(converted from warning) 'newdata' had 3 rows but variables found have 31 rows")
+Error : (converted from warning) 'newdata' had 3 rows but variables found have 31 rows
+Got expected error from try(predict(linmod.y1.x1, newdata = trees[3:5, 1, drop = FALSE]))
 > expect.err(try(predict(lm1, newdata=trees[3:5,1,drop=FALSE])),
 +            "(converted from warning) 'newdata' had 3 rows but variables found have 31 rows")
 Error : (converted from warning) 'newdata' had 3 rows but variables found have 31 rows
-Got error as expected from try(predict(lm1, newdata = trees[3:5, 1, drop = FALSE]))
+Got expected error from try(predict(lm1, newdata = trees[3:5, 1, drop = FALSE]))
 > expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=TRUE])),
-+            "variable 'x1' is missing from newdata")
++            "(converted from warning) 'newdata' had 3 rows but variables found have 31 rows")
+Error : (converted from warning) 'newdata' had 3 rows but variables found have 31 rows
+Got expected error from try(predict(linmod.y1.x1, newdata = trees[3:5, 1, drop = TRUE]))
+> 
+> # following checks predict.linmod error messages when missing variables
+> # (it tries to give better error messages than predict.lm)
+> 
+> options(warn=1) # print warnings as they occur to test stop() in linmod.R::process.newdata.formula
+> expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=FALSE])),
++            "newdata has 3 rows but model.frame returned 31 rows (variable 'x1' may be missing from newdata)")
+Warning: 'newdata' had 3 rows but variables found have 31 rows
 Error in process.newdata.formula(object, newdata) : 
-  variable 'x1' is missing from newdata
-Got error as expected from try(predict(linmod.y1.x1, newdata = trees[3:5, 1, drop = TRUE]))
+  newdata has 3 rows but model.frame returned 31 rows (variable 'x1' may be missing from newdata)
+Got expected error from try(predict(linmod.y1.x1, newdata = trees[3:5, 1, drop = FALSE]))
+> expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=TRUE])),
++            "newdata has 3 rows but model.frame returned 31 rows (variable 'x1' may be missing from newdata)")
+Warning: 'newdata' had 3 rows but variables found have 31 rows
+Error in process.newdata.formula(object, newdata) : 
+  newdata has 3 rows but model.frame returned 31 rows (variable 'x1' may be missing from newdata)
+Got expected error from try(predict(linmod.y1.x1, newdata = trees[3:5, 1, drop = TRUE]))
+> options(warn=2) # back to treating warnings as errors
+> 
+> # test old version of linmod.R (pre Sep 2020)
+> #
+> # expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=FALSE])),
+> #            "variable 'x1' is missing from newdata")
+> # expect.err(try(predict(lm1, newdata=trees[3:5,1,drop=FALSE])),
+> #            "(converted from warning) 'newdata' had 3 rows but variables found have 31 rows")
+> # expect.err(try(predict(linmod.y1.x1, newdata=trees[3:5,1,drop=TRUE])),
+> #            "variable 'x1' is missing from newdata")
 > 
 > linmod6.form <- linmod(y1~x1)
 > check.lm(linmod6.form, linmod.y1.x1, check.newdata=FALSE)
@@ -666,16 +698,14 @@ check linmod6.form vs linmod.y1.x1
 > newdata <- trees[5:6,]
 > colnames(newdata) <- c("Girth99", "Height", "Volume")
 > expect.err(try(predict(linmod.form.Volume.tr, newdata=newdata)),
-+            "variable 'Girth' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'Girth' is missing from newdata
-Got error as expected from try(predict(linmod.form.Volume.tr, newdata = newdata))
++            "object 'Girth' not found")
+Error in eval(predvars, data, env) : object 'Girth' not found
+Got expected error from try(predict(linmod.form.Volume.tr, newdata = newdata))
 > colnames(newdata) <- c("Girth", "Height99", "Volume")
 > expect.err(try(predict(linmod.form.Volume.tr, newdata=newdata)),
-+            "variable 'Height' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'Height' is missing from newdata
-Got error as expected from try(predict(linmod.form.Volume.tr, newdata = newdata))
++            "object 'Height' not found")
+Error in eval(predvars, data, env) : object 'Height' not found
+Got expected error from try(predict(linmod.form.Volume.tr, newdata = newdata))
 > 
 > cat0("==check integer input (sibsp is an integer)\n")
 ==check integer input (sibsp is an integer)
@@ -722,8 +752,8 @@ Girth         4.7081605 0.2642646 17.816084 8.223304e-17
 Height        0.3392512 0.1301512  2.606594 1.449097e-02
 > plotres(linmod1a.xy) # plot caption shows response name "Volume"
 > 
-> cat0("==test model building with different non numeric args\n")
-==test model building with different non numeric args
+> cat0("==test model building with assorted non-numeric args\n")
+==test model building with assorted non-numeric args
 > 
 > library(earth) # for etitanic data
 > data(etitanic)
@@ -741,24 +771,28 @@ check linmod9.form vs lm9
 > # change class of pclass to numeric
 > etit.pclass.numeric <- etit
 > etit.pclass.numeric$pclass <- as.numeric(etit$pclass)
-> expect.err(try(predict(lm9,       newdata=etit.pclass.numeric)), "(converted from warning) variable 'pclass' is not a factor")
+> expect.err(try(predict(lm9,       newdata=etit.pclass.numeric)),
++               "(converted from warning) variable 'pclass' is not a factor")
 Error in model.frame.default(Terms, newdata, na.action = na.action, xlev = object$xlevels) : 
   (converted from warning) variable 'pclass' is not a factor
-Got error as expected from try(predict(lm9, newdata = etit.pclass.numeric))
-> expect.err(try(predict(linmod9.form, newdata=etit.pclass.numeric)), "(converted from warning) variable 'pclass' is not a factor")
+Got expected error from try(predict(lm9, newdata = etit.pclass.numeric))
+> expect.err(try(predict(linmod9.form, newdata=etit.pclass.numeric)),
++               "(converted from warning) variable 'pclass' is not a factor")
 Error in model.frame.default(terms, newdata, na.action = na.pass, xlev = object$xlevels) : 
   (converted from warning) variable 'pclass' is not a factor
-Got error as expected from try(predict(linmod9.form, newdata = etit.pclass.numeric))
+Got expected error from try(predict(linmod9.form, newdata = etit.pclass.numeric))
 > 
 > # change class of age to factor
 > etit.age.factor <- etit
 > etit.age.factor$age <- etit$pclass
-> expect.err(try(predict(lm9,       newdata=etit.age.factor)), "variable 'age' was fitted with type \"numeric\" but type \"factor\" was supplied")
+> expect.err(try(predict(lm9,       newdata=etit.age.factor)),
++               "variable 'age' was fitted with type \"numeric\" but type \"factor\" was supplied")
 Error : variable 'age' was fitted with type "numeric" but type "factor" was supplied
-Got error as expected from try(predict(lm9, newdata = etit.age.factor))
-> expect.err(try(predict(linmod9.form, newdata=etit.age.factor)), "variable 'age' was fitted with type \"numeric\" but type \"factor\" was supplied")
+Got expected error from try(predict(lm9, newdata = etit.age.factor))
+> expect.err(try(predict(linmod9.form, newdata=etit.age.factor)),
++               "variable 'age' was fitted with type \"numeric\" but type \"factor\" was supplied")
 Error : variable 'age' was fitted with type "numeric" but type "factor" was supplied
-Got error as expected from try(predict(linmod9.form, newdata = etit.age.factor))
+Got expected error from try(predict(linmod9.form, newdata = etit.age.factor))
 > 
 > # predict for formula model ignores extra column(s) in newdata
 > etit.extra.col <- etit
@@ -775,23 +809,27 @@ Got error as expected from try(predict(linmod9.form, newdata = etit.age.factor))
 > stopifnot(identical(predict(linmod9.form, newdata=etit), predict(linmod9.form, newdata=etit.different.col.order)))
 > 
 > # linmod.default, non numeric x (factors in x)
-> expect.err(try(linmod(etit[c(1,3,4,5,6)], etit[,"survived"])), "non-numeric column in 'x'")
+> expect.err(try(linmod(etit[c(1,3,4,5,6)], etit[,"survived"])),
++               "non-numeric column in 'x'")
 Error in check.linmod.x(x) : non-numeric column in 'x'
-Got error as expected from try(linmod(etit[c(1, 3, 4, 5, 6)], etit[, "survived"]))
-> expect.err(try(linmod.fit(etit[c(1,3,4,5,6)], etit[,"survived"])), "'x' is not a matrix or could not be converted to a matrix")
+Got expected error from try(linmod(etit[c(1, 3, 4, 5, 6)], etit[, "survived"]))
+> expect.err(try(linmod.fit(etit[c(1,3,4,5,6)], etit[,"survived"])),
++               "'x' is not a matrix or could not be converted to a matrix")
 Error in check.linmod.x(x) : 
   'x' is not a matrix or could not be converted to a matrix
-Got error as expected from try(linmod.fit(etit[c(1, 3, 4, 5, 6)], etit[, "survived"]))
+Got expected error from try(linmod.fit(etit[c(1, 3, 4, 5, 6)], etit[, "survived"]))
 > # lousy error message from lm.fit
-> expect.err(try(lm.fit(etit[,c(1,3,4,5,6)], etit[,"survived"])), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
+> expect.err(try(lm.fit(etit[,c(1,3,4,5,6)], etit[,"survived"])),
++               "INTEGER() can only be applied to a 'integer', not a 'NULL'")
 Error in lm.fit(etit[, c(1, 3, 4, 5, 6)], etit[, "survived"]) : 
   INTEGER() can only be applied to a 'integer', not a 'NULL'
-Got error as expected from try(lm.fit(etit[, c(1, 3, 4, 5, 6)], etit[, "survived"]))
+Got expected error from try(lm.fit(etit[, c(1, 3, 4, 5, 6)], etit[, "survived"]))
 > 
-> expect.err(try(linmod(data.matrix(cbind("(Intercept)"=1, etit[,c(1,3,4,5,6)])), etit[,"survived"])), "column name \"(Intercept)\" in 'x' is duplicated")
+> expect.err(try(linmod(data.matrix(cbind("(Intercept)"=1, etit[,c(1,3,4,5,6)])), etit[,"survived"])),
++               "column name \"(Intercept)\" in 'x' is duplicated")
 Error in check.linmod.x(x) : 
   column name "(Intercept)" in 'x' is duplicated
-Got error as expected from try(linmod(data.matrix(cbind(`(Intercept)` = 1, etit[, c(1, 3,     4, 5, 6)])), etit[, "survived"]))
+Got expected error from try(linmod(data.matrix(cbind(`(Intercept)` = 1, etit[, c(1, 3,     4, 5, 6)])), etit[, "survived"]))
 > linmod9a.xy <- linmod(data.matrix(etit[,c(1,3,4,5,6)]), etit[,"survived"])
 > lm9.fit <- lm.fit(data.matrix(cbind("(Intercept)"=1, etit[,c(1,3,4,5,6)])), etit[,"survived"])
 > stopifnot(coef(linmod9a.xy) == coef(lm9.fit))
@@ -799,15 +837,15 @@ Got error as expected from try(linmod(data.matrix(cbind(`(Intercept)` = 1, etit[
 > expect.err(try(predict(linmod9a.xy, newdata=etit.age.factor[,c(1,3,4,5,6)])), "non-numeric column in 'newdata'")
 Error in predict.linmod(linmod9a.xy, newdata = etit.age.factor[, c(1,  : 
   non-numeric column in 'newdata' (after processing)
-Got error as expected from try(predict(linmod9a.xy, newdata = etit.age.factor[, c(1, 3,     4, 5, 6)]))
+Got expected error from try(predict(linmod9a.xy, newdata = etit.age.factor[, c(1, 3,     4, 5, 6)]))
 > expect.err(try(predict(linmod9a.xy, newdata=etit[,c(1,3,4,5)])), "ncol(newdata) is 4 but should be 5")
 Error in predict.linmod(linmod9a.xy, newdata = etit[, c(1, 3, 4, 5)]) : 
   ncol(newdata) is 4 but should be 5
-Got error as expected from try(predict(linmod9a.xy, newdata = etit[, c(1, 3, 4, 5)]))
+Got expected error from try(predict(linmod9a.xy, newdata = etit[, c(1, 3, 4, 5)]))
 > expect.err(try(predict(linmod9a.xy, newdata=etit[,c(1,3,4,5,6,6)])), "ncol(newdata) is 6 but should be 5")
 Error in predict.linmod(linmod9a.xy, newdata = etit[, c(1, 3, 4, 5, 6,  : 
   ncol(newdata) is 6 but should be 5
-Got error as expected from try(predict(linmod9a.xy, newdata = etit[, c(1, 3, 4, 5, 6, 6)]))
+Got expected error from try(predict(linmod9a.xy, newdata = etit[, c(1, 3, 4, 5, 6, 6)]))
 > 
 > # linmod.formula, logical response
 > data.logical.response <- data.frame(etit[1:6,c("age","sibsp","parch")], response=c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))
@@ -825,23 +863,25 @@ check linmod9b.form vs lm9b.form
 > data.fac.response <- data.frame(etit[1:6,c("age","sibsp","parch")], response=factor(c("a", "a", "b", "a", "b", "b")))
 > expect.err(try(linmod(response~., data=data.fac.response)), "'y' is not numeric or logical")
 Error in check.linmod.y(x, y) : 'y' is not numeric or logical
-Got error as expected from try(linmod(response ~ ., data = data.fac.response))
+Got expected error from try(linmod(response ~ ., data = data.fac.response))
 > # lm.formula
-> expect.err(try(lm(response~., data=data.fac.response)), "(converted from warning) using type = \"numeric\" with a factor response will be ignored")
+> expect.err(try(lm(response~., data=data.fac.response)),
++               "(converted from warning) using type = \"numeric\" with a factor response will be ignored")
 Error in model.response(mf, "numeric") : 
   (converted from warning) using type = "numeric" with a factor response will be ignored
-Got error as expected from try(lm(response ~ ., data = data.fac.response))
+Got expected error from try(lm(response ~ ., data = data.fac.response))
 > 
 > # linmod.formula, string response (not allowed)
 > data.string.response <- data.frame(etit[1:6,c("age","sibsp","parch")], response=c("a", "a", "b", "a", "b", "b"))
 > expect.err(try(linmod(response~., data=data.string.response)), "'y' is not numeric or logical")
 Error in check.linmod.y(x, y) : 'y' is not numeric or logical
-Got error as expected from try(linmod(response ~ ., data = data.string.response))
+Got expected error from try(linmod(response ~ ., data = data.string.response))
 > # lm.formula
-> expect.err(try(lm(response~., data=data.string.response)), "(converted from warning) using type = \"numeric\" with a factor response will be ignored")
-Error in model.response(mf, "numeric") : 
-  (converted from warning) using type = "numeric" with a factor response will be ignored
-Got error as expected from try(lm(response ~ ., data = data.string.response))
+> expect.err(try(lm(response~., data=data.string.response)),
++               "(converted from warning) NAs introduced by coercion")
+Error in storage.mode(v) <- "double" : 
+  (converted from warning) NAs introduced by coercion
+Got expected error from try(lm(response ~ ., data = data.string.response))
 > 
 > # linmod.default, logical response
 > linmod9b.xy <- linmod(etit[1:6,c("age","sibsp","parch")], c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))
@@ -852,36 +892,41 @@ Call: linmod.default(x = etit[1:6, c("age", "sibsp", "parch")], y = c(TRUE,
  (Intercept)          age        sibsp        parch 
  1.102508872 -0.007261985 -0.182883049 -0.569470942 
 > # lm.fit, logical response (lousy error message from lm.fit)
-> expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
+> expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], c(TRUE, TRUE, FALSE, TRUE, FALSE, FALSE))),
++               "INTEGER() can only be applied to a 'integer', not a 'NULL'")
 Error in lm.fit(etit[1:6, c("age", "sibsp", "parch")], c(TRUE, TRUE, FALSE,  : 
   INTEGER() can only be applied to a 'integer', not a 'NULL'
-Got error as expected from try(lm.fit(etit[1:6, c("age", "sibsp", "parch")], c(TRUE, TRUE,     FALSE, TRUE, FALSE, FALSE)))
+Got expected error from try(lm.fit(etit[1:6, c("age", "sibsp", "parch")], c(TRUE, TRUE,     FALSE, TRUE, FALSE, FALSE)))
 > # linmod.default, factor response
-> expect.err(try(linmod(etit[1:6,c("age","sibsp","parch")], factor(c("a", "a", "b", "a", "b", "b")))), "'y' is not numeric or logical")
+> expect.err(try(linmod(etit[1:6,c("age","sibsp","parch")], factor(c("a",
++               "a", "b", "a", "b", "b")))), "'y' is not numeric or logical")
 Error in check.linmod.y(x, y) : 'y' is not numeric or logical
-Got error as expected from try(linmod(etit[1:6, c("age", "sibsp", "parch")], factor(c("a",     "a", "b", "a", "b", "b"))))
+Got expected error from try(linmod(etit[1:6, c("age", "sibsp", "parch")], factor(c("a",     "a", "b", "a", "b", "b"))))
 > # linmod.default, string response
-> expect.err(try(linmod(etit[1:6,c("age","sibsp","parch")], c("a", "a", "b", "a", "b", "b"))), "'y' is not numeric or logical")
+> expect.err(try(linmod(etit[1:6,c("age","sibsp","parch")], c("a",
++               "a", "b", "a", "b", "b"))), "'y' is not numeric or logical")
 Error in check.linmod.y(x, y) : 'y' is not numeric or logical
-Got error as expected from try(linmod(etit[1:6, c("age", "sibsp", "parch")], c("a", "a",     "b", "a", "b", "b")))
+Got expected error from try(linmod(etit[1:6, c("age", "sibsp", "parch")], c("a", "a",     "b", "a", "b", "b")))
 > # lm.fit, string and factor responses (lousy error messages from lm.fit)
-> expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], factor(c("a", "a", "b", "a", "b", "b")))), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
+> expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], factor(c("a",
++               "a", "b", "a", "b", "b")))), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
 Error in lm.fit(etit[1:6, c("age", "sibsp", "parch")], factor(c("a", "a",  : 
   INTEGER() can only be applied to a 'integer', not a 'NULL'
-Got error as expected from try(lm.fit(etit[1:6, c("age", "sibsp", "parch")], factor(c("a",     "a", "b", "a", "b", "b"))))
-> expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], c("a", "a", "b", "a", "b", "b"))), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
+Got expected error from try(lm.fit(etit[1:6, c("age", "sibsp", "parch")], factor(c("a",     "a", "b", "a", "b", "b"))))
+> expect.err(try(lm.fit(etit[1:6,c("age","sibsp","parch")], c("a",
++               "a", "b", "a", "b", "b"))), "INTEGER() can only be applied to a 'integer', not a 'NULL'")
 Error in lm.fit(etit[1:6, c("age", "sibsp", "parch")], c("a", "a", "b",  : 
   INTEGER() can only be applied to a 'integer', not a 'NULL'
-Got error as expected from try(lm.fit(etit[1:6, c("age", "sibsp", "parch")], c("a", "a",     "b", "a", "b", "b")))
+Got expected error from try(lm.fit(etit[1:6, c("age", "sibsp", "parch")], c("a", "a",     "b", "a", "b", "b")))
 > 
 > options(warn=2) # treat warnings as errors
 > expect.err(try(lm(pclass~., data=etit)), "using type = \"numeric\" with a factor response will be ignored")
 Error in model.response(mf, "numeric") : 
   (converted from warning) using type = "numeric" with a factor response will be ignored
-Got error as expected from try(lm(pclass ~ ., data = etit))
+Got expected error from try(lm(pclass ~ ., data = etit))
 > expect.err(try(linmod(pclass~., data=etit)), "'y' is not numeric or logical")
 Error in check.linmod.y(x, y) : 'y' is not numeric or logical
-Got error as expected from try(linmod(pclass ~ ., data = etit))
+Got expected error from try(linmod(pclass ~ ., data = etit))
 > 
 > options(warn=1) # print warnings as they occur
 > lm10 <- lm(pclass~., data=etit) # will give warnings
@@ -896,13 +941,13 @@ Warning in Ops.factor(y, z$residuals) : '-' not meaningful for factors
 > 
 > expect.err(try(linmod(pclass~., data=etit)), "'y' is not numeric or logical")
 Error in check.linmod.y(x, y) : 'y' is not numeric or logical
-Got error as expected from try(linmod(pclass ~ ., data = etit))
+Got expected error from try(linmod(pclass ~ ., data = etit))
 > expect.err(try(linmod(etit[,-1], etit[,1])), "non-numeric column in 'x'")
 Error in check.linmod.x(x) : non-numeric column in 'x'
-Got error as expected from try(linmod(etit[, -1], etit[, 1]))
+Got expected error from try(linmod(etit[, -1], etit[, 1]))
 > expect.err(try(linmod(1:10, paste(1:10))), "'y' is not numeric or logical")
 Error in check.linmod.y(x, y) : 'y' is not numeric or logical
-Got error as expected from try(linmod(1:10, paste(1:10)))
+Got expected error from try(linmod(1:10, paste(1:10)))
 > 
 > linmod10a.form <- linmod(survived~pclass, data=etit)
 > lm10a <- lm(survived~pclass, data=etit)
@@ -911,11 +956,11 @@ check linmod10a.form vs lm10a
 > 
 > expect.err(try(linmod(etit[,"pclass"], etit[,"age"])), "non-numeric column in 'x'")
 Error in check.linmod.x(x) : non-numeric column in 'x'
-Got error as expected from try(linmod(etit[, "pclass"], etit[, "age"]))
+Got expected error from try(linmod(etit[, "pclass"], etit[, "age"]))
 > 
 > expect.err(try(linmod(paste(1:10), 1:10)), "non-numeric column in 'x'")
 Error in check.linmod.x(x) : non-numeric column in 'x'
-Got error as expected from try(linmod(paste(1:10), 1:10))
+Got expected error from try(linmod(paste(1:10), 1:10))
 > 
 > lm11 <- lm(as.numeric(pclass)~., data=etit)
 > linmod11.form <- linmod(as.numeric(pclass)~., data=etit)
@@ -939,6 +984,53 @@ check linmod12.form vs lm12
 +          check.casenames=FALSE)
 check linmod12.xy vs lm12
 > 
+> cat0("==check use of functions in arguments to linmod\n")
+==check use of functions in arguments to linmod
+> 
+> identfunc <- function(x) x
+> lm10 <- lm(        sqrt(survived) ~ I(age^2) + as.numeric(sex), data=identfunc(etit))
+> linmod10 <- linmod(sqrt(survived) ~ I(age^2) + as.numeric(sex), data=identfunc(etit))
+> print(summary(lm10))
+
+Call:
+lm(formula = sqrt(survived) ~ I(age^2) + as.numeric(sex), data = identfunc(etit))
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.6959 -0.2665 -0.2302  0.3427  0.8261 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(>|t|)  
+(Intercept)      1.101e+00  4.223e-01   2.608   0.0198 *
+I(age^2)        -5.389e-05  1.190e-04  -0.453   0.6571  
+as.numeric(sex) -3.881e-01  2.508e-01  -1.547   0.1426  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.4855 on 15 degrees of freedom
+Multiple R-squared:  0.1736,	Adjusted R-squared:  0.06346 
+F-statistic: 1.576 on 2 and 15 DF,  p-value: 0.2392
+
+> print(summary(linmod10))
+Call: linmod.formula(formula = sqrt(survived) ~ I(age^2) + as.numeric(sex),
+      data = identfunc(etit))
+
+                     Estimate       StdErr    t.value    p.value
+(Intercept)      1.101499e+00 0.4223245953  2.6081808 0.01977424
+I(age^2)        -5.389047e-05 0.0001189838 -0.4529226 0.65708686
+as.numeric(sex) -3.880912e-01 0.2507927081 -1.5474582 0.14258876
+> check.lm(linmod10, lm10, newdata=etit[3:5,])
+check linmod10 vs lm10
+> set.seed(2020)
+> plotmo(lm10,     pt.col="green", do.par=2)
+ plotmo grid:    age  sex
+                32.5 male
+> set.seed(2020)
+> plotmo(linmod10, pt.col="green", do.par=0)
+ plotmo grid:    age  sex
+                32.5 male
+> par(org.par)
+> 
 > cat0("==data.frame with strings\n")
 ==data.frame with strings
 > 
@@ -961,15 +1053,15 @@ check linmod31.form vs lm31
 > 
 > expect.err(try(linmod(string~., df.with.string)), "'y' is not numeric or logical")
 Error in check.linmod.y(x, y) : 'y' is not numeric or logical
-Got error as expected from try(linmod(string ~ ., df.with.string))
+Got expected error from try(linmod(string ~ ., df.with.string))
 > 
 > vec <- c(1,2,3,4,3)
 > expect.err(try(linmod(df.with.string, vec)), "non-numeric column in 'x'")
 Error in check.linmod.x(x) : non-numeric column in 'x'
-Got error as expected from try(linmod(df.with.string, vec))
+Got expected error from try(linmod(df.with.string, vec))
 > expect.err(try(linmod(etit$pclass, etit$survived)), "non-numeric column in 'x'")
 Error in check.linmod.x(x) : non-numeric column in 'x'
-Got error as expected from try(linmod(etit$pclass, etit$survived))
+Got expected error from try(linmod(etit$pclass, etit$survived))
 > 
 > cat0("==x is singular\n")
 ==x is singular
@@ -981,7 +1073,7 @@ Got error as expected from try(linmod(etit$pclass, etit$survived))
 Error in do.linmod.fit(x, y) : 
   'x' is singular (it has 4 columns but its rank is 2)
   colnames(x): (Intercept) x21 x22 x23
-Got error as expected from try(linmod(y2 ~ x2))
+Got expected error from try(linmod(y2 ~ x2))
 > 
 > x3 <- matrix(1:10, ncol=2)
 > y3 <- c(1,2,9,4,5)
@@ -989,13 +1081,13 @@ Got error as expected from try(linmod(y2 ~ x2))
 Error in do.linmod.fit(x, y) : 
   'x' is singular (it has 3 columns but its rank is 2)
   colnames(x): (Intercept) x31 x32
-Got error as expected from try(linmod(y3 ~ x3))
+Got expected error from try(linmod(y3 ~ x3))
 > 
 > expect.err(try(linmod(trees[1,1:2], trees[1,3])), "'x' is singular (it has 3 columns but its rank is 1)")
 Error in do.linmod.fit(x, y) : 
   'x' is singular (it has 3 columns but its rank is 1)
   colnames(x): (Intercept) Girth Height
-Got error as expected from try(linmod(trees[1, 1:2], trees[1, 3]))
+Got expected error from try(linmod(trees[1, 1:2], trees[1, 3]))
 > 
 > x2a <- matrix(1:6, nrow=3)
 > y2a <- c(1,2,3)
@@ -1003,7 +1095,7 @@ Got error as expected from try(linmod(trees[1, 1:2], trees[1, 3]))
 Error in do.linmod.fit(x, y) : 
   'x' is singular (it has 3 columns but its rank is 2)
   colnames(x): (Intercept) x2a1 x2a2
-Got error as expected from try(linmod(y2a ~ x2a))
+Got expected error from try(linmod(y2a ~ x2a))
 > 
 > cat0("==perfect fit (residuals are zero)\n")
 ==perfect fit (residuals are zero)
@@ -1082,14 +1174,12 @@ F-statistic: 3.18e+31 on 1 and 8 DF,  p-value: < 2.2e-16
 > check.lm(linmod.x2c, lm.x2c, newdata=data.x2c[1:2,]+1, check.sigma=FALSE)
 check linmod.x2c vs lm.x2c
 > 
-> old.par <- par(no.readonly=TRUE)
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2)) # all plots on same page so can compare
 > plot(linmod.x2b, main="linmod.x2b\nall residuals are zero")
 > plot(lm.x2b, which=1, main="lm.x2b")
 > plot(linmod.x2c, main="linmod.x2c")
 > plot(lm.x2c, which=1, main="lm.x2c")
-> par(old.par)
+> par(org.par)
 > 
 > cat0("==nrow(x) does not match length(y)\n")
 ==nrow(x) does not match length(y)
@@ -1098,13 +1188,13 @@ check linmod.x2c vs lm.x2c
 > y4 <- c(1,2,9,4)
 > expect.err(try(linmod(x4, y4)), "nrow(x) is 5 but length(y) is 4")
 Error in check.linmod.y(x, y) : nrow(x) is 5 but length(y) is 4
-Got error as expected from try(linmod(x4, y4))
+Got expected error from try(linmod(x4, y4))
 > 
 > x5 <- matrix(1:10, ncol=2)
 > y5 <- c(1,2,9,4,5,9)
 > expect.err(try(linmod(x5, y5)), "nrow(x) is 5 but length(y) is 6")
 Error in check.linmod.y(x, y) : nrow(x) is 5 but length(y) is 6
-Got error as expected from try(linmod(x5, y5))
+Got expected error from try(linmod(x5, y5))
 > 
 > cat0("==y has multiple columns\n")
 ==y has multiple columns
@@ -1113,10 +1203,10 @@ Got error as expected from try(linmod(x5, y5))
 > y2 <- cbind(c(1,2,3,4,9), vec^2)
 > expect.err(try(linmod(vec, y2)), "nrow(x) is 5 but length(y) is 10")
 Error in check.linmod.y(x, y) : nrow(x) is 5 but length(y) is 10
-Got error as expected from try(linmod(vec, y2))
+Got expected error from try(linmod(vec, y2))
 > expect.err(try(linmod(y2~vec)), "nrow(x) is 5 but length(y) is 10")
 Error in check.linmod.y(x, y) : nrow(x) is 5 but length(y) is 10
-Got error as expected from try(linmod(y2 ~ vec))
+Got expected error from try(linmod(y2 ~ vec))
 > 
 > cat0("==NA in x\n")
 ==NA in x
@@ -1126,14 +1216,101 @@ Got error as expected from try(linmod(y2 ~ vec))
 > x[2,2] <- NA
 > expect.err(try(linmod(x, y)), "NA in 'x'")
 Error in check.linmod.x(x) : NA in 'x'
-Got error as expected from try(linmod(x, y))
+Got expected error from try(linmod(x, y))
 > 
 > x <- tr[,1:2]
 > y <- tr[,3]
 > y[9] <- NA
 > expect.err(try(linmod(x, y)), "NA in 'y'")
 Error in check.linmod.y(x, y) : NA in 'y'
-Got error as expected from try(linmod(x, y))
+Got expected error from try(linmod(x, y))
+> 
+> # Following added Sep 2020 (prior to this, predict.linmod gave an incorrect error message)
+> cat0("==test formulas that use functions on rhs variables, like Volume~sqrt(Girth)\n")
+==test formulas that use functions on rhs variables, like Volume~sqrt(Girth)
+> 
+> linmod.sqrt1 <- linmod(Volume~sqrt(as.numeric(Girth)), data=tr)
+> cat0("==print(summary(linmod.sqrt1))\n")
+==print(summary(linmod.sqrt1))
+> print(summary(linmod.sqrt1))
+Call: linmod.formula(formula = Volume ~ sqrt(as.numeric(Girth)), data = tr)
+
+                          Estimate   StdErr   t.value      p.value
+(Intercept)             -103.40058 7.706018 -13.41816 5.733634e-14
+sqrt(as.numeric(Girth))   36.94188 2.117135  17.44900 6.396229e-17
+> lm.sqrt1 <- lm(Volume~sqrt(as.numeric(Girth)), data=tr)
+> check.lm(linmod.sqrt1, lm.sqrt1)
+check linmod.sqrt1 vs lm.sqrt1
+> stopifnot(almost.equal(predict(linmod.sqrt1, newdata=data.frame(Girth=10, Height=80)),
++                        predict(lm.sqrt1,     newdata=data.frame(Girth=10, Height=80))))
+> stopifnot(almost.equal(predict(linmod.sqrt1, newdata=as.matrix(tr[1:3,])),
++                        predict(lm.sqrt1,     newdata=tr[1:3,])))
+> par(mfrow=c(2,2)) # all plots on same page so can compare
+> plotmo(linmod.sqrt1, do.par=FALSE)
+> plotmo(lm.sqrt1,     do.par=FALSE)
+> par(org.par)
+> 
+> linmod.sqrt2 <- linmod(Volume~sqrt(Girth)+Height+Girth, data=tr)
+> cat0("==print(summary(linmod.sqrt2))\n")
+==print(summary(linmod.sqrt2))
+> print(summary(linmod.sqrt2))
+Call: linmod.formula(formula = Volume ~ sqrt(Girth) + Height + Girth, data =
+      tr)
+
+                Estimate      StdErr   t.value      p.value
+(Intercept)  132.4266671 33.03008713  4.009274 4.318421e-04
+sqrt(Girth) -106.5505058 18.19173301 -5.857084 3.085730e-06
+Height         0.4030722  0.08863082  4.547765 1.026574e-04
+Girth         19.0489443  2.45495604  7.759383 2.410443e-08
+> lm.sqrt2 <- lm(Volume~sqrt(Girth)+Height+Girth, data=tr)
+> check.lm(linmod.sqrt2, lm.sqrt2)
+check linmod.sqrt2 vs lm.sqrt2
+> stopifnot(almost.equal(predict(linmod.sqrt2, newdata=data.frame(Girth=10, Height=80)),
++                        predict(lm.sqrt2,     newdata=data.frame(Girth=10, Height=80))))
+> stopifnot(almost.equal(predict(linmod.sqrt2, newdata=as.matrix(tr[1:3,])),
++                        predict(lm.sqrt2,     newdata=tr[1:3,])))
+> par(mfrow=c(2,2)) # all plots on same page so can compare
+> plotmo(linmod.sqrt2, do.par=FALSE)
+ plotmo grid:    Girth Height
+                  12.9     76
+> plotmo(lm.sqrt2,     do.par=FALSE)
+ plotmo grid:    Girth Height
+                  12.9     76
+> par(org.par)
+> 
+> lm.sqrt.as.numeric <- lm(survived~sqrt(age)+as.numeric(pclass), data=etit)
+> linmod.sqrt.as.numeric <- linmod(survived~sqrt(age)+as.numeric(pclass), data=etit)
+> check.lm(linmod.sqrt.as.numeric, lm.sqrt.as.numeric, newdata=etit[3:5,])
+check linmod.sqrt.as.numeric vs lm.sqrt.as.numeric
+> expect.err(try(predict(linmod.sqrt.as.numeric, newdata=data.frame(age=30))), # pclass missing
++            "object 'pclass' not found")
+Error in eval(predvars, data, env) : object 'pclass' not found
+Got expected error from try(predict(linmod.sqrt.as.numeric, newdata = data.frame(age = 30)))
+> par(mfrow=c(2,2)) # all plots on same page so can compare
+> plotmo(linmod.sqrt.as.numeric, do.par=FALSE)
+ plotmo grid:    age pclass
+                32.5    3rd
+> plotmo(lm.sqrt.as.numeric,     do.par=FALSE)
+ plotmo grid:    age pclass
+                32.5    3rd
+> par(org.par)
+> 
+> y.age    <- etit[,"age"]
+> x.pclass <- etit[,"pclass"]
+> x.sex    <- etit[,"sex"]
+> linmod.y.age.sex.pclass <- linmod(y.age ~ as.numeric(x.pclass) + x.sex)
+> lm.y.age.sex.pclass     <- lm(    y.age ~ as.numeric(x.pclass) + x.sex)
+> stopifnot(identical(linmod.y.age.sex.pclass$coef, lm.y.age.sex.pclass$coef))
+> options(warn=1) # print warnings as they occur to test stop() in linmod.R::process.newdata.formula
+> # TODO following says variable 'as.numeric(x.pclass)' may be missing
+> #      it should say  variable 'x.pclass' may be missing
+> expect.err(try(predict(linmod.y.age.sex.pclass, newdata=etit[3:5,1,drop=FALSE])),
++            "newdata has 3 rows but model.frame returned 18 rows (variable 'as.numeric(x.pclass)' may be missing from newdata)")
+Warning: 'newdata' had 3 rows but variables found have 18 rows
+Error in process.newdata.formula(object, newdata) : 
+  newdata has 3 rows but model.frame returned 18 rows (variable 'as.numeric(x.pclass)' may be missing from newdata)
+Got expected error from try(predict(linmod.y.age.sex.pclass, newdata = etit[3:5, 1, drop = FALSE]))
+> options(warn=2) # back to treating warnings as errors
 > 
 > cat0("==misc tests with different kinds of data\n")
 ==misc tests with different kinds of data
@@ -1157,7 +1334,7 @@ num          1.500000e+00 0.8660254  1.732051e+00 0.3333333
 > stopifnot(sapply(data4, class) == c("factor", "numeric", "numeric"))
 > expect.err(try(linmod(data4[,1:2], data4[,3])), "non-numeric column in 'x'")
 Error in check.linmod.x(x) : non-numeric column in 'x'
-Got error as expected from try(linmod(data4[, 1:2], data4[, 3]))
+Got expected error from try(linmod(data4[, 1:2], data4[, 3]))
 > 
 > # following gives no error (and matches lm) even though col 1 of data3 is character not factor
 > a41 <- linmod(y~., data=data4)
@@ -1180,29 +1357,26 @@ num          1.500000e+00 0.8660254  1.732051e+00 0.3333333
 +                     num=c(1,9,4,2,6),
 +                     num2=c(1,9,4,2,7),
 +                     y=c(1,2,3,5,3), stringsAsFactors=T)
-> expect.err(try(predict(a41, newdata=data6[1:3,1])), "variable 's' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 's' is missing from newdata
-Got error as expected from try(predict(a41, newdata = data6[1:3, 1]))
-> expect.err(try(predict(a41, newdata=data6[1:3,c(1,1)])), "variable 'num' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'num' is missing from newdata
-Got error as expected from try(predict(a41, newdata = data6[1:3, c(1, 1)]))
+> expect.err(try(predict(a41, newdata=data6[1:3,1])), "object 's' not found")
+Error in eval(predvars, data, env) : object 's' not found
+Got expected error from try(predict(a41, newdata = data6[1:3, 1]))
+> expect.err(try(predict(a41, newdata=data6[1:3,c(1,1)])), "object 'num' not found")
+Error in eval(predvars, data, env) : object 'num' not found
+Got expected error from try(predict(a41, newdata = data6[1:3, c(1, 1)]))
 > 
 > expect.err(try(predict(a41, newdata=data.frame(s=1, num=2, y=3))), "variable 's' is not a factor")
 Error in model.frame.default(terms, newdata, na.action = na.pass, xlev = object$xlevels) : 
   (converted from warning) variable 's' is not a factor
-Got error as expected from try(predict(a41, newdata = data.frame(s = 1, num = 2, y = 3)))
+Got expected error from try(predict(a41, newdata = data.frame(s = 1, num = 2, y = 3)))
 > 
 > expect.err(try(predict(a41, newdata=1:9)),
-+            "variable 's' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 's' is missing from newdata
-Got error as expected from try(predict(a41, newdata = 1:9))
++            "object 's' not found")
+Error in eval(predvars, data, env) : object 's' not found
+Got expected error from try(predict(a41, newdata = 1:9))
 > 
 > expect.err(try(predict(a41, newdata=data.frame())), "'newdata' is empty")
 Error in predict.linmod(a41, newdata = data.frame()) : 'newdata' is empty
-Got error as expected from try(predict(a41, newdata = data.frame()))
+Got expected error from try(predict(a41, newdata = data.frame()))
 > 
 > # perfect fit (residuals are all zero)
 > linmod.data6 <- linmod(y~s+num, data=data6)
@@ -1243,54 +1417,55 @@ check linmod.data6 vs lm.data6
 Error in do.linmod.fit(x, y) : 
   'x' is singular (it has 6 columns but its rank is 5)
   colnames(x): (Intercept) sa9 sb sc num num2
-Got error as expected from try(linmod(y ~ ., data = data6))
+Got expected error from try(linmod(y ~ ., data = data6))
 > 
 > tr.na <- trees
 > tr.na[9,3] <- NA
 > expect.err(try(linmod(Volume~.,data=tr.na)), "NA in 'y'")
 Error in check.linmod.y(x, y) : NA in 'y'
-Got error as expected from try(linmod(Volume ~ ., data = tr.na))
+Got expected error from try(linmod(Volume ~ ., data = tr.na))
 > expect.err(try(linmod(tr.na[,1:2], tr.na[,3])), "NA in 'y'")
 Error in check.linmod.y(x, y) : NA in 'y'
-Got error as expected from try(linmod(tr.na[, 1:2], tr.na[, 3]))
+Got expected error from try(linmod(tr.na[, 1:2], tr.na[, 3]))
 > 
 > tr.na <- trees
 > tr.na[10,1] <- NA
 > expect.err(try(linmod(Volume~.,data=tr.na)), "NA in 'x'")
 Error in check.linmod.x(x) : NA in 'x'
-Got error as expected from try(linmod(Volume ~ ., data = tr.na))
+Got expected error from try(linmod(Volume ~ ., data = tr.na))
 > expect.err(try(linmod(tr.na[,1:2], tr.na[,3])), "NA in 'x'")
 Error in check.linmod.x(x) : NA in 'x'
-Got error as expected from try(linmod(tr.na[, 1:2], tr.na[, 3]))
+Got expected error from try(linmod(tr.na[, 1:2], tr.na[, 3]))
 > 
 > a42 <- linmod(trees[,1:2], trees[, 3])
 > newdata1 <- data.frame(Girth=20)
 > expect.err(try(predict(a42, newdata=newdata1)), "ncol(newdata) is 1 but should be 2")
 Error in predict.linmod(a42, newdata = newdata1) : 
   ncol(newdata) is 1 but should be 2
-Got error as expected from try(predict(a42, newdata = newdata1))
+Got expected error from try(predict(a42, newdata = newdata1))
 > newdata3 <- data.frame(Girth=20, extra1=21, extra2=22)
 > expect.err(try(predict(a42, newdata=newdata3)), "ncol(newdata) is 3 but should be 2")
 Error in predict.linmod(a42, newdata = newdata3) : 
   ncol(newdata) is 3 but should be 2
-Got error as expected from try(predict(a42, newdata = newdata3))
+Got expected error from try(predict(a42, newdata = newdata3))
 > expect.err(try(predict(a42, newdata=data.frame())), "'newdata' is empty")
 Error in predict.linmod(a42, newdata = data.frame()) : 'newdata' is empty
-Got error as expected from try(predict(a42, newdata = data.frame()))
+Got expected error from try(predict(a42, newdata = data.frame()))
 > newdata.with.NA <- data.frame(Girth=20, Height=NA)
 > expect.err(try(predict(a42, newdata=newdata.with.NA)), "NA in 'newdata'")
 Error in predict.linmod(a42, newdata = newdata.with.NA) : NA in 'newdata'
-Got error as expected from try(predict(a42, newdata = newdata.with.NA))
+Got expected error from try(predict(a42, newdata = newdata.with.NA))
 > 
 > a43 <- linmod(Volume~.,data=trees)
 > expect.err(try(predict(a43, newdata=newdata.with.NA)), "NA in 'newdata'")
 Error in process.newdata.formula(object, newdata) : NA in 'newdata'
-Got error as expected from try(predict(a43, newdata = newdata.with.NA))
+Got expected error from try(predict(a43, newdata = newdata.with.NA))
 > lm43 <- lm(Volume~.,data=trees)
 > # message from predict.lm could be better
-> expect.err(try(predict(lm43, newdata=newdata.with.NA)), "variable 'Height' was fitted with type \"numeric\" but type \"logical\" was supplied")
+> expect.err(try(predict(lm43, newdata=newdata.with.NA)),
++               "variable 'Height' was fitted with type \"numeric\" but type \"logical\" was supplied")
 Error : variable 'Height' was fitted with type "numeric" but type "logical" was supplied
-Got error as expected from try(predict(lm43, newdata = newdata.with.NA))
+Got expected error from try(predict(lm43, newdata = newdata.with.NA))
 > 
 > y6 <- 1:5
 > x6 <- data.frame()
@@ -1299,37 +1474,37 @@ Got error as expected from try(predict(lm43, newdata = newdata.with.NA))
 Warning in cbind(`(Intercept)` = 1, xmat) :
   number of rows of result is not a multiple of vector length (arg 1)
 Error in check.linmod.x(x) : 'x' is empty
-Got error as expected from try(linmod(x6, y6))
+Got expected error from try(linmod(x6, y6))
 > options(warn=2) # treat warnings as errors
 > 
 > y7 <- data.frame()
 > x7 <- 1:5
 > expect.err(try(linmod(x7, y7)), "'y' is empty")
 Error in check.linmod.y(x, y) : 'y' is empty
-Got error as expected from try(linmod(x7, y7))
+Got expected error from try(linmod(x7, y7))
 > 
 > # duplicated column names
 > data7 <- matrix(1:25, ncol=5)
 > colnames(data7) <- c("y", "x1", "x1", "x3", "x4")
 > expect.err(try(linmod(data7[,-1], data7[,1])), "column name \"x1\" in 'x' is duplicated")
 Error in check.linmod.x(x) : column name "x1" in 'x' is duplicated
-Got error as expected from try(linmod(data7[, -1], data7[, 1]))
+Got expected error from try(linmod(data7[, -1], data7[, 1]))
 > 
 > colnames(data7) <- c("y", "x1", "x2", "x2", "x4")
 > expect.err(try(linmod(data7[,-1], data7[,1])), "column name \"x2\" in 'x' is duplicated")
 Error in check.linmod.x(x) : column name "x2" in 'x' is duplicated
-Got error as expected from try(linmod(data7[, -1], data7[, 1]))
+Got expected error from try(linmod(data7[, -1], data7[, 1]))
 > 
 > colnames(data7) <- c("y", "x1", "x2", "x2", "x2")
 > expect.err(try(linmod(data7[,-1], data7[,1])), "column name \"x2\" in 'x' is duplicated")
 Error in check.linmod.x(x) : column name "x2" in 'x' is duplicated
-Got error as expected from try(linmod(data7[, -1], data7[, 1]))
+Got expected error from try(linmod(data7[, -1], data7[, 1]))
 > 
 > # column name V2 will be created but it clashes with the existing column name
 > colnames(data7) <- c("y", "V2", "", "V3", "V4")
 > expect.err(try(linmod(data7[,-1], data7[,1])), "column name \"V2\" in 'x' is duplicated")
 Error in check.linmod.x(x) : column name "V2" in 'x' is duplicated
-Got error as expected from try(linmod(data7[, -1], data7[, 1]))
+Got expected error from try(linmod(data7[, -1], data7[, 1]))
 > 
 > # missing column names
 > trees1 <- trees
@@ -1362,7 +1537,7 @@ linmod.form.Volume.trees1.formula
 > expect.err(try(linmod(Volume~., data=trees1)), "attempt to use zero-length variable name")
 Error in terms.formula(formula, data = data) : 
   attempt to use zero-length variable name
-Got error as expected from try(linmod(Volume ~ ., data = trees1))
+Got expected error from try(linmod(Volume ~ ., data = trees1))
 > 
 > # very long names to test formatting in summary.linmod
 > trees1 <- trees
@@ -1414,41 +1589,53 @@ Error in plotmo(intonly.form) : x is empty
 > plotres(intonly.form)
 > expect.err(try(plotmo(intonly.form)), "x is empty")
 Error in plotmo(intonly.form) : x is empty
-Got error as expected from try(plotmo(intonly.form))
-> expect.err(try(linmod(rep(1, length.out=nrow(trees)), trees$Volume)), "'x' is singular (it has 2 columns but its rank is 1)")
+Got expected error from try(plotmo(intonly.form))
+> expect.err(try(linmod(rep(1, length.out=nrow(trees)), trees$Volume)),
++               "'x' is singular (it has 2 columns but its rank is 1)")
 Error in do.linmod.fit(x, y) : 
   'x' is singular (it has 2 columns but its rank is 1)
   colnames(x): (Intercept) V1
-Got error as expected from try(linmod(rep(1, length.out = nrow(trees)), trees$Volume))
+Got expected error from try(linmod(rep(1, length.out = nrow(trees)), trees$Volume))
 > 
 > # various tests for bad args
 > expect.err(try(linmod(trees[,1:2])), "no 'y' argument")
 Error in as.matrix(y) : no 'y' argument
-Got error as expected from try(linmod(trees[, 1:2]))
+Got expected error from try(linmod(trees[, 1:2]))
 > 
 > # test stop.if.dot.arg.used
-> expect.err(try(linmod(Volume~., data=trees, nonesuch=99)), "unused argument (nonesuch = 99)")
+> expect.err(try(linmod(Volume~., data=trees, nonesuch=99)),
++               "unused argument (nonesuch = 99)")
 Error in stop.if.dot.arg.used(...) : unused argument (nonesuch = 99)
-Got error as expected from try(linmod(Volume ~ ., data = trees, nonesuch = 99))
-> expect.err(try(linmod(trees[,1:2], trees[,3], nonesuch=linmod)), "unused argument (nonesuch = linmod)")
-Error in stop.if.dot.arg.used(...) : unused argument (nonesuch = linmod)
-Got error as expected from try(linmod(trees[, 1:2], trees[, 3], nonesuch = linmod))
-> expect.err(try(summary(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused argument (nonesuch = linmod)")
-Error in stop.if.dot.arg.used(...) : unused argument (nonesuch = linmod)
-Got error as expected from try(summary(linmod(trees[, 1:2], trees[, 3]), nonesuch = linmod))
-> expect.err(try(print(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)), "unused argument (nonesuch = linmod)")
-Error in stop.if.dot.arg.used(...) : unused argument (nonesuch = linmod)
-Got error as expected from try(print(linmod(trees[, 1:2], trees[, 3]), nonesuch = linmod))
-> expect.err(try(predict(linmod.form.Volume.tr, nonesuch=99)), "unused argument (nonesuch = 99)")
+Got expected error from try(linmod(Volume ~ ., data = trees, nonesuch = 99))
+> expect.err(try(linmod(trees[,1:2], trees[,3], nonesuch=linmod)),
++               "unused argument (nonesuch = function (...)")
+Error in stop.if.dot.arg.used(...) : 
+  unused argument (nonesuch = function (...) 
+UseMethod("linmod"))
+Got expected error from try(linmod(trees[, 1:2], trees[, 3], nonesuch = linmod))
+> expect.err(try(summary(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)),
++               "unused argument (nonesuch = function (...)")
+Error in stop.if.dot.arg.used(...) : 
+  unused argument (nonesuch = function (...) 
+UseMethod("linmod"))
+Got expected error from try(summary(linmod(trees[, 1:2], trees[, 3]), nonesuch = linmod))
+> expect.err(try(print(linmod(trees[,1:2], trees[,3]), nonesuch=linmod)),
++               "unused argument (nonesuch = function (...)")
+Error in stop.if.dot.arg.used(...) : 
+  unused argument (nonesuch = function (...) 
+UseMethod("linmod"))
+Got expected error from try(print(linmod(trees[, 1:2], trees[, 3]), nonesuch = linmod))
+> expect.err(try(predict(linmod.form.Volume.tr, nonesuch=99)),
++               "unused argument (nonesuch = 99)")
 Error in stop.if.dot.arg.used(...) : unused argument (nonesuch = 99)
-Got error as expected from try(predict(linmod.form.Volume.tr, nonesuch = 99))
+Got expected error from try(predict(linmod.form.Volume.tr, nonesuch = 99))
 > 
 > # check partial matching on type argument
 > stopifnot(identical(predict(linmod.form.Volume.tr, type="r"),    predict(linmod.form.Volume.tr)))
 > stopifnot(identical(predict(linmod.form.Volume.tr, type="resp"), predict(linmod.form.Volume.tr)))
 > expect.err(try(predict(linmod.form.Volume.tr, type="nonesuch")), "'arg' should be one of \"response\"")
 Error in match.arg(type, "response") : 'arg' should be one of "response"
-Got error as expected from try(predict(linmod.form.Volume.tr, type = "nonesuch"))
+Got expected error from try(predict(linmod.form.Volume.tr, type = "nonesuch"))
 > 
 > # test additional method functions (see linmod.methods.R)
 > 
@@ -1478,7 +1665,7 @@ check linmod.form.Volume.tr vs lm.Volume.tr
 > expect.err(try(logLik(linmod.form.Volume.tr, REML=TRUE)), "!REML is not TRUE")
 Error in logLik.linmod(linmod.form.Volume.tr, REML = TRUE) : 
   !REML is not TRUE
-Got error as expected from try(logLik(linmod.form.Volume.tr, REML = TRUE))
+Got expected error from try(logLik(linmod.form.Volume.tr, REML = TRUE))
 > library(sandwich) # for estfun.lm
 > stopifnot(almost.equal(estfun(linmod.form.Volume.tr), estfun(lm.Volume.tr)))
 > 
@@ -1508,20 +1695,20 @@ check linmod.xy.Volume.tr vs lm.Volume.tr
 > expect.err(try(model.frame(linmod.xy.Volume.tr)),  "model.frame cannot be used on linmod models built without a formula")
 Error in model.frame.linmod(linmod.xy.Volume.tr) : 
   model.frame cannot be used on linmod models built without a formula
-Got error as expected from try(model.frame(linmod.xy.Volume.tr))
-> expect.err(try(model.matrix(linmod.xy.Volume.tr)), "model.frame cannot be used on linmod models built without a formula")
+Got expected error from try(model.frame(linmod.xy.Volume.tr))
+> expect.err(try(model.matrix(linmod.xy.Volume.tr)),
++               "model.frame cannot be used on linmod models built without a formula")
 Error in model.frame.linmod(object) : 
   model.frame cannot be used on linmod models built without a formula
-Got error as expected from try(model.matrix(linmod.xy.Volume.tr))
+Got expected error from try(model.matrix(linmod.xy.Volume.tr))
 > stopifnot(almost.equal(logLik(linmod.xy.Volume.tr), logLik(lm.Volume.tr)))
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
 > plot(linmod.form.Volume.tr)
 > plot(lm.Volume.tr, which=1, main="lm.Volume.tr")
 > plot(linmod.xy.Volume.tr)
 > plot(linmod.form.Volume.tr, xlim=c(0,80), ylim=c(-10,10), pch=20, main="linmod.form.Volume.tr: test plot args")
-> par(old.par)
+> par(org.par)
 > 
 > cat0("==test one predictor model\n")
 ==test one predictor model
@@ -1540,12 +1727,11 @@ Girth         5.065856 0.247377  20.47829 8.644334e-19
 > check.lm(linmod.onepred.xy, lm.onepred.form, newdata=trees[3,1,drop=FALSE])
 check linmod.onepred.xy vs lm.onepred.form
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
 > plot(linmod.onepred.form)
 > plot(lm.onepred.form, which=1, main="lm.onepred.form")
 > plot(linmod.onepred.xy)
-> par(old.par)
+> par(org.par)
 > plotres(linmod.onepred.form)
 > plotmo(linmod.onepred.form, pt.col=2)
 > 
@@ -1605,30 +1791,29 @@ check linmod.noint vs lm.noint
 > stopifnot(almost.equal(estfun(linmod.noint), estfun(lm.noint)))
 > 
 > # check error messages with bad newdata in no-intercept model
-> expect.err(try(predict(linmod.noint, newdata=NA)), "variable 'Girth' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'Girth' is missing from newdata
-Got error as expected from try(predict(linmod.noint, newdata = NA))
-> expect.err(try(predict(linmod.noint, newdata=data.frame(Height=c(1,NA), Girth=c(3,4)))), "NA in 'newdata'")
+> expect.err(try(predict(linmod.noint, newdata=NA)),
++               "object 'Girth' not found")
+Error in eval(predvars, data, env) : object 'Girth' not found
+Got expected error from try(predict(linmod.noint, newdata = NA))
+> expect.err(try(predict(linmod.noint, newdata=data.frame(Height=c(1,NA), Girth=c(3,4)))),
++               "NA in 'newdata'")
 Error in process.newdata.formula(object, newdata) : NA in 'newdata'
-Got error as expected from try(predict(linmod.noint, newdata = data.frame(Height = c(1,     NA), Girth = c(3, 4))))
+Got expected error from try(predict(linmod.noint, newdata = data.frame(Height = c(1,     NA), Girth = c(3, 4))))
 > expect.err(try(predict(linmod.noint, newdata=trees[0,])), "'newdata' is empty")
 Error in predict.linmod(linmod.noint, newdata = trees[0, ]) : 
   'newdata' is empty
-Got error as expected from try(predict(linmod.noint, newdata = trees[0, ]))
-> expect.err(try(predict(linmod.noint, newdata=trees[3:5,"Height"])), "variable 'Girth' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'Girth' is missing from newdata
-Got error as expected from try(predict(linmod.noint, newdata = trees[3:5, "Height"]))
+Got expected error from try(predict(linmod.noint, newdata = trees[0, ]))
+> expect.err(try(predict(linmod.noint, newdata=trees[3:5,"Height"])), "object 'Girth' not found")
+Error in eval(predvars, data, env) : object 'Girth' not found
+Got expected error from try(predict(linmod.noint, newdata = trees[3:5, "Height"]))
 > # check that extra fields in predict newdata are ok with (formula) models without intercept
 > stopifnot(almost.equal(predict(linmod.noint, newdata=data.frame(Girth=10, Height=80, extra=99)),
 +                        predict(lm.noint,  newdata=data.frame(Girth=10, Height=80, extra=99))))
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
 > plot(linmod.noint)
 > plot(lm.noint, which=1, main="lm.noint")
-> par(old.par)
+> par(org.par)
 > 
 > plotres(linmod.noint)
 > plotmo(linmod.noint)
@@ -1690,43 +1875,40 @@ check linmod.onepred.noint vs lm.onepred.noint
 > stopifnot(almost.equal(estfun(linmod.onepred.noint), estfun(lm.onepred.noint)))
 > 
 > # check error messages with bad newdata in one predictor no-intercept model
-> expect.err(try(predict(linmod.onepred.noint, newdata=99)), "variable 'Girth' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'Girth' is missing from newdata
-Got error as expected from try(predict(linmod.onepred.noint, newdata = 99))
+> expect.err(try(predict(linmod.onepred.noint, newdata=99)), "object 'Girth' not found")
+Error in eval(predvars, data, env) : object 'Girth' not found
+Got expected error from try(predict(linmod.onepred.noint, newdata = 99))
 > expect.err(try(predict(linmod.onepred.noint, newdata=data.frame(Girth=NA))), "NA in 'newdata'")
 Error in process.newdata.formula(object, newdata) : NA in 'newdata'
-Got error as expected from try(predict(linmod.onepred.noint, newdata = data.frame(Girth = NA)))
+Got expected error from try(predict(linmod.onepred.noint, newdata = data.frame(Girth = NA)))
 > expect.err(try(predict(linmod.onepred.noint, newdata=trees[0,1])), "'newdata' is empty")
 Error in predict.linmod(linmod.onepred.noint, newdata = trees[0, 1]) : 
   'newdata' is empty
-Got error as expected from try(predict(linmod.onepred.noint, newdata = trees[0, 1]))
-> expect.err(try(predict(linmod.onepred.noint, newdata=trees[3:5,"Height"])), "variable 'Girth' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'Girth' is missing from newdata
-Got error as expected from try(predict(linmod.onepred.noint, newdata = trees[3:5, "Height"]))
+Got expected error from try(predict(linmod.onepred.noint, newdata = trees[0, 1]))
+> expect.err(try(predict(linmod.onepred.noint, newdata=trees[3:5,"Height"])), "object 'Girth' not found")
+Error in eval(predvars, data, env) : object 'Girth' not found
+Got expected error from try(predict(linmod.onepred.noint, newdata = trees[3:5, "Height"]))
 > # check that extra fields in predict newdata are ok with (formula) models without intercept
 > stopifnot(almost.equal(predict(linmod.onepred.noint, newdata=data.frame(Girth=10, extra=99)),
 +                        predict(lm.onepred.noint,     newdata=data.frame(Girth=10, extra=99))))
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
 > plot(linmod.onepred.noint)
 > plot(lm.onepred.noint, which=1, main="lm.onepred.noint")
-> par(old.par)
+> par(org.par)
 > 
 > plotres(linmod.onepred.noint)
 > plotmo(linmod.onepred.noint)
 > 
 > expect.err(try(linmod(Volume~nonesuch, data=trees)), "object 'nonesuch' not found")
 Error in eval(predvars, data, env) : object 'nonesuch' not found
-Got error as expected from try(linmod(Volume ~ nonesuch, data = trees))
+Got expected error from try(linmod(Volume ~ nonesuch, data = trees))
 > expect.err(try(linmod(Volume~0, data=trees)),   "'x' is empty") # no predictor
 Error in check.linmod.x(x) : 'x' is empty
-Got error as expected from try(linmod(Volume ~ 0, data = trees))
+Got expected error from try(linmod(Volume ~ 0, data = trees))
 > expect.err(try(linmod(Volume~-1, data=trees)), "'x' is empty") # no predictor, no intercept
 Error in check.linmod.x(x) : 'x' is empty
-Got error as expected from try(linmod(Volume ~ -1, data = trees))
+Got expected error from try(linmod(Volume ~ -1, data = trees))
 > 
 > cat0("==check model with many variables\n")
 ==check model with many variables
@@ -2170,10 +2352,9 @@ var297      -0.2151298321 0.3031934 -0.709546479 0.4836518
 var298       0.0208265210 0.2160796  0.096383564 0.9238789
 var299       0.0882009038 0.2477594  0.355994206 0.7244217
 var300       0.1604547308 0.2218983  0.723100206 0.4754104
-> expect.err(try(predict(linmod.bigdat, newdata=bigdat[,1:(p-3)])), "variable 'var297' is missing from newdata")
-Error in process.newdata.formula(object, newdata) : 
-  variable 'var297' is missing from newdata
-Got error as expected from try(predict(linmod.bigdat, newdata = bigdat[, 1:(p - 3)]))
+> expect.err(try(predict(linmod.bigdat, newdata=bigdat[,1:(p-3)])), "object 'var297' not found")
+Error in eval(predvars, data, env) : object 'var297' not found
+Got expected error from try(predict(linmod.bigdat, newdata = bigdat[, 1:(p - 3)]))
 > plot(linmod.bigdat)
 > # plotmo(linmod.bigdat) # works, but commented out because slow(ish)
 > # plotres(linmod.bigdat) # ditto
@@ -2183,11 +2364,11 @@ Got error as expected from try(predict(linmod.bigdat, newdata = bigdat[, 1:(p - 
 > # linmod.form allows a matrix, lm doesn't TODO is this inconsistency what we want?
 > tr.mat <- as.matrix(tr)
 > cat0("class(tr.mat)=", class(tr.mat), "\n") # class(tr.mat)=matrix
-class(tr.mat)=matrix
+class(tr.mat)=matrixarray
 > expect.err(try(lm(Volume~., data=tr.mat)), "'data' must be a data.frame, not a matrix or an array")
 Error in model.frame.default(formula = Volume ~ ., data = tr.mat, drop.unused.levels = TRUE) : 
   'data' must be a data.frame, not a matrix or an array
-Got error as expected from try(lm(Volume ~ ., data = tr.mat))
+Got expected error from try(lm(Volume ~ ., data = tr.mat))
 > linmod.form.Volume.mat.tr <- linmod(Volume~., data=tr.mat)
 > check.lm(linmod.form.Volume.mat.tr, linmod.form.Volume.tr)
 check linmod.form.Volume.mat.tr vs linmod.form.Volume.tr
@@ -2206,10 +2387,10 @@ Height        0.3392512 0.1301512  2.606594 1.449097e-02
 > colnames(tr.mat.no.colnames) <- NULL
 > expect.err(try(linmod(Volume~., data=tr.mat.no.colnames)), "object 'Volume' not found")
 Error in eval(predvars, data, env) : object 'Volume' not found
-Got error as expected from try(linmod(Volume ~ ., data = tr.mat.no.colnames))
+Got expected error from try(linmod(Volume ~ ., data = tr.mat.no.colnames))
 > linmod.form.Volume.mat.tr.no.colnames <- linmod(V3~., data=tr.mat.no.colnames)
 > check.lm(linmod.form.Volume.mat.tr.no.colnames, linmod.form.Volume.tr,
-+          check.coef.names=FALSE, check.newdata=FALSE) # no check.newdata else variable 'V1' is missing from newdata
++          check.coef.names=FALSE, check.newdata=FALSE) # no check.newdata else object 'V1' not found
 check linmod.form.Volume.mat.tr.no.colnames vs linmod.form.Volume.tr
 > 
 > # Check what happens when we change the original data used to build the model.
@@ -2228,7 +2409,6 @@ check linmod.form.Volume.mat.tr.no.colnames vs linmod.form.Volume.tr
 > # call etc. to get the x and y used to build the model, and rely on predict()
 > linmod.trees1$residuals <- NULL
 > linmod.trees1$fitted.values <- NULL
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,3))
 > pr(linmod.trees1)
 > trees1 <- trees[, 3:1]                      # change column order in original data
@@ -2252,7 +2432,8 @@ model.frame now returns the changed data:
 > trees1 <- trees[nrow(tr):1, ]               # change row order (but keep same nbr of rows)
 > pr(linmod.trees1, "change row order")
 > colnames(trees1) <- c("x1", "x2", "x3")     # change column names in original data
-> expect.err(try(pr(linmod.trees1, "change colnames")), "cannot get the original model predictors")
+> expect.err(try(pr(linmod.trees1,
++               "change colnames")), "cannot get the original model predictors")
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -2263,9 +2444,10 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.trees1, "change colnames"))
+Got expected error from try(pr(linmod.trees1, "change colnames"))
 > trees1 <- "garbage"
-> expect.err(try(pr(linmod.trees1, "trees1=\"garbage\"")), "cannot get the original model predictors")
+> expect.err(try(pr(linmod.trees1,
++               "trees1=\"garbage\"")), "cannot get the original model predictors")
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -2276,9 +2458,10 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.trees1, "trees1=\"garbage\""))
+Got expected error from try(pr(linmod.trees1, "trees1=\"garbage\""))
 > trees1 <- 1:1000
-> expect.err(try(pr(linmod.trees1, "trees1=1:1000")), "cannot get the original model predictors")
+> expect.err(try(pr(linmod.trees1,
++               "trees1=1:1000")), "cannot get the original model predictors")
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -2289,9 +2472,10 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.trees1, "trees1=1:1000"))
+Got expected error from try(pr(linmod.trees1, "trees1=1:1000"))
 > trees1 <- NULL                              # original data no longer available
-> expect.err(try(pr(linmod.trees1, "trees1=NULL")), "cannot get the original model predictors")
+> expect.err(try(pr(linmod.trees1,
++               "trees1=NULL")), "cannot get the original model predictors")
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -2302,9 +2486,10 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.trees1, "trees1=NULL"))
+Got expected error from try(pr(linmod.trees1, "trees1=NULL"))
 > remove(trees1)
-> expect.err(try(pr(linmod.trees1, "remove(trees1)")), "cannot get the original model predictors")
+> expect.err(try(pr(linmod.trees1,
++               "remove(trees1)")), "cannot get the original model predictors")
 Error in eval(expr, envir, enclos) : object 'trees1' not found
 
 Looked unsuccessfully for the original predictors in the following places:
@@ -2316,7 +2501,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.trees1, "remove(trees1)"))
+Got expected error from try(pr(linmod.trees1, "remove(trees1)"))
 > 
 > # similar to above, but don't delete the saved residuals and fitted.values
 > trees1 <- trees
@@ -2324,13 +2509,12 @@ Got error as expected from try(pr(linmod.trees1, "remove(trees1)"))
 > trees1 <- trees[1:3, ]                      # change number of rows in original data
 > expect.err(try(plotmo(linmod2.trees1)), "plotmo_y returned the wrong length (got 3 but expected 31)")
 Error : plotmo_y returned the wrong length (got 3 but expected 31)
-Got error as expected from try(plotmo(linmod2.trees1))
+Got expected error from try(plotmo(linmod2.trees1))
 > 
-> par(old.par)
+> par(org.par)
 > 
 > cat0("==linmod.formula(keep=TRUE): change data used to build the model\n")
 ==linmod.formula(keep=TRUE): change data used to build the model
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,3))
 > trees1 <- trees
 > linmod.trees1.keep <- linmod(Volume~., data=trees1, keep=TRUE)
@@ -2351,7 +2535,7 @@ Got error as expected from try(plotmo(linmod2.trees1))
 > pr(linmod.trees1.keep, "trees1=NULL")
 > remove(trees1)
 > pr(linmod.trees1.keep, "remove(trees1)")
-> par(old.par)
+> par(org.par)
 > 
 > cat0("==linmod.default: change data used to build the model\n")
 ==linmod.default: change data used to build the model
@@ -2363,15 +2547,15 @@ Got error as expected from try(plotmo(linmod2.trees1))
 > # call etc. to get the x1 and y1 used to build the model, and rely on predict()
 > linmod.xy$residuals <- NULL
 > linmod.xy$fitted.values <- NULL
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,3))
 > pr(linmod.xy)
 > x1 <- trees1[,2:1]                 # change column order in original x1
 > pr(linmod.xy, "change col order")
 > x1 <- trees1[1:3, 1:2]                      # change number of rows in original x1
-> expect.err(try(pr(linmod.xy, "change nbr rows")), "plotmo_y returned the wrong length (got 31 but expected 3)") # TODO different behaviour to linmod.trees1
+> expect.err(try(pr(linmod.xy, "change nbr rows")),
++               "plotmo_y returned the wrong length (got 31 but expected 3)") # TODO different behaviour to linmod.trees1
 Error : plotmo_y returned the wrong length (got 31 but expected 3)
-Got error as expected from try(pr(linmod.xy, "change nbr rows"))
+Got expected error from try(pr(linmod.xy, "change nbr rows"))
 > cat("call$x1 now refers to the changed x1:\n") # lm has the same problem if called with model=FALSE
 call$x1 now refers to the changed x1:
 > print(eval(linmod.xy$call$x1))
@@ -2393,7 +2577,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: garbage
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.xy, "x1=\"garbage\""))
+Got expected error from try(pr(linmod.xy, "x1=\"garbage\""))
 > x1 <- 1:1000
 > expect.err(try(pr(linmod.xy, "x1=1:1000")), "ncol(newdata) is 1 but should be 2")
 
@@ -2401,7 +2585,7 @@ stats::predict(linmod.object, data.frame[3,1], type="response")
 
 Error in predict.linmod(structure(list(coefficients = c(`(Intercept)` = -57.987658918381,  : 
   ncol(newdata) is 1 but should be 2
-Got error as expected from try(pr(linmod.xy, "x1=1:1000"))
+Got expected error from try(pr(linmod.xy, "x1=1:1000"))
 > x1 <- NULL                              # original x1 no longer available
 > expect.err(try(pr(linmod.xy, "x1=NULL")), "cannot get the original model predictors")
 
@@ -2414,7 +2598,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.xy, "x1=NULL"))
+Got expected error from try(pr(linmod.xy, "x1=NULL"))
 > remove(x1)
 > expect.err(try(pr(linmod.xy, "remove(x1)")), "cannot get the original model predictors")
 
@@ -2427,7 +2611,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: object 'x1' not found
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.xy, "remove(x1)"))
+Got expected error from try(pr(linmod.xy, "remove(x1)"))
 > 
 > # similar to above, but don't delete the saved residuals and fitted.values
 > trees1 <- trees
@@ -2437,13 +2621,12 @@ Got error as expected from try(pr(linmod.xy, "remove(x1)"))
 > x1 <- trees1[1:3, 1:2]                      # change number of rows in original x1
 > expect.err(try(plotmo(linmod2.x1)), "object 'linmod2.x1' not found") # TODO error message misleading?
 Error in plotmo(linmod2.x1) : object 'linmod2.x1' not found
-Got error as expected from try(plotmo(linmod2.x1))
+Got expected error from try(plotmo(linmod2.x1))
 > 
-> par(old.par)
+> par(org.par)
 > 
 > cat0("==linmod.default(keep=TRUE): change data used to build the model\n")
 ==linmod.default(keep=TRUE): change data used to build the model
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,3))
 > trees1 <- trees
 > x1 <- trees1[,1:2]
@@ -2466,7 +2649,7 @@ Got error as expected from try(plotmo(linmod2.x1))
 > pr(linmod.xy.keep, "x1=NULL")
 > remove(x1)
 > pr(linmod.xy.keep, "remove(x1)")
-> par(old.par)
+> par(org.par)
 > 
 > cat("==test processing a model created in a function with local data\n")
 ==test processing a model created in a function with local data
@@ -2505,7 +2688,6 @@ Got error as expected from try(plotmo(linmod2.x1))
 +     model$fitted.values <- NULL
 +     model
 + }
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,2))
 > 
 > lm.form <- lm.form.func(keep=FALSE)
@@ -2532,12 +2714,12 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: object 'xx' not found
 
 Error : cannot get the original model predictors
-Got error as expected from try(pr(linmod.xy))
+Got expected error from try(pr(linmod.xy))
 > 
 > linmod.xy.keep <- linmod.xy.func(keep=TRUE)
 > pr(linmod.xy.keep)
 > 
-> par(old.par)
+> par(org.par)
 > 
 > # test xlevels (predict with newdata using a string to represent a factor)
 > data(iris)

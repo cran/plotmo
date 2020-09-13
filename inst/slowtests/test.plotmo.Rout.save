@@ -2,7 +2,7 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 3.6.3 (2020-02-29)"
+[1] "R version 4.0.2 (2020-06-22)"
 > 
 > source("test.prolog.R")
 > library(earth)
@@ -10,7 +10,7 @@ Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
 Loading required package: TeachingDemos
-> data(ozone1)
+> options(warn=1) # print warnings as they occur
 > data(etitanic)
 > make.space.for.caption <- function(caption="CAPTION")
 + {
@@ -39,8 +39,8 @@ Loading required package: TeachingDemos
 plotmo> if (require(rpart)) {
 plotmo+     data(kyphosis)
 plotmo+     rpart.model <- rpart(Kyphosis~., data=kyphosis)
-plotmo+     # pass type="prob" to plotmo's internal calls to predict.rpart, and select
-plotmo+     # the column named "present" from the matrix returned by predict.rpart
+plotmo+     # pass type="prob" to plotmo's internal calls to predict.rpart, and
+plotmo+     # select the column named "present" from the matrix returned by predict.rpart
 plotmo+     plotmo(rpart.model, type="prob", nresponse="present")
 plotmo+ }
 Loading required package: rpart
@@ -66,7 +66,7 @@ plotmo+ }
 > plotmo(a, caption=caption, trace=1)
 stats::predict(earth.object, NULL, type="response")
 stats::fitted(object=earth.object)
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 
  plotmo grid:    vh wind humidity temp    ibh dpg   ibt vis   doy
@@ -79,9 +79,9 @@ got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
 > a <- earth(O3 ~ ., data=ozone1, nk=30, pmethod="n", degree=2)
 > plotmo(a, caption=caption, trace=2)
 plotmo trace 2: plotmo(object=a, caption=caption, trace=2)
+--get.model.env for object with class earth
 object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'a'
 --plotmo_x for earth object
 
@@ -91,7 +91,7 @@ object$x is NULL (and it has no colnames)
 object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
 
 get.x.from.model.frame:
-formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
+formula(object) is O3 ~ vh + wind + humidity + temp + ibh + dpg + ibt + vis ...
 naked formula is the same
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
@@ -100,7 +100,7 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
-stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ vh + wind + humidity + temp + ib..., data=call$data, na.action="na.fail")
 x=model.frame[,-1] is usable and has column names vh wind humidity temp ibh dpg ibt vis doy
 plotmo_x returned[330,9]:
       vh wind humidity temp  ibh dpg ibt vis doy
@@ -154,8 +154,7 @@ object$y is NULL (and it has no colnames)
 object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
 
 get.y.from.model.frame:
-formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
-naked formula is the same
+formula(object) is O3 ~ vh + wind + humidity + temp + ibh + dpg + ibt + vis ...
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
@@ -163,7 +162,7 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
-stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ vh + wind + humidity + temp + ib..., data=call$data, na.action="na.fail")
 y=model.frame[,1] is usable and has column name O3
 plotmo_y returned[330,1]:
     O3
@@ -191,7 +190,7 @@ object$y is NULL (and it has no colnames)
 object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=30)
 
 get.y.from.model.frame:
-formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
+formula(object) is O3 ~ vh + wind + humidity + temp + ibh + dpg + ibt + vis ...
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
@@ -199,9 +198,9 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 vh wind humidity temp ibh dpg ibt vis doy
 na.action(object) is "na.fail"
-stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ vh + wind + humidity + temp + ib..., data=call$data, na.action="na.fail")
 y=model.frame[,1] is usable and has column name O3
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 plotmo_y returned[330,1]:
     O3
@@ -337,9 +336,9 @@ persp(ibt:vis) theta 235
 > a <- earth(O3 ~ ., data=ozone1, nk=16, pmethod="n", degree=2)
 > plotmo(a, caption=caption, trace=3)
 plotmo trace 3: plotmo(object=a, caption=caption, trace=3)
+--get.model.env for object with class earth
 object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'a'
 --plotmo_x for earth object
 
@@ -349,7 +348,7 @@ object$x is NULL (and it has no colnames)
 object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
 
 get.x.from.model.frame:
-formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
+formula(object) is O3 ~ vh + wind + humidity + temp + ibh + dpg + ibt + vis ...
 naked formula is the same
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
@@ -366,7 +365,7 @@ data[330,10]:
 3    5 5760    3       51   54 1450  25 139  60  35
 ...  6 5720    4       69   35 1568  15 121  60  36
 330  1 5550    4       85   39 5000   8  44 100 390
-stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ vh + wind + humidity + temp + ib..., data=call$data, na.action="na.fail")
 model.frame returned[330,10]:
     O3   vh wind humidity temp  ibh dpg ibt vis doy
 1    3 5710    4       28   40 2693 -25  87 250  33
@@ -427,8 +426,7 @@ object$y is NULL (and it has no colnames)
 object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
 
 get.y.from.model.frame:
-formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
-naked formula is the same
+formula(object) is O3 ~ vh + wind + humidity + temp + ibh + dpg + ibt + vis ...
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
@@ -444,7 +442,7 @@ data[330,10]:
 3    5 5760    3       51   54 1450  25 139  60  35
 ...  6 5720    4       69   35 1568  15 121  60  36
 330  1 5550    4       85   39 5000   8  44 100 390
-stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ vh + wind + humidity + temp + ib..., data=call$data, na.action="na.fail")
 model.frame returned[330,10]:
     O3   vh wind humidity temp  ibh dpg ibt vis doy
 1    3 5710    4       28   40 2693 -25  87 250  33
@@ -479,7 +477,7 @@ object$y is NULL (and it has no colnames)
 object call is earth(formula=O3~., data=ozone1, pmethod="n", degree=2, nk=16)
 
 get.y.from.model.frame:
-formula(object) is O3~vh+wind+humidity+temp+ibh+dpg+ibt+vis+doy
+formula(object) is O3 ~ vh + wind + humidity + temp + ibh + dpg + ibt + vis ...
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
@@ -495,7 +493,7 @@ data[330,10]:
 3    5 5760    3       51   54 1450  25 139  60  35
 ...  6 5720    4       69   35 1568  15 121  60  36
 330  1 5550    4       85   39 5000   8  44 100 390
-stats::model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+..., data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ vh + wind + humidity + temp + ib..., data=call$data, na.action="na.fail")
 model.frame returned[330,10]:
     O3   vh wind humidity temp  ibh dpg ibt vis doy
 1    3 5710    4       28   40 2693 -25  87 250  33
@@ -504,7 +502,7 @@ model.frame returned[330,10]:
 ...  6 5720    4       69   35 1568  15 121  60  36
 330  1 5550    4       85   39 5000   8  44 100 390
 y=model.frame[,1] is usable and has column name O3
-got model response from model.frame(O3~vh+wind+humidity+temp+ibh+dpg+ibt+...,
+got model response from model.frame(O3 ~ vh + wind + humidity + temp + ib...,
                                     data=call$data, na.action="na.fail")
 plotmo_y returned[330,1]:
     O3
@@ -934,13 +932,13 @@ calculating apartdep for fac:str 01234567890
 > plotmo(varied.type.lm, all2=TRUE, ticktype="d", col.response="red", caption="varied.type.lm\ndefault grid func")
  plotmo grid:    num int bool       date  ord  fac  str
                    4   4 TRUE 2018-08-07 ord1 fac3 str3
-> plotmo(varied.type.lm, all2=TRUE, ndiscrete=1, caption="varied.type.lm\nndiscrete=1")
+> plotmo(varied.type.lm, all2=TRUE, ndiscre=1, caption="varied.type.lm\nndiscrete=1")
  plotmo grid:    num int bool       date  ord  fac  str
                    4   4 TRUE 2018-08-07 ord1 fac3 str3
-> plotmo(varied.type.lm, all2=TRUE, ndiscrete=2, caption="varied.type.lm\nndiscrete=2")
+> plotmo(varied.type.lm, all2=TRUE, ndiscr=2, caption="varied.type.lm\nndiscrete=2")
  plotmo grid:    num int bool       date  ord  fac  str
                    4   4 TRUE 2018-08-07 ord1 fac3 str3
-> plotmo(varied.type.lm, all2=TRUE, ndiscrete=100, caption="varied.type.lm\nndiscrete=100")
+> plotmo(varied.type.lm, all2=TRUE, ndis=100, caption="varied.type.lm\nndiscrete=100")
  plotmo grid:    num int bool       date  ord  fac  str
                    4   4 TRUE 2018-08-07 ord1 fac3 str3
 > cat("grid.func=median:\n")
@@ -1128,7 +1126,7 @@ GCV 8954.829    RSS 2590958    GRSq 0.1805267    RSq 0.2771303
 +            col.response=3, pt.pch=20)
 + 
 +     func2 <- function() {
-+         a.func <- earth(O3~temp+humidity, data=oz10, degree=2)
++         a.func <- earth(O3 ~ temp +   humidity, data=oz10, degree=2)
 +         plotmo(a.func, do.par=FALSE, main="a.func oz10",
 +                degree1=1, all2=1, degree2=1, type2="im",
 +                col.response=3, pt.pch=20)
@@ -1142,7 +1140,7 @@ GCV 8954.829    RSS 2590958    GRSq 0.1805267    RSq 0.2771303
 +         dopar(4,4,caption)
 + 
 +         oz <- .1 * oz.org
-+         a.func <- earth(O3~temp+humidity, data=oz, degree=2)
++         a.func <- earth(O3~temp+ humidity , data=oz, degree=2)
 +         plotmo(a.func, do.par=FALSE, main="a.func oz.1",
 +                degree1=1, all2=1, degree2=1, type2="im",
 +                col.response=3, pt.pch=20)
@@ -1215,9 +1213,9 @@ GCV 8954.829    RSS 2590958    GRSq 0.1805267    RSq 0.2771303
 plotmo trace 2: plotmo(object=a.glob, type2="im", degree1=1, degree2=1, all2=1,
                        do.par=FALSE, trace=2, main="a.glob oz", col.response=3,
                        pt.pch=20)
+--get.model.env for object with class earth
 object call is earth(formula=O3~temp+humidity, data=oz, degree=2)
---get.model.env for earth object
-using the environment saved with the earth model: R_GlobalEnv
+using the environment saved in $terms of the earth model: R_GlobalEnv
 --plotmo_prolog for earth object 'a.glob'
 --plotmo_x for earth object
 
@@ -1227,7 +1225,7 @@ object$x is NULL (and it has no colnames)
 object call is earth(formula=O3~temp+humidity, data=oz, degree=2)
 
 get.x.from.model.frame:
-formula(object) is O3~temp+humidity
+formula(object) is O3 ~ temp + humidity
 naked formula is the same
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
@@ -1236,7 +1234,7 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
-stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ temp + humidity, data=call$data, na.action="na.fail")
 x=model.frame[,-1] is usable and has column names temp humidity
 plotmo_x returned[51,2]:
     temp humidity
@@ -1290,8 +1288,7 @@ object$y is NULL (and it has no colnames)
 object call is earth(formula=O3~temp+humidity, data=oz, degree=2)
 
 get.y.from.model.frame:
-formula(object) is O3~temp+humidity
-naked formula is the same
+formula(object) is O3 ~ temp + humidity
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
@@ -1299,7 +1296,7 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
-stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ temp + humidity, data=call$data, na.action="na.fail")
 y=model.frame[,1] is usable and has column name O3
 plotmo_y returned[51,1]:
     O3
@@ -1327,7 +1324,7 @@ object$y is NULL (and it has no colnames)
 object call is earth(formula=O3~temp+humidity, data=oz, degree=2)
 
 get.y.from.model.frame:
-formula(object) is O3~temp+humidity
+formula(object) is O3 ~ temp + humidity
 formula is valid, now looking for data for the model.frame
 object$model is NULL (and it has no colnames)
 object$data is NULL (and it has no colnames)
@@ -1335,9 +1332,9 @@ argument 2 of the call is 'data'
 eval(call$data, R_GlobalEnv)
 call$data is usable and has column names O3 temp humidity ibh
 na.action(object) is "na.fail"
-stats::model.frame(O3~temp+humidity, data=call$data, na.action="na.fail")
+stats::model.frame(O3 ~ temp + humidity, data=call$data, na.action="na.fail")
 y=model.frame[,1] is usable and has column name O3
-got model response from model.frame(O3~temp+humidity,
+got model response from model.frame(O3 ~ temp + humidity,
                                     data=call$data, na.action="na.fail")
 plotmo_y returned[51,1]:
     O3
@@ -1434,8 +1431,8 @@ graphics::plot.default(x=c(48,48.92,49.8...), y=c(7.99,8.279,8...), type="n",
 plotmo trace 2: plotmo(object=ad.glob, type2="im", degree1=1, degree2=1,
                        all2=1, do.par=FALSE, trace=2, main="ad.glob oz",
                        col.response=3, pch.response=20)
+--get.model.env for object with class earth
 object call is earth(x=oz[, 2:3], y=oz[, 1], degree=2)
---get.model.env for earth object
 assuming the environment of the earth model is that of plotmo's caller: env(caption)
 --plotmo_prolog for earth object 'ad.glob'
 --plotmo_x for earth object
@@ -1464,14 +1461,14 @@ plotmo_x returned[51,2]:
 calling predict.earth with NULL newdata
 stats::predict(earth.object, NULL, type="response")
 predict returned[51,1]:
-       oz[,1]
+      oz[, 1]
 1    7.990058
 2   11.446254
 3   13.959851
 ... 13.645652
 51  18.207402
 predict after processing with nresponse=NULL is [51,1]:
-       oz[,1]
+      oz[, 1]
 1    7.990058
 2   11.446254
 3   13.959851
@@ -1481,14 +1478,14 @@ predict after processing with nresponse=NULL is [51,1]:
 ----Metadata: plotmo_fitted with nresponse=NULL
 stats::fitted(object=earth.object)
 fitted(object) returned[51,1]:
-       oz[,1]
+      oz[, 1]
 1    7.990058
 2   11.446254
 3   13.959851
 ... 13.645652
 51  18.207402
 fitted(object) after processing with nresponse=NULL is [51,1]:
-       oz[,1]
+      oz[, 1]
 1    7.990058
 2   11.446254
 3   13.959851
@@ -1515,7 +1512,7 @@ names(call) is "" "x" "y" "degree"
 the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
-y colname was NULL now "y"
+colname was NULL now "y"
 plotmo_y returned[51,1]:
      y
 1    2
@@ -1554,7 +1551,7 @@ the name of argument 2 is "y" so we will not process it with argn
 object$y is NULL
 call$y is usable but without colnames but we will use it anyway
 got model response from getCall(object)$y
-y colname was NULL now "y"
+colname was NULL now "y"
 plotmo_y returned[51,1]:
      y
 1    2
@@ -1569,7 +1566,7 @@ plotmo_y after processing with nresponse=1 is [51,1]:
 3   22
 ... 17
 51  14
-got response name "oz[,1]" from yhat
+got response name "oz[, 1]" from yhat
 resp.levs is NULL
 
 ----Metadata: done
@@ -1597,14 +1594,14 @@ newdata[50,2]:
 50  93.00000       68
 stats::predict(earth.object, data.frame[50,2], type="response")
 predict returned[50,1]:
-       oz[,1]
+      oz[, 1]
 1    7.990058
 2    8.278609
 3    8.567159
 ...  8.855710
 50  29.834221
 predict after processing with nresponse=1 is [50,1]:
-       oz[,1]
+      oz[, 1]
 1    7.990058
 2    8.278609
 3    8.567159
@@ -1621,14 +1618,14 @@ newdata[400,2]:
 400 93.00000       90
 stats::predict(earth.object, data.frame[400,2], type="response")
 predict returned[400,1]:
-       oz[,1]
+      oz[, 1]
 1    7.990058
 2    8.734215
 3    9.478372
 ... 10.222529
 400 33.851866
 predict after processing with nresponse=1 is [400,1]:
-       oz[,1]
+      oz[, 1]
 1    7.990058
 2    8.734215
 3    9.478372
@@ -1671,7 +1668,7 @@ graphics::plot.default(x=c(48,48.92,49.8...), y=c(7.99,8.279,8...), type="n",
 Expect error msg: formal argument "do.par" matched by multiple actual arguments
 Error in plotmo(a.oz10, do.par = FALSE, main = "func1:a.oz10", degree1 = 1,  : 
   formal argument "do.par" matched by multiple actual arguments
-Got error as expected from try(plotmo(a.oz10, do.par = FALSE, main = "func1:a.oz10", degree1 = 1,     all2 = 1, degree2 = 1, type2 = "im", col.response = 3, pt.pch = 20,     do.par = FALSE))
+Got expected error from try(plotmo(a.oz10, do.par = FALSE, main = "func1:a.oz10", degree1 = 1,     all2 = 1, degree2 = 1, type2 = "im", col.response = 3, pt.pch = 20,     do.par = FALSE))
 ==lm.18.out
  plotmo grid:    x1 x2
                   6  6
@@ -1682,9 +1679,9 @@ Got error as expected from try(plotmo(a.oz10, do.par = FALSE, main = "func1:a.oz
 plotmo trace 2: plotmo(object=lm.18.keep, degree1=1, do.par=FALSE, clip=FALSE,
                        ylim=c(0,20), trace=2, main="lm.18.keep",
                        col.response=2, pt.pch=20)
+--get.model.env for object with class lm
 object call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
---get.model.env for lm object
-using the environment saved with the lm model: env(frame, lm.18.out, x1, y)
+using the environment saved in $terms of the lm model: env(frame, lm.18.out, x1, y)
 --plotmo_prolog for lm object 'lm.18.keep'
 --plotmo_x for lm object
 
@@ -1743,8 +1740,7 @@ object$y is usable but without colnames so we will keep on searching
 object call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
 
 get.y.from.model.frame:
-formula(object) is y~x1+x2
-naked formula is the same
+formula(object) is y ~ x1 + x2
 formula is valid, now looking for data for the model.frame
 object$model is usable and has column names y x1 x2
 y=model.frame[,1] is usable and has column name y
@@ -1774,7 +1770,7 @@ object$y is usable but without colnames so we will keep on searching
 object call is lm(formula=y~x1+x2, x=TRUE, y=TRUE)
 
 get.y.from.model.frame:
-formula(object) is y~x1+x2
+formula(object) is y ~ x1 + x2
 formula is valid, now looking for data for the model.frame
 object$model is usable and has column names y x1 x2
 y=model.frame[,1] is usable and has column name y
@@ -1804,7 +1800,7 @@ number of x values: x1 6 x2 9
 singles: 1 x1 
 
 ----plotmo_pairs for lm object
-formula(object) returned y~x1+x2
+formula(object) returned y ~ x1 + x2
 formula.vars "x1" "x2"
 term.labels "x1" "x2"
 plotmo.pairs.from.term.labels
@@ -2205,45 +2201,45 @@ GCV 0.2040487    RSS 206.9554    GRSq 0.1569604    RSq 0.1809888
 > # check detection of illegal grid.levels argument
 > expect.err(try(plotmo(a, grid.levels=list(pcla="1", pclass="2"))), 'illegal grid.levels argument ("pcla" and "pclass" both match "pclass")')
 Error : illegal grid.levels argument ("pcla" and "pclass" both match "pclass")
-Got error as expected from try(plotmo(a, grid.levels = list(pcla = "1", pclass = "2")))
+Got expected error from try(plotmo(a, grid.levels = list(pcla = "1", pclass = "2")))
 > expect.err(try(plotmo(a, grid.levels=list(pclass="1", pcla="2"))), 'illegal grid.levels argument ("pclass" and "pcla" both match "pclass")')
 Error : illegal grid.levels argument ("pclass" and "pcla" both match "pclass")
-Got error as expected from try(plotmo(a, grid.levels = list(pclass = "1", pcla = "2")))
+Got expected error from try(plotmo(a, grid.levels = list(pclass = "1", pcla = "2")))
 > expect.err(try(plotmo(a, grid.levels=list(pcla="nonesuch"))), 'illegal level "nonesuch" for "pclass" in grid.levels (allowed levels are "1st" "2nd" "3rd")')
 Error : illegal level "nonesuch" for "pclass" in grid.levels (allowed levels are "1st" "2nd" "3rd")
-Got error as expected from try(plotmo(a, grid.levels = list(pcla = "nonesuch")))
+Got expected error from try(plotmo(a, grid.levels = list(pcla = "nonesuch")))
 > expect.err(try(plotmo(a, grid.levels=list(pcla="1sx"))), 'illegal level "1sx" for "pclass" in grid.levels (allowed levels are "1st" "2nd" "3rd")')
 Error : illegal level "1sx" for "pclass" in grid.levels (allowed levels are "1st" "2nd" "3rd")
-Got error as expected from try(plotmo(a, grid.levels = list(pcla = "1sx")))
+Got expected error from try(plotmo(a, grid.levels = list(pcla = "1sx")))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=1))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
 Error : illegal level for "pclass" in grid.levels (specify factor levels with a string)
-Got error as expected from try(plotmo(a, grid.levels = list(pcla = 1)))
+Got expected error from try(plotmo(a, grid.levels = list(pcla = 1)))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=c("ab", "cd")))), "length(pclass) in grid.levels is not 1")
 Error : length(pclass) in grid.levels is not 1
-Got error as expected from try(plotmo(a, grid.levels = list(pcla = c("ab", "cd"))))
+Got expected error from try(plotmo(a, grid.levels = list(pcla = c("ab", "cd"))))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=NA))), 'pclass in grid.levels is NA')
 Error : pclass in grid.levels is NA
-Got error as expected from try(plotmo(a, grid.levels = list(pcla = NA)))
+Got expected error from try(plotmo(a, grid.levels = list(pcla = NA)))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=Inf))), 'pclass in grid.levels is infinite')
 Error : pclass in grid.levels is infinite
-Got error as expected from try(plotmo(a, grid.levels = list(pcla = Inf)))
+Got expected error from try(plotmo(a, grid.levels = list(pcla = Inf)))
 > expect.err(try(plotmo(a, grid.levels=list(pcla=9))), 'illegal level for "pclass" in grid.levels (specify factor levels with a string)')
 Error : illegal level for "pclass" in grid.levels (specify factor levels with a string)
-Got error as expected from try(plotmo(a, grid.levels = list(pcla = 9)))
+Got expected error from try(plotmo(a, grid.levels = list(pcla = 9)))
 > options(warn=2)
 > expect.err(try(plotmo(a, grid.levels=list(age="ab"))), 'grid.levels returned class \"character\" for age, so will use the default grid.func for age')
 Error : (converted from warning) grid.levels returned class "character" for age, so will use the default grid.func for age
-Got error as expected from try(plotmo(a, grid.levels = list(age = "ab")))
+Got expected error from try(plotmo(a, grid.levels = list(age = "ab")))
 > options(warn=1)
 > expect.err(try(plotmo(a, grid.levels=list(age=NA))), 'age in grid.levels is NA')
 Error : age in grid.levels is NA
-Got error as expected from try(plotmo(a, grid.levels = list(age = NA)))
+Got expected error from try(plotmo(a, grid.levels = list(age = NA)))
 > expect.err(try(plotmo(a, grid.levels=list(age=Inf))), 'age in grid.levels is infinite')
 Error : age in grid.levels is infinite
-Got error as expected from try(plotmo(a, grid.levels = list(age = Inf)))
+Got expected error from try(plotmo(a, grid.levels = list(age = Inf)))
 > expect.err(try(plotmo(a, grid.lev=list(age=list(1,2)))), 'length(age) in grid.levels is not 1')
 Error : length(age) in grid.levels is not 1
-Got error as expected from try(plotmo(a, grid.lev = list(age = list(1, 2))))
+Got expected error from try(plotmo(a, grid.lev = list(age = list(1, 2))))
 > 
 > # more-or-less repeat above, but with glm models
 > a <- earth(survived ~ pclass+age+sibsp, data=etitanic, degree=2, glm=list(family=binomial))
@@ -2372,12 +2368,12 @@ calculating partdep for x1
 calculating partdep for x1 
 > expect.err(try(plotmo(lm.x1.x2.x3, degree1="x1", degree2=0, main="x1 (x4=1))",   ylim=c(0,16), do.par=0, pmethod="partdep", grid.levels=list(x4="x"))), "expected a logical value in grid.levels for x4") # char to logical
 Error : expected a logical value in grid.levels for x4
-Got error as expected from try(plotmo(lm.x1.x2.x3, degree1 = "x1", degree2 = 0, main = "x1 (x4=1))",     ylim = c(0, 16), do.par = 0, pmethod = "partdep", grid.levels = list(x4 = "x")))
+Got expected error from try(plotmo(lm.x1.x2.x3, degree1 = "x1", degree2 = 0, main = "x1 (x4=1))",     ylim = c(0, 16), do.par = 0, pmethod = "partdep", grid.levels = list(x4 = "x")))
 > expect.err(try(plotmo(lm.x1.x2.x3, degree1="x2", do.par=0, pmethod="partdep", grid.levels=list(x1="1"))), "the class \"character\" of \"x1\" in grid.levels does not match its class \"numeric\" in the input data")
 Warning: grid.levels returned class "character" for x1, so will use the default grid.func for x1
 Error : the class "character" of "x1" in grid.levels does not match its class "numeric" in the input data
-Got error as expected from try(plotmo(lm.x1.x2.x3, degree1 = "x2", do.par = 0, pmethod = "partdep",     grid.levels = list(x1 = "1")))
-> par(old.par)
+Got expected error from try(plotmo(lm.x1.x2.x3, degree1 = "x2", do.par = 0, pmethod = "partdep",     grid.levels = list(x1 = "1")))
+> par(org.par)
 > 
 > # test vector main
 > 
@@ -2441,31 +2437,31 @@ Expect warning below (missing single titles)
 stats::predict(earth.object, NULL, type="response", no.such.arg=9)
 
 Error : (converted from warning) predict.earth ignored argument 'no.such.arg'
-Got error as expected from try(plotmo(aflip, no.such.arg = 9))
+Got expected error from try(plotmo(aflip, no.such.arg = 9))
 > expect.err(try(plotmo(aflip, ycolumn=1)), "(converted from warning) predict.earth ignored argument 'ycolumn'")
 
 stats::predict(earth.object, NULL, type="response", ycolumn=1)
 
 Error : (converted from warning) predict.earth ignored argument 'ycolumn'
-Got error as expected from try(plotmo(aflip, ycolumn = 1))
+Got expected error from try(plotmo(aflip, ycolumn = 1))
 > expect.err(try(plotmo(aflip, title="abc")), "(converted from warning) predict.earth ignored argument 'title'")
 
 stats::predict(earth.object, NULL, type="response", title="abc")
 
 Error : (converted from warning) predict.earth ignored argument 'title'
-Got error as expected from try(plotmo(aflip, title = "abc"))
+Got expected error from try(plotmo(aflip, title = "abc"))
 > expect.err(try(plotmo(aflip, persp.ticktype="d", persp.ntick=3, tic=3, tick=9)), "(converted from warning) predict.earth ignored argument 'tic'")
 
 stats::predict(earth.object, NULL, type="response", tic=3, tick=9)
 
 Error : (converted from warning) predict.earth ignored argument 'tic'
-Got error as expected from try(plotmo(aflip, persp.ticktype = "d", persp.ntick = 3, tic = 3,     tick = 9))
+Got expected error from try(plotmo(aflip, persp.ticktype = "d", persp.ntick = 3, tic = 3,     tick = 9))
 > expect.err(try(plotmo(aflip, persp.ticktype="d", ntick=3, tic=3)), "(converted from warning) predict.earth ignored argument 'ntick'")
 
 stats::predict(earth.object, NULL, type="response", ntick=3, tic=3)
 
 Error : (converted from warning) predict.earth ignored argument 'ntick'
-Got error as expected from try(plotmo(aflip, persp.ticktype = "d", ntick = 3, tic = 3))
+Got expected error from try(plotmo(aflip, persp.ticktype = "d", ntick = 3, tic = 3))
 > options(warn=1)
 > # expect.err(try(plotmo(aflip, adj1=8, adj2=9))) # Error : plotmo: illegal argument "adj1"
 > # expect.err(try(plotmo(aflip, yc=8, x2=9))) # "ycolumn" is no longer legal, use "nresponse" instead
@@ -2476,7 +2472,7 @@ Got error as expected from try(plotmo(aflip, persp.ticktype = "d", ntick = 3, ti
 > # expect.err(try(plotmo(aflip, z="abc"))) # "zlab" is illegal, use "ylab" instead ("z" taken to mean "zlab")
 > expect.err(try(plotmo(aflip, degree1=c(4,1))), "'degree1' is out of range, allowed values are 1 to 2")
 Error : 'degree1' is out of range, allowed values are 1 to 2
-Got error as expected from try(plotmo(aflip, degree1 = c(4, 1)))
+Got expected error from try(plotmo(aflip, degree1 = c(4, 1)))
 > # expect.err(try(plotmo(aflip, none.such=TRUE))) # illegal argument "all1"
 > # expect.err(try(plotmo(aflip, ntick=3, type2="im"))) # the ntick argument is illegal for type2="image"
 > # expect.err(try(plotmo(aflip, breaks=3, type2="persp"))) # the breaks argument is illegal for type2="persp"
@@ -2487,10 +2483,10 @@ Got error as expected from try(plotmo(aflip, degree1 = c(4, 1)))
 > lm.bad <- lm.fit(as.matrix(ozone1[,-1]), as.matrix(ozone1[,1]))
 > expect.err(try(plotmo(lm.bad)), "'lm.bad' is a plain list, not an S3 model")
 Error : 'lm.bad' is a plain list, not an S3 model
-Got error as expected from try(plotmo(lm.bad))
+Got expected error from try(plotmo(lm.bad))
 > expect.err(try(plotmo(99)), "'99' is not an S3 model")
 Error : '99' is not an S3 model
-Got error as expected from try(plotmo(99))
+Got expected error from try(plotmo(99))
 > 
 > x <- matrix(c(1,3,2,4,5,6,7,8,9,10,
 +               2,3,4,5,6,7,8,9,8,9), ncol=2)
@@ -2517,7 +2513,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a.foo1))
+Got expected error from try(plotmo(a.foo1))
 > foo2 <- function()
 + {
 +     a.foo2 <- lm(y~x1+x2, data=df, model=FALSE)
@@ -2536,7 +2532,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a.foo2))
+Got expected error from try(plotmo(a.foo2))
 > foo3 <- function()
 + {
 +     a.foo3 <- lm(y~x) # lm() builds an lm model for which predict doesn't work
@@ -2544,9 +2540,10 @@ Got error as expected from try(plotmo(a.foo2))
 + }
 > foo3()
 Warning: the variable on the right side of the formula is a matrix or data.frame
+         plotmo often cannot process such variables
 Warning: 'newdata' had 50 rows but variables found have 10 rows
 Error : predict returned the wrong length (got 10 but expected 50)
-Got error as expected from try(plotmo(a.foo3))
+Got expected error from try(plotmo(a.foo3))
 > foo3a <- function()
 + {
 +     a.foo3a <- lm(y~x) # lm() builds an lm model for which predict doesn't work
@@ -2555,9 +2552,10 @@ Got error as expected from try(plotmo(a.foo3))
 + }
 > foo3a()
 Warning: the variable on the right side of the formula is a matrix or data.frame
+         plotmo often cannot process such variables
 Warning: 'newdata' had 11 rows but variables found have 10 rows
 Error : predict returned the wrong length (got 10 but expected 11)
-Got error as expected from try(plotmo(a.foo3a, ngrid1 = nrow(x)))
+Got expected error from try(plotmo(a.foo3a, ngrid1 = nrow(x)))
 > foo4 <- function()
 + {
 +     a.foo4 <- lm(y~x[,1]+x[,2])  # builds an lm model for which predict doesn't work
@@ -2565,9 +2563,11 @@ Got error as expected from try(plotmo(a.foo3a, ngrid1 = nrow(x)))
 +     expect.err(try(plotmo(a.foo4)), "predict returned the wrong length (got 10 but expected 50)")
 + }
 > foo4()
+Warning: Cannot determine which variables to plot in degree2 plots (use all2=TRUE?)
+         Confused by variable name "x[, 1]"
 Warning: 'newdata' had 50 rows but variables found have 10 rows
 Error : predict returned the wrong length (got 10 but expected 50)
-Got error as expected from try(plotmo(a.foo4))
+Got expected error from try(plotmo(a.foo4))
 > foo5 <- function()
 + {
 +     a.foo5 <- lm(y~x1+x2, model=FALSE)
@@ -2586,7 +2586,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a.foo5))
+Got expected error from try(plotmo(a.foo5))
 > foo6 <- function()
 + {
 +     a.foo6 <- lm(y~x1+x2, model=FALSE)
@@ -2605,7 +2605,7 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a.foo6, col.response = 3))
+Got expected error from try(plotmo(a.foo6, col.response = 3))
 > foo7 <- function()
 + {
 +     a.foo7 <- lm(y~x1+x2, model=FALSE)
@@ -2617,18 +2617,29 @@ Got error as expected from try(plotmo(a.foo6, col.response = 3))
 + }
 > foo7()
 Error : (converted from warning) non-finite values returned by plotmo_y
-Got error as expected from try(plotmo(a.foo7, col.response = 3))
+Got expected error from try(plotmo(a.foo7, col.response = 3))
+> options(warn=1)
 > foo8 <- function()
 + {
 +     i <- 1
 +     a.foo8 <- lm(y~x[,i]+x[,2])
-+     # causes Warning: 'newdata' had 8 rows but variables found have 10 rows
++     options <- options("warn")
++     on.exit(options(warn=options$warn))
++     options(warn=2)
++     expect.err(try(plotmo(a.foo8)), "Cannot determine which variables to plot in degree2 plots (use all2=TRUE?)")
++     options(warn=options$warn)
 +     expect.err(try(plotmo(a.foo8)), "predict returned the wrong length (got 10 but expected 50)")
 + }
 > foo8()
+Error : (converted from warning) Cannot determine which variables to plot in degree2 plots (use all2=TRUE?)
+         Confused by variable name "x[, i]"
+Got expected error from try(plotmo(a.foo8))
+Warning: Cannot determine which variables to plot in degree2 plots (use all2=TRUE?)
+         Confused by variable name "x[, i]"
 Warning: 'newdata' had 50 rows but variables found have 10 rows
 Error : predict returned the wrong length (got 10 but expected 50)
-Got error as expected from try(plotmo(a.foo8))
+Got expected error from try(plotmo(a.foo8))
+> options(warn=1)
 > foo9 <- function()
 + {
 +     my.list <- list(j=2)
@@ -2636,7 +2647,8 @@ Got error as expected from try(plotmo(a.foo8))
 +     expect.err(try(plotmo(a.foo9)), "cannot get the original model predictors")
 + }
 > foo9()
-Warning: x[,1] + x[,my.list$j]: "$" in the formula is not allowed by plotmo, will try to get the data elsewhere
+Warning: "$" in the formula is not supported by plotmo, will try to get the data elsewhere
+         formula: x[, 1] + x[, my.list$j]
 
 Looked unsuccessfully for the original predictors in the following places:
 
@@ -2647,13 +2659,11 @@ Looked unsuccessfully for the original predictors in the following places:
 (3) getCall(object)$x: NULL
 
 Error : cannot get the original model predictors
-Got error as expected from try(plotmo(a.foo9))
+Got expected error from try(plotmo(a.foo9))
 > foo9a <- function()
 + {
 +     df <- data.frame(y=y, x1=x[,1], x2=x[,2])
 +     a.foo9a <- lm(y~x1+x2, data=df)
-+     old.par <- par(no.readonly=TRUE)
-+     on.exit(par(old.par))
 +     par(mfrow = c(2, 2), oma=c(0,0,4,0))
 +     set.seed(2018)
 +     plotmo(a.foo9a, col.resp=2, do.par=FALSE,
@@ -2668,11 +2678,10 @@ Got error as expected from try(plotmo(a.foo9))
                 5.5 6.5
  plotmo grid:    x1  x2
                 5.5 6.5
+> par(org.par)
 > 
 > foo20.func <- function()
 + {
-+     old.par <- par(no.readonly=TRUE)
-+     on.exit(par(old.par))
 +     par(mfrow = c(2, 2), oma=c(0,0,4,0))
 +     foo20 <- lm(y~x1+x2)
 +     set.seed(2018)
@@ -2686,6 +2695,7 @@ Got error as expected from try(plotmo(a.foo9))
                 5.5 6.5
  plotmo grid:    x1  x2
                 5.5 6.5
+> par(org.par)
 > 
 > set.seed(1235)
 > tit <- etitanic
@@ -2748,7 +2758,6 @@ Warning: extend=0.5: will not plot degree2 plots (extend is not yet implemented 
 > 
 > # intercept only models
 > 
-> old.par <- par(no.readonly=TRUE)
 > dopar(2, 2, caption = "intercept-only models")
                               intercept-only models 
 > set.seed(1)
@@ -2759,7 +2768,7 @@ Warning: extend=0.5: will not plot degree2 plots (extend is not yet implemented 
 > plotmo(earth.intercept.only, do.par=FALSE, col.response=1, pt.pch=20)
 > # TODO following draws a plot but it shouldn't (very minor bug because int-only model with a bad degree1 spec)
 > plotmo(earth.intercept.only, do.par=FALSE, degree1=3) # expect warning: 'degree1' specified but no degree1 plots
-Warning: 'degree1' specified but no degree1 plots
+Warning: 'degree1' specified but no degree1 plots (maybe use all1=TRUE?)
 > plotmo(earth.intercept.only, do.par=FALSE, degree1=0) # expect warning: plotmo: nothing to plot
 Warning: plotmo: nothing to plot
 > library(rpart)
@@ -2767,11 +2776,10 @@ Warning: plotmo: nothing to plot
 > plotmo(rpart.intercept.only, do.par=FALSE, main="rpart.plot intercept-only model")
 > plotmo(rpart.intercept.only, do.par=FALSE, degree1=0)
 Warning: plotmo: nothing to plot
-> par(old.par)
+> par(org.par)
 > 
 > # nrug argument
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,3), mar=c(3,3,3,1), mgp=c(1.5, 0.5, 0))
 > mod.nrug <- earth(survived~age, data=etitanic)
 > set.seed(2016)
@@ -2782,7 +2790,7 @@ Warning: plotmo: nothing to plot
 > plotmo(mod.nrug, do.par=0, nrug="density", main="nrug=\"density\"")
 > plotmo(mod.nrug, do.par=0, nrug="density", density.col=2, density.lwd=2, main="nrug=\"density\"\ndensity.col=2, density.lwd=2")
 > plotmo(mod.nrug, do.par=0, nrug="density", density.adj=.2, density.col=1, main="nrug=\"density\"\ndensity.adj=.2, density.col=1")
-> par(old.par)
+> par(org.par)
 > 
 > # a <- earth(ozone1[,3]~ozone1[,1]+ozone1[,2]+ozone1[,4]+ozone1[,5]+ozone1[,6], data=ozone1)
 > # # TODO fails: actual.nrows=330 expected.nrows=50 fitted.nrows=330

@@ -22,7 +22,7 @@ plotmo_predict <- function(object, newdata, nresponse,
         # used here because for example a glm model inherits("lm") but with
         # NULL newdata doesn't process type as we might hope.
         if(class(object)[1] %in% c("lm", "earth"))
-            trace2(trace, "calling predict.%s with NULL newdata\n", class(object)[1])
+            trace2(trace, "calling predict.%s with NULL newdata\n", class.as.char(object))
         else { # assume object cannot handle newdata=NULL
             trace2(trace, "plotmo_predict with NULL newdata%s, %s",
                    if(nrows) sprint(" (nrows=%d)", nrows) else "",
@@ -32,7 +32,7 @@ plotmo_predict <- function(object, newdata, nresponse,
                 newdata <- newdata[seq_len(nrows),,drop=FALSE]
             trace2(trace,
                    "will use the above data instead of newdata=NULL for predict.%s\n",
-                   class(object)[1])
+                   class.as.char(object))
         }
     } else
         print_summary(newdata, "newdata", trace)

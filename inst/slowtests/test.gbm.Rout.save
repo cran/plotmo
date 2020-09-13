@@ -2,7 +2,7 @@
 > 
 > source("test.prolog.R")
 > library(gbm)
-Loaded gbm 2.1.5
+Loaded gbm 2.1.8
 > library(rpart.plot) # for ptitanic, want data with NAs for testing
 Loading required package: rpart
 > library(plotmo)
@@ -27,12 +27,11 @@ Loading required package: TeachingDemos
 +                    n.trees=50, shrinkage=.1, keep.data=FALSE)
 > expect.err(try(plotres(gbm.gaussian)), "use keep.data=TRUE in the call to gbm")
 Error : use keep.data=TRUE in the call to gbm (cannot determine the variable importances)
-Got error as expected from try(plotres(gbm.gaussian))
+Got expected error from try(plotres(gbm.gaussian))
 > set.seed(2016)
 > gbm.gaussian <- gbm(age~., data=ptit, train.frac=train.frac,
 +                    distribution="gaussian",
 +                    n.trees=50, shrinkage=.1)
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2), mar=c(3,3,4,1))
 > w1 <- plotres(gbm.gaussian, which=1, do.par=FALSE, w1.smooth=TRUE,
 +         w1.main="gbm.gaussian")
@@ -59,7 +58,7 @@ train  test    CV   OOB
 > abline(h=0, col="gray")
 > stopifnot(all(yhat == w3$x))
 > stopifnot(all(y - yhat == w3$y))
-> par(old.par)
+> par(org.par)
 > 
 > w1 <- plotres(gbm.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
 +               w1.smooth=TRUE,
@@ -84,16 +83,14 @@ train  test    CV   OOB
 > # plotmo(gbm.gaussian, trace=-1, all2=TRUE, SHOWCALL=TRUE)
 > 
 > # test color argument
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2), mar=c(3,3,4,1))
 > plotres(gbm.gaussian, which=1)
 > title("test color argument")
 > plotres(gbm.gaussian, which=1, w1.col=c(1,2,3,0))
 > plotres(gbm.gaussian, which=1, w1.col=c(1,0,0,4), w1.legend.x=40, w1.legend.y=.3)
 > plotres(gbm.gaussian, which=1, w1.col=c(2,3,4,1), w1.legend.x="topright")
-> par(old.par)
+> par(org.par)
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2), mar=c(3,3,4,1))
 > plot_gbm(gbm.gaussian)
 > title("test plot_gbm")
@@ -104,10 +101,9 @@ third w1 plot for gbm.gaussian returned (smooth=TRUE):
 > print(w1)
 train  test    CV   OOB 
    50     1     0     1 
-> par(old.par)
+> par(org.par)
 > 
 > # test xlim and ylim
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,3), mar=c(3,3,4,1))
 > plot_gbm(gbm.gaussian,                  main="test xlim and ylim default")
 > plot_gbm(gbm.gaussian, ylim=NULL,       main="ylim=NULL")
@@ -117,10 +113,9 @@ train  test    CV   OOB
 +                        ylim=c(150, 170),  main="xlim=c(10, 25), ylim=c(150, 170)")
 > plot_gbm(gbm.gaussian, xlim=c(-10, 40), ylim=c(-10, 300), legend.x=NA,
 +                                         main="xlim=c(-10, 40), ylim=c(-10, 300)\nlegend.x=NA")
-> par(old.par)
+> par(org.par)
 > 
 > # test the smooth argument
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(3,3), mar=c(3,3,4,1))
 > imin <- plot_gbm(gbm.gaussian,                    main="smooth=default")
 > imin.default <- imin
@@ -174,7 +169,7 @@ train  test    CV   OOB
    50     1     0     1 
 > stopifnot(identical(imin.smooth, imin.noplot))
 > 
-> par(old.par)
+> par(org.par)
 > 
 > cat("--- distribution=\"gaussian\", glm.fit interface ----------------------------------\n")
 --- distribution="gaussian", glm.fit interface ----------------------------------
@@ -188,7 +183,6 @@ train  test    CV   OOB
 > gbm.gaussian.fit <- gbm.fit(ptit[,-4], ptit[,4], nTrain=floor(train.frac * nrow(ptit)),
 +                    distribution="gaussian", verbose=FALSE,
 +                    n.trees=50, shrinkage=.1)
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2), mar=c(3,3,4,1))
 > w1 <- plotres(gbm.gaussian.fit, which=1, do.par=FALSE, w1.smooth=TRUE,
 +         w1.main="gbm.gaussian.fit")
@@ -225,7 +219,7 @@ train  test    CV   OOB
 > # stopifnot(all(yhat.fit == w3$x))
 > # stopifnot(all(y.fit - yhat.fit == w3$y.fit))
 > plotmo(gbm.gaussian.fit, trace=-1, SHOWCALL=TRUE)
-> par(old.par)
+> par(org.par)
 > 
 > cat("--- distribution=\"laplace\" ----------------------------------\n")
 --- distribution="laplace" ----------------------------------
@@ -239,7 +233,6 @@ train  test    CV   OOB
 > gbm.laplace <- gbm(age~., data=ptit, train.frac=train.frac,
 +                    distribution="laplace",
 +                    n.trees=100, shrinkage=.1)
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2), mar=c(3,3,4,1))
 > w1 <- plotres(gbm.laplace, which=1:2, do.par=FALSE, w1.smooth=TRUE,
 +         w1.main="gbm.laplace")
@@ -267,7 +260,7 @@ train  test    CV   OOB
 > stopifnot(all(yhat == w3$x))
 > stopifnot(all(y - yhat == w3$y))
 > plotmo(gbm.laplace, trace=-1, SHOWCALL=TRUE)
-> par(old.par)
+> par(org.par)
 > 
 > # # TODO commented out because gives random slightly different results per invocation
 > # cat("--- distribution=\"tdist\" ----------------------------------\n")
@@ -281,7 +274,6 @@ train  test    CV   OOB
 > # gbm.tdist <- gbm(age~., data=ptit, train.frac=train.frac,
 > #                    distribution="tdist",
 > #                    n.trees=100, shrinkage=.1)
-> # old.par <- par(no.readonly=TRUE)
 > # par(mfrow=c(2,2), mar=c(3,3,4,1))
 > # set.seed(2016)
 > # w1 <- plotres(gbm.tdist, which=1:2, do.par=FALSE,
@@ -308,7 +300,7 @@ train  test    CV   OOB
 > # stopifnot(all(yhat == w3$x))
 > # stopifnot(all(y - yhat == w3$y))
 > # plotmo(gbm.tdist, trace=-1, SHOWCALL=TRUE)
-> # par(old.par)
+> # par(org.par)
 > 
 > cat("--- distribution=\"bernoulli\" ----------------------------------\n")
 --- distribution="bernoulli" ----------------------------------
@@ -324,15 +316,6 @@ train  test    CV   OOB
 > gbm.bernoulli <- gbm(survived~., data=ptit, train.frac=train.frac,
 +                      distribution="bernoulli",
 +                      n.trees=100, shrinkage=.1, cv.folds=3)
-D:/AltC/Documents/.Rprofile
-D:/AltC/Documents/.Rprofile
-D:/AltC/Documents/.Rprofile
-D:/AltC/Documents/.Rprofile
-D:/AltC/Documents/.Rprofile
-D:/AltC/Documents/.Rprofile
-D:/AltC/Documents/.Rprofile
-D:/AltC/Documents/.Rprofile
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
 > par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
 > par(mgp=c(1.5, .4, 0))      # squash axis annotations
@@ -362,9 +345,8 @@ train  test    CV   OOB
 > abline(h=0, col="gray")
 > stopifnot(all(yhat == w3$x))
 > stopifnot(all(y - yhat == w3$y))
-> par(old.par)
+> par(org.par)
 > 
-> old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.bernoulli, do.par=2)
  plotmo grid:    sex age sibsp parch pclass
                 male  27     0     0  third
@@ -375,7 +357,7 @@ sex       sex 29.921593
 pclass pclass 17.323084
 parch   parch 13.277759
 sibsp   sibsp  7.170468
-> par(old.par)
+> par(org.par)
 > 
 > cat("--- distribution=\"huberized\" ----------------------------------\n")
 --- distribution="huberized" ----------------------------------
@@ -389,7 +371,6 @@ sibsp   sibsp  7.170468
 > gbm.huberized <- gbm(survived~., data=ptit, train.frac=train.frac,
 +                      distribution="huberized",
 +                      n.trees=200, shrinkage=.1)
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
 > par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
 > par(mgp=c(1.5, .4, 0))      # squash axis annotations
@@ -419,9 +400,8 @@ train  test    CV   OOB
 > abline(h=0, col="gray")
 > stopifnot(all(yhat == w3$x))
 > stopifnot(all(y - yhat == w3$y))
-> par(old.par)
+> par(org.par)
 > 
-> old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.huberized, do.par=2)
  plotmo grid:    sex age
                 male  28
@@ -429,7 +409,7 @@ train  test    CV   OOB
     var  rel.inf
 age age 68.12613
 sex sex 31.87387
-> par(old.par)
+> par(org.par)
 > 
 > cat("--- distribution=\"adaboost\" ----------------------------------\n")
 --- distribution="adaboost" ----------------------------------
@@ -443,7 +423,6 @@ sex sex 31.87387
 > gbm.adaboost <- gbm(survived~., data=ptit, train.frac=train.frac,
 +                      distribution="adaboost",
 +                      n.trees=150, shrinkage=.01)
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2))
 > par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
 > par(mgp=c(1.5, .4, 0))      # squash axis annotations
@@ -471,9 +450,8 @@ train  test    CV   OOB
 > abline(h=0, col="gray")
 > stopifnot(all(yhat == w3$x))
 > stopifnot(all(y - yhat == w3$y))
-> par(old.par)
+> par(org.par)
 > 
-> old.par <- par(no.readonly=TRUE)
 > plotmo(gbm.adaboost, do.par=2)
  plotmo grid:    sex  age
                 male 27.5
@@ -481,23 +459,24 @@ train  test    CV   OOB
     var  rel.inf
 sex sex 75.09661
 age age 24.90339
-> par(old.par)
+> par(org.par)
 > 
 > # test gbm multinomial model, also test very small number of trees in plot_gbm
 > 
 > data(iris)
 > set.seed(2016)
 > gbm.iris <- gbm(Species~., data=iris, distribution="multinomial", n.tree=5)
+Warning: Setting `distribution = "multinomial"` is ill-advised as it is currently broken. It exists only for backwards compatibility. Use at your own risk.
 > expect.err(try(plotres(gbm.iris)),
 +            "gbm distribution=\"multinomial\" is not yet supported")
 Error : gbm distribution="multinomial" is not yet supported
        (A direct call to plot_gbm may work)
-Got error as expected from try(plotres(gbm.iris))
+Got expected error from try(plotres(gbm.iris))
 > expect.err(try(plotmo(gbm.iris)),
 +            "gbm distribution=\"multinomial\" is not yet supported")
 Error : gbm distribution="multinomial" is not yet supported
        (A direct call to plot_gbm may work)
-Got error as expected from try(plotmo(gbm.iris))
+Got expected error from try(plotmo(gbm.iris))
 > plot_gbm(gbm.iris)
 > 
 > # TODO following fails in the new version of gbm (version 2.2)
@@ -537,7 +516,6 @@ Got error as expected from try(plotmo(gbm.iris))
 > #                      shrinkage = 0.1,
 > #                      bag_fraction = 0.5,
 > #                      num_train = round(.8 * nrow(ptit)))
-> # old.par <- par(no.readonly=TRUE)
 > # par(mfrow=c(2,2), mar=c(3,3,4,1))
 > # set.seed(2016)
 > # gbmt.gaussian <- gbmt(age~., data=ptit,
@@ -575,7 +553,7 @@ Got error as expected from try(plotmo(gbm.iris))
 > # abline(h=0, col="gray")
 > # stopifnot(all(yhat == w3$x))
 > # stopifnot(all(y - yhat == w3$y))
-> # par(old.par)
+> # par(org.par)
 > #
 > # w1 <- plotres(gbmt.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
 > #               w1.smooth=TRUE,
@@ -584,7 +562,7 @@ Got error as expected from try(plotmo(gbm.iris))
 > # print(w1)
 > # plotmo(gbmt.gaussian, trace=-1, SHOWCALL=TRUE)
 > #
-> # par(old.par)
+> # par(org.par)
 > #
 > # cat("--- distribution=\"bernoulli\" ----------------------------------\n")
 > #
@@ -606,7 +584,6 @@ Got error as expected from try(plotmo(gbm.iris))
 > #             train_params = train_params,
 > #             cv_folds = 3,
 > #             is_verbose = FALSE,  keep_gbm_data=TRUE)
-> # old.par <- par(no.readonly=TRUE)
 > # par(mfrow=c(2,2))
 > # par(mar=c(3.5, 3, 2, 0.5))  # small margins and text to pack figs in
 > # par(mgp=c(1.5, .4, 0))      # squash axis annotations
@@ -633,11 +610,10 @@ Got error as expected from try(plotmo(gbm.iris))
 > # abline(h=0, col="gray")
 > # stopifnot(all(yhat == w3$x))
 > # stopifnot(all(y - yhat == w3$y))
-> # par(old.par)
+> # par(org.par)
 > #
-> # old.par <- par(no.readonly=TRUE)
 > # plotmo(gbmt.bernoulli, do.par=2)
 > # print(summary(gbmt.bernoulli)) # will also plot
-> # par(old.par)
+> # par(org.par)
 > 
 > source("test.epilog.R")

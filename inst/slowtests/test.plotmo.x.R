@@ -3,6 +3,7 @@
 source("test.prolog.R")
 library(plotmo)
 library(earth)
+options(warn=1) # print warnings as they occur
 data(ozone1)
 data(etitanic)
 get.tit <- function()
@@ -304,12 +305,12 @@ rv <- plotmo(lm.form.df.model.false.x.true, trace=100)
 stopifnot1(rv, X)
 
 printf("-- test \"warning: object$x may be corrupt\", same as above but set options(warn=2)\n")
-old.warn <- options(warn=2)
+options(warn=2)
 get.data()
 lm.form.df.model.false.x.true[["x"]] <- "nonesuch"
 # Warning: object$x may be corrupt
 expect.err(try(plotmo(lm.form.df.model.false.x.true, trace=100)), "x may be corrupt")
-options(warn=old.warn[[1]])
+options(warn=1)
 stopifnot1(rv, X)
 
 printf("====== strings in the data.frame\n")

@@ -50,16 +50,25 @@ plotres <- function(object = stop("no 'object' argument"),
     on.exit({init.global.data(); gc()}) # release memory on exit
     object # make sure object exists
     trace <- as.numeric(check.integer.scalar(trace, logical.ok=TRUE))
+
+    use.submodel <- dota("USE.SUBMODEL", DEF=TRUE, ...) # undoc arg (for parsnip models)
+    use.submodel <- is.specified(use.submodel)
+
     # Associate the model environment with the object.
     # (This is instead of passing it as an argument to plotmo's data access
     # functions.  It saves a few hundred references to model.env in the code.)
-    attr(object, ".Environment") <- get.model.env(object, object.name, trace)
-    temp <- plotmo_prolog(object, object.name, trace, ...)
-        object  <- temp$object
-        my.call <- temp$my.call
+    object.env <- get.model.env(object, object.name, trace, use.submodel)
+
+    ret <- plotmo_prolog(object, object.name, trace, ...)
+        object  <- ret$object # the original object or a submodel (parsnip)
+        my.call <- ret$my.call
+
+    attr(object, ".Environment") <- object.env
+
     if(!is.numeric(which) || !is.vector(which) || anyNA(which) ||
-            any(which != floor(which)) || any(which < 1) || any(which > W9LOGLOG))
+            any(which != floor(which)) || any(which < 1) || any(which > W9LOGLOG)) {
         which.err()
+    }
     info        <- check.boolean(info)
     standardize <- check.boolean(standardize)
     delever     <- check.boolean(delever)

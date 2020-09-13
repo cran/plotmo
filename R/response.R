@@ -7,8 +7,10 @@ plotmo_rsq <- function(object, newdata=NULL, trace=0, nresponse=NA, type=NULL, .
 {
     init.global.data() # needed if plotmo has never been invoked
     object.name <- quote.deparse(substitute(object))
+    use.submodel <- dota("USE.SUBMODEL", DEF=TRUE, ...) # undoc arg (for parsnip models)
+    use.submodel <- is.specified(use.submodel)
     # TODO revisit, not really reliable because it may use parent.frame
-    attr(object, ".Environment") <- get.model.env(object, object.name, trace)
+    attr(object, ".Environment") <- get.model.env(object, object.name, trace, use.submodel)
     meta <- plotmo_meta(object, type, nresponse, trace, ...)
     plotmo_rsq1(object=object, newdata=newdata, trace=trace, meta=meta, ...)
 }

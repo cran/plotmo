@@ -168,8 +168,6 @@ plot(lm, which=2, pch=20)
 plotres(lm, standardize=1, cook.levels=c(.1,.2,.3), SHOWCALL=TRUE)
 elm <- earth(survived~sex+pclass+age, linpreds=TRUE, thresh=0, penalty=-1)
 plotres(elm, col=survived+2, SHOWCALL=TRUE)
-plotres(elm, col=survived+2, SHOWCALL=TRUE)
-plotres(elm, col=survived+2, col.rsq="darkorange", lty.rsq=1, SHOWCALL=TRUE)
 set.seed(2015)
 elm.glm <- earth(survived~sex+pclass+age, linpreds=TRUE, thresh=0, penalty=-1,
                  glm=list(family=binomial),
@@ -179,6 +177,7 @@ plotres(elm.glm, col=survived+2, SHOWCALL=TRUE)
 printf("======== check type arg with earth\n")
 par(mfrow=c(2,2), mar=c(3,3,3,1), mgp=c(1.5,0.5,0), oma=c(0,0,2.5,0))
 # following two are equivalent
+# TODO $$ following look wrong (the plots have changed from plotmo/earth pre Sep 2020)
 plotres(elm.glm, col=survived+2, standardize=TRUE,
         which=3, do.par=FALSE, main="standardize=TRUE")
 mtext("elm.glm with various type options", outer=TRUE, font=2, line=1, cex=1)
@@ -194,7 +193,12 @@ plotres(elm.glm, col=survived+2, type="deviance",
 printf("======== multiple response earth models\n")
 par(mfrow=c(2,2), mar=c(3,3,3,1), mgp=c(1.5,0.5,0), oma=c(0,0,2.5,0))
 set.seed(2015)
-emulti <- earth(cbind(Volume, Volume + 100 + 5 * rnorm(nrow(trees)))~., data=trees)
+emulti0 <- earth(cbind(Volume, Volume + 100 + 5 * rnorm(nrow(trees)))~., data=trees)
+set.seed(2015)
+plot(emulti0, nresponse=2, which=3, do.par=FALSE, main="emulti0 nresponse=2")
+set.seed(2015)
+rnorm1 <- rnorm(nrow(trees))
+emulti <- earth(cbind(Volume, Volume + 100 + 5 * rnorm1)~., data=trees)
 plot(emulti, nresponse=2,
      which=3, do.par=FALSE, main="emulti nresponse=2")
 mtext("multiple response earth models", outer=TRUE, font=2, line=1, cex=1)

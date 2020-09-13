@@ -7,6 +7,7 @@ Loading required package: Formula
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(earth) # for ozone1
+> options(warn=1) # print warnings as they occur
 > data(airquality)
 > airq <- airquality[complete.cases(airquality), (c("Ozone", "Wind", "Temp"))]
 > # prevent confusion caused by integer rownames which don't match row numbers
@@ -34,7 +35,6 @@ Loading required package: TeachingDemos
 > 
 > # compare singleplot and plotmo
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,2)) # 4 plots per page
 > 
 > singleplot(pre.mod, varname="Temp", main="Temp\n(singleplot)")
@@ -59,11 +59,10 @@ calculating partdep for Temp
 +        predict.penalty.par.val="lambda.min") # use "predict." to pass it on to predict.pre
 calculating partdep for Temp 
 > 
-> par(old.par)
+> par(org.par)
 > 
 > # compare pairplot and plotmo
 > 
-> old.par <- par(no.readonly=TRUE)
 > par(mfrow=c(2,3)) # 6 plots per page
 > 
 > pairplot(pre.mod, c("Temp", "Wind"), main="pairplot")
@@ -92,7 +91,7 @@ calculating apartdep for Wind:Temp 01234567890
 > plotmo(pre.mod, type2="image",
 +        degree1=0, degree2="Temp", do.par=FALSE)
 > 
-> par(old.par)
+> par(org.par)
 > 
 > # test gpe models
 > 
@@ -130,7 +129,7 @@ predict.pre returned multiple columns (see above) but nresponse is not specified
          Example: nresponse="versicolor"
 
 Error : (converted from warning) Defaulting to nresponse=1, see above messages
-Got error as expected from try(plotmo(pre.iris))
+Got expected error from try(plotmo(pre.iris))
 > options(warn=1) # print warnings as they occur
 > plotmo(pre.iris, all2=TRUE, nresponse="virginica", trace=1)
 importance: Petal.Length Petal.Width
@@ -140,7 +139,7 @@ fitted() was unsuccessful, will use predict() instead
 assuming "Species" in the model.frame is the response, because terms(object) did not return the terms
 nresponse=3 but for plotmo_y using nresponse=1 because ncol(y) == 1
 assuming "Species" in the model.frame is the response, because terms(object) did not return the terms
-got model response from model.frame(Species~.,
+got model response from model.frame(Species ~ .,
                                     data=object$data, na.action="na.fail")
 
  plotmo grid:    Sepal.Length Sepal.Width Petal.Length Petal.Width

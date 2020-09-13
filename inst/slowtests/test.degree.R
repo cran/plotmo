@@ -1,4 +1,4 @@
-# test.pre.R: test the "pre" package with plotmo and plotres
+# test.pre.R: test the degree1 and degree2 and related args
 
 source("test.prolog.R")
 library(earth)
@@ -12,7 +12,7 @@ plotmo(a80, degree1="i", degree2="t",
        caption='degree1="i", degree2="t"')
 plotmo(a80, degree1="^temp$", degree2="^dpg$",
        caption='degree1="^temp$", degree2="^dpg$"')
-# Expect Warning: "nonesuch1" in degree1 does not match any variables, ditto for degree2
+# Expect Warning: "nonesuch1" in degree1 does not regex-match any variables, ditto for degree2
 plotmo(a80, degree1=c("temp", "nonesuch1"), degree2="vis",
        caption='degree1=c("temp", "nonesuch1"), degree2="vis")')
 # Expect above warnings and also Warning: nothing to plot
@@ -22,23 +22,23 @@ plotmo(a80, degree1="nonesuch1", degree2="nonesuch2")
 
 data(etitanic)
 a81 <- earth(survived~., data=etitanic, degree=2)
-options(warn=2) # treat warnings as errors
+options(warn=1) # print warnings as they occur
 plotmo(a81)
 
 # degree1 tests
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(3,3), mar=c(1,2.5,2,1), oma=c(0,0,4,0))
 plotmo(a81, do.par=FALSE, degree1="pclass", degree2=0, main='degree1="pclass"',
        caption="test degree1 with strings")
-expect.err(try(plotmo(a81, do.par=FALSE, degree1="survived", degree2=0)), '"survived" in degree1 does not match any names')
+options(warn=2) # treat warnings as errors
+expect.err(try(plotmo(a81, do.par=FALSE, degree1="survived", degree2=0)), '"survived" in degree1 does not regex-match any names')
+options(warn=1) # print warnings as they occur
 plotmo(a81, do.par=FALSE, degree1="sibsp", degree2=0, main='degree1="sibsp"')
 # parch does not appear in the standard degree1 plotmo plots, but we can still specify it explictly
 plotmo(a81, do.par=FALSE, degree1="parch", degree2=0, trace=0, main='degree1="parch"')
 plotmo(a81, do.par=FALSE, degree1=c("sibsp", "pclass"), degree2=0, main='degree1=c("sibsp", "pclass")')
-par(old.par)
+par(org.par)
 
 # degree2 tests
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(3,3), mar=c(1,2.5,2,1), oma=c(0,0,4,0))
 plotmo(a81, do.par=FALSE, degree1=0, degree2="pclass", main='degree2="pclass"',
        caption="test degree2 with two strings")
@@ -47,13 +47,13 @@ plotmo(a81, do.par=FALSE, degree1=0, degree2=c("age", "se"), persp.theta=-35,
 plotmo(a81, do.par=FALSE, degree1=0, degree2="ag", main='degree2="ag"')
 plotmo(a81, do.par=FALSE, degree1=0, degree2=c("sex", "sibsp"), main='degree2=c("sex", "sibsp"')
 plotmo(a81, do.par=FALSE, degree1=0, degree2=c("sibsp", "sex"), main='degree2=c("sibsp", "sex")')
-expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("pclass", "nonesuch"))), "\"nonesuch\" in degree2 does not match any names")
-expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("nonesuch1", "nonesuch2"))), "\"nonesuch1\" in degree2 does not match any names")
-expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("nonesuch", "pclass"))), "\"nonesuch\" in degree2 does not match any names")
-par(old.par)
-
-old.par <- par(no.readonly=TRUE)
+options(warn=2) # treat warnings as errors
+expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("pclass", "nonesuch"))), "\"nonesuch\" in degree2 does not regex-match any names")
+expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("nonesuch1", "nonesuch2"))), "\"nonesuch1\" in degree2 does not regex-match any names")
+expect.err(try(plotmo(a81, do.par=FALSE, degree1=0, degree2=c("nonesuch", "pclass"))), "\"nonesuch\" in degree2 does not regex-match any names")
 options(warn=1) # print warnings as they occur
+par(org.par)
+
 par(mfrow=c(2,2), mar=c(1,2.5,2,1), oma=c(0,0,4,0))
 
 # check that order of strings in two string degree2 is observed
@@ -88,6 +88,6 @@ try(plotmo(a81, do.par=FALSE, degree1=0,
        degree2=c("sex", "sex"),
        main='degree1=1\ndegree2=c("sex", "sex")'))
 
-par(old.par)
+par(org.par)
 
 source("test.epilog.R")

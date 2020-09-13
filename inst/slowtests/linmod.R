@@ -188,17 +188,7 @@ process.newdata.formula <- function(object, newdata)
     newdata <- as.data.frame(newdata) # allows newdata to be a matrix
     terms <- object$terms
     dataClasses <- attr(terms, "dataClasses")
-
-    # The code below preempts code in model.frame that issues
-    #   Warning: 'newdata' had M rows but variables found have N rows
-    # This code gives a clearer error message.
-    # The var names check is necessary else model.frame can return bad data.
-    varnames <- names(dataClasses)
-    varnames <- varnames[-attr(terms, "response")]
-    missing <- which(!(varnames %in% colnames(newdata)))
-    if(length(missing))
-        stop("variable '", varnames[missing[1]], "' is missing from newdata")
-
+    iresp <- attr(terms, "response")
     terms <- delete.response(terms)
     # na.action=na.pass because we will catch NAs after (for clearer error msg)
     # xlevels is needed to convert strings to factor levels, for example:
@@ -207,9 +197,24 @@ process.newdata.formula <- function(object, newdata)
     mf <- model.frame(terms, newdata, na.action = na.pass, xlev = object$xlevels)
     if(anyNA(mf))
         stop("NA in 'newdata'")
-    if(NROW(mf) != NROW(newdata))    # paranoia, shouldn't be needed
+    if(NROW(mf) != NROW(newdata)) {
+        # Get here when model.frame() issues
+        #   Warning: 'newdata' had M rows but variables found have N rows
+        # Must stop, else the call to model.matrix() below would silently return bad data.
+
+        # If a variable is missing, print its name to help the user.
+        # TODO This will erroneously identify "sqrt(x)" as a missing var in the
+        #      formula "y ~ sqrt(x)" (because the var is wrapped in a func call).
+        varnames <- names(dataClasses)
+        varnames <- varnames[-iresp]
+        missing <- which(!(varnames %in% colnames(newdata)))
+        missing.msg <- ""
+        if(length(missing))
+            missing.msg <- paste0(" (variable '", varnames[missing[1]],
+                                  "' may be missing from newdata)")
         stop("newdata has ", NROW(newdata),
-             " rows but model.frame returned ", NROW(mf), " rows")
+             " rows but model.frame returned ", NROW(mf), " rows", missing.msg)
+    }
     .checkMFClasses(dataClasses, mf) # check types in newdata match original data
     model.matrix(terms, mf)
 }

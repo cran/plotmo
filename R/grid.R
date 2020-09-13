@@ -81,8 +81,8 @@ blockify.degree1.frame <- function(xframe, yhat, intervals,
     u1 <- ux.list[[ipred]]
     # TODO the integral check is necessary for compatibility with blockify.degree2.frame
     # (the code here can handle non integers but the code in blockify.degree2.frame can't)
-    if(length(u1) <= ndiscrete && !is.factor(xframe[[ipred]]) && !isDate(u1) &&
-            is.integral(u1)) {
+    if(length(u1) <= ndiscrete && !is.factor(xframe[[ipred]]) &&
+            !inherits(u1, "Date") && is.integral(u1)) {
         # discrete, so duplicate each elem in yhat
         yhat <- rep(yhat, each=2)
         if(!is.null(intervals)) {
@@ -119,8 +119,8 @@ get.degree2.xgrid <- function(x, grid.func, grid.levels, pred.names, ngrid2)
         xgrid[[ipred]] <- get.fixed.gridval(x[[ipred]], pred.names[ipred],
                                             grid.func, grid.levels)
     warn.if.not.all.finite(xgrid, "'xgrid' for degree2 plots")
-    names(xgrid) <- pred.names
     xgrid <- as.data.frame(xgrid)
+    colnames(xgrid) <- pred.names
     xgrid[seq_len(ngrid2^2), ] <- xgrid
     xgrid
 }

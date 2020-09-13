@@ -52,7 +52,15 @@ plotresids <- function(
     level.shade2 <- dota("level.shade2 shade.cints", DEF="mistyrose4", ...)
     if(which == W3RESID && is.specified(level)) {
         p <- plotmo.pint(object, newdata=NULL, type, level, trace=0)
-        stopifnot(is.null(p$fit) || (p$fit - fitted == 0))
+        if(!is.null(p$fit) && max(abs(p$fit - fitted)) != 0) {
+            # TODO $$ happens with test.unusual.vars.R:earth.glm.spaced.bx
+            warning0("Internal inconsistency: p$fit != fitted",
+                if(inherits(object, "earth"))
+                    "\n         Workaround: no 'glm' arg in call to earth, or no 'level' arg n call to plotres"
+                else
+                    "")
+            fitted <- p$fit # hack
+        }
         if(is.specified(level.shade) && !is.null(p$upr)) {
             pints <- data.frame(upr=rinfo$scale * (p$upr - fitted),
                                 lwr=rinfo$scale * (p$lwr - fitted))
@@ -399,7 +407,7 @@ get.versus.info <- function(which, versus, object, fitted, nresponse, trace=0)
         if(length(which) == 0)
             warnf(
                 "which=%s is now empty because plots were removed because versus=%s",
-                paste.c(org.which), paste(versus))
+                paste.c(org.which, maxlen=50), paste.c(versus, maxlen=30))
     }
     list(which      = which,      # which after possibly removing some plots
          versus.mat = versus.mat, # either fitted, response, x, or bx
