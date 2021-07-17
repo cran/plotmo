@@ -143,8 +143,8 @@ form.pairs <- function(varnames) # return a two column matrix, each row is a pai
 plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace, ...)
 {
     trace2(trace, "plotmo.pairs.from.term.labels\n")
-    trace2(trace, "term.labels: %s\n", quotify.trunc(term.labels, maxlen=100), "\n")
-    trace2(trace, "pred.names:  %s\n", quotify.trunc(pred.names, maxlen=100), "\n")
+    trace2(trace, "term.labels: %s\n", quotify.trunc(term.labels, maxlen=100))
+    trace2(trace, "pred.names:  %s\n", quotify.trunc(pred.names, maxlen=100))
     pairs <- matrix(0, nrow=0, ncol=2)          # no pairs initially
     for(i in 1:length(term.labels)) {
         untouchable <- get.untouchable.for.naken(term.labels[i])

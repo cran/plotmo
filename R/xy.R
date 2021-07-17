@@ -953,7 +953,7 @@ naken.formula.string <- function(form.as.char, trace)
     }
     trace2(trace,
            if(strip.space(naked) == strip.space(old.form.as.char))
-               "naked formula is the same\n" # e.g. O3~vh+wind
+               "naked formula is the same%.0s\n" # e.g. O3~vh+wind
            else
                "naked formula is %s\n", naked)
     naked

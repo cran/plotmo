@@ -151,8 +151,7 @@ y[1046,1] with colname subY, and values 1, 1, 0, 1, 1, 1, 0, 1, 0, 0,...
 weights: no weights (because all weights equal)
 Forward pass term 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20
 Reached nk 21
-After forward pass GRSq 0.448 RSq 0.487
-Fixed rank deficient bx by removing 1 term, 15 terms remain
+After forward pass GRSq 0.451 RSq 0.487
 Prune backward penalty 3 nprune null: selected 13 of 15 terms, and 6 of 7 preds
 After pruning pass GRSq 0.456 RSq 0.487
 > plotmo(a.bag3, clip=F, caption="bagEarth, etitanic", trace=1, SHOWCALL=TRUE)

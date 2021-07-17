@@ -257,21 +257,22 @@ set.seed(2020)
 earth_tworesp <- earth(survived + notsurvived ~ ., data=etit, degree=2)
 print(summary(earth_tworesp))
 
-set.seed(2020)
-mars_tworesp <- mars(mode = "regression", prod_degree=2) %>%
-         set_engine("earth") %>%
-         fit(survived + notsurvived~., data=etit)
-print(summary(mars_tworesp))
-print(summary(mars_tworesp$fit))
-
-stopifnot(identical(earth_tworesp$coeff, mars_tworesp$fit$coeff))
-
-predict.earth_tworesp <- predict(earth_tworesp, etit[3:6,])
-predict.mars_tworesp <-  mars_tworesp %>% predict(etit[3:6,])
-stopifnot(all(predict.earth_tworesp == predict.mars_tworesp))
-
-plotmo(earth_tworesp, trace=0, nresponse=1, SHOWCALL=TRUE)
-plotmo(mars_tworesp, trace=0, nresponse=1, SHOWCALL=TRUE)
-plotmo(mars_tworesp, trace=0, nresponse=2, SHOWCALL=TRUE)
+# TODO following commented out because parsnip (version 0.1.5) says "'+' not meaningful for factors"
+# set.seed(2020)
+# mars_tworesp <- mars(mode = "regression", prod_degree=2) %>%
+#          set_engine("earth") %>%
+#          fit(survived + notsurvived~., data=etit)
+# print(summary(mars_tworesp))
+# print(summary(mars_tworesp$fit))
+#
+# stopifnot(identical(earth_tworesp$coeff, mars_tworesp$fit$coeff))
+#
+# predict.earth_tworesp <- predict(earth_tworesp, etit[3:6,])
+# predict.mars_tworesp <-  mars_tworesp %>% predict(etit[3:6,])
+# stopifnot(all(predict.earth_tworesp == predict.mars_tworesp))
+#
+# plotmo(earth_tworesp, trace=0, nresponse=1, SHOWCALL=TRUE)
+# plotmo(mars_tworesp, trace=0, nresponse=1, SHOWCALL=TRUE)
+# plotmo(mars_tworesp, trace=0, nresponse=2, SHOWCALL=TRUE)
 
 source("test.epilog.R")

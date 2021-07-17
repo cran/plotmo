@@ -8,7 +8,7 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(glmnet)
 Loading required package: Matrix
-Loaded glmnet 4.0-2
+Loaded glmnet 4.1-1
 > data(ozone1)
 > data(etitanic)
 > get.tit <- function() # abbreviated titanic data
@@ -283,7 +283,8 @@ singles: 1 survived, 2 sibsp, 3 logage
 ----plotmo_pairs for cv.glmnet object
 Error in formula.default(object) : invalid formula
 formula(object) failed for cv.glmnet object in plotmo.pairs.default
-Error in terms.default(object) : no terms component nor attribute
+Error in x$terms %||% attr(x, "terms") %||% stop("no terms component nor attribute") : 
+  no terms component nor attribute
 terms(object) failed for cv.glmnet object in plotmo.pairs.default
 no pairs
 

@@ -2,7 +2,7 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 4.0.2 (2020-06-22)"
+[1] "R version 4.1.0 (2021-05-18)"
 > 
 > source("test.prolog.R")
 > library(earth)

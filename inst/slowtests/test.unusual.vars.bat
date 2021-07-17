@@ -2,7 +2,7 @@
 @rem                        this file was first created for plotmo 3.6.0 (Sep 2020)
 
 @echo test.unusual.vars.bat
-@"C:\PROGRA~1\R\R-4.0.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.unusual.vars.R
+@"C:\PROGRA~1\R\R-4.1.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.unusual.vars.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.unusual.vars.Rout:
 @echo.

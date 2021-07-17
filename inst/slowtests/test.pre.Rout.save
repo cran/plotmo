@@ -2,6 +2,8 @@
 > 
 > source("test.prolog.R")
 > library(pre)
+Warning in .recacheSubclasses(def@className, def, env) :
+  undefined subclass "numericVector" of class "Mnumeric"; definition not updated
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix

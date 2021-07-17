@@ -1,12 +1,15 @@
 > # test.mlr.R: test the "mlr" package with plotmo and plotres
 > #
+> # TODO mlr is in maintenance mode, add mlr3 support to plotmo?
 > # TODO generally, plotres residuals for WrappedModel prob models aren't right
 > 
 > source("test.prolog.R")
 > library(mlr)
 Loading required package: ParamHelpers
-'mlr' is in maintenance mode since July 2019. Future development
-efforts will go into its successor 'mlr3' (<https://mlr3.mlr-org.com>).
+Warning message: 'mlr' is in 'maintenance-only' mode since July 2019.
+Future development will only happen in 'mlr3'
+(<https://mlr3.mlr-org.com>). Due to the focus on 'mlr3' there might be
+uncaught bugs meanwhile in {mlr} - please consider switching.
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix

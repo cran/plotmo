@@ -88,89 +88,97 @@ plotres1 <- function(object, ..., trace=0, SHOWCALL=TRUE, caption=NULL) {
 }
 # basic tests of plotmo on abbreviated titanic data
 
-get.tit <- function()
+get.tita <- function()
 {
-    tit <- etitanic
-    pclass <- as.character(tit$pclass)
+    tita <- etitanic
+    pclass <- as.character(tita$pclass)
     # change the order of the factors so not alphabetical
     pclass[pclass == "1st"] <- "first"
     pclass[pclass == "2nd"] <- "class2"
     pclass[pclass == "3rd"] <- "classthird"
-    tit$pclass <- factor(pclass, levels=c("class2", "classthird", "first"))
+    tita$pclass <- factor(pclass, levels=c("class2", "classthird", "first"))
     # log age is so we have a continuous predictor even when model is age~.
     set.seed(2015)
-    tit$logage <- log(tit$age) + rnorm(nrow(tit))
-    tit$parch <- NULL
+    tita$logage <- log(tita$age) + rnorm(nrow(tita))
+    tita$parch <- NULL
     # by=12 gives us a small fast model with an additive and a interaction term
-    tit <- tit[seq(1, nrow(etitanic), by=12), ]
+    tita[seq(1, nrow(etitanic), by=12), ]
 }
-tit <- get.tit()
+tita <- get.tita()
 
-mod.lm.age <- lm(age~., data=tit)
+mod.lm.age <- lm(age~., data=tita)
 plotmo1(mod.lm.age)
 plotmo1(mod.lm.age, level=.95)
 plotmo1(mod.lm.age, level=.95, col.resp=3)
 
-sexn <- as.numeric(tit$sex)
-mod.lm.sexn <- lm(sexn~.-sex, data=tit)
+sexn <- as.numeric(tita$sex)
+mod.lm.sexn <- lm(sexn~.-sex, data=tita)
 plotmo1(mod.lm.sexn)
 plotmo1(mod.lm.sexn, level=.95)
 
-mod.earth.age <- earth(age~., data=tit, degree=2, nfold=3, ncross=3, varmod.method="lm")
+set.seed(2020)
+mod.earth.age <- earth(age~., data=tita, degree=2, nfold=3, ncross=3, varmod.method="lm")
 plotmo1(mod.earth.age)
 plotmo1(mod.earth.age, level=.9, degree2=0)
 
-# tit[,4] is age
-mod.earth.tit <- earth(tit[,-4], tit[,4], degree=2, nfold=3, ncross=3, trace=.5, varmod.method="lm")
-plotmo1(mod.earth.tit)
-plotmo1(mod.earth.tit, level=.9, degree2=0)
+# tita[,4] is age
+set.seed(2020)
+mod.earth.tita.age <- earth(tita[,-4], tita[,4], degree=2, nfold=3, ncross=3, trace=.5, varmod.method="lm")
+cat("\nsummary(mod.earth.tita.age)\n")
+print(summary(mod.earth.tita.age))
+plotmo1(mod.earth.tita.age)
+plotmo1(mod.earth.tita.age, level=.9, degree2=0)
 
-a.earth.sex <- earth(sex~., data=tit, degree=2, nfold=3, ncross=3, varmod.method="lm")
+set.seed(2020)
+a.earth.sex <- earth(sex~., data=tita, degree=2, nfold=3, ncross=3, varmod.method="lm")
 plotmo1(a.earth.sex)
 plotmo1(a.earth.sex, level=.9)
 plotmo1(a.earth.sex, type="class")
 expect.err(try(plotmo1(a.earth.sex, level=.9, degree2=0, type="class")), "predicted values are strings")
 
-# tit[,3] is sex
-mod.earth.tit <- earth(tit[,-3], tit[,3], degree=2, nfold=3, ncross=3, varmod.method="lm")
-plotmo1(mod.earth.tit)
-plotmo1(mod.earth.tit, level=.9, degree2=0)
-plotmo1(mod.earth.tit, type="class")
-expect.err(try(plotmo1(mod.earth.tit, level=.9, degree2=0, type="class")), "predicted values are strings")
+# tita[,3] is sex
+set.seed(2020)
+mod.earth.tita <- earth(tita[,-3], tita[,3], degree=2, nfold=3, ncross=3, varmod.method="lm")
+plotmo1(mod.earth.tita)
+plotmo1(mod.earth.tita, level=.9, degree2=0)
+plotmo1(mod.earth.tita, type="class")
+expect.err(try(plotmo1(mod.earth.tita, level=.9, degree2=0, type="class")), "predicted values are strings")
 
-mod.earth.sex <- earth(sex~., data=tit, degree=2, nfold=3, ncross=3, varmod.method="earth", glm=list(family=binomial))
+set.seed(2020)
+mod.earth.sex <- earth(sex~., data=tita, degree=2, nfold=3, ncross=3, varmod.method="earth", glm=list(family=binomial))
 plotmo1(mod.earth.sex)
 plotmo1(mod.earth.sex, type="link")
 plotmo1(mod.earth.sex, type="class")
 plotmo1(mod.earth.sex, level=.9, type="earth")
 
-# tit[,3] is sex
-mod.earth.tit <- earth(tit[,-3], tit[,3], degree=2, nfold=3, ncross=3, varmod.method="earth", glm=list(family=binomial))
-plotmo1(mod.earth.tit)
-plotmo1(mod.earth.tit, type="link")
-plotmo1(mod.earth.tit, type="class")
-plotmo1(mod.earth.tit, level=.9, type="earth")
+# tita[,3] is sex
+set.seed(2020)
+mod.earth.tita <- earth(tita[,-3], tita[,3], degree=2, nfold=3, ncross=3, varmod.method="earth", glm=list(family=binomial))
+plotmo1(mod.earth.tita)
+plotmo1(mod.earth.tita, type="link")
+plotmo1(mod.earth.tita, type="class")
+plotmo1(mod.earth.tita, level=.9, type="earth")
 
 # check factor handling when factors are not ordered alphabetically
-tit.orgpclass <- etitanic[seq(1, nrow(etitanic), by=12), ]
-tit  <- get.tit()
-tit$logage <- NULL
-tit.orgpclass$parch <- NULL
-stopifnot(names(tit.orgpclass) == names(tit))
-a.tit.orgpclass <- earth(pclass~., degree=2, data=tit.orgpclass)
-a.tit           <- earth(pclass~., degree=2, data=tit)
+tita.orgpclass <- etitanic[seq(1, nrow(etitanic), by=12), ]
+tita  <- get.tita()
+tita$logage <- NULL
+tita.orgpclass$parch <- NULL
+stopifnot(names(tita.orgpclass) == names(tita))
+a.tita.orgpclass <- earth(pclass~., degree=2, data=tita.orgpclass)
+a.tita           <- earth(pclass~., degree=2, data=tita)
 options(warn=2) # treat warnings as errors
-expect.err(try(plotmo(a.tit)), "Defaulting to nresponse=1, see above messages")
+expect.err(try(plotmo(a.tita)), "Defaulting to nresponse=1, see above messages")
 options(warn=1)
 # following two graphs should be identical
-plotmo1(a.tit.orgpclass, nresponse="1st",   all1=T, col.resp=3, type2="im")
-plotmo1(a.tit,           nresponse="first", all1=T, col.resp=3, type2="im")
+plotmo1(a.tita.orgpclass, nresponse="1st",   all1=T, col.resp=3, type2="im")
+plotmo1(a.tita,           nresponse="first", all1=T, col.resp=3, type2="im")
 # following two graphs should be identical
-plotmo1(a.tit.orgpclass, nresponse="2nd",    all1=T)
-plotmo1(a.tit,           nresponse="class2", all1=T)
+plotmo1(a.tita.orgpclass, nresponse="2nd",    all1=T)
+plotmo1(a.tita,           nresponse="class2", all1=T)
 
-tit  <- get.tit()
-mod.earth.pclass <- earth(pclass~., data=tit, degree=2)
+tita  <- get.tita()
+mod.earth.pclass <- earth(pclass~., data=tita, degree=2)
 options(warn=2) # treat warnings as errors
 expect.err(try(plotmo1(mod.earth.pclass)), "Defaulting to nresponse=1, see above messages")
 options(warn=1)
@@ -181,28 +189,28 @@ plotmo1(mod.earth.pclass, type="class")
 plotmo1(mod.earth.pclass, nresponse=1,
        type="class", grid.levels=list(sex="fem"),
        smooth.col="indianred", smooth.lwd=2,
-       pt.col=as.numeric(tit$pclass)+1,
+       pt.col=as.numeric(tita$pclass)+1,
        pt.pch=1)
 
-# tit[,1] is pclass
-mod.earth.tit <- earth(tit[,-1], tit[,1], degree=2)
+# tita[,1] is pclass
+mod.earth.tita <- earth(tita[,-1], tita[,1], degree=2)
 options(warn=2) # treat warnings as errors
-expect.err(try(plotmo1(mod.earth.tit)), "Defaulting to nresponse=1, see above messages")
+expect.err(try(plotmo1(mod.earth.tita)), "Defaulting to nresponse=1, see above messages")
 options(warn=1)
-plotmo1(mod.earth.tit, nresponse="first")
-plotmo1(mod.earth.tit, type="class")
+plotmo1(mod.earth.tita, nresponse="first")
+plotmo1(mod.earth.tita, type="class")
 
-mod.earth.pclass2 <- earth(pclass~., data=tit, degree=2, glm=list(family=binomial))
+mod.earth.pclass2 <- earth(pclass~., data=tita, degree=2, glm=list(family=binomial))
 # expect.err(try(plotmo1(mod.earth.pclass2)), "nresponse is not specified")
 plotmo1(mod.earth.pclass2, nresponse=3)
 plotmo1(mod.earth.pclass2, type="link", nresponse=3)
 plotmo1(mod.earth.pclass2, type="class")
 
-# tit[,1] is pclass
-mod.earth.tit <- earth(tit[,-1], tit[,1], degree=2, glm=list(family=binomial))
-plotmo1(mod.earth.tit, nresponse=3)
-plotmo1(mod.earth.tit, type="link", nresponse=3)
-plotmo1(mod.earth.tit, type="class")
+# tita[,1] is pclass
+mod.earth.tita <- earth(tita[,-1], tita[,1], degree=2, glm=list(family=binomial))
+plotmo1(mod.earth.tita, nresponse=3)
+plotmo1(mod.earth.tita, type="link", nresponse=3)
+plotmo1(mod.earth.tita, type="class")
 
 # plotmo vignette examples
 
@@ -275,17 +283,17 @@ plotmo1(qda.model.vignette, type="class", all2=TRUE,
 
 # miscellaneous other examples
 
-tit <- get.tit()
+tita <- get.tita()
 
-mod.glm.sex <- glm(sex~., data=tit, family=binomial)
-plotmo1(mod.glm.sex, pt.col=as.numeric(tit$pclass)+1)
+mod.glm.sex <- glm(sex~., data=tita, family=binomial)
+plotmo1(mod.glm.sex, pt.col=as.numeric(tita$pclass)+1)
 
-# tit[,4] is age, tit[,1] is pclass
+# tita[,4] is age, tita[,1] is pclass
 printf("library(lars)\n")
 library(lars)
 set.seed(2015)
-xmat <- as.matrix(tit[,c(2,5,6)])
-mod.lars.xmat <- lars(xmat, tit[,4])
+xmat <- as.matrix(tita[,c(2,5,6)])
+mod.lars.xmat <- lars(xmat, tita[,4])
 par(mfrow=c(2,2))
 plot(mod.lars.xmat)
 plotmo1(mod.lars.xmat, nresponse=4, do.par=F)
@@ -295,7 +303,7 @@ if(0) { # TODO fails with R-3.4.2: object '.QP_qpgen2' not found
     printf("library(cosso)\n")
     library(cosso)
     set.seed(2016)
-    cosso <- cosso(xmat,tit[,4],family="Gaussian")
+    cosso <- cosso(xmat,tita[,4],family="Gaussian")
     # TODO tell maintainer of cosso that you have to do this
     class(cosso) <- "cosso"
     set.seed(2016)

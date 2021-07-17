@@ -1,5 +1,6 @@
 # test.mlr.R: test the "mlr" package with plotmo and plotres
 #
+# TODO mlr is in maintenance mode, add mlr3 support to plotmo?
 # TODO generally, plotres residuals for WrappedModel prob models aren't right
 
 source("test.prolog.R")

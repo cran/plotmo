@@ -1,7 +1,7 @@
 @rem test.mlr.bat: mlr tests for plotmo and plotres
 
 @echo test.mlr.bat
-@"C:\PROGRA~1\R\R-4.0.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.mlr.R
+@"C:\PROGRA~1\R\R-4.1.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.mlr.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.mlr.Rout:
 @echo.

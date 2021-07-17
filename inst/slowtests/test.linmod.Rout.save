@@ -277,7 +277,7 @@ Height        1.54335  0.3838693  4.020509 0.0003783823
 > check.lm(linmod1a.xy, lma.tr, newdata=trees[3:5,2,drop=FALSE])
 check linmod1a.xy vs lma.tr
 > check.lm(linmod1a.xy, lma.tr, newdata=trees[3:5,2,drop=TRUE],
-+          check.newdata=FALSE) # needed because predict.lm gives numeric 'envir' arg not of length one
++          check.newdata=FALSE) # needed because predict.lm gives 'data' must be a data.frame, environment, or list
 check linmod1a.xy vs lma.tr
 > stopifnot(almost.equal(predict(linmod1a.xy, newdata=trees[3:5,2,drop=FALSE]),
 +                        predict(linmod1a.xy, newdata=trees[3:5,2,drop=TRUE])))
@@ -629,9 +629,9 @@ check linmod6.xy vs linmod.y1.x1
 Error : (converted from warning) 'newdata' had 3 rows but variables found have 31 rows
 Got expected error from try(predict(lm1, newdata = trees[3:5, 1, drop = FALSE]))
 > expect.err(try(predict(lm1,    newdata=trees[3:5,1,drop=TRUE])),
-+            "numeric 'envir' arg not of length one")
-Error in eval(predvars, data, env) : 
-  numeric 'envir' arg not of length one
++            "'data' must be a data.frame, environment, or list")
+Error in model.frame.default(Terms, newdata, na.action = na.action, xlev = object$xlevels) : 
+  'data' must be a data.frame, environment, or list
 Got expected error from try(predict(lm1, newdata = trees[3:5, 1, drop = TRUE]))
 > 
 > # following checks messages when missing variables in newdata
@@ -1124,9 +1124,9 @@ ALL 3 residuals are 0: no residual degrees of freedom!
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)
-(Intercept)  2.28088         NA      NA       NA
-x1          -0.05212         NA      NA       NA
-x2          -0.82339         NA      NA       NA
+(Intercept)  2.28088        NaN     NaN      NaN
+x1          -0.05212        NaN     NaN      NaN
+x2          -0.82339        NaN     NaN      NaN
 
 Residual standard error: NaN on 0 degrees of freedom
 Multiple R-squared:      1,	Adjusted R-squared:    NaN 
@@ -1400,11 +1400,11 @@ ALL 5 residuals are 0: no residual degrees of freedom!
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)
-(Intercept)      0.6         NA      NA       NA
-sa9              3.6         NA      NA       NA
-sb              -2.2         NA      NA       NA
-sc               0.8         NA      NA       NA
-num              0.4         NA      NA       NA
+(Intercept)      0.6        NaN     NaN      NaN
+sa9              3.6        NaN     NaN      NaN
+sb              -2.2        NaN     NaN      NaN
+sc               0.8        NaN     NaN      NaN
+num              0.4        NaN     NaN      NaN
 
 Residual standard error: NaN on 0 degrees of freedom
 Multiple R-squared:      1,	Adjusted R-squared:    NaN 

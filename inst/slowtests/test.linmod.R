@@ -160,7 +160,7 @@ cat0("==print(summary(linmod1a.xy))\n")
 print(summary(linmod1a.xy))
 check.lm(linmod1a.xy, lma.tr, newdata=trees[3:5,2,drop=FALSE])
 check.lm(linmod1a.xy, lma.tr, newdata=trees[3:5,2,drop=TRUE],
-         check.newdata=FALSE) # needed because predict.lm gives numeric 'envir' arg not of length one
+         check.newdata=FALSE) # needed because predict.lm gives 'data' must be a data.frame, environment, or list
 stopifnot(almost.equal(predict(linmod1a.xy, newdata=trees[3:5,2,drop=FALSE]),
                        predict(linmod1a.xy, newdata=trees[3:5,2,drop=TRUE])))
 stopifnot(almost.equal(predict(linmod1a.xy, newdata=data.frame(Height=80)),
@@ -330,7 +330,7 @@ options(warn=2) # treat warnings as errors
 expect.err(try(predict(lm1,    newdata=trees[3:5,1,drop=FALSE])),
            "'newdata' had 3 rows but variables found have 31 rows")
 expect.err(try(predict(lm1,    newdata=trees[3:5,1,drop=TRUE])),
-           "numeric 'envir' arg not of length one")
+           "'data' must be a data.frame, environment, or list")
 
 # following checks messages when missing variables in newdata
 

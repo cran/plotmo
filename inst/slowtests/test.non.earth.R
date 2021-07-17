@@ -436,6 +436,8 @@ library(rpart)
 data(kyphosis)
 # kyphosis data, earth model
 a <- earth(Kyphosis ~ ., data=kyphosis, degree=2, glm=list(family=binomial))
+cat("summary(a): (Kyphosis)\n")
+print(summary(a))
 par(mfrow=c(3, 3))
 par(mar=c(3, 3, 2, .5))  # small margins to pack figs in
 set.seed(9) # for jitter
