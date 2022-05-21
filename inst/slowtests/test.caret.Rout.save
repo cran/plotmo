@@ -9,8 +9,8 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(earth)
 > library(caret)
-Loading required package: lattice
 Loading required package: ggplot2
+Loading required package: lattice
 > data(ozone1)
 > data(etitanic)
 > dopar <- function(nrows, ncols, caption = "")

@@ -32,7 +32,9 @@
                                             @if %errorlevel% NEQ 0 goto error
 @call test.non.earth.bat
                                             @if %errorlevel% NEQ 0 goto error
+
 @rem The following miscellaneous models are in alphabetical order
+
 @call test.c50.bat
                                             @if %errorlevel% NEQ 0 goto error
 @call test.caret.bat

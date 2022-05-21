@@ -841,7 +841,8 @@ plot.degree1 <- function( # plot all degree1 graphs
         trace2(trace, "degree1 plot%d (pmethod \"%s\") variable %s\n",
                isingle, pmethod, pred.names[ipred])
         if(pmethod == "partdep" || pmethod == "apartdep") {
-            stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
+            # following commented out because causes warning in R 4.2.0: length(x) = 64 > 1' in coercion to 'logical(1)'
+            # stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
             yhat <- degree1.partdep.yhat(object,
                         type, nresponse, pmethod, inverse.func, trace2,
                         partdep.x, xframe, ipred, pred.names, resp.levs, ...)
@@ -1319,7 +1320,8 @@ plot.degree2 <- function(  # plot all degree2 graphs
         trace2(trace, "degree2 plot%d (pmethod \"%s\") variables %s:%s\n",
                ipair, pmethod, pred.names[ipred1], pred.names[ipred2])
         if(pmethod == "partdep" || pmethod == "apartdep") {
-            stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
+            # following commented out because causes warning in R 4.2.0: length(x) = 91 > 1' in coercion to 'logical(1)'
+            # stopifnot(!is.na(partdep.x) && !is.null(partdep.x))
             yhat <- degree2.partdep.yhat(object,
                         type, nresponse, pmethod, inverse.func, trace,
                         partdep.x, x1grid, ipred1, x2grid, ipred2,

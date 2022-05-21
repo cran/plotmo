@@ -15,7 +15,7 @@ plotmo.prolog.C5.0 <- function(object, object.name, trace, ...) # invoked when p
 order.C5.0.vars.on.importance <- function(object)
 {
     imp <- C50::C5imp(object)
-    stopifnot(is.data.frame(imp) && dim(imp) == c(object$dims[2], 1))
+    stopifnot(is.data.frame(imp) && all(dim(imp) == c(object$dims[2], 1)))
     imp <- imp[imp >= 1, , drop=FALSE]
     stopifnot(length(imp) > 0)
     imp <- match(rownames(imp), object$predictors)

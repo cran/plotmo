@@ -93,7 +93,7 @@ Got expected error from try(plotmo(earth, degree1 = 1, degree2 = 0))
 ==regression model with randomForest (binary response)============================
 > 
 > library(randomForest)
-randomForest 4.6-14
+randomForest 4.7-1
 Type rfNews() to see new features/changes/bug fixes.
 > library(earth) # for etitanic data
 > data(etitanic)

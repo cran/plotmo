@@ -183,7 +183,7 @@ get.fixed.gridval.for.partdep <- function(x, ipred, pred.name, grid.levels)
     gridval <- get.fixed.gridval.from.grid.levels.arg(x, pred.name, grid.levels)
     # common type conversions were already done in get.fixed.gridval.from.grid.levels.arg
     # check here if that wasn't possible
-    if(!is.na(gridval) && class(gridval)[1] != class(x))
+    if(!is.na(gridval)[1] && class(gridval)[1] != class(x)[1])
         stop0("the class \"", class(gridval)[1], "\" of \"", pred.name,
               "\" in grid.levels does not match its class \"",
               class(x)[1],

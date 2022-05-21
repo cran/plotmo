@@ -883,7 +883,7 @@ expect.err(try(predict(linmod.form.Volume.tr, nonesuch=99)),
 # check partial matching on type argument
 stopifnot(identical(predict(linmod.form.Volume.tr, type="r"),    predict(linmod.form.Volume.tr)))
 stopifnot(identical(predict(linmod.form.Volume.tr, type="resp"), predict(linmod.form.Volume.tr)))
-expect.err(try(predict(linmod.form.Volume.tr, type="nonesuch")), "'arg' should be one of \"response\"")
+expect.err(try(predict(linmod.form.Volume.tr, type="nonesuch")), "'arg' should be \"response\"")
 
 # test additional method functions (see linmod.methods.R)
 

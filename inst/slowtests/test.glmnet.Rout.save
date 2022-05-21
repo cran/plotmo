@@ -8,7 +8,7 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > library(glmnet)
 Loading required package: Matrix
-Loaded glmnet 4.1-1
+Loaded glmnet 4.1-4
 > data(ozone1)
 > data(etitanic)
 > get.tit <- function() # abbreviated titanic data
@@ -962,7 +962,7 @@ x4 -0.07611821
 > # TODO Following causes the following warning:
 > #      Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda value not reached after maxit=100000 iterations; solutions for larger lambdas returned
 > multinomial.mod <- glmnet(x, y, family="multinomial")
-Warning: from glmnet Fortran code (error code -90); Convergence for 90th lambda value not reached after maxit=100000 iterations; solutions for larger lambdas returned
+Warning: from glmnet C++ code (error code -90); Convergence for 90th lambda value not reached after maxit=100000 iterations; solutions for larger lambdas returned
 > 
 > plotres(multinomial.mod, nresponse=1, w1.main="nresponse=1",
 +         main="family=\"multinomial\"",

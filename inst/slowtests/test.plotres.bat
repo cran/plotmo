@@ -1,7 +1,7 @@
 @rem test.plotres.bat: test plotres
 
 @echo test.plotres.bat
-@"C:\PROGRA~1\R\R-4.1.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotres.R
+@"C:\PROGRA~1\R\R-4.2.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotres.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotres.Rout:
 @echo.

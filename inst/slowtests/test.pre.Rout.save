@@ -2,8 +2,6 @@
 > 
 > source("test.prolog.R")
 > library(pre)
-Warning in .recacheSubclasses(def@className, def, env) :
-  undefined subclass "numericVector" of class "Mnumeric"; definition not updated
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
@@ -69,6 +67,10 @@ calculating partdep for Temp
 > 
 > pairplot(pre.mod, c("Temp", "Wind"), main="pairplot")
 Loading required namespace: akima
+Warning in akima::interp(exp_dataset[, varnames[1]], exp_dataset[, varnames[2]],  :
+  collinear points, trying to add some jitter to avoid colinearities!
+Warning in akima::interp(exp_dataset[, varnames[1]], exp_dataset[, varnames[2]],  :
+  success: collinearities reduced through jitter
 NOTE: function pairplot uses package 'akima', which has an ACM license. See also https://www.acm.org/publications/policies/software-copyright-notice.
 > plotmo(pre.mod, main="plotmo partdep",
 +        pmethod="partdep",
