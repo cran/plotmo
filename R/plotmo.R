@@ -259,7 +259,7 @@ plotmo <- function(object = stop("no 'object' argument"),
     ylim   <- temp$ylim
     trace2 <- temp$trace2
     if(nsingles)
-        plot.degree1(object=object, degree1=degree1, all1=all1, center=center,
+        plot_degree1(object=object, degree1=degree1, all1=all1, center=center,
             ylim=if(is.na.ylim) NULL else ylim, # each graph has its own ylim?
             type=type, nresponse=nresponse, pmethod=pmethod,
             trace=trace, trace2=trace2,
@@ -274,7 +274,7 @@ plotmo <- function(object = stop("no 'object' argument"),
             nfigs=nfigs, uy=uy, xflip=xflip, jittered.y=jittered.y,
             n.apartdep=n.apartdep, ...)
     if(npairs)
-        plot.degree2(object=object, degree2=degree2, all2=all2, center,
+        plot_degree2(object=object, degree2=degree2, all2=all2, center,
             ylim=if(is.na.ylim) NULL else ylim, # each graph has its own ylim?
             type=type, nresponse=nresponse, pmethod=pmethod,
             clip=clip, trace=trace, trace2=trace2,
@@ -381,7 +381,7 @@ get.ylim <- function(object,
             # have to use explicit arg names to prevent alias probs
             # with dots, because the user can pass in any name with dots
             all.yhat <- c(all.yhat,
-              plot.degree1(object=object, degree1=degree1, all1=all1,
+              plot_degree1(object=object, degree1=degree1, all1=all1,
                 center=center,
                 ylim=ylim, type=type,  nresponse=nresponse, pmethod=pmethod,
                 trace=trace, trace2=trace2, pt.col=pt.col,
@@ -399,7 +399,7 @@ get.ylim <- function(object,
         }
         if(npairs) {
             all.yhat <- c(all.yhat,
-                plot.degree2(object=object, degree2=degree2, all2=all2,
+                plot_degree2(object=object, degree2=degree2, all2=all2,
                     center=center, ylim=ylim,
                     type=type, nresponse=nresponse, pmethod=pmethod,
                     clip=clip, trace=trace, trace2=trace2, pt.col=pt.col,
@@ -523,7 +523,7 @@ plotmo_singles <- function(object, x, nresponse, trace, degree1, all1)
         singles <- seq_len(NCOL(x))
     }
     if(length(singles))
-        singles <- sort.unique(singles) # this will drop NAs if any
+        singles <- sort_unique(singles) # this will drop NAs if any
     nsingles <- length(singles)
     if(length(singles)) {
         degree1 <- check.index(degree1, "degree1", singles, colnames=colnames(x),
@@ -712,7 +712,7 @@ get.ux.list <- function(x, trace)
 
     for(i in seq_len(ncol(x)))
         ux.list[[i]] <- if(is.factor(x[,i])) levels(x[,i])
-                        else                 sort.unique(x[,i])
+                        else                 sort_unique(x[,i])
 
     trace2(trace, "number of x values: %s\n",
            paste.trunc(colnames(x), sapply(ux.list, length)))
@@ -807,7 +807,7 @@ init.global.data <- function()
     degree1.data(NULL) # clear the degree1 data by passing NULL
     degree2.data(NULL)
 }
-plot.degree1 <- function( # plot all degree1 graphs
+plot_degree1 <- function( # plot all degree1 graphs
     # copy of args from plotmo, some have been tweaked slightly
     object, degree1, all1, center,
     ylim, type, nresponse, pmethod,
@@ -827,7 +827,7 @@ plot.degree1 <- function( # plot all degree1 graphs
 {
     get.degree1.data <- function(isingle)
     {
-        # check if plot.degree1 was already called by get.ylim.by.dummy.plots
+        # check if plot_degree1 was already called by get.ylim.by.dummy.plots
         data <- degree1.data(isingle)
         if(!is.null(data)) # data is already initialized?
             return(data)   # yes, use it
@@ -993,7 +993,7 @@ plot.degree1 <- function( # plot all degree1 graphs
         if(is.int.only) # make it obvious that this is an intercept-only model
             legend("topleft", "intercept-only model", bg="white")
     }
-    #--- plot.degree1 starts here
+    #--- plot_degree1 starts here
     trace2(trace, "--plot.degree1(draw.plot=%s)\n", if(draw.plot) "TRUE" else "FALSE")
     # get the x matrix we will plot, will be updated later for each predictor one by one
     if(!is.null(degree1.xgrid.global))  # already have the data?
@@ -1011,7 +1011,7 @@ plot.degree1 <- function( # plot all degree1 graphs
             assignInMyNamespace("partdep.x.global", partdep.x)
     }
     if(pmethod == "plotmo" && draw.plot && trace >= 0 && ncol(xgrid) > 1)
-        print.grid.values(xgrid, trace)
+        print_grid_values(xgrid, trace)
     cex.lab <- dota("cex.lab", DEF=.8 * par("cex.main"), ...)
     all.yhat <- NULL
     for(isingle in seq_along(singles)) {
@@ -1111,7 +1111,7 @@ draw.smooth1 <- function(smooth.col, x, ipred, y, ux.list, ndiscrete, center, ..
     is.discrete.x <- FALSE
     if(is.factor(x1)) {
         is.discrete.x <- TRUE
-        levels <- sort.unique(as.numeric(x1))
+        levels <- sort_unique(as.numeric(x1))
     } else if(length(ux.list[[ipred]]) <= ndiscrete) {
         is.discrete.x <- TRUE
         levels <- ux.list[[ipred]]
@@ -1285,7 +1285,7 @@ get.def.nticks <- function(x, ipred1, ipred2) # for persp plot
     nticks <- max(nticks, 2) # must be at least 2
     min(nticks, 6)           # but not more than 6 (not enough space)
 }
-plot.degree2 <- function(  # plot all degree2 graphs
+plot_degree2 <- function(  # plot all degree2 graphs
     # copy of args from plotmo, some have been tweaked slightly
     object, degree2, all2, center, ylim,
     type, nresponse, pmethod,
@@ -1395,7 +1395,7 @@ plot.degree2 <- function(  # plot all degree2 graphs
                 ux.list=ux.list, ndiscrete=ndiscrete, iresponse=iresponse,
                 ...))
     }
-    #--- plot.degree2 starts here
+    #--- plot_degree2 starts here
     trace2(trace, "--plot.degree2(draw.plot=%s)\n", if(draw.plot) "TRUE" else "FALSE")
     stopifnot(npairs > 0)
     # need ticktype to determine degree2 margins
@@ -1686,7 +1686,7 @@ get.contour.levs <- function(yhat)
     levs <- pretty(range(yhat, finite=TRUE), 10)
     # reduce the default if the number of unique yhat values is less
     # this is mainly for factors
-    unique.yhat <- sort.unique(yhat)
+    unique.yhat <- sort_unique(yhat)
     if(length(unique.yhat) > 1 && length(unique.yhat) < length(levs))
         levs <- unique.yhat
     levs

@@ -7,7 +7,6 @@ Loading required package: rpart
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(earth) # for etitanic
 > data(etitanic)
 > get.tit <- function() # abbreviated titanic data

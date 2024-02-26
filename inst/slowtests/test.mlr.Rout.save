@@ -13,7 +13,6 @@ uncaught bugs meanwhile in {mlr} - please consider switching.
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(rpart.plot)
 Loading required package: rpart
 > library(earth)
@@ -93,7 +92,7 @@ Got expected error from try(plotmo(earth, degree1 = 1, degree2 = 0))
 ==regression model with randomForest (binary response)============================
 > 
 > library(randomForest)
-randomForest 4.7-1
+randomForest 4.7-1.1
 Type rfNews() to see new features/changes/bug fixes.
 > library(earth) # for etitanic data
 > data(etitanic)
@@ -157,7 +156,8 @@ calculating partdep for pclass
 > # TODO following fails
 > pd <- generatePartialDependenceData(regr.rf.with.call, task.regr.rf, "pclass", n=c(50, NA))
 > try(print(plotPartialDependence(pd, data = getTaskData(task.regr.rf)))) # Error: Discrete value supplied to continuous scale
-Error : Discrete value supplied to continuous scale
+Error in train_continuous(x, self$range) : 
+  Discrete value supplied to a continuous scale
 > 
 > cat("==classification model with randomForest (binary response)======================\n")
 ==classification model with randomForest (binary response)======================
@@ -498,7 +498,8 @@ calculating partdep for pclass
 > # TODO following fails
 > pd <- generatePartialDependenceData(classif.rf.with.call, task.classif.rf, "pclass", n=c(50, NA))
 > try(print(plotPartialDependence(pd, data = getTaskData(task.classif.rf)))) # Error: Discrete value supplied to continuous scale
-Error : Discrete value supplied to continuous scale
+Error in train_continuous(x, self$range) : 
+  Discrete value supplied to a continuous scale
 > 
 > plotmo(rf, type="prob", nresponse="notsurvived", degree1="age", degree2=0,
 +        pmethod="partdep", ylim=c(.3,.75), nrug=TRUE, grid.col="gray") # looks plausible
@@ -655,9 +656,9 @@ Got expected error from try(plotres(classif.lda$learner.model))
 
 predict.lda[3,2]:
           LD1        LD2
-15  10.723308  1.2184763
-131 -6.507414 -0.9729798
-140 -5.339014  0.8727408
+15  10.723308 -1.2184763
+131 -6.507414  0.9729798
+140 -5.339014 -0.8727408
 
 predict.lda returned multiple columns (see above) but nresponse is not specified
     Use the nresponse argument to specify a column.
@@ -759,7 +760,8 @@ calculating partdep for Petal.Width
 > 
 > set.seed(2018)
 > library(gbm)
-Loaded gbm 2.1.8
+Loaded gbm 2.1.9
+This version of gbm is no longer under development. Consider transitioning to gbm3, https://github.com/gbm-developers/gbm3
 > # reference model
 > gbm = gbm(y~., data=data, n.trees=300)
 Distribution not specified, assuming gaussian ...

@@ -83,6 +83,9 @@ For example give \code{w1.col=1:4} to \code{plotres} (plain
 This function is based on \code{\link[glmnet]{plot.glmnet}} in the
 \code{\link[glmnet]{glmnet}} package authored by Jerome Friedman,
 Trevor Hastie, and Rob Tibshirani.
+
+This function incorporates the function \code{spread.labs} from the orphaned
+package \code{TeachingDemos} written by Greg Snow.
 }
 \seealso{
 Chapter 6 in \href{../doc/plotres-notes.pdf}{plotres vignette} discusses

@@ -233,7 +233,7 @@ get.all.levs <- function(x, levels)
         factor(1:length(levels), labels=levels)
 }
 # Print the grid values, must do some finagling for a nice display
-print.grid.values <- function(xgrid, trace)
+print_grid_values <- function(xgrid, trace)
 {
     trace1(trace, "\n") # extra space when tracing
     row <- xgrid[1, , drop=FALSE]

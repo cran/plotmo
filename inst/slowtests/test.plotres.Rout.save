@@ -5,7 +5,6 @@
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > data(ozone1)
 > data(etitanic)
 > example(plotres)
@@ -277,7 +276,7 @@ training rsq 0.23
 > library(gam)
 Loading required package: splines
 Loading required package: foreach
-Loaded gam 1.20.1
+Loaded gam 1.22-3
 
 > gam.package.loaded  <- "package:gam"  %in% search()
 > mgcv.package.loaded <- "package:mgcv" %in% search()
@@ -302,7 +301,7 @@ Loaded gam 1.20.1
 > 
 > library(mda)
 Loading required package: class
-Loaded mda 0.5-3
+Loaded mda 0.5-4
 
 > mars <- mars(ozone1[,2:3], ozone1[,1], degree=2)
 > mars.to.earth <- mars.to.earth(mars)

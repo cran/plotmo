@@ -69,10 +69,10 @@ plotmo_response <- function(object, newdata=NULL, trace=0,
                                              na.action=na.pass, newdata)$x
     }
     if(!is.good.data(y, "response", trace, check.colnames=FALSE))
-        stop0("response with newdata", format.err.field(y, "response", trace))
+        stop0("response with newdata", format_err_field(y, "response", trace))
     y <- cleanup.x.or.y(object, y, "y", trace, check.naked=FALSE)
     if(!is.good.data(y, check.colnames=FALSE))
-        stop0("response with newdata", format.err.field(y, "response", trace))
+        stop0("response with newdata", format_err_field(y, "response", trace))
     y <- convert.glm.response(object, y, trace) # TODO test this and factor responses
     # TODO following will sometimes give the wrong results?
     if(!is.null(meta$nresponse) && meta$nresponse > NCOL(y)) {

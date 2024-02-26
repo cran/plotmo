@@ -5,10 +5,9 @@
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(glmnet)
 Loading required package: Matrix
-Loaded glmnet 4.1-4
+Loaded glmnet 4.1-8
 > data(ozone1)
 > data(etitanic)
 > get.tit <- function() # abbreviated titanic data

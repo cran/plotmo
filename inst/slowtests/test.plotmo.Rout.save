@@ -2,14 +2,13 @@
 > # Stephen Milborrow, Petaluma Jan 2007
 > 
 > print(R.version.string)
-[1] "R version 4.2.0 (2022-04-22 ucrt)"
+[1] "R version 4.3.2 (2023-10-31 ucrt)"
 > 
 > source("test.prolog.R")
 > library(earth)
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > options(warn=1) # print warnings as they occur
 > data(etitanic)
 > make.space.for.caption <- function(caption="CAPTION")
@@ -1803,7 +1802,7 @@ singles: 1 x1
 formula(object) returned y ~ x1 + x2
 formula.vars "x1" "x2"
 term.labels "x1" "x2"
-plotmo.pairs.from.term.labels
+plotmo_pairs_from_term_labels
 term.labels: "x1" "x2" "x1" "x2"
 pred.names:  "x1" "x2"
 considering x1

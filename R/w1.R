@@ -150,7 +150,7 @@ w1.glmnet <- function(object, trace, type, nresponse, which, grid.col, ...)
             force.nresponse=nresponse, ...,
             object=object, trace=trace)
 }
-plot.with.axis.par <- function(object, which, trace, type, ...)
+plot_with_axis_par <- function(object, which, trace, type, ...)
 {
     if(length(which) > 1) {
         # slightly smaller axis annotations to fit all top labels
@@ -162,15 +162,15 @@ plot.with.axis.par <- function(object, which, trace, type, ...)
 }
 w1.lars <- function(object, trace, type, nresponse, which, grid.col, ...)
 {
-    plot.with.axis.par(object, which, trace, type, ...)
+    plot_with_axis_par(object, which, trace, type, ...)
 }
 w1.sparsenet <- function(object, trace, type, nresponse, which, grid.col, ...)
 {
-    plot.with.axis.par(object, which, trace, type, ...)
+    plot_with_axis_par(object, which, trace, type, ...)
 }
 w1.cv.glmnet <- function(object, trace, type, nresponse, which, grid.col, ...)
 {
-    plot.with.axis.par(object, which, trace, type, ...)
+    plot_with_axis_par(object, which, trace, type, ...)
 }
 w1.pre <- function(object, trace, type, nresponse, which, grid.col, ...) # pre package
 {

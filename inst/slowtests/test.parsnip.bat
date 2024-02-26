@@ -2,7 +2,7 @@
 @rem Stephen Milborrow Sep 2020 Petaluma
 
 @echo test.parsnip.bat
-@"C:\PROGRA~1\R\R-4.2.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.parsnip.R
+@"C:\PROGRA~1\R\R-4.3.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.parsnip.R
 @if %errorlevel% equ 0 goto good1
 @echo R returned errorlevel %errorlevel%, see test.parsnip.Rout:
 @echo.
@@ -12,8 +12,9 @@
 :good1
 @rem second egrep gets rid of random messages issued by library(tidymodels)
 @rem could perhaps use suppressPackageStartupMessages() instead
-@egrep -v "Fit time:" test.parsnip.Rout | egrep -v "^\* " >test.parsnip.Rout2
-mks.diff test.parsnip.Rout2 test.parsnip.Rout.save
+@egrep -v "Fit time:| Use | Dig | Learn | Search |^\* " test.parsnip.Rout >test.parsnip.Rout2
+mv test.parsnip.Rout2 test.parsnip.Rout
+mks.diff test.parsnip.Rout test.parsnip.Rout.save
 @if %errorlevel% equ 0 goto good2
 @echo === Files are different ===
 @diffps -s Rplots.ps ..\..\.#\test-reference\test.parsnip.save.ps
@@ -26,6 +27,6 @@ diffps Rplots.ps ..\..\.#\test-reference\test.parsnip.save.ps
 @echo === Files are different ===
 @exit /B 1
 :good3
-@rm -f test.parsnip.Rout test.parsnip.Rout2
+@rm -f test.parsnip.Rout test.parsnip.Rout
 @rm -f Rplots.ps
 @exit /B  0

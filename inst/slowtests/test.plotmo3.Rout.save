@@ -5,7 +5,6 @@
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > data(ozone1)
 > data(etitanic)
 > options(warn=1) # print warnings as they occur
@@ -541,7 +540,7 @@ plotmo1(object=lm.model.vignette,level=0.9)
 library(mda)
 > library(mda)
 Loading required package: class
-Loaded mda 0.5-3
+Loaded mda 0.5-4
 
 > mars.model.vignette1 <- mars(oz[,-1], oz[,1], degree=2)
 > plotmo1(mars.model.vignette1)
@@ -590,7 +589,8 @@ Got expected error from try(plotmo1(rpart.model.vignette, level = 0.9))
 > printf("library(gbm)\n")
 library(gbm)
 > library(gbm)                                            # gbm
-Loaded gbm 2.1.8
+Loaded gbm 2.1.9
+This version of gbm is no longer under development. Consider transitioning to gbm3, https://github.com/gbm-developers/gbm3
 > set.seed(2016)
 > gbm.model.vignette <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=100)
 > # commented out following because they always take the whole page

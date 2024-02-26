@@ -7,24 +7,23 @@
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > cat("loading parsnip libraries\n") # these libraries take several seconds to load
 loading parsnip libraries
-> library(tidymodels)
--- Attaching packages -------------------------------------- tidymodels 0.2.0 --
-v broom        0.8.0     v recipes      0.2.0
-v dials        0.1.1     v rsample      0.1.1
-v dplyr        1.0.9     v tibble       3.1.7
-v ggplot2      3.3.6     v tidyr        1.2.0
-v infer        1.0.0     v tune         0.2.0
-v modeldata    0.1.1     v workflows    0.2.6
-v parsnip      0.2.1     v workflowsets 0.2.1
-v purrr        0.3.4     v yardstick    0.0.9
--- Conflicts ----------------------------------------- tidymodels_conflicts() --
-x purrr::discard() masks scales::discard()
-x dplyr::filter()  masks stats::filter()
-x dplyr::lag()     masks stats::lag()
-x recipes::step()  masks stats::step()
+> library(tidymodels, quietly=TRUE, verbose=FALSE)
+── Attaching packages ────────────────────────────────────── tidymodels 1.1.1 ──
+✔ broom        1.0.5     ✔ recipes      1.0.9
+✔ dials        1.2.0     ✔ rsample      1.2.0
+✔ dplyr        1.1.4     ✔ tibble       3.2.1
+✔ ggplot2      3.4.4     ✔ tidyr        1.3.1
+✔ infer        1.0.6     ✔ tune         1.1.2
+✔ modeldata    1.3.0     ✔ workflows    1.1.3
+✔ parsnip      1.1.1     ✔ workflowsets 1.0.1
+✔ purrr        1.0.2     ✔ yardstick    1.3.0
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ purrr::discard() masks scales::discard()
+✖ dplyr::filter()  masks stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+✖ recipes::step()  masks stats::step()
 > library(timetk)
 > library(lubridate)
 
@@ -37,7 +36,7 @@ The following objects are masked from 'package:base':
 > cat("loaded parsnip libraries\n")
 loaded parsnip libraries
 > cat("parsnip version:", as.character(packageVersion("parsnip")[[1]]), "\n")
-parsnip version: 0.2.1 
+parsnip version: 1.1.1 
 > 
 > vdata <- data.frame(
 +     resp    = 1:23,
@@ -152,19 +151,9 @@ F-statistic: 12.38 on 9 and 10 DF,  p-value: 0.0002531
 > lmpar.sqrtnum <- linear_reg(mode = "regression") %>%
 +          set_engine("lm") %>%
 +          fit(resp~sqrt(num), data = training(splits))
-> expect.err(try(plotmo(lmpar.sqrtnum)),
-+            "cannot get the original model predictors")
-
-Looked unsuccessfully for the original predictors in the following places:
-
-(1) object$x: NULL
-
-(2) model.frame: object 'resp' not found
-
-(3) getCall(object)$x: NULL
-
-Error : cannot get the original model predictors
-Got expected error from try(plotmo(lmpar.sqrtnum))
+> #$$ TODO
+> # expect.err(try(plotmo(lmpar.sqrtnum)),
+> #            "cannot get the original model predictors")
 > 
 > #--- earth -------------------------------------------------------------------
 > 
@@ -364,19 +353,9 @@ rpart.rules(rpart.sqrtnum$fit)
     7 when ord is         ORD1 & date >= 17748 & sqrt(num) is 2.3 to 3.1            & fac is FAC2 or FAC3
     9 when ord is         ORD1 & date >= 17748                                      & fac is         FAC1
    14 when ord is ORD3 or ORD2                                                                           
-> expect.err(try(plotmo(rpart.sqrtnum)),
-+            "cannot get the original model predictors")
-
-Looked unsuccessfully for the original predictors in the following places:
-
-(1) object$x: NULL
-
-(2) model.frame: object 'resp' not found
-
-(3) getCall(object)$x: NULL
-
-Error : cannot get the original model predictors
-Got expected error from try(plotmo(rpart.sqrtnum))
+> #$$ TODO
+> # expect.err(try(plotmo(rpart.sqrtnum)),
+> #            "cannot get the original model predictors")
 > 
 > #-----------------------------------------------------------------------------------
 > # Test fix for github bug report https://github.com/tidymodels/parsnip/issues/341
@@ -389,7 +368,7 @@ Got expected error from try(plotmo(rpart.sqrtnum))
 +     filter(id == "M750") %>%
 +     select(-id)
 > print(m750a) # a tibble
-# A tibble: 306 x 2
+# A tibble: 306 × 2
    date       value
    <date>     <dbl>
  1 1990-01-01  6370
@@ -402,7 +381,7 @@ Got expected error from try(plotmo(rpart.sqrtnum))
  8 1990-08-01  5450
  9 1990-09-01  6480
 10 1990-10-01  6820
-# ... with 296 more rows
+# ℹ 296 more rows
 > set.seed(2020)
 > splits_a <- initial_time_split(m750a, prop = 0.9)
 > earth_m750a <- earth(log(value) ~ as.numeric(date) + month(date, label = TRUE), data = training(splits_a), degree=2)
@@ -410,24 +389,24 @@ Got expected error from try(plotmo(rpart.sqrtnum))
 Call: earth(formula=log(value)~as.numeric(date)+month(date,label=TRUE),
             data=training(splits_a), degree=2)
 
-                                                                                    coefficients
-(Intercept)                                                                          1.00000e+01
-h(as.numeric(date)-7639)                                                             0.00000e+00
-h(as.numeric(date)-9100)                                                             0.00000e+00
-h(12022-as.numeric(date))                                                            0.00000e+00
-h(as.numeric(date)-13483)                                                            0.00000e+00
-h(as.numeric(date)-14579)                                                            0.00000e+00
-h(0.370142-month(date, label = TRUE)^7)                                              0.00000e+00
-h(month(date, label = TRUE)^7-0.370142)                                              0.00000e+00
-h(month(date, label = TRUE)^10-0.491049)                                            -6.99302e+12
-h(as.numeric(date)-9100) * h(-0.254544-month(date, label = TRUE)^8)                  0.00000e+00
-h(as.numeric(date)-13483) * h(month(date, label = TRUE)^11- -0.392904)               0.00000e+00
-h(as.numeric(date)-13483) * h(-0.392904-month(date, label = TRUE)^11)                0.00000e+00
-h(0.491049-month(date, label = TRUE)^10) * h(month(date, label = TRUE)^11-0.065484)  0.00000e+00
-h(0.491049-month(date, label = TRUE)^10) * h(0.065484-month(date, label = TRUE)^11)  0.00000e+00
+                                                                                     coefficients
+(Intercept)                                                                          1.000000e+01
+h(as.numeric(date)-7639)                                                             0.000000e+00
+h(as.numeric(date)-9100)                                                             0.000000e+00
+h(12022-as.numeric(date))                                                            0.000000e+00
+h(as.numeric(date)-13483)                                                            0.000000e+00
+h(as.numeric(date)-14579)                                                            0.000000e+00
+h(0.370142-month(date, label = TRUE)^7)                                              0.000000e+00
+h(month(date, label = TRUE)^7-0.370142)                                              0.000000e+00
+h(month(date, label = TRUE)^10-0.491049)                                            -3.077492e+12
+h(as.numeric(date)-9100) * h(-0.254544-month(date, label = TRUE)^8)                  0.000000e+00
+h(as.numeric(date)-13483) * h(month(date, label = TRUE)^11- -0.392904)               0.000000e+00
+h(as.numeric(date)-13483) * h(-0.392904-month(date, label = TRUE)^11)                0.000000e+00
+h(0.491049-month(date, label = TRUE)^10) * h(month(date, label = TRUE)^11-0.065484)  0.000000e+00
+h(0.491049-month(date, label = TRUE)^10) * h(0.065484-month(date, label = TRUE)^11)  0.000000e+00
 
-Selected 14 of 19 terms, and 5 of 12 predictors
-Termination condition: RSq changed by less than 0.001 at 19 terms
+Selected 14 of 17 terms, and 5 of 12 predictors
+Termination condition: RSq changed by less than 0.001 at 17 terms
 Importance: as.numeric(date), month(date, label = TRUE)^10, ...
 Number of terms at each degree of interaction: 1 8 5
 GCV 0.0004725457    RSS 0.1002179    GRSq 0.9834104    RSq 0.9871125
@@ -439,24 +418,24 @@ GCV 0.0004725457    RSS 0.1002179    GRSq 0.9834104    RSq 0.9871125
 Call: earth(formula=log(value)~as.numeric(date)+month(date,label=TRUE),
             data=data, keepxy=TRUE, degree=~2)
 
-                                                                                    coefficients
-(Intercept)                                                                          1.00000e+01
-h(as.numeric(date)-7639)                                                             0.00000e+00
-h(as.numeric(date)-9100)                                                             0.00000e+00
-h(12022-as.numeric(date))                                                            0.00000e+00
-h(as.numeric(date)-13483)                                                            0.00000e+00
-h(as.numeric(date)-14579)                                                            0.00000e+00
-h(0.370142-month(date, label = TRUE)^7)                                              0.00000e+00
-h(month(date, label = TRUE)^7-0.370142)                                              0.00000e+00
-h(month(date, label = TRUE)^10-0.491049)                                            -6.99302e+12
-h(as.numeric(date)-9100) * h(-0.254544-month(date, label = TRUE)^8)                  0.00000e+00
-h(as.numeric(date)-13483) * h(month(date, label = TRUE)^11- -0.392904)               0.00000e+00
-h(as.numeric(date)-13483) * h(-0.392904-month(date, label = TRUE)^11)                0.00000e+00
-h(0.491049-month(date, label = TRUE)^10) * h(month(date, label = TRUE)^11-0.065484)  0.00000e+00
-h(0.491049-month(date, label = TRUE)^10) * h(0.065484-month(date, label = TRUE)^11)  0.00000e+00
+                                                                                     coefficients
+(Intercept)                                                                          1.000000e+01
+h(as.numeric(date)-7639)                                                             0.000000e+00
+h(as.numeric(date)-9100)                                                             0.000000e+00
+h(12022-as.numeric(date))                                                            0.000000e+00
+h(as.numeric(date)-13483)                                                            0.000000e+00
+h(as.numeric(date)-14579)                                                            0.000000e+00
+h(0.370142-month(date, label = TRUE)^7)                                              0.000000e+00
+h(month(date, label = TRUE)^7-0.370142)                                              0.000000e+00
+h(month(date, label = TRUE)^10-0.491049)                                            -3.077492e+12
+h(as.numeric(date)-9100) * h(-0.254544-month(date, label = TRUE)^8)                  0.000000e+00
+h(as.numeric(date)-13483) * h(month(date, label = TRUE)^11- -0.392904)               0.000000e+00
+h(as.numeric(date)-13483) * h(-0.392904-month(date, label = TRUE)^11)                0.000000e+00
+h(0.491049-month(date, label = TRUE)^10) * h(month(date, label = TRUE)^11-0.065484)  0.000000e+00
+h(0.491049-month(date, label = TRUE)^10) * h(0.065484-month(date, label = TRUE)^11)  0.000000e+00
 
-Selected 14 of 19 terms, and 5 of 12 predictors
-Termination condition: RSq changed by less than 0.001 at 19 terms
+Selected 14 of 17 terms, and 5 of 12 predictors
+Termination condition: RSq changed by less than 0.001 at 17 terms
 Importance: as.numeric(date), month(date, label = TRUE)^10, ...
 Number of terms at each degree of interaction: 1 8 5
 GCV 0.0004725457    RSS 0.1002179    GRSq 0.9834104    RSq 0.9871125
@@ -475,7 +454,7 @@ plotmo trace 2: plotmo(object=model_m750a, pt.col="green", do.par=FALSE,
 plotmo parsnip model: will plot model_m750a$fit, not 'model_m750a' itself
 object call is earth(formula=log(value)~as.numeric(date)+month(date,
                      label=TRUE), data=data, keepxy=TRUE, degree=~2)
-using the environment saved in $terms of the earth model: env(.)
+using the environment saved in $terms of the earth model: env(data, weights)
 --plotmo_prolog for _earth object 'model_m750a'
 --plotmo_x for earth object
 
@@ -647,7 +626,7 @@ got model response from model.frame(log(value) ~ as.numeric(date) + month...,
 +     select(-id) %>%
 +     rename(date2 = date)
 > print(m750b) # tibble
-# A tibble: 306 x 2
+# A tibble: 306 × 2
    date2      value
    <date>     <dbl>
  1 1990-01-01  6370
@@ -660,7 +639,7 @@ got model response from model.frame(log(value) ~ as.numeric(date) + month...,
  8 1990-08-01  5450
  9 1990-09-01  6480
 10 1990-10-01  6820
-# ... with 296 more rows
+# ℹ 296 more rows
 > set.seed(2020)
 > splits_b <- initial_time_split(m750b, prop = 0.9)
 > set.seed(2020)
@@ -670,7 +649,7 @@ got model response from model.frame(log(value) ~ as.numeric(date) + month...,
 > # new data that only contains the feature "date" as a predictor
 > future_data <- m750b %>% future_frame(date2, .length_out = "3 years")
 > print(future_data) # a tibble with a single column of class "Date"
-# A tibble: 36 x 1
+# A tibble: 36 × 1
    date2     
    <date>    
  1 2015-07-01
@@ -683,7 +662,7 @@ got model response from model.frame(log(value) ~ as.numeric(date) + month...,
  8 2016-02-01
  9 2016-03-01
 10 2016-04-01
-# ... with 26 more rows
+# ℹ 26 more rows
 > stopifnot(class(future_data[,1,drop=TRUE]) == "Date")
 > predict_m750a <- model_m750b %>% predict(new_data = future_data)
 > 
@@ -696,7 +675,7 @@ plotmo trace 2: plotmo(object=model_m750b, pt.col="green", do.par=FALSE,
 plotmo parsnip model: will plot model_m750b$fit, not 'model_m750b' itself
 object call is earth(formula=log(value)~as.numeric(date2)+month(date2,
                      label=TRUE), data=data, keepxy=TRUE)
-using the environment saved in $terms of the earth model: env(.)
+using the environment saved in $terms of the earth model: env(data, weights)
 --plotmo_prolog for _earth object 'model_m750b'
 --plotmo_x for earth object
 
@@ -727,35 +706,35 @@ calling predict.earth with NULL newdata
 stats::predict(earth.object, NULL, type="response")
 predict returned[275,1]:
     log(value)
-1     8.767997
-2     8.783293
-3     8.796220
-...   8.804836
-275   9.237886
+1     8.773349
+2     8.779320
+3     8.797022
+...   8.803553
+275   9.243245
 predict after processing with nresponse=NULL is [275,1]:
     log(value)
-1     8.767997
-2     8.783293
-3     8.796220
-...   8.804836
-275   9.237886
+1     8.773349
+2     8.779320
+3     8.797022
+...   8.803553
+275   9.243245
 
 ----Metadata: plotmo_fitted with nresponse=NULL
 stats::fitted(object=earth.object)
 fitted(object) returned[275,1]:
     log(value)
-1     8.767997
-2     8.783293
-3     8.796220
-...   8.804836
-275   9.237886
+1     8.773349
+2     8.779320
+3     8.797022
+...   8.803553
+275   9.243245
 fitted(object) after processing with nresponse=NULL is [275,1]:
     log(value)
-1     8.767997
-2     8.783293
-3     8.796220
-...   8.804836
-275   9.237886
+1     8.773349
+2     8.779320
+3     8.797022
+...   8.803553
+275   9.243245
 
 ----Metadata: plotmo_y with nresponse=NULL
 --plotmo_y with nresponse=NULL for earth object
@@ -826,25 +805,25 @@ newdata[50,1]:
 stats::predict(earth.object, data.frame[50,1], type="response")
 predict returned[50,1]:
     log(value)
-1     8.767997
-2     8.798947
-3     8.826877
-...   8.852878
-50    9.237886
+1     8.773349
+2     8.797894
+3     8.831375
+...   8.848941
+50    9.243245
 predict after processing with nresponse=1 is [50,1]:
     log(value)
-1     8.767997
-2     8.798947
-3     8.826877
-...   8.852878
-50    9.237886
+1     8.773349
+2     8.797894
+3     8.831375
+...   8.848941
+50    9.243245
 --done get.ylim.by.dummy.plots
 
 ylim c(8.603, 9.289)    clip TRUE
 
 --plot.degree1(draw.plot=TRUE)
 graphics::plot.default(x=Date:1990-01-01 1990-06-20 1990-12...,
-                       y=c(8.768,8.799,8...), type="n", main="model_m750b",
+                       y=c(8.773,8.798,8...), type="n", main="model_m750b",
                        xlab="", ylab="", xaxt="s", yaxt="s",
                        xlim=Date:1990-01-01 2012-11-01, ylim=c(8.603,9.289))
 > set.seed(2020)

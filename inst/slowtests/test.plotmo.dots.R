@@ -10,7 +10,7 @@ a <- earth(O3~., data=ozone1, degree=2)
 expect.err(try(plotmo(a, persp.s=99)), "'s' matches both the 'sub' and 'scale' arguments of persp()")
 
 # Commented out because we now silently drop partial plot args like cex.l
-# expect.err(try(plotmo(a, cex.l=.8, cex.la=.9)), "arguments 'cex.l' and 'cex.la' both match 'cex.lab' in draw.plot.degree1")
+# expect.err(try(plotmo(a, cex.l=.8, cex.la=.9)), "arguments 'cex.l' and 'cex.la' both match 'cex.lab' in draw.plot_degree1")
 # expect.err(try(plotmo(a, persp.shad=1, persp.sh=2)), "'persp.shad' and 'persp.sh' both match the 'shade' argument of persp()")
 
 options(warn=2) # treat warnings as errors

@@ -314,8 +314,7 @@ gbm.top.labels <- function(leg.imin, leg.text, leg.col)
     leg.col[leg.col == "darkgray"] <- lighten("darkgray", -0.1)
     usr <- par("usr") # xmin, xmax, ymin, ymax
     # TODO spread.labs is buggy for horizontal labels (too much space sometimes)?
-    x <- TeachingDemos::spread.labs(leg.imin,
-            mindiff=par("cex") * max(strwidth(paste0(leg.imin, " "))),
+    x <- spread.labs(leg.imin,mindiff=par("cex") * max(strwidth(paste0(leg.imin, " "))),
             min=usr[1], max=usr[2])
     # use of "ok" prevents display off the right or left of the plot
     # (necessary if user specifies xlim)

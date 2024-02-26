@@ -4,7 +4,6 @@
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(earth)
 > options(warn=1) # print warnings as they occur
 > data(ozone1)

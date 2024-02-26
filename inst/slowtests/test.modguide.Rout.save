@@ -92,7 +92,6 @@ Got expected error from try(predict(fit1, newdata = as.matrix(tr[1:3, ])))
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > expect.err(try(plotmo(fit1)), "object 'Volume' not found")
 
 stats::predict(linmod.object, data.frame[3,2], type="response")

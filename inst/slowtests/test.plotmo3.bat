@@ -1,7 +1,7 @@
 @rem test.plotmo3.bat: extra tests for plotmo version 3 and higher
 
 @echo test.plotmo3.bat
-@"C:\PROGRA~1\R\R-4.2.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo3.R
+@"C:\PROGRA~1\R\R-4.3.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo3.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo3.Rout:
 @echo.

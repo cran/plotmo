@@ -1,17 +1,24 @@
 Changes to the plotmo package
 -----------------------------
 
---- 3.6.2 May 21, 2022
+## 3.6.3 Feb 16, 2024
 
-  Minor updates for R version 4.2.0.
+Updates for R version 4.3.2.
+For example, had to change "sort.unique" to "sort_unique".
 
---- 3.6.1 Jun 2, 2021
+Removed dependency on possibly orphaned package TeachingDemos.
 
-  Minor updates for R version 4.1.0.
-  These updates quieten some warnings from sprintf when plotmo's trace flag is set.
-  Alsp updated some of the test scripts.
+## 3.6.2 May 21, 2022
 
---- 3.6.0 Sep 12, 2020
+Minor updates for R version 4.2.0.
+
+## 3.6.1 Jun 2, 2021
+
+Minor updates for R version 4.1.0.
+These updates quieten some warnings from sprintf when plotmo's trace flag is set.
+Also updated some of the test scripts.
+
+## 3.6.0 Sep 12, 2020
 
 We now have better support for models with unusual variable names.
 For example, variable names with spaces in them, and formula terms
@@ -35,7 +42,7 @@ Updated the libraries shared with the earth and plotmo packages.
 
 Extended the test scripts and updated them for R version 4.0.2.
 
---- 3.5.7 Apr 15, 2020
+## 3.5.7 Apr 15, 2020
 
 Added new dot arguments "prednames.abbreviate" and "prednames.minlength".
   o Use prednames.abbreviate=FALSE for full predictor names in graph axes.
@@ -45,12 +52,12 @@ Added new dot arguments "prednames.abbreviate" and "prednames.minlength".
 Reinstated the tests for the emma package (were removed before because
 emma gave the message "package 'clusterSim' could not be loaded").
 
---- 3.5.6 Oct 26, 2019
+## 3.5.6 Oct 26, 2019
 
 The family of a model can now be a string (as well as a "family" object).
 This allows better support of glmnet objects.
 
---- 3.5.5 June 27, 2019
+## 3.5.5 June 27, 2019
 
 S4 models wrapped in caret models are now supported
 e.g. train method="svmRadial" (which creates a kernlab ksvm model).
@@ -64,7 +71,7 @@ Modifications for glmnet models:
 Updated test scripts for the new random number generator
 that came with R version 3.6.0.
 
---- 3.5.4 Apr 6, 2019
+## 3.5.4 Apr 6, 2019
 
 Added a reminder to use keepxy=2 for earth if you want to use
 plot.earth or plotmo on an earth cross-validation submodel.
@@ -72,7 +79,7 @@ plot.earth or plotmo on an earth cross-validation submodel.
 Plotmo now requires R version at least 3.4.0.
 Minor updates to libraries shared with earth and rpart.plot.
 
---- 3.5.3 March 16, 2019
+## 3.5.3 March 16, 2019
 
 Extended plotmo to support earth version 5.0.0, which allows multiple
 responses using the Formula package.  Plotmo now also has partial
@@ -88,13 +95,13 @@ plotmo issued an error message).
 
 Updates to the libraries shared with earth.
 
---- 3.5.2  Jan 2, 2019
+## 3.5.2  Jan 2, 2019
 
 Improved support for models specified with a formula containing an offset term.
 
 The grid.levels argument can now be used with pmethod="partdep".
 
---- 3.5.1  Nov 23, 2018
+## 3.5.1  Nov 23, 2018
 
 Can now plot multinomial models from the "pre" package.
 
@@ -106,7 +113,7 @@ options(warnPartialMatchArgs=TRUE).
 
 Added "LazyData: yes" to the DESCRIPTION file.
 
---- 3.5.0  Aug 19, 2018
+## 3.5.0  Aug 19, 2018
 
 The default pegged value of background variables has changed in this
 version, but only for logical and factor variables.  For these
@@ -123,7 +130,7 @@ We now support base::Date variables.
 
 Plotmo now has better support for caret rpart models with factor predictors.
 
---- 3.4.2  July 3, 2018
+## 3.4.2  July 3, 2018
 
 Added support for the partykit and evtree packages.
 Thanks to Achim Zeilis for his help.
@@ -133,7 +140,7 @@ degree2 plots in the 4x4 grid.
 
 Minor updates to linmod.R and linmod.methods.R.
 
---- 3.4.1  June 8, 2018
+## 3.4.1  June 8, 2018
 
 If plotting a probability and pt.col is specified, we now scale the
 response range to 0...1 so the points are displayed on the probability
@@ -151,7 +158,7 @@ objects properly until the call is saved with WrappedModels).
 Enhanced support for the caret package (we now use get.singles and
 get.pairs on the submodel).
 
---- 3.4.0  May 31, 2018
+## 3.4.0  May 31, 2018
 
 If predict.rpart is predicting a probability, plotmo now recognizes
 that and sets ylim=c(0,1) appropriately.
@@ -172,7 +179,7 @@ Added basic support for the mlr package (see test.mlr.R).
 
 Documentation updates, especially to modguide.pdf and linmod.R.
 
---- 3.3.7  May 15, 2018
+## 3.3.7  May 15, 2018
 
 Added a README file.
 
@@ -200,28 +207,28 @@ The vignettes are now compressed with gs and qpdf as in tools::compactPDF,
 (but that happens outside the standard CRAN build system).  It does mean
 that the tar.gz file for plotmo is a little smaller (now 1155 kByte).
 
---- 3.3.6  Mar 20, 2018
+## 3.3.6  Mar 20, 2018
 
 Minor documentation updates.
 
---- 3.3.5  Feb 26, 2018
+## 3.3.5  Feb 26, 2018
 
 Added support for package gam version 1.15 and higher (the S3 class of
 gam objects changed from "gam" to "Gam" to prevent clashes with the mgcv
 package).  Plotmo now works with both the old and new versions of gam.
 
---- 3.3.4  July 26, 2017
+## 3.3.4  July 26, 2017
 
 Added support for glmnetUtils objects.
 
---- 3.3.3  May 4, 2017
+## 3.3.3  May 4, 2017
 
 Error "glmnet.formula must be called with use.model.frame=TRUE"
 is now issued when necessary.
 
 Tweaked test scripts because cosso models fail with R version 3.4.0.
 
---- 3.3.2  Dec 2, 2016
+## 3.3.2  Dec 2, 2016
 
 Support for the C50 package.
 
@@ -233,7 +240,7 @@ With all2=2, plotmo will now plot up to a maximum of all pairs of 20
 variables (and as always, with all2=TRUE plotmo will plot a maximum
 of all pairs of 7 variables).
 
---- 3.3.1  Nov 24, 2016
+## 3.3.1  Nov 24, 2016
 
 When choosing which variables to plot for randomForest models,
 variable importance is now calculated using a more correct measure,
@@ -248,7 +255,7 @@ correct position when n.trees is specified.
 
 Documentation touchups.
 
---- 3.3.0  Nov 11, 2016
+## 3.3.0  Nov 11, 2016
 
 Added support for partial dependence plots (the pmethod argument).
 
@@ -267,7 +274,7 @@ arguments.
 Fixed error message when plot_gbm was used on multinomial models.
 Fixed warnings in plot_gbm when gbm.ntrees is very small (less than 10).
 
---- 3.2.1  Oct 27, 2016
+## 3.2.1  Oct 27, 2016
 
 Added support for gbm package version 2.2.  See gbm.backcompat.R.
 
@@ -275,7 +282,7 @@ Extended linmod.R: support for no-intercept models, support for
 'keep' argument, better handling of newdata in predict.linmod.
 Also extended the tests for linmod.R in inst/slowtests.
 
---- 3.2.0  Sep 7, 2016
+## 3.2.0  Sep 7, 2016
 
 The functions plot_gbm and plot_glmnet are now exported and available
 for the user.  These functions have been enhanced for this version.
@@ -294,7 +301,7 @@ Updated dot library functions for eventual move to a dots package.
 
 Revamped the vignettes.
 
---- 3.1.5  Aug 26, 2016
+## 3.1.5  Aug 26, 2016
 
 The pt.cex argument now works correctly in plotres QQ plots.
 
@@ -311,7 +318,7 @@ and rpart.plot packages's lib.R.
 
 Updated and extended vignettes.
 
---- 3.1.4  Jul 29, 2015
+## 3.1.4  Jul 29, 2015
 
 Added support for the adabag package.
 
@@ -320,23 +327,23 @@ functions, as now required by CRAN check.
 
 Documentation updates. Thanks to Achim Zeileis for his feedback.
 
---- 3.1.3  Jun 24, 2015
+## 3.1.3  Jun 24, 2015
 
 Added plotmo.prolog.cv.glmnet (to handle missing "call" in cv.glmnet objects).
 More work on the issue where vars on the rhs of formula are multidimensional.
 Documentation updates.
 
---- 3.1.2  Jun 15, 2015
+## 3.1.2  Jun 15, 2015
 
 Added the new vignette "Guidelines for S3 Regression Models".
 Documentation touchups.
 
---- 3.1.1  May 27, 2015
+## 3.1.1  May 27, 2015
 
 Removed references needed for old versions of earth.  Fixed a
 gbm column naming issue.  Other minor code and document updates.
 
---- 3.1.0  May 6, 2015
+## 3.1.0  May 6, 2015
 
 Removed references to functions in old versions of earth.
 
@@ -354,7 +361,7 @@ plotmo adds a dummy response column before calling predict.biglm.
 We now find the data argument for formula models even if the argument
 is unnamed.
 
---- 3.0.0  Apr 29, 2015
+## 3.0.0  Apr 29, 2015
 
 Added the plotres function.
 
@@ -363,7 +370,7 @@ Reworked the internal functions that get the data from the model.
 Reparameterized the argument list of plotmo, but maintained
 backwards compatibility using the "dots" routines.
 
---- 2.2.1  Jan 7, 2015
+## 2.2.1  Jan 7, 2015
 
 If pch.response has type character, we now plot the
 response points as text.
@@ -373,7 +380,7 @@ incorrectly labelled as intercept-only models.  Fixed that.
 
 Changes to match changes to earth's predict.varmod interval argument.
 
---- 2.2.0  Dec 10, 2014
+## 2.2.0  Dec 10, 2014
 
 Fixed incorrect printing of some messages when trace=-1.
 
@@ -381,7 +388,7 @@ Expansions to check.index for earth.
 
 Documentation touchups.
 
---- 2.1.0  Nov 30, 2014
+## 2.1.0  Nov 30, 2014
 
 Added a vignette "Notes on the plotmo package".
 
@@ -390,7 +397,7 @@ earth::plotmor to easily get the model data
 
 Some documentation touchups as usual.
 
---- 2.0.0  Nov 19, 2014
+## 2.0.0  Nov 19, 2014
 
 Plotting of prediction or confidence levels is now more comprehensive.
 We now allow both prediction and confidence intervals to be plotted
@@ -424,31 +431,31 @@ The default cex.response is now NULL (meaning automatic, was 1).
 
 Minor other changes to fix formatting of captions etc.
 
---- 1.3-3  Feb 4, 2014
+## 1.3-3  Feb 4, 2014
 
 Clerical changes to satisfy recent CRAN check requirements.
 
---- 1.3-2  Dec 1, 2011
+## 1.3-2  Dec 1, 2011
 
 You can now use trace=-1 to inhibit the "grid: " message.
 
 Removed a call to .Internal(persp)
 
---- 1.3-1  Sep 16, 2011
+## 1.3-1  Sep 16, 2011
 
 Fixed an minor incorrect message introduced in the previous release.
 
---- 1.3-0  Sep 15, 2011
+## 1.3-0  Sep 15, 2011
 
 You can now specify variables by name in degree1 and degree2.
 Suppressed annoying "Warning: surface extends beyond the box".
 We no longer issue an incorrect err msg if data frame has an "AsIs" field.
 
---- 1.2-6
+## 1.2-6
 
 Removed an incorrect stopifnot.integer(y.column) in plotmo_y.wrapper
 
---- 1.2-5 Jun 11, 2011
+## 1.2-5 Jun 11, 2011
 
 Fixed an incorrect stop when trace>0 and x had no column names.
 We no longer print the plot index in the plot title when all1 or
@@ -456,14 +463,14 @@ We no longer print the plot index in the plot title when all1 or
 Added get.plotmo.default.type.fda
 Touchups to the documentation.
 
---- 1.2-4 Apr 27, 2011
+## 1.2-4 Apr 27, 2011
 
 Removed hooks for the earth package (which are no longer necessary
 with earth 2.6-2).  The file plotmo.methods.R was deleted.
 
 Added the grid argument.
 
---- 1.2-3 Apr 17, 2011
+## 1.2-3 Apr 17, 2011
 
 This package no longer needs the earth package.  However the current
   earth (2.6-1) needs some hooks in this package to build.
@@ -472,7 +479,7 @@ This package no longer needs the earth package.  However the current
 We now have better error reporting for bad y's.
 We now have better jittering of response points with a binary response.
 
---- 1.2-0 Apr 12, 2011
+## 1.2-0 Apr 12, 2011
 
 Added ndiscrete arg (variables with a small number of levels
    are now plotted as "blocks", like factors).
@@ -496,7 +503,7 @@ Fixed handling of factors with non contiguous levels
 Modified test scripts to conform to R 2.13.0's way of printing numbers
 Numerous other document and code touch ups.
 
---- 1.0-1 Apr 01, 2011
+## 1.0-1 Apr 01, 2011
 
 plotmo was printing degree1 graphs for all used earth predictors,
 not just those appearing in degree1 terms.  Fixed that.
@@ -504,6 +511,6 @@ not just those appearing in degree1 terms.  Fixed that.
 plotmo was not handling all1=TRUE correctly for earth models with
 factor predictors.  Fixed that.
 
---- 1.0-0 Mar 31, 2011
+## 1.0-0 Mar 31, 2011
 
 Initial release.  Moved plotmo from earth 2.5-1 to here.

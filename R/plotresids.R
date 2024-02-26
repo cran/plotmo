@@ -802,7 +802,7 @@ get.isubset <- function(x, nsubset, nbiggest=0, use.all=FALSE, scale=NULL)
         if(!is.null(scale)) {
             which <- which(is.na(scale))
             if(length(which) > 0)
-                ix <- sort.unique(c(which, ix))
+                ix <- sort_unique(c(which, ix))
         }
     }
     ix # index vector

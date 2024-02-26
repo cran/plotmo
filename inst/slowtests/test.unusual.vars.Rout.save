@@ -8,7 +8,6 @@
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > data(ozone1)
 > data(etitanic)
 > options(warn=1) # print warnings as they occur
@@ -908,18 +907,18 @@ Call: earth(formula=resp~log(num)+bool+ord+offset(off), data=vdata,
             ncross=3, varmod.method="lm")
 
                                  coefficients
-(Intercept)                          7.384615
-h(-7.85046e-17-ord.L)               -9.171908
+(Intercept)                          6.273213
+boolTRUE                             1.111403
+h(-7.85046e-17-ord.L)               -7.600147
 h(ord.L- -7.85046e-17)               4.568998
 log(num) * h(-7.85046e-17-ord.L)     3.100021
-boolTRUE * h(-7.85046e-17-ord.L)     1.571761
 
 Selected 5 of 5 terms, and 3 of 4 predictors (pmethod="none")
 Termination condition: GRSq -Inf at 5 terms
 Importance: ord.L, log(num), boolTRUE, ord.Q-unused
 Offset: off with values 0.07692308, 0.1538462, 0.2307692, 0.3076923, 0.3...
 Weights: 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-Number of terms at each degree of interaction: 1 2 2
+Number of terms at each degree of interaction: 1 3 1
 GCV 28.70012  RSS 8.830806  GRSq -0.7319038  RSq 0.9518916  CVRSq 0.2995745
 
 Note: the cross-validation sd's below are standard deviations across folds
@@ -1240,10 +1239,6 @@ summary(glm.spaced.bx):
 
 Call:
 glm(formula = `surv fac` ~ ., family = "binomial", data = spaced.bx.fac)
-
-Deviance Residuals: 
-    Min       1Q   Median       3Q      Max  
--2.6426  -0.3901   0.4533   0.6051   2.4357  
 
 Coefficients:
                          Estimate Std. Error z value Pr(>|z|)    

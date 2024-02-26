@@ -5,7 +5,6 @@
 > # For more comprehensive tests, see plotmo/inst/slowtests.
 > library(plotmo)
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(rpart)
 > data(kyphosis)
 > rpart.model <- rpart(Kyphosis~., data=kyphosis)

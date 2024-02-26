@@ -1,7 +1,7 @@
 @rem test.degree.bat: test plotmo's degree1 and degree2 args with character arguments
 
 @echo test.degree.bat
-@"C:\PROGRA~1\R\R-4.2.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.degree.R
+@"C:\PROGRA~1\R\R-4.3.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.degree.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.degree.Rout:
 @echo.

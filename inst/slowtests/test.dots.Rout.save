@@ -17,7 +17,7 @@
 > test.dotindex(1,  "a1", a=10, b=20)
 > test.dotindex(NA, "a",  a1=10, a2=20)
 > expect.err(try(test.dotindex(1, nonesuch, a=10, a=20)), "object 'nonesuch' not found")
-Error in stopifnot(is.character(argname)) : object 'nonesuch' not found
+Error : object 'nonesuch' not found
 Got expected error from try(test.dotindex(1, nonesuch, a = 10, a = 20))
 > expect.err(try(test.dotindex(1, "a1", a=10, a=20)), "argument 'a' for test.dotindex() is duplicated")
 Error : argument 'a' for test.dotindex() is duplicated
@@ -101,8 +101,7 @@ Error : argument 'a' for test.dota() is duplicated
 Got expected error from try(test.dota(2, "a", EX = T, aa = 1, a = 2, a = 3))
 > 
 > expect.err(try(test.dota(2, "a", EX=T, a=none.such)), "cannot evaluate 'a'")
-Error in eval(dots[[idot]], parent.frame(1)) : 
-  object 'none.such' not found
+Error : object 'none.such' not found
 Error : cannot evaluate 'a'
 Got expected error from try(test.dota(2, "a", EX = T, a = none.such))
 > 

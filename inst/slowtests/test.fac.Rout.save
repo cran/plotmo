@@ -5,7 +5,6 @@
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(earth)
 > library(rpart)
 > data(ozone1)

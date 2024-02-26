@@ -2,7 +2,7 @@
 @rem Stephen Milborrow Apr 2007 Petaluma
 
 @echo test.plotmo.bat
-@"C:\PROGRA~1\R\R-4.2.0\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.R
+@"C:\PROGRA~1\R\R-4.3.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.plotmo.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.plotmo.Rout:
 @echo.

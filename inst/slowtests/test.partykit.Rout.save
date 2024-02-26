@@ -4,7 +4,6 @@
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(partykit)
 Loading required package: grid
 Loading required package: libcoin

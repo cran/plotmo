@@ -54,7 +54,7 @@ plotmo.pairs.gbm <- function(object, ...)
     form.pairs(importance[1: min(npairs, length(importance))])
 }
 # following is used by plotmo.x.gbm and plotmo.x.GBMFit
-plotmo.x.gbm.aux <- function(x, x.order, var.levels)
+plotmo_x_gbm_aux <- function(x, x.order, var.levels)
 {
     stopifnot(!is.null(x))
     stopifnot(!is.null(x.order) && !is.null(dim(x.order)))
@@ -80,7 +80,7 @@ plotmo.x.gbm.aux <- function(x, x.order, var.levels)
     x
 }
 # following is used by plotmo.y.gbm and plotmo.y.GBMFit
-plotmo.y.gbm.aux <- function(y, x.order)
+plotmo_y_gbm_aux <- function(y, x.order)
 {
     stopifnot(!is.null(y))
     stopifnot(!is.null(x.order) && !is.null(dim(x.order)))
@@ -89,11 +89,11 @@ plotmo.y.gbm.aux <- function(y, x.order)
 }
 plotmo.x.gbm <- function(object, ...)
 {
-    plotmo.x.gbm.aux(object$data$x, object$data$x.order, object$var.levels)
+    plotmo_x_gbm_aux(object$data$x, object$data$x.order, object$var.levels)
 }
 plotmo.y.gbm <- function(object, ...)
 {
-    plotmo.y.gbm.aux(object$data$y, object$data$x.order)
+    plotmo_y_gbm_aux(object$data$y, object$data$x.order)
 }
 plotmo.predict.gbm <- function(object, newdata, type, ..., TRACE)
 {

@@ -389,7 +389,6 @@ attr(,"class")
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > data(trees)
 > 
 > linmod.form.Volume.trees <- linmod(Volume~., data=trees)
@@ -1322,7 +1321,7 @@ Got expected error from try(predict(linmod.y.age.sex.pclass, newdata = etit[3:5,
 Call: linmod.formula(formula = y ~ ., data = data3)
 
                  Estimate    StdErr       t.value   p.value
-(Intercept) -1.191616e-15 1.2247449 -9.729507e-16 1.0000000
+(Intercept) -1.390219e-15 1.2247449 -1.135109e-15 1.0000000
 sb          -4.500000e+00 3.2787193 -1.372487e+00 0.4008582
 sc          -8.500000e+00 6.6895441 -1.270640e+00 0.4244770
 num          1.500000e+00 0.8660254  1.732051e+00 0.3333333
@@ -1342,7 +1341,7 @@ Got expected error from try(linmod(data4[, 1:2], data4[, 3]))
 Call: linmod.formula(formula = y ~ ., data = data4)
 
                  Estimate    StdErr       t.value   p.value
-(Intercept) -1.191616e-15 1.2247449 -9.729507e-16 1.0000000
+(Intercept) -1.390219e-15 1.2247449 -1.135109e-15 1.0000000
 sb          -4.500000e+00 3.2787193 -1.372487e+00 0.4008582
 sc          -8.500000e+00 6.6895441 -1.270640e+00 0.4244770
 num          1.500000e+00 0.8660254  1.732051e+00 0.3333333
@@ -2620,7 +2619,7 @@ Got expected error from try(pr(linmod.xy, "remove(x1)"))
 > linmod.xy <- linmod(x1, y1)
 > x1 <- trees1[1:3, 1:2]                      # change number of rows in original x1
 > expect.err(try(plotmo(linmod2.x1)), "object 'linmod2.x1' not found") # TODO error message misleading?
-Error in plotmo(linmod2.x1) : object 'linmod2.x1' not found
+Error : object 'linmod2.x1' not found
 Got expected error from try(plotmo(linmod2.x1))
 > 
 > par(org.par)

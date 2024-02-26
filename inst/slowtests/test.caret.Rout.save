@@ -6,7 +6,6 @@
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(earth)
 > library(caret)
 Loading required package: ggplot2

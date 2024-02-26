@@ -45,13 +45,13 @@ plotmo.pairs.GBMFit <- function(object, ...)
 }
 plotmo.x.GBMFit <- function(object, ...)
 {
-    plotmo.x.gbm.aux(object$gbm_data_obj$x,
+    plotmo_x_gbm_aux(object$gbm_data_obj$x,
                      object$gbm_data_obj$x_order,
                      object$variables$var_levels)
 }
 plotmo.y.GBMFit <- function(object, ...)
 {
-    plotmo.y.gbm.aux(object$gbm_data_obj$y, object$gbm_data_obj$x_order)
+    plotmo_y_gbm_aux(object$gbm_data_obj$y, object$gbm_data_obj$x_order)
 }
 plotmo.predict.GBMFit <- function(object, newdata, type, ..., TRACE)
 {

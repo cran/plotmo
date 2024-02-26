@@ -185,8 +185,7 @@ right.labs <- function(beta, iname, cex.names, coef.col) # varnames on right of 
 {
     usr <- par("usr")
     text(x=usr[2] + .01 * (usr[2] - usr[1]),
-         y=TeachingDemos::spread.labs(beta[iname, ncol(beta)],
-                                      mindiff=1.2 * cex.names * strheight("X")),
+         y=spread.labs(beta[iname, ncol(beta)], mindiff=1.2 * cex.names * strheight("X")),
          labels=names(iname), cex=cex.names, col=coef.col[iname], adj=0, xpd=NA)
 }
 top.axis <- function(obj, x, nresponse, approx.f)

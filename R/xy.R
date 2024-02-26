@@ -289,7 +289,7 @@ trace.data <- function(good, has.colnames,
 
     if(!is.null(x) && check.colnames) {
         if(!good)
-            printf("%s:%s\n", xname, format.err.field(x, xname, trace))
+            printf("%s:%s\n", xname, format_err_field(x, xname, trace))
         else if(trace >= 4) {
             printf("trace>=4: ")
             print_summary(x, xname, trace=2)
@@ -305,24 +305,24 @@ errmsg.for.get.x.or.y <- function(field, trace, try.object.x.or.y,
     ifield <- 1
     if(try.object.x.or.y) {
         printf("\n(%d) object$%s:%s\n",
-               ifield, field, format.err.field(object.x, field, trace))
+               ifield, field, format_err_field(object.x, field, trace))
         ifield <- ifield + 1
     }
     printf("\n(%d) model.frame:%s\n",
-           ifield, format.err.field(model.frame.x, field, trace))
+           ifield, format_err_field(model.frame.x, field, trace))
     ifield <- ifield + 1
 
     printf("\n(%d) getCall(object)$%s:%s\n",
-           ifield, field, format.err.field(call.x, field, trace))
+           ifield, field, format_err_field(call.x, field, trace))
     ifield <- ifield + 1
 
     if(argn)
         printf("\n(%d) argument %d of the model call:%s\n",
-               ifield, argn+1, format.err.field(argn.x, field, trace))
+               ifield, argn+1, format_err_field(argn.x, field, trace))
 
     printf("\n")
 }
-format.err.field <- function(x, xname, trace=0)
+format_err_field <- function(x, xname, trace=0)
 {
     if(is.try.err(x)) {
         errmsg <- sub(".* : *",    "",  x[1])   # strip prefix "Error in xxx : "
@@ -825,10 +825,10 @@ get.model.formula <- function(object, trace, naked)
         isFormula <- !is.null(form) # "Formula" vs "formula"
         if(isFormula) {
             trace1(trace, "object created with Formula (not formula): using attr(terms, \"Formula\")\n")
-            form <- formula.as.char.with.check(form, "attr(terms, \"Formula\")", trace)
+            form <- formula_as_char_with_check(form, "attr(terms, \"Formula\")", trace)
         } else {
             form <- try(formula(terms), silent=TRUE)
-            form <- formula.as.char.with.check(form, "formula(object)", trace)
+            form <- formula_as_char_with_check(form, "formula(object)", trace)
         }
         if(!is.null(form$form.as.char))
             return(process.formula(object, form$form.as.char, isFormula, trace, naked))
@@ -855,7 +855,7 @@ get.model.formula <- function(object, trace, naked)
     # names(call) <- names.call # note <<- not <-
     form.name <- sprint("model call argument %d", iform-1)
     form <- eval(call[[iform]], model.env(object))
-    form <- formula.as.char.with.check(form, form.name, trace)
+    form <- formula_as_char_with_check(form, form.name, trace)
     if(is.null(form$form.as.char))
         return(ret(form$errmsg))
     # TODO More classes could be added to the following assignment to isFormula
@@ -866,7 +866,7 @@ get.model.formula <- function(object, trace, naked)
 }
 # convert the formula to character, and also check it
 
-formula.as.char.with.check <- function(form, form.name, trace)
+formula_as_char_with_check <- function(form, form.name, trace)
 {
     ret.null <- function(...) # ... is an err msg in printf form
     {
@@ -913,7 +913,7 @@ process.formula <- function(object, form.as.char, isFormula, trace, naked)
     if(isFormula && !is.try.err(form))
         form <- try(Formula::Formula(form))
     if(is.try.err(form)) {
-        # prepend "formula(%s) failed" for a clearer msg in format.err.field later
+        # prepend "formula(%s) failed" for a clearer msg in format_err_field later
         form <- sprint("%s(%s) failed%s",
                        if(isFormula) "Formula" else "formula",
                        quotify(form.as.char),
@@ -1032,7 +1032,7 @@ cleanup.x.or.y <- function(object, x, field, trace, check.naked)
 #   library(ElemStatLearn); x <- mixture.example$x;
 #   g <- mixture.example$y; a <- lm(g ~ x)
 #
-# This routine also prevents a misleading error msg later in plot.degree1
+# This routine also prevents a misleading error msg later in plot_degree1
 # (illegal index, missing column in x) caused by the following code:
 #    data(gasoline, package='pls')
 #    plotmo(earth(octane ~ NIR, data=gasoline))

@@ -5,7 +5,6 @@
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > library(earth) # for ozone1
 > options(warn=1) # print warnings as they occur
 > data(airquality)
@@ -66,12 +65,7 @@ calculating partdep for Temp
 > par(mfrow=c(2,3)) # 6 plots per page
 > 
 > pairplot(pre.mod, c("Temp", "Wind"), main="pairplot")
-Loading required namespace: akima
-Warning in akima::interp(exp_dataset[, varnames[1]], exp_dataset[, varnames[2]],  :
-  collinear points, trying to add some jitter to avoid colinearities!
-Warning in akima::interp(exp_dataset[, varnames[1]], exp_dataset[, varnames[2]],  :
-  success: collinearities reduced through jitter
-NOTE: function pairplot uses package 'akima', which has an ACM license. See also https://www.acm.org/publications/policies/software-copyright-notice.
+Loading required namespace: interp
 > plotmo(pre.mod, main="plotmo partdep",
 +        pmethod="partdep",
 +        degree1=0, degree2="Temp",

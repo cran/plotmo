@@ -93,7 +93,7 @@ plotmo.pairs.default <- function(object, x, nresponse, trace, all2, ...)
     }
     if(is.null(formula.vars) && is.null(term.labels))
         return(NULL)
-    plotmo.pairs.from.term.labels(c(formula.vars, term.labels), colnames(x), trace)
+    plotmo_pairs_from_term_labels(c(formula.vars, term.labels), colnames(x), trace)
 }
 get.all.pairs.from.singles <- function(object, x, trace, all2)
 {
@@ -140,9 +140,9 @@ form.pairs <- function(varnames) # return a two column matrix, each row is a pai
 # predictor pair.  The following combos of x1 and x2 for example are
 # considered pairs: x1*x2, x1:x2, s(x1,x2), and similar.
 
-plotmo.pairs.from.term.labels <- function(term.labels, pred.names, trace, ...)
+plotmo_pairs_from_term_labels <- function(term.labels, pred.names, trace, ...)
 {
-    trace2(trace, "plotmo.pairs.from.term.labels\n")
+    trace2(trace, "plotmo_pairs_from_term_labels\n")
     trace2(trace, "term.labels: %s\n", quotify.trunc(term.labels, maxlen=100))
     trace2(trace, "pred.names:  %s\n", quotify.trunc(pred.names, maxlen=100))
     pairs <- matrix(0, nrow=0, ncol=2)          # no pairs initially
