@@ -17,7 +17,6 @@ plotmo.prolog.gbm <- function(object, object.name, trace, ...) # invoked when pl
     if(trace > 0)
         cat0("importance: ",
              paste.trunc(object$var.names[importance], maxlen=120), "\n")
-
     object
 }
 order.gbm.vars.on.importance <- function(object)
@@ -35,22 +34,28 @@ order.gbm.vars.on.importance <- function(object)
 }
 plotmo.singles.gbm <- function(object, x, nresponse, trace, all1, ...)
 {
-    if(all1)
-        return(1:length(object$var.names))
     importance <- attr(object, "plotmo.importance")
     stopifnot(!is.null(importance)) # uninitialized?
-    # indices of vars with importance >= 1%, max of 10 variables
-    # (10 becauses plotmo.pairs returns 6, total is 16, therefore 4x4 grid)
-    importance[1: min(10, length(importance))]
+    if(all1)
+        nsingles = length(importance)
+    else
+        # indices of vars with importance >= 1%, max of 10 variables
+        # (10 becauses plotmo.pairs returns 6, total is 16, therefore 4x4 grid)
+        nsingles = min(10, length(importance))
+    if(nsingles == 0)
+        return(NULL)
+    importance[1: nsingles]
 }
 plotmo.pairs.gbm <- function(object, ...)
 {
     # pairs of four most important variables (i.e. 6 plots)
     importance <- attr(object, "plotmo.importance")
     stopifnot(!is.null(importance)) # uninitialized?
-    # choose npairs so a total of no more than 16 plots
+    # choose npairs so a total of no more than 16 plots (including singles)
     # npairs=5 gives 10 pairplots, npairs=4 gives 6 pairplots
     npairs <- if(length(importance) <= 6) 5 else 4
+    if(npairs == 0)
+        return(NULL)
     form.pairs(importance[1: min(npairs, length(importance))])
 }
 # following is used by plotmo.x.gbm and plotmo.x.GBMFit

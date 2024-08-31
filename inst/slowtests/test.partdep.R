@@ -173,7 +173,7 @@ par(org.par)
 # gbm, simple binomial (two-class) data
 library(gbm)
 n.trees <- 10
-data$y <- x1 > .6 # y depends only on x1
+data$y <- as.numeric(x1 > .6) # y depends only on x1
 set.seed(2016)
 mod <- gbm(y~., data=data, n.trees=n.trees, shrinkage=.1, interact=4,
            distribution="bernoulli")

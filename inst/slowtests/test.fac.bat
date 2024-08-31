@@ -2,7 +2,7 @@
 @rem Stephen Milborrow, Berea Mar 2011
 
 @echo test.fac.bat
-@"C:\PROGRA~1\R\R-4.3.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.fac.R
+@"C:\PROGRA~1\R\R-4.4.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.fac.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.fac.Rout:
 @echo.

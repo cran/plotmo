@@ -6,10 +6,6 @@
 > source("test.prolog.R")
 > library(mlr)
 Loading required package: ParamHelpers
-Warning message: 'mlr' is in 'maintenance-only' mode since July 2019.
-Future development will only happen in 'mlr3'
-(<https://mlr3.mlr-org.com>). Due to the focus on 'mlr3' there might be
-uncaught bugs meanwhile in {mlr} - please consider switching.
 > library(plotmo)
 Loading required package: Formula
 Loading required package: plotrix
@@ -156,8 +152,9 @@ calculating partdep for pclass
 > # TODO following fails
 > pd <- generatePartialDependenceData(regr.rf.with.call, task.regr.rf, "pclass", n=c(50, NA))
 > try(print(plotPartialDependence(pd, data = getTaskData(task.regr.rf)))) # Error: Discrete value supplied to continuous scale
-Error in train_continuous(x, self$range) : 
-  Discrete value supplied to a continuous scale
+Error in scale_x_continuous() : 
+  Discrete values supplied to continuous scale.
+ℹ Example values: 1st, 1st, 1st, 1st, and 1st
 > 
 > cat("==classification model with randomForest (binary response)======================\n")
 ==classification model with randomForest (binary response)======================
@@ -498,8 +495,9 @@ calculating partdep for pclass
 > # TODO following fails
 > pd <- generatePartialDependenceData(classif.rf.with.call, task.classif.rf, "pclass", n=c(50, NA))
 > try(print(plotPartialDependence(pd, data = getTaskData(task.classif.rf)))) # Error: Discrete value supplied to continuous scale
-Error in train_continuous(x, self$range) : 
-  Discrete value supplied to a continuous scale
+Error in scale_x_continuous() : 
+  Discrete values supplied to continuous scale.
+ℹ Example values: 1st, 1st, 1st, 1st, and 1st
 > 
 > plotmo(rf, type="prob", nresponse="notsurvived", degree1="age", degree2=0,
 +        pmethod="partdep", ylim=c(.3,.75), nrug=TRUE, grid.col="gray") # looks plausible
@@ -760,7 +758,7 @@ calculating partdep for Petal.Width
 > 
 > set.seed(2018)
 > library(gbm)
-Loaded gbm 2.1.9
+Loaded gbm 2.2.2
 This version of gbm is no longer under development. Consider transitioning to gbm3, https://github.com/gbm-developers/gbm3
 > # reference model
 > gbm = gbm(y~., data=data, n.trees=300)

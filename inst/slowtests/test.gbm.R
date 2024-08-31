@@ -255,7 +255,7 @@ cat("--- distribution=\"bernoulli\" ----------------------------------\n")
 
 set.seed(2016)
 ptit <- ptitanic[sample(1:nrow(ptitanic), size=80), ]
-ptit$survived <- ptit$survived == "survived"
+ptit$survived <- as.numeric(ptit$survived == "survived")
 temp <- ptit$pclass # put pclass at the end so can check ordering of importances
 ptit$pclass <- NULL
 ptit$pclass <- factor(as.numeric(temp), labels=c("first", "second", "third"))
@@ -300,7 +300,7 @@ cat("--- distribution=\"huberized\" ----------------------------------\n")
 
 set.seed(2016)
 ptit <- ptitanic[sample(1:nrow(ptitanic), size=100), ]
-ptit$survived <- ptit$survived == "survived"
+ptit$survived <- as.numeric(ptit$survived == "survived")
 ptit$sibsp <- ptit$parch <- ptit$pclass <- NULL
 train.frac <- 1
 set.seed(2016)
@@ -342,7 +342,7 @@ cat("--- distribution=\"adaboost\" ----------------------------------\n")
 
 set.seed(2016)
 ptit <- ptitanic[sample(1:nrow(ptitanic), size=100), ]
-ptit$survived <- ptit$survived == "survived"
+ptit$survived <- as.numeric(ptit$survived == "survived")
 ptit$sibsp <- ptit$parch <- ptit$pclass <- NULL
 train.frac <- .8
 set.seed(2016)
@@ -526,5 +526,126 @@ plot_gbm(gbm.iris)
 # plotmo(gbmt.bernoulli, do.par=2)
 # print(summary(gbmt.bernoulli)) # will also plot
 # par(org.par)
+
+cat("--- gbm3: distribution=\"gaussian\", formula interface ----------------------------------\n")
+
+library(gbm3)
+
+set.seed(2016)
+ptit <- ptitanic[sample(1:nrow(ptitanic), size=70), ] # small data for fast test
+set.seed(2016)
+# # TODO bug in gbm3: following causes error: survived is not of type numeric, ordered, or factor
+# ptit$survived <- ptit$survived == "survived"
+ptit <- ptit[!is.na(ptit$age), ]
+train.frac <- .8
+set.seed(2016)
+gbm3.gaussian <- gbm3::gbm(age~., data=ptit, train.frac=train.frac,
+                   distribution="gaussian",
+                   n.trees=50, shrinkage=.1, keep.data=FALSE)
+expect.err(try(plotres(gbm3.gaussian)), "use keep_gbm_data=TRUE in the call to gbm")
+set.seed(2016)
+gbm3.gaussian <- gbm3::gbm(age~., data=ptit, train.frac=train.frac,
+                   distribution="gaussian",
+                   n.trees=50, shrinkage=.1)
+par(mfrow=c(2,2), mar=c(3,3,4,1))
+w1 <- plotres(gbm3.gaussian, which=1, do.par=FALSE, w1.smooth=TRUE,
+        w1.main="gbm3.gaussian")
+cat("w1 plot for gbm3.gaussian returned (w1.smooth=TRUE):\n")
+print(w1)
+plot(0, 0) # dummy plot
+w3 <- plotres(gbm3.gaussian, which=3, do.par=FALSE, info=TRUE,
+        smooth.col=0, col=ptit$sex, # ylim=c(-40,40),
+        wmain="nresponse=1")
+
+# compare to manual residuals
+iused <- 1:(train.frac * nrow(ptit))
+y <- ptit$age[iused]
+n.trees <- plotmo:::gbm.n.trees(gbm3.gaussian)
+# TODO following fails in the new version of gbm (version 2.2) (you have to provide newdata)
+# yhat <- predict(gbm3.gaussian, type="response", n.trees=n.trees)
+yhat <- predict(gbm3.gaussian, newdata=ptit, type="response", n.trees=n.trees)
+yhat <- yhat[iused]
+plot(yhat, y - yhat,
+     col=ptit$sex[iused], main="manual gaussian residuals",
+     pch=20, ylim=c(-40,40))
+abline(h=0, col="gray")
+stopifnot(all(yhat == w3$x))
+stopifnot(all(y - yhat == w3$y))
+par(org.par)
+
+w1 <- plotres(gbm3.gaussian, predict.n.trees=13, w1.grid.col=1, trace=1, SHOWCALL=TRUE,
+              w1.smooth=TRUE,
+              w1.main="predict.n.trees=13 w1.grid.col=1")
+cat("second w1 plot for gbm3.gaussian returned (w1.smooth=TRUE):\n")
+print(w1)
+plotmo(gbm3.gaussian, trace=-1, SHOWCALL=TRUE)
+# plotmo(gbm3.gaussian, trace=-1, all1=TRUE, SHOWCALL=TRUE)
+# plotmo(gbm3.gaussian, trace=-1, all2=TRUE, SHOWCALL=TRUE)
+
+cat("--- gbm3: distribution=\"gaussian\", xy interface ----------------------------------\n")
+
+y = ptit$age
+x = ptit[,c(1,2,3,5,6)]
+train_params=gbm3::training_params(num_trees=100,
+ interaction_depth=2,
+ min_num_obs_in_node=3,
+ shrinkage=0.1, bag_fraction=0.5,
+ id=seq_len(nrow(x)), num_train=round(0.5 * nrow(x)),
+ num_features=ncol(x))
+gbm3fit <- gbm3::gbmt_fit(x, y, train_params=train_params,
+                          keep_gbm_data=TRUE, dist=gbm_dist("Gaussian"))
+plotmo(gbm3fit, trace=-1, SHOWCALL=TRUE)
+plotres(gbm3fit, trace=-1, SHOWCALL=TRUE)
+
+cat("--- gbm3: large number of variables ----------------------------------\n")
+
+set.seed(2024)
+N <- 1000
+
+X <- data.frame(X1=runif(N), X2=2*runif(N), X3=3*runif(N),
+                X4=runif(N), X5=2*runif(N), X6=3*runif(N),
+                X7=runif(N), X8=2*runif(N), X9=3*runif(N),
+                X10=runif(N), X11=2*runif(N), X12=3*runif(N),
+                X13=runif(N), X14=2*runif(N), X15=3*runif(N))
+
+# Y <- sample(c(0, 1), N, replace = TRUE)
+set.seed(2024)
+Y <- sqrt(X[,1])  +
+     sqrt(X[,2])  +
+     sqrt(X[,3])  +
+     sqrt(X[,4])  +
+     sqrt(X[,5])  +
+     sqrt(X[,6])  +
+     .5 * sqrt(X[,8]) +
+     sqrt(X[,9])  +
+     sqrt(X[,10]) +
+     sqrt(X[,11]) +
+     sqrt(X[,12])
+
+data <- data.frame(Y, X)
+set.seed(2024)
+gbm3.big <- gbm3::gbm(Y~., data=data, shrinkage=0.1, dist="gaussian")
+y = data[,1]
+x = data[,2:ncol(data)]
+train_params=gbm3::training_params(num_trees=100,
+ interaction_depth=3,
+ min_num_obs_in_node=10,
+ shrinkage=0.1, bag_fraction=0.5,
+ id=seq_len(nrow(x)), num_train=round(0.5 * nrow(x)),
+ num_features=ncol(x))
+gbm3fit.big <- gbm3::gbmt_fit(x, y, train_params=train_params, keep_gbm_data=TRUE, dist=gbm_dist("Gaussian"))
+
+set.seed(2024)
+plotmo(gbm3.big, SHOWCALL=TRUE)
+plotmo(gbm3.big, all1=TRUE, all2=TRUE, caption="all1=TRUE, all2=TRUE")
+plotmo(gbm3.big, all1=TRUE, all2=2, caption="all1=TRUE, all2=2")
+plotres(gbm3.big, trace=-1, SHOWCALL=TRUE)
+
+set.seed(2024)
+plotmo(gbm3fit.big, SHOWCALL=TRUE)
+plotmo(gbm3fit.big, all1=TRUE, caption="all1=TRUE")
+plotmo(gbm3fit.big, all2=TRUE, caption="all2=TRUE")
+plotmo(gbm3fit.big, all2=2, caption="all2=2")
+plotres(gbm3.big, trace=-1, SHOWCALL=TRUE)
 
 source("test.epilog.R")

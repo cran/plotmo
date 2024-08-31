@@ -589,7 +589,7 @@ Got expected error from try(plotmo1(rpart.model.vignette, level = 0.9))
 > printf("library(gbm)\n")
 library(gbm)
 > library(gbm)                                            # gbm
-Loaded gbm 2.1.9
+Loaded gbm 2.2.2
 This version of gbm is no longer under development. Consider transitioning to gbm3, https://github.com/gbm-developers/gbm3
 > set.seed(2016)
 > gbm.model.vignette <- gbm(O3~., data=oz, dist="gaussian", inter=2, n.trees=100)

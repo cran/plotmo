@@ -280,7 +280,7 @@ number of x values: survived 2 sibsp 5 logage 88
 singles: 1 survived, 2 sibsp, 3 logage 
 
 ----plotmo_pairs for cv.glmnet object
-Error in formula.default(object) : invalid formula
+Error in attr(x, "formula") %||% { : invalid formula
 formula(object) failed for cv.glmnet object in plotmo.pairs.default
 Error in x$terms %||% attr(x, "terms") %||% stop("no terms component nor attribute") : 
   no terms component nor attribute

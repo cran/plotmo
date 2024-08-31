@@ -1,6 +1,13 @@
 Changes to the plotmo package
 -----------------------------
 
+## 3.6.4 Aug 29, 2024
+
+Updates for R version 4.4.1
+
+Fixed an issue with gbm3 version 3.0.
+Thanks to Marcia Barbosa for help on this.
+
 ## 3.6.3 Feb 16, 2024
 
 Updates for R version 4.3.2.

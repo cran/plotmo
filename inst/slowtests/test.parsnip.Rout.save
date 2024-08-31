@@ -10,21 +10,29 @@ Loading required package: plotrix
 > cat("loading parsnip libraries\n") # these libraries take several seconds to load
 loading parsnip libraries
 > library(tidymodels, quietly=TRUE, verbose=FALSE)
-── Attaching packages ────────────────────────────────────── tidymodels 1.1.1 ──
-✔ broom        1.0.5     ✔ recipes      1.0.9
-✔ dials        1.2.0     ✔ rsample      1.2.0
+── Attaching packages ────────────────────────────────────── tidymodels 1.2.0 ──
+✔ broom        1.0.6     ✔ recipes      1.1.0
+✔ dials        1.3.0     ✔ rsample      1.2.1
 ✔ dplyr        1.1.4     ✔ tibble       3.2.1
-✔ ggplot2      3.4.4     ✔ tidyr        1.3.1
-✔ infer        1.0.6     ✔ tune         1.1.2
-✔ modeldata    1.3.0     ✔ workflows    1.1.3
-✔ parsnip      1.1.1     ✔ workflowsets 1.0.1
-✔ purrr        1.0.2     ✔ yardstick    1.3.0
+✔ ggplot2      3.5.1     ✔ tidyr        1.3.1
+✔ infer        1.0.7     ✔ tune         1.2.1
+✔ modeldata    1.4.0     ✔ workflows    1.1.4
+✔ parsnip      1.2.1     ✔ workflowsets 1.1.0
+✔ purrr        1.0.2     ✔ yardstick    1.3.1
 ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ purrr::%||%()    masks base::%||%()
 ✖ purrr::discard() masks scales::discard()
 ✖ dplyr::filter()  masks stats::filter()
 ✖ dplyr::lag()     masks stats::lag()
 ✖ recipes::step()  masks stats::step()
 > library(timetk)
+
+Attaching package: 'timetk'
+
+The following object is masked from 'package:base':
+
+    %||%
+
 > library(lubridate)
 
 Attaching package: 'lubridate'
@@ -36,7 +44,7 @@ The following objects are masked from 'package:base':
 > cat("loaded parsnip libraries\n")
 loaded parsnip libraries
 > cat("parsnip version:", as.character(packageVersion("parsnip")[[1]]), "\n")
-parsnip version: 1.1.1 
+parsnip version: 1.2.1 
 > 
 > vdata <- data.frame(
 +     resp    = 1:23,
