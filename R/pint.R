@@ -41,12 +41,12 @@ plotmo.pint <- function(object, newdata, type, level, trace, ...)
 {
     UseMethod("plotmo.pint")
 }
-plotmo.pint.default <- function(object, ...)
+plotmo.pint.default <- function(object, newdata, type, level, trace, ...)
 {
     stop0("the level argument is not supported for ",
           class.as.char(object, quotify=TRUE), " objects")
 }
-plotmo.pint.lm <- function(object, newdata, type, level, ...)
+plotmo.pint.lm <- function(object, newdata, type, level, trace, ...)
 {
     # lm objects with weights do not support confidence intervals on new data
     if(!is.null(object$weights))
@@ -59,26 +59,31 @@ plotmo.pint.lm <- function(object, newdata, type, level, ...)
         cint.lwr = cints[,"lwr"], # intervals for prediction of mean response
         cint.upr = cints[,"upr"])
 }
-plotmo.pint.glm <- function(object, newdata, type, level, ...)
+plotmo.pint.glm <- function(object, newdata, type, level, trace, ...)
 {
+    predict <- try(predict(object, newdata, type="link", se.fit=TRUE))
+    if(is.try.err(predict))
+        stopf("\"predict(mod, newdata, type=\"link\", se.fit=TRUE)\" failed for \"%s\" model", class(object)[1])
+
+    ilink = try(family(object)$linkinv)
+    if(is.try.err(ilink))
+        stopf("\"family(mod)$linkinv\" failed for \"%s\" model", class(object)[1])
+
+    df <- try(df.residual(object))
+    if(is.try.err(df))
+        stopf("\"df.residual(mod)\" failed for \"%s\" model", class(object)[1])
+
+    q <- get.quant(level, df=df, trace=trace>=2) # e.g for level=.95 return 1.96 if df=Inf
+
     if(!is.null(object$weights) && !all(object$weights == object$weights[1]))
-        warnf(
-"the level argument may not work correctly on glm objects built with weights")
+        warnf("the level argument may not work correctly on glm objects built with weights")
 
-    quant <- 1 - (1 - level) / 2 # .95 becomes .975
-
-    predict <- predict(object, newdata, type=type, se.fit=TRUE)
-
-    data.frame(cint.lwr = predict$fit - quant * predict$se.fit,
-               cint.upr = predict$fit + quant * predict$se.fit)
+    data.frame(cint.lwr = ilink(predict$fit - q * predict$se.fit), # changed in plotmo 3.7.0, jan 2026
+               cint.upr = ilink(predict$fit + q * predict$se.fit))
 }
 # package mgcv, or package gam version less than 1.15
-plotmo.pint.gam <- function(object, newdata, type, level, ...)
+plotmo.pint.gam <- function(object, newdata, type, level, trace, ...)
 {
-    if(!is.null(object$weights) && !all(object$weights == object$weights[1]))
-        warnf(
-"the level argument may not work correctly on gam objects built with weights")
-
     quant <- 1 - (1 - level) / 2 # .95 becomes .975
 
     predict <- predict(object, newdata, type=type, se.fit=TRUE)
@@ -90,16 +95,16 @@ plotmo.pint.gam <- function(object, newdata, type, level, ...)
         stop0("gam objects in the 'gam' package do not support ",
               "confidence intervals on new data")
     }
+    if(!is.null(object$weights) && !all(object$weights == object$weights[1]))
+        warnf(
+"the level argument may not work correctly on gam objects built with weights")
+
     data.frame(cint.lwr = predict$fit - quant * predict$se.fit,
                cint.upr = predict$fit + quant * predict$se.fit)
 }
 # package gam version 1.15 or higher
-plotmo.pint.Gam <- function(object, newdata, type, level, ...)
+plotmo.pint.Gam <- function(object, newdata, type, level, trace, ...)
 {
-    if(!is.null(object$weights) && !all(object$weights == object$weights[1]))
-        warnf(
-"the level argument may not work correctly on Gam objects built with weights")
-
     quant <- 1 - (1 - level) / 2 # .95 becomes .975
 
     predict <- predict(object, newdata, type=type, se.fit=TRUE)
@@ -108,10 +113,14 @@ plotmo.pint.Gam <- function(object, newdata, type, level, ...)
         cat("\n")
         stop0("Gam objects do not support confidence intervals on new data")
     }
+    if(!is.null(object$weights) && !all(object$weights == object$weights[1]))
+        warnf(
+"the level argument may not work correctly on Gam objects built with weights")
+
     data.frame(cint.lwr = predict$fit - quant * predict$se.fit,
                cint.upr = predict$fit + quant * predict$se.fit)
 }
-plotmo.pint.quantregForest <- function(object, newdata, type, level, ...)
+plotmo.pint.quantregForest <- function(object, newdata, type, level, trace, ...)
 {
     q0 <- (1 - level) / 2   # .95 becomes .025
     q1 <- 1 - q0            # .975
@@ -120,7 +129,7 @@ plotmo.pint.quantregForest <- function(object, newdata, type, level, ...)
 
     data.frame(lwr = predict[,1], upr = predict[,2])
 }
-plotmo.pint.earth <- function(object, newdata, type, level, ...)
+plotmo.pint.earth <- function(object, newdata, type, level, trace, ...)
 {
     pints <- predict(object, newdata=newdata, type=type, interval="pint", level=level)
     if(is.null(newdata)) {

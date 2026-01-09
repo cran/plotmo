@@ -540,7 +540,7 @@ plotmo1(object=lm.model.vignette,level=0.9)
 library(mda)
 > library(mda)
 Loading required package: class
-Loaded mda 0.5-4
+Loaded mda 0.5-5
 
 > mars.model.vignette1 <- mars(oz[,-1], oz[,1], degree=2)
 > plotmo1(mars.model.vignette1)
@@ -637,10 +637,294 @@ plotmo1(object=qda.model.vignette,type="class",all2=TRUE,type2="contour",ngrid2=
 > tita <- get.tita()
 > 
 > mod.glm.sex <- glm(sex~., data=tita, family=binomial)
-> plotmo1(mod.glm.sex, pt.col=as.numeric(tita$pclass)+1)
-plotmo1(object=mod.glm.sex,pt.col=as.numeric(tita$pclass)+1)
+> plotmo1(mod.glm.sex, pt.col=as.numeric(tita$pclass)+1, do.par=2)
+plotmo1(object=mod.glm.sex,pt.col=as.numeric(tita$pclass)+1,do.par=2)
  plotmo grid:    pclass survived age sibsp  logage
              classthird        0  30     0 3.06991
+> empty.plot()
+> 
+> # glm binomial model: compare error band on plotmo versus manual plot
+> 
+> wasp <- read.table("darlingtonia.tab", header=T)
+> iorder = order(wasp$leafHeight, wasp$visited)
+> wasp = wasp[iorder,]
+> iseq = seq(1, nrow(wasp), by = 2)
+> dat = wasp[iseq, ]
+> newdat = wasp[iseq+1, ]
+> 
+> print(summary(dat))
+   leafHeight      visited      
+ Min.   :14.0   Min.   :0.0000  
+ 1st Qu.:32.0   1st Qu.:0.0000  
+ Median :43.0   Median :0.0000  
+ Mean   :44.9   Mean   :0.1905  
+ 3rd Qu.:58.0   3rd Qu.:0.0000  
+ Max.   :83.0   Max.   :1.0000  
+> set.seed(2026)
+> mod <- glm(visited ~ leafHeight, data=dat, family=binomial())
+> print(summary(mod))
+
+Call:
+glm(formula = visited ~ leafHeight, family = binomial(), data = dat)
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)  
+(Intercept) -4.71115    2.14347  -2.198   0.0280 *
+leafHeight   0.06385    0.03652   1.748   0.0805 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 20.450  on 20  degrees of freedom
+Residual deviance: 16.565  on 19  degrees of freedom
+AIC: 20.565
+
+Number of Fisher Scoring iterations: 5
+
+> set.seed(2026)
+> level95 = .95
+> plotmo(mod, do.par=FALSE, trace=2,
++     level=level95, level.shade="lightgray",
++     # nrug=TRUE,
++     grid.col="lightgray",
++     pt.col=ifelse(dat$visited, "pink", "lightgreen"), jitter=0.1,
++     main="plotmo: visited vs leafHeight")
+plotmo trace 2: plotmo(object=mod,
+                       pt.col=ifelse(dat$visited,"pink","lightgreen"),
+                       jitter=0.1, level=level95, grid.col="lightgray",
+                       do.par=FALSE, trace=2, level.shade="lightgray",
+                       main="plotmo: visited vs leafHeight")
+--get.model.env for object with class glm
+object call is glm(formula=visited~leafHeight, family=binomial(), data=dat)
+using the environment saved in $terms of the glm model: R_GlobalEnv
+--plotmo_prolog for glm object 'mod'
+--plotmo_x for glm object
+
+get.object.x:
+object$x is NULL (and it has no colnames)
+
+object call is glm(formula=visited~leafHeight, family=binomial(), data=dat)
+
+get.x.from.model.frame:
+formula(object) is visited ~ leafHeight
+naked formula is the same
+formula is valid, now looking for data for the model.frame
+object$model is usable and has column names visited leafHeight
+x=model.frame[,-1] is usable and has column name leafHeight
+plotmo_x returned[21,1]:
+    leafHeight
+42          14
+11          18
+41          20
+...         29
+26          83
+
+----Metadata: plotmo_predict with nresponse=NULL and newdata=NULL
+plotmo_predict with NULL newdata (nrows=3), using plotmo_x to get the data
+--plotmo_x for glm object
+
+get.object.x:
+object$x is NULL (and it has no colnames)
+
+object call is glm(formula=visited~leafHeight, family=binomial(), data=dat)
+
+get.x.from.model.frame:
+formula(object) is visited ~ leafHeight
+naked formula is the same
+formula is valid, now looking for data for the model.frame
+object$model is usable and has column names visited leafHeight
+x=model.frame[,-1] is usable and has column name leafHeight
+plotmo_x returned[21,1]:
+    leafHeight
+42          14
+11          18
+41          20
+...         29
+26          83
+will use the above data instead of newdata=NULL for predict.glm
+stats::predict(glm.object, data.frame[3,1], type="response")
+predict returned[3,1] with no column names:
+             
+42 0.02151400
+11 0.02760091
+41 0.03124279
+predict after processing with nresponse=NULL is [3,1] with no column names:
+             
+42 0.02151400
+11 0.02760091
+41 0.03124279
+
+----Metadata: plotmo_fitted with nresponse=NULL
+stats::fitted(object=glm.object)
+fitted(object) returned[21,1] with no column names:
+              
+42  0.02151400
+11  0.02760091
+41  0.03124279
+... 0.05418670
+26  0.64292551
+fitted(object) after processing with nresponse=NULL is [21,1] with no column names:
+              
+42  0.02151400
+11  0.02760091
+41  0.03124279
+... 0.05418670
+26  0.64292551
+
+----Metadata: plotmo_y with nresponse=NULL
+--plotmo_y with nresponse=NULL for glm object
+
+get.object.y:
+object$y is usable but without colnames so we will keep on searching
+
+object call is glm(formula=visited~leafHeight, family=binomial(), data=dat)
+
+get.y.from.model.frame:
+formula(object) is visited ~ leafHeight
+formula is valid, now looking for data for the model.frame
+object$model is usable and has column names visited leafHeight
+y=model.frame[,1] is usable and has column name visited
+plotmo_y returned[21,1]:
+    visited
+42        0
+11        0
+41        0
+...       0
+26        0
+plotmo_y after processing with nresponse=NULL is [21,1]:
+    visited
+42        0
+11        0
+41        0
+...       0
+26        0
+converted nresponse=NA to nresponse=1
+nresponse=1 (was NA) ncol(fitted) 1 ncol(predict) 1 ncol(y) 1
+
+----Metadata: plotmo_y with nresponse=1
+--plotmo_y with nresponse=1 for glm object
+
+get.object.y:
+object$y is usable but without colnames so we will keep on searching
+
+object call is glm(formula=visited~leafHeight, family=binomial(), data=dat)
+
+get.y.from.model.frame:
+formula(object) is visited ~ leafHeight
+formula is valid, now looking for data for the model.frame
+object$model is usable and has column names visited leafHeight
+y=model.frame[,1] is usable and has column name visited
+got model response from object$model
+plotmo_y returned[21,1]:
+    visited
+42        0
+11        0
+41        0
+...       0
+26        0
+plotmo_y after processing with nresponse=1 is [21,1]:
+    visited
+1         0
+2         0
+3         0
+...       0
+21        0
+got response name "visited" from yfull
+resp.levs is NULL
+
+----Metadata: done
+
+number of x values: leafHeight 21
+
+----plotmo_singles for glm object
+singles: 1 leafHeight 
+
+----plotmo_pairs for glm object
+formula(object) returned visited ~ leafHeight
+formula.vars "leafHeight"
+term.labels "leafHeight"
+plotmo_pairs_from_term_labels
+term.labels: "leafHeight" "leafHeight"
+pred.names:  "leafHeight"
+considering leafHeight
+considering leafHeight
+no pairs
+
+----Figuring out ylim
+ylim c(-0.1, 1.1)    clip TRUE
+
+--plot.degree1(draw.plot=TRUE)
+degree1 plot1 (pmethod "plotmo") variable leafHeight
+newdata[50,1]:
+    leafHeight
+1     14.00000
+2     15.40816
+3     16.81633
+...   18.22449
+50    83.00000
+stats::predict(glm.object, data.frame[50,1], type="response")
+predict returned[50,1] with no column names:
+              
+1   0.02151400
+2   0.02349031
+3   0.02564341
+... 0.02798820
+50  0.64292551
+predict after processing with nresponse=1 is [50,1]:
+       predict
+1   0.02151400
+2   0.02349031
+3   0.02564341
+... 0.02798820
+50  0.64292551
+plotmo_pint for glm object
+plotmo: plot_degree1: get.degree1.data: plotmo_pint: plotmo.pint: plotmo.pint.glm:
+get.quant_plotmo2(level 0.95 df 19)   level2 0.975   quant 2.09302
+Warning: the level argument may not work correctly on glm objects built with weights
+prediction intervals[50,2]:
+        cint.lwr  cint.upr
+1   0.0006797761 0.4154360
+2   0.0008215046 0.4130813
+3   0.0009922489 0.4108536
+... 0.0011977732 0.4087640
+50  0.1370955421 0.9532826
+graphics::plot.default(x=c(14,15.41,16.8...), y=c(0.0215,0.0235...), type="n",
+                       main="plotmo: visited vs leafHeight", xlab="", ylab="",
+                       xaxt="s", yaxt="s", xlim=c(13.99,83.01),
+                       ylim=c(-0.1,1.1))
+Will shift and scale displayed points specified by pt.col: yshift -0 yscale 1
+> 
+> # wrong error bars (used prior to plotmo 3.7.0)
+> pred = predict(mod, newdata=newdat, type='response', se.fit=TRUE)
+> yhat = pred$fit
+> wrong_se = pred$se.fit
+> wrong_lwr = yhat - (2 * wrong_se)
+> wrong_upr = yhat + (2 * wrong_se)
+> points(newdat$leafHeight, wrong_lwr, pch=".", col="red")
+> points(newdat$leafHeight, wrong_upr, pch=".",, col="red")
+> 
+> # correct error bars (fixed in plotmo 3.7.0)
+> ilink = family(mod)$linkinv
+> pred_link = predict(mod, newdata=newdat, type="link", se.fit=TRUE)
+> q = qt((1 - level95) / 2, df = df.residual(mod), lower.tail = FALSE)
+> printf("darlingtonia: level95 %.4f q %.4f\n", level95, q)
+darlingtonia: level95 0.9500 q 2.0930
+> lwr = ilink(pred_link$fit - (q * pred_link$se.fit))
+> upr = ilink(pred_link$fit + (q * pred_link$se.fit))
+> 
+> points(newdat$leafHeight, lwr, pch="o")
+> points(newdat$leafHeight, upr, pch="o")
+> 
+> legend(x="topleft",
++        legend=c("correct (plotmo 3.7.0)", "incorrect (prior to plotmo 3.7.0)"),
++        col=c(1,2),
++        pch=sprintf("%s%s", "o", "."))
+> 
+> plot(newdat$leafHeight, yhat, type="l", main="manual: visited vs leafHeight",
++      xlim=c(15,80), ylim=c(-.05,1.1))
+> points(newdat$leafHeight, lwr, pch="o")
+> points(newdat$leafHeight, upr, pch="o")
 > 
 > # tita[,4] is age, tita[,1] is pclass
 > printf("library(lars)\n")

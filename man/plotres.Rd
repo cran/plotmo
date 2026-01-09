@@ -127,7 +127,7 @@ Only supported for some models, an error message will be issued otherwise.
 Each residual is divided by by \code{se_i * sqrt(1 - h_ii)},
 where \code{se_i} is the standard error of prediction
 and \code{h_ii} is the leverage (the diagonal entry of the hat matrix).
-When the variance model holds, the standardized residuals are
+When the variance assumptions hold (for your type of model), the standardized residuals are
 homoscedastic with unity variance.
 \cr
 The leverages are obtained using \code{\link{hatvalues}}.

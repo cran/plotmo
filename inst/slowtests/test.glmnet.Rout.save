@@ -7,7 +7,7 @@ Loading required package: plotmo
 Loading required package: plotrix
 > library(glmnet)
 Loading required package: Matrix
-Loaded glmnet 4.1-8
+Loaded glmnet 4.1-10
 > data(ozone1)
 > data(etitanic)
 > get.tit <- function() # abbreviated titanic data

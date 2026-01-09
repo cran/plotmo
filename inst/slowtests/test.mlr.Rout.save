@@ -60,6 +60,11 @@ calculating partdep for Girth
 > pd <- generatePartialDependenceData(regr.earth, task, "Girth", n=c(50, NA))
 Loading required package: mmpf
 > print(plotPartialDependence(pd, data = getTaskData(task)))
+Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+ℹ Please use tidy evaluation idioms with `aes()`.
+ℹ See also `vignette("ggplot2-in-packages")` for more information.
+ℹ The deprecated feature was likely used in the mlr package.
+  Please report the issue at <https://github.com/mlr-org/mlr/issues>.
 Warning in grid.Call.graphics(C_points, x$x, x$y, x$pch, x$size) :
   semi-transparency is not supported on this device: reported only once per page
 > 
@@ -88,7 +93,7 @@ Got expected error from try(plotmo(earth, degree1 = 1, degree2 = 0))
 ==regression model with randomForest (binary response)============================
 > 
 > library(randomForest)
-randomForest 4.7-1.1
+randomForest 4.7-1.2
 Type rfNews() to see new features/changes/bug fixes.
 > library(earth) # for etitanic data
 > data(etitanic)
@@ -153,8 +158,8 @@ calculating partdep for pclass
 > pd <- generatePartialDependenceData(regr.rf.with.call, task.regr.rf, "pclass", n=c(50, NA))
 > try(print(plotPartialDependence(pd, data = getTaskData(task.regr.rf)))) # Error: Discrete value supplied to continuous scale
 Error in scale_x_continuous() : 
-  Discrete values supplied to continuous scale.
-ℹ Example values: 1st, 1st, 1st, 1st, and 1st
+  Discrete value supplied to a continuous scale.
+ℹ Example values: 1st, 2nd, and 3rd.
 > 
 > cat("==classification model with randomForest (binary response)======================\n")
 ==classification model with randomForest (binary response)======================
@@ -496,8 +501,8 @@ calculating partdep for pclass
 > pd <- generatePartialDependenceData(classif.rf.with.call, task.classif.rf, "pclass", n=c(50, NA))
 > try(print(plotPartialDependence(pd, data = getTaskData(task.classif.rf)))) # Error: Discrete value supplied to continuous scale
 Error in scale_x_continuous() : 
-  Discrete values supplied to continuous scale.
-ℹ Example values: 1st, 1st, 1st, 1st, and 1st
+  Discrete value supplied to a continuous scale.
+ℹ Example values: 1st, 2nd, and 3rd.
 > 
 > plotmo(rf, type="prob", nresponse="notsurvived", degree1="age", degree2=0,
 +        pmethod="partdep", ylim=c(.3,.75), nrug=TRUE, grid.col="gray") # looks plausible

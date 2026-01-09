@@ -1,6 +1,14 @@
 Changes to the plotmo package
 -----------------------------
 
+## 3.7.0 Dec 30, 2025
+
+Fixed incorrect calculation of interval bands for glm models
+with the plotmo "level" argument
+Thanks to Marcia Barbosa for help on this.
+
+Updated some web addresses in the man pages.
+
 ## 3.6.4 Aug 29, 2024
 
 Updates for R version 4.4.1

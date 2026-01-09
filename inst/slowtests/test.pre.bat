@@ -1,7 +1,7 @@
 @rem test.pre.bat: pre tests for plotmo and plotres
 
 @echo test.pre.bat
-@"C:\PROGRA~1\R\R-4.4.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.pre.R
+@"C:\PROGRA~1\R\R-4.5.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.pre.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.pre.Rout:
 @echo.

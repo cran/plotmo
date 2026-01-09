@@ -286,7 +286,60 @@ plotmo1(qda.model.vignette, type="class", all2=TRUE,
 tita <- get.tita()
 
 mod.glm.sex <- glm(sex~., data=tita, family=binomial)
-plotmo1(mod.glm.sex, pt.col=as.numeric(tita$pclass)+1)
+plotmo1(mod.glm.sex, pt.col=as.numeric(tita$pclass)+1, do.par=2)
+empty.plot()
+
+# glm binomial model: compare error band on plotmo versus manual plot
+
+wasp <- read.table("darlingtonia.tab", header=T)
+iorder = order(wasp$leafHeight, wasp$visited)
+wasp = wasp[iorder,]
+iseq = seq(1, nrow(wasp), by = 2)
+dat = wasp[iseq, ]
+newdat = wasp[iseq+1, ]
+
+print(summary(dat))
+set.seed(2026)
+mod <- glm(visited ~ leafHeight, data=dat, family=binomial())
+print(summary(mod))
+set.seed(2026)
+level95 = .95
+plotmo(mod, do.par=FALSE, trace=2,
+    level=level95, level.shade="lightgray",
+    # nrug=TRUE,
+    grid.col="lightgray",
+    pt.col=ifelse(dat$visited, "pink", "lightgreen"), jitter=0.1,
+    main="plotmo: visited vs leafHeight")
+
+# wrong error bars (used prior to plotmo 3.7.0)
+pred = predict(mod, newdata=newdat, type='response', se.fit=TRUE)
+yhat = pred$fit
+wrong_se = pred$se.fit
+wrong_lwr = yhat - (2 * wrong_se)
+wrong_upr = yhat + (2 * wrong_se)
+points(newdat$leafHeight, wrong_lwr, pch=".", col="red")
+points(newdat$leafHeight, wrong_upr, pch=".",, col="red")
+
+# correct error bars (fixed in plotmo 3.7.0)
+ilink = family(mod)$linkinv
+pred_link = predict(mod, newdata=newdat, type="link", se.fit=TRUE)
+q = qt((1 - level95) / 2, df = df.residual(mod), lower.tail = FALSE)
+printf("darlingtonia: level95 %.4f q %.4f\n", level95, q)
+lwr = ilink(pred_link$fit - (q * pred_link$se.fit))
+upr = ilink(pred_link$fit + (q * pred_link$se.fit))
+
+points(newdat$leafHeight, lwr, pch="o")
+points(newdat$leafHeight, upr, pch="o")
+
+legend(x="topleft",
+       legend=c("correct (plotmo 3.7.0)", "incorrect (prior to plotmo 3.7.0)"),
+       col=c(1,2),
+       pch=sprintf("%s%s", "o", "."))
+
+plot(newdat$leafHeight, yhat, type="l", main="manual: visited vs leafHeight",
+     xlim=c(15,80), ylim=c(-.05,1.1))
+points(newdat$leafHeight, lwr, pch="o")
+points(newdat$leafHeight, upr, pch="o")
 
 # tita[,4] is age, tita[,1] is pclass
 printf("library(lars)\n")

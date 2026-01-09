@@ -99,7 +99,7 @@ calculating apartdep for x1:x3 01234567890
 > 
 > # randomForest, simple regression function
 > library(randomForest)
-randomForest 4.7-1.1
+randomForest 4.7-1.2
 Type rfNews() to see new features/changes/bug fixes.
 > data$y <- x1 > -.1 # y depends only on x1 (-.1 hand-tuned to create interesting model surface)
 > set.seed(2016)

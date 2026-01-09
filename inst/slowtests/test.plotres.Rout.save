@@ -276,7 +276,7 @@ training rsq 0.23
 > library(gam)
 Loading required package: splines
 Loading required package: foreach
-Loaded gam 1.22-4
+Loaded gam 1.22-7
 
 > gam.package.loaded  <- "package:gam"  %in% search()
 > mgcv.package.loaded <- "package:mgcv" %in% search()
@@ -301,7 +301,7 @@ Loaded gam 1.22-4
 > 
 > library(mda)
 Loading required package: class
-Loaded mda 0.5-4
+Loaded mda 0.5-5
 
 > mars <- mars(ozone1[,2:3], ozone1[,1], degree=2)
 > mars.to.earth <- mars.to.earth(mars)
